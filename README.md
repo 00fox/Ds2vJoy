@@ -141,8 +141,8 @@ Under central led, you'll find 2 checkboxes
 
 At the left of first 4 destinations, you'll find special mouse actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
-  - (from the bottom group of checkboxes)
-  - into the timestamp or make it responsive to the toggle
+  - from the bottom group of checkboxes into the timestamp
+  - or make it responsive to the toggle
 - SAVE_POSITION: Save the mouse position
 - MOVE_BACK: return to saved point
 - MOVE_TO_XY/MOVE_TO_WH: Go to x,y/w,h (two left/central numbers of the grid)
