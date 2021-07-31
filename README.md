@@ -35,7 +35,7 @@ Fork from @090 DS4vJoy and DS5vJoy projects
   - but for example if you chosen DS5 and only DS4 is connected this one will be in used
   - You may have to restart the program to change apply
 - Usual Configurations
-- Triggers only works with DS5
+- Triggers mode (only works with DS5)
   - May be used only for touch pleasure
   - But in conjunction with L2, L2LOW, L2HIGH, L2FULL (same for R2),
   - you may use distinctly 2 or 3 separate actions on the same trigger
