@@ -54,6 +54,7 @@ DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 ## vJoy
 ![vJoy](Doc/3.png)
 Each line correspond to a different mapping
+
 Order, add, delete, copy or edit (double click or menu)
 Mappings are treated in order,
   Then you can decide for compelexe actions or shifts
