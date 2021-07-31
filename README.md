@@ -300,6 +300,7 @@ There is no resize but some other stuff
 * https://github.com/Jays2Kings/DS4Windows
 * https://www.inputmapper.com
 * http://www.wischik.com/lu/programmer/zip_utils.html
+* https://github.com/stbrumme/crc32
 * https://notepad-plus-plus.org
 * http://www.planetpointy.co.uk/joystick-test-application
 * https://github.com/microsoft/Windows-driver-samples/tree/master/setup/devcon
