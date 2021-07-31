@@ -1,7 +1,7 @@
-﻿#Ds2vJoy
-DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
-
+﻿# # Ds2vJoy
 Fork from @090 DS4vJoy and DS5vJoy projects
+
+DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 - Bluetooth compatible
 - Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
 - Combinations, macros and time based operations allowed
@@ -10,12 +10,12 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 
 ## How to use
 1. Install vJoy (https://sourceforge.net/projects/vjoystick/)
-   * or not if you plan to use ViGEm
+  * or not if you plan to use ViGEm
 2. Open 'Configure vJoy' and select Axes, up to 128 Buttons and up to 4 continuous POV and effects
-   * It may result in a PC restart.
+  * It may result in a PC restart.
 3. Launch Ds2vJoy.exe
-   * an .ini file will be created, to save parameters, with some examples already filled
-   * and needed .dll, whose will be destroyed when you'll exit
+  * an .ini file will be created, to save parameters, with some examples already filled
+  * and needed .dll, whose will be destroyed when you'll exit
 4. Connect your PC and DS4/DS5 via USB or Bluetooth 
 5. Configure as you wish (you have 3 profiles accessible by system tray)
 
@@ -106,30 +106,28 @@ Under each source and destination, you'll find disabling
   - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
 
 Under first source you'll find 3 checkboxes which determine the method
-Checkboxes    | Method
-------------- | --------------------------------------------------------------------
-None          | Simple:        start when pressed, stop when release
-First         | Short*:        you have to press and release quickly
-Second        | Double:        you'll have to double press in a limited time
-Third         | Long:          you have to stay pressed from a certain time
-1 & 2         | Double short*: second press acting like short
-2 & 2         | Double long:   second press acting like long
-1 & 3         | Medium long:   like long but after double long
-All           | Very long
+- None: Simple, start when pressed, stop when release
+- First: Short*, you have to press and release quickly
+- Second: Double, you'll have to double press in a limited time
+- Third: Long, you have to stay pressed from a certain time
+- 1 & 2: Double short*, second press acting like short
+- 2 & 2: Double long, second press acting like long
+- 1 & 3: Medium long, like long but after double long
+- all: Very long
 
   `* you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
 
 In terms of time:
-Method        | Press times
-------------- | --------------------------------------------------------------------
-Simple        | Immediate
-Short         | found in settings
-Double        | ~first press and second press < long
-Long          | found in settings
-Double        | ~first press and second press < long + second press duration < short
+Method | Press times
+------   -----------
+Simple | Immediate
+Short | found in settings
+Double | ~first press and second press < long
+Long | found in settings
+Double | ~first press and second press < long + second press duration < short
 Double short* | ~first press and second press < long + second press duration > long
-Medium long   | ~press > twice the time as long
-Very long     | found in settings
+Medium long | ~press > twice the time as long
+Very long | found in settings
 
 Under central led, you'll find 2 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
@@ -171,26 +169,6 @@ In this numbers group at the right
 - left ones are for first points, central ones for second point,
 - two last ones are to divide the zone in a grid, then you are always docked to a point of this grid
  
-A lot of buttons type has been added, for DS and for vJoy
-
-RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE, OPTIONS, SQUARE, TRIANGLE, CIRCLE, CROSS, R3, PS, TOUCH, MUTE, L1, R1, L2, R2, L2TRIGGER, R2TRIGGER, EMPTY, MIDDLE, FULL, LXINV, LYINV, RXINV, RYINV, AXISL_LEFT, AXISL_UP_LEFT, AXISL_UP, AXISL_UP_RIGHT, AXISL_RIGHT, AXISL_DOWN_RIGHT, AXISL_DOWN, AXISL_DOWN_LEFT, AXISR_LEFT, AXISR_UP_LEFT, AXISR_UP, AXISR_UP_RIGHT, AXISR_RIGHT, AXISR_DOWN_RIGHT, AXISR_DOWN, AXISR_DOWN_LEFT, TOUCHUP, TOUCHPAD, TOUCH1, TOUCH2, TOUCH3, TOUCH4, TOUCHL, TOUCHR, L2TRIGGER_33, R2TRIGGER_33, L2TRIGGER_66, R2TRIGGER_66, L2TRIGGER_100, R2TRIGGER_100, L1R1, L2R2, BATTERY
-- Usual DS buttons classed by MMORPG action bar order
-- Inversed Axis
-- Multiple level Triggers (Normal L2 R2, Normal Triggers, ~33, 66 and 100% according to Proactive Triggers mode
-- Different parts of the touchpad (all, Up, Only touch part, Left, Right and 4 corners)
-- Cardinal Axis (for old games for example, instead of Dpad)
-- Simultaneous presses, L1R1 L2R2 (you have a short - configurable - time to press both buttons same time, and will be released only when both will)
-- Battery level, Null, 50% value and full value, for your macros and tips (always on)
-
-RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR, SL1TR, XINV, YINV, ZINV, RXINV, RYINV, RZINV, SL0INV, SL1INV, DPAD1_LEFT, DPAD1_UP_LEFT, DPAD1_UP, DPAD1_UP_RIGHT, DPAD1_RIGHT, DPAD1_DOWN_RIGHT, DPAD1_DOWN, DPAD1_DOWN_LEFT, DPAD2_LEFT, DPAD2_UP_LEFT, DPAD2_UP, DPAD2_UP_RIGHT, DPAD2_RIGHT, DPAD2_DOWN_RIGHT, DPAD2_DOWN, DPAD2_DOWN_LEFT, DPAD3_LEFT, DPAD3_UP_LEFT, DPAD3_UP, DPAD3_UP_RIGHT, DPAD3_RIGHT, DPAD3_DOWN_RIGHT, DPAD3_DOWN, DPAD3_DOWN_LEFT, DPAD4_LEFT, DPAD4_UP_LEFT, DPAD4_UP, DPAD4_UP_RIGHT, DPAD4_RIGHT, DPAD4_DOWN_RIGHT, DPAD4_DOWN, DPAD4_DOWN_LEFT
-- Usual vJoy buttons
-- Inversed Axis
-- Triggered Axis (to transform lower start point to middle stability)
-- Splitted Dpad, then you have unlimited capabilities instead 1 to 1 Dpad affectation
-  - Dpad use a mathematical medium function, then you can attribute other sources than normal ones
-  - And instead having the result of for example Left + Up > Up Left
-  - You can have it for Left + Up + UpRight + Right (which is mmm... let the program do it itself...)
-
 An example of a simple advanced script for mouse:
 ```
   1st mapping: DS L2R2 + DS R2 activate right stick mouse
