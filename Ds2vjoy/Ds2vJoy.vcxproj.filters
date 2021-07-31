@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="crc32">
+      <UniqueIdentifier>{37750dbb-0a33-4512-99c4-b99a5ada37f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="vJoy">
+      <UniqueIdentifier>{df06f252-1c96-45d1-90f9-3d172db4e594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CEffect">
+      <UniqueIdentifier>{aa6c7b91-1bac-416c-bd08-6cdce63fff2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Zip Utils">
+      <UniqueIdentifier>{4bba62d8-5dbe-41d8-b821-5a0fa8289ca4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ds2vJoy.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoy.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Stopwatch.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Keymap.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mapping.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MappingDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="KeymapDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dsButton.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoyButton.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="KeymapDataDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasktray.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Startup.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MappingDataDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Language.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Findwindow.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="HidGuardian.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="HidGuardianDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="LinksDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ViGEmDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsTools.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="FFB.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CEffect.h">
+      <Filter>CEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Crc32.h">
+      <Filter>crc32</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoyInterface.h">
+      <Filter>vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidFire.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidFireDataDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidFireDlg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="unzip.h">
+      <Filter>Zip Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ViGEm.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CPULimiter.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DS.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ds2vJoy.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="vJoy.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stopwatch.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Keymap.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mapping.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="MappingDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeymapDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="dsButton.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="vJoyButton.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeymapDataDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tasktray.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="MappingDataDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Language.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="Findwindow.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="HidGuardian.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="HidGuardianDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="LinksDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="ViGEmDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="FFB.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffect.cpp">
+      <Filter>CEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Crc32.cpp">
+      <Filter>crc32</Filter>
+    </ClCompile>
+    <ClCompile Include="RapidFire.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="RapidFireDataDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="RapidFireDlg.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="unzip.cpp">
+      <Filter>Zip Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ViGEm.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="CPULimiter.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="DS.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ds2vJoy.rc">
+      <Filter>Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="icon32.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Ds2vJoy.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Ds2vJoyHelp.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SDK\Devcon.exe" />
+    <None Include="..\SDK\ViGEmBus.zip" />
+    <None Include="..\SDK\HidCerberus.zip" />
+    <None Include="..\SDK\lib\ViGEmClient.dll" />
+    <None Include="..\SDK\lib\vJoyInterface.dll" />
+    <None Include="..\SDK\HidGuardian.zip" />
+  </ItemGroup>
+</Project>
