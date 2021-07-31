@@ -257,7 +257,6 @@ Order, add, delete, copy or edit (double click or menu)
 - Send to, permit you to specify the process, and will ungrey (disabled)Find button
 - If you check last checkbox, this will activate the window first (if post method is unsupported)
 
-## Keymap find window
 ![Keymap Window Post](Doc/10.png)
 
 You will find.
