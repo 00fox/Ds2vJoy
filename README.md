@@ -225,7 +225,7 @@ Checkboxes are made to swap betweeen DS or vJoy as source
 
 ## Guardian
 ![Guardian](Doc/12.png)
-Install, remove and use Nefarius&co HidGuardian and HidCerberus (and stop/start this service)
+Install, remove and use Nefarius&co HidGuardian and HidCerberus (and stop/start this service).
 A restart may be necessaire after installing Guardian to have it properly running
 You can find link to manual configuration of Cerberus,
 In which you can verify the HID\ to enter in the blacklist section
