@@ -238,6 +238,7 @@ After the first time has passed, release and press repeatedly
 - you can also enable repeated hits of the cross key and □ △ × ○, 
 - for example, only when L2 or R2 is pressed
 
+## RapidFire editing
 ![RapidFire Editing](Doc/7.png)
 
 Removed DS4vJoy/DS5vJoy limits of time
@@ -249,12 +250,14 @@ You can send a keydown when the button is pressed and a keyup when it is release
 
 Order, add, delete, copy or edit (double click or menu)
 
+## Keymap editing
 ![Keymap Editing](Doc/9.png)
 
 - You can enter directly keys in the Enter Keycode part, or use Send Keycode choices (for advanced use)
 - Send to, permit you to specify the process, and will ungrey (disabled)Find button
 - If you check last checkbox, this will activate the window first (if post method is unsupported)
 
+## Keymap find window
 ![Keymap Window Post](Doc/10.png)
 
 You will find.
