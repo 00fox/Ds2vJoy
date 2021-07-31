@@ -199,7 +199,7 @@ An example of a simple advanced script for mouse:
     if you release only R2 you enter sniper mode,
     if you press back R2 you get again quick mouse
     until both L2 and R2 are released,
-	which can therefore be used for usual actions
+    which can therefore be used for usual actions
     (you may differ them 40ms and add -(simple)L2R2
 ```
 
@@ -292,12 +292,17 @@ There is no resize but some other stuff
 
 ## Thanks
 * https://github.com/090 (a lot)
-* https://sourceforge.net/projects/vjoystick/
+* https://sourceforge.net/projects/vjoystick
 * https://github.com/ViGEm/ViGEmBus
 * https://github.com/ViGEm/ViGEmClient
 * https://github.com/ViGEm/HidGuardian
 * https://github.com/ViGEm/HidCerberus
 * https://github.com/Jays2Kings/DS4Windows
+* https://www.inputmapper.com
+* http://www.wischik.com/lu/programmer/zip_utils.html
+* https://notepad-plus-plus.org
+* http://www.planetpointy.co.uk/joystick-test-application
+* https://github.com/microsoft/Windows-driver-samples/tree/master/setup/devcon
 
 ## Development environment
 - Win10 64bit + Visual Studio 2019 (Community is fine)
