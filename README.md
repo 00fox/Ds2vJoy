@@ -1,4 +1,6 @@
-﻿# Ds2vJoy
+﻿# # Ds2vJoy
+Fork from @090 DS4vJoy and DS5vJoy projects
+
 DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 - Bluetooth compatible
 - Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
@@ -8,12 +10,12 @@ DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 
 ## How to use
 1. Install vJoy (https://sourceforge.net/projects/vjoystick/)
-  - or not if you plan to use ViGEm
+  * or not if you plan to use ViGEm
 2. Open 'Configure vJoy' and select Axes, up to 128 Buttons and up to 4 continuous POV and effects
-  - It may result in a PC restart.
+  * It may result in a PC restart.
 3. Launch Ds2vJoy.exe
-  - an .ini file will be created, to save parameters, with some examples already filled
-  - and needed .dll, whose will be destroyed when you'll exit
+  * an .ini file will be created, to save parameters, with some examples already filled
+  * and needed .dll, whose will be destroyed when you'll exit
 4. Connect your PC and DS4/DS5 via USB or Bluetooth 
 5. Configure as you wish (you have 3 profiles accessible by system tray)
 
@@ -64,14 +66,14 @@ DS Button:
 vJoy Button:
 - See a brief of what will be launched like vJoy, mouse action (different from mouse) 
 Tags:
-  > I: if mouse is actually in use
-  > F: force this mapping even if a source button has been disabled by another
-  > S: short press
-  > D: double press
-  > L: long press
-  > T: this is a toggle mapping
-  > R: an action will be effected on release
-  > M: if Mouse will be in used
+  * I: if mouse is actually in use
+  * F: force this mapping even if a source button has been disabled by another
+  * S: short press
+  * D: double press
+  * L: long press
+  * T: this is a toggle mapping
+  * R: an action will be effected on release
+  * M: if Mouse will be in used
 
 ![vJoy Editing](Doc/4.png)
 
@@ -116,15 +118,16 @@ Under first source you'll find 3 checkboxes which determine the method
   `* you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
 
 In terms of time:
---------------------------------------------------------------------------------------------
-- Simple | Immediate
-- Short | found in settings
-- Double | ~first press and second press < long
-- Long | found in settings
-- Double | ~first press and second press < long + second press duration < short
-- Double short* | ~first press and second press < long + second press duration > long
-- Medium long | ~press > twice the time as long
-- Very long | found in settings
+Method | Press times
+------   -----------
+Simple | Immediate
+Short | found in settings
+Double | ~first press and second press < long
+Long | found in settings
+Double | ~first press and second press < long + second press duration < short
+Double short* | ~first press and second press < long + second press duration > long
+Medium long | ~press > twice the time as long
+Very long | found in settings
 
 Under central led, you'll find 2 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
@@ -180,17 +183,17 @@ An example of a simple advanced script for mouse:
 
 An example of advanced script for targeting:
 ```
-- 1st mapping: DS L2R2 -(double) DS R2 active vJoy 128
-  - when you first press L2R2 nothing happen as R2 is pressed
-  - as soon as you release only R2, the conditions is respected, and then button 128 is pressed
-  - as R2 is double checked, it doesn't stop the mapping while already running,
-  - so until you release both L2 and R2, 128 stay pressed
-  - (you could even press R2 and release only L2 for other actions and come back after to only L2)
-- 2nd mapping: vJoy 128 + DS R2 do target forward target (you place on the button you wish)
-- Do the same for the left, with button 127 and target backward target (you place on the button you wish)
-  - and then until you release Both L2 & R2, you can easily swap target
-  - and individual L2 and R2 stay free to be affected to usual actions
-  - (you may differ them 40ms and add -(simple)L2R2
+  1st mapping: DS L2R2 -(double) DS R2 active vJoy 128
+    when you first press L2R2 nothing happen as R2 is pressed
+    as soon as you release only R2, the conditions is respected, and then button 128 is pressed
+    as R2 is double checked, it doesn't stop the mapping while already running,
+    so until you release both L2 and R2, 128 stay pressed
+    (you could even press R2 and release only L2 for other actions and come back after to only L2)
+  2nd mapping: vJoy 128 + DS R2 do target forward target (you place on the button you wish)
+  Do the same for the left, with button 127 and target backward target (you place on the button you wish)
+    and then until you release Both L2 & R2, you can easily swap target
+    and individual L2 and R2 stay free to be affected to usual actions
+    (you may differ them 40ms and add -(simple)L2R2
 ```
 
 ![vJoy Help](Doc/5.png)
@@ -233,7 +236,7 @@ You will find.
 ## ViGEm
 ![ViGEm](Doc/11.png)
 
-Install, remove and use @Nefarius &co ViGEm separately or jointly to vJoy
+Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
 - Or a simple copy of DS4/DS5 to X360, to simplify compatibility problems
 - Checkboxes are made to swap between DS or vJoy as source
@@ -241,7 +244,7 @@ Install, remove and use @Nefarius &co ViGEm separately or jointly to vJoy
 ## Guardian
 ![Guardian](Doc/12.png)
 
-Install, remove and use @Nefarius &co HidGuardian and HidCerberus (and stop/start this service)
+Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/start this service)
 - A restart may be necessary after installing Guardian to have it properly running
 - You can find link to manual configuration of Cerberus,
 - In which you can verify the HID\ to enter in the blacklist section
@@ -266,13 +269,13 @@ Picture talk by itself
 There is no resize but some other stuff
 
 ## Thanks
-@090 https://github.com/090 (a lot)
-https://sourceforge.net/projects/vjoystick/
-https://github.com/ViGEm/ViGEmBus
-https://github.com/ViGEm/ViGEmClient
-https://github.com/ViGEm/HidGuardian
-https://github.com/ViGEm/HidCerberus
-https://github.com/Jays2Kings/DS4Windows
+* https://github.com/090 (a lot)
+* https://sourceforge.net/projects/vjoystick/
+* https://github.com/ViGEm/ViGEmBus
+* https://github.com/ViGEm/ViGEmClient
+* https://github.com/ViGEm/HidGuardian
+* https://github.com/ViGEm/HidCerberus
+* https://github.com/Jays2Kings/DS4Windows
 
 ## Development environment
 - Win10 64bit + Visual Studio 2019 (Community is fine)
