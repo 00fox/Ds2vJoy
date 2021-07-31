@@ -63,8 +63,10 @@ DS Button:
 - '+' Indicate combination
 - '-' Indicate this mapping won't be launched if this button is pressed
 - Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
+
 vJoy Button:
 - See a brief of what will be launched like vJoy, mouse action (different from mouse) 
+
 Tags:
   * I: if mouse is actually in use
   * F: force this mapping even if a source button has been disabled by another
@@ -75,11 +77,12 @@ Tags:
   * R: an action will be effected on release
   * M: if Mouse will be in used
 
+## vJoy editing
 ![vJoy Editing](Doc/4.png)
 
 - First row is source
 - Solo is central led and battery status
-- Height ones are destination
+- Eight ones are destination
 - Group of checkboxes is for mouse
 - Group of numbers is either for special mouse actions,
   - or to use mouse in a grid (divided or not) and not the full screen
@@ -99,7 +102,7 @@ Destinations can be effected with time stamps for tricky actions, macros or comb
 - Enter start (if not as soon as) or/and end (of not when release)
 - If you enter an odd number, 0-9 milliseconds will be added, different each time
 - Middle check box, is to begin the action on release
- - double, only the up press, even if some other timestamps are finished
+  - double, only the up press, even if some other timestamps are finished
   
 Under each source and destination, you'll find disabling
 - this button will be disabled for next mappings if this mapping is running (except with Force)
@@ -142,10 +145,10 @@ Under central led, you'll find 2 checkboxes
 At the left of first 4 destinations, you'll find special mouse actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
-  - or make it responsive to the toggle
-- SAVE_POSITION: Save the mouse position
+  - and/or make it responsive to the toggle
+- SAVE_POSITION: save the mouse position
 - MOVE_BACK: return to saved point
-- MOVE_TO_XY/MOVE_TO_WH: Go to x,y/w,h (two left/central numbers of the grid)
+- MOVE_TO_XY/MOVE_TO_WH: go to x,y/w,h (two left/central numbers of the grid)
 - SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH: both
 - LEFT_CLICK, MIDDLE_CLICK, RIGHT_CLICK, X1_CLICK, X2_CLICK, CROLL_UP, SCROLL_DOWN
 - LEFT_DOUBLE_CLICK, MIDDLE_DOUBLE_CLICK, RIGHT_DOUBLE_CLICK, X1_DOUBLE_CLICK, X2_DOUBLE_CLICK, SCROLL_UP_x5, SCROLL_DOWN_x5
@@ -165,11 +168,11 @@ There is different modes for each
 - Move (stick) or slow (touchpad), the same but adapted for game movements, or precise mouse
 - Sniper (stick) or accuracy (touchpad), extreme precision
 - Raid (stick) or grid (touchpad), move inside a zone whom coordinates are entered in numbers group at the right
-- Last solo checkbox is for when you have together raid/grid and another mouse mode active which one is the default one
+- Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
 
 In this numbers group at the right
 - left ones are for first points, central ones for second point,
-- two last ones are to divide the zone in a grid, then you are always docked to a point of this grid
+- two last ones are to divide the zone in a grid, then you are always docked to a point of this grid (or whole screen)
  
 A lot of buttons type has been added, for DS and for vJoy
 
@@ -180,13 +183,14 @@ RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE,
 - Different parts of the touchpad (all, Up, Only touch part, Left, Right and 4 corners)
 - Cardinal Axis (for old games for example, instead of Dpad)
 - Simultaneous presses, L1R1 L2R2 (you have a short - configurable - time to press both buttons same time, and will be released only when both will)
-- Battery level, Null, 50% value and full value, for your macros and tips (always on)
+- Null, 50% value and full value, for your macros and tips (always on)
+- Battery level
 
 RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR, SL1TR, XINV, YINV, ZINV, RXINV, RYINV, RZINV, SL0INV, SL1INV, DPAD1_LEFT, DPAD1_UP_LEFT, DPAD1_UP, DPAD1_UP_RIGHT, DPAD1_RIGHT, DPAD1_DOWN_RIGHT, DPAD1_DOWN, DPAD1_DOWN_LEFT, DPAD2_LEFT, DPAD2_UP_LEFT, DPAD2_UP, DPAD2_UP_RIGHT, DPAD2_RIGHT, DPAD2_DOWN_RIGHT, DPAD2_DOWN, DPAD2_DOWN_LEFT, DPAD3_LEFT, DPAD3_UP_LEFT, DPAD3_UP, DPAD3_UP_RIGHT, DPAD3_RIGHT, DPAD3_DOWN_RIGHT, DPAD3_DOWN, DPAD3_DOWN_LEFT, DPAD4_LEFT, DPAD4_UP_LEFT, DPAD4_UP, DPAD4_UP_RIGHT, DPAD4_RIGHT, DPAD4_DOWN_RIGHT, DPAD4_DOWN, DPAD4_DOWN_LEFT
 - Usual vJoy buttons
 - Inversed Axis
 - Triggered Axis (to transform lower start point to middle stability)
-- Splitted Dpad, then you have unlimited capabilities instead 1 to 1 Dpad affectation
+- Splitted Dpad, then you have unlimited capabilities instead of 1 to 1 Dpad affectation
   - Dpad use a mathematical medium function, then you can attribute other sources than normal ones
   - And instead having the result of for example Left + Up > Up Left
   - You can have it for Left + Up + UpRight + Right (which is mmm... let the program do it itself...)
@@ -261,7 +265,7 @@ You will find.
 Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
 - Or a simple copy of DS4/DS5 to X360, to simplify compatibility problems
-- Checkboxes are made to swap between DS or vJoy as source
+- Checkboxes are made to swap between DS or vJoy as source individually for each button
 
 ## Guardian
 ![Guardian](Doc/12.png)
@@ -278,7 +282,7 @@ Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/star
 
 You'll find source of inspiration for this project
 
-And you can enter from 1 to 5 programs name and location which can be launched after that is the systray menu
+And you can enter from 1 to 5 programs name and location which can be launched after that through systray menu
 
 ## Tray
 ![Tray](Doc/14.png)
