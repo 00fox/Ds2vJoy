@@ -116,14 +116,15 @@ Under first source you'll find 3 checkboxes which determine the method
   `* you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
 
 In terms of time:
-- Simple		Immediate
-- Short			found in settings
-- Double		~first press and second press < long
-- Long			found in settings
-- Double		~first press and second press < long + second press duration < short
-- Double short*	~first press and second press < long + second press duration > long
-- Medium long	~press > twice the time as long
-- Very long		found in settings
+--------------------------------------------------------------------------------------------
+- Simple | Immediate
+- Short | found in settings
+- Double | ~first press and second press < long
+- Long | found in settings
+- Double | ~first press and second press < long + second press duration < short
+- Double short* | ~first press and second press < long + second press duration > long
+- Medium long | ~press > twice the time as long
+- Very long | found in settings
 
 Under central led, you'll find 2 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
