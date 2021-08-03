@@ -68,14 +68,16 @@ vJoy Button:
 - See a brief of what will be launched like vJoy, mouse action (different from mouse) 
 
 Tags:
-  * I: IfMouse condition is in use (see below)
-  * F: Force condition is in use (see below)
-  * S: Short press
-  * D: Double press (can be mixed, see below)
-  * L: Long press
-  * T: Toggle condition is in use (see below)
-  * R: An OnRelease condition is in use (see below)
-  * M: If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
+Tag | Description
+--- | ------------------------------------------------------------------------------
+I 	| IfMouse condition is in use (see below)
+F 	| Force condition is in use (see below)
+S 	| Short press
+D 	| Double press (can be mixed, see below)
+L 	| Long press
+T 	| Toggle condition is in use (see below)
+R 	| An OnRelease condition is in use (see below)
+M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
 
 ## vJoy editing
 ![vJoy Editing](Doc/4.png)
