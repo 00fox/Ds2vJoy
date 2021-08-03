@@ -9,7 +9,7 @@ Mapping::Mapping()
 	, Target()
 	, Disbale()
 	, OrXorNot()
-	, Ifmouse(false)
+	, Ifmouse(0)
 	, Force(0)
 	, Led(0)
 	, Short(false)
@@ -367,7 +367,7 @@ void Mapping::Run()
 		}
 
 	legit =
-		((Ifmouse && mouseactivated) || !Ifmouse) &&
+		(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
 		((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : (OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1])) &&
 		((OrXorNot[1] == 2) ? (legits[0] ^ legits[2]) : (OrXorNot[0]) ? (legits[0] || legits[2]) : (legits[0] && legits[2])) &&
 		((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&

@@ -61,7 +61,7 @@ public:
 	bool Target[5];
 	int Disbale[13];
 	int OrXorNot[4];
-	bool Ifmouse;
+	int Ifmouse;
 	int Force;
 	int Led;
 	bool Short;

@@ -162,7 +162,7 @@ void Settings::Load()
 				btn.OrXorNot[1] = mapdata[MappingName::Mapping_OrXorNot_2];
 				btn.OrXorNot[2] = mapdata[MappingName::Mapping_OrXorNot_3];
 				btn.OrXorNot[3] = mapdata[MappingName::Mapping_OrXorNot_4];
-				btn.Ifmouse = mapdata[MappingName::Mapping_If_mouse] == 1;
+				btn.Ifmouse = mapdata[MappingName::Mapping_If_mouse];
 				btn.Force = mapdata[MappingName::Mapping_Force];
 				btn.Led = mapdata[MappingName::Mapping_led];
 				btn.Short = mapdata[MappingName::Mapping_Short] == 1;
