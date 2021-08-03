@@ -178,7 +178,7 @@ There is different modes for each
 
 In this numbers group at the right
 - left ones are for first points, central ones for second point,
-Or they are for MOVE_TO_XY/MOVE_TO_WH, SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH special mouse actions (two left/central numbers of the grid)
+  - Or they are for MOVE_TO_XY/MOVE_TO_WH, SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH special mouse actions (two left/central numbers of the grid)
 - two last ones are to divide the zone in a grid, then you are always docked to a point of this grid (or whole screen)
  
 A lot of buttons type has been added, for DS and for vJoy
