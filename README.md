@@ -274,6 +274,10 @@ Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Or a simple copy of DS4/DS5 to X360, to simplify compatibility problems
 - Checkboxes are made to swap between DS or vJoy as source individually for each button
 
+If you plan to use ViGEm X360 with vJoy as source, remember to change in the vJoy Tab sample:
+- AXISL Y: Y > YINV
+- AXISR Y: RZ > RZINV
+
 ## Guardian
 ![Guardian](Doc/12.png)
 
