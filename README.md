@@ -89,6 +89,7 @@ Tags:
 
 Over first source you can find special requirements
 - If mouse, if a mouse is already in use
+  - double, if none mouse is actually in use
 - And Force, to ignore if a button has been disabled by a precedent mapping
   - double, this will work only if this mapping is already working
 
@@ -157,7 +158,7 @@ At the left of first 4 destinations, you'll find special mouse actions
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
 	
-The mouse group of checkboxes at the bottom, let you use mouse
+The mouse group of checkboxes at the bottom, let you use mouse in conjuction with ACTIVE_MOUSE special action
 - With left stick (left column)
 - With the touchpad (central column)
 - With the right stick (right column)
@@ -238,7 +239,6 @@ After the first time has passed, release and press repeatedly
 - you can also enable repeated hits of the cross key and □ △ × ○, 
 - for example, only when L2 or R2 is pressed
 
-## RapidFire editing
 ![RapidFire Editing](Doc/7.png)
 
 Removed DS4vJoy/DS5vJoy limits of time
@@ -250,7 +250,6 @@ You can send a keydown when the button is pressed and a keyup when it is release
 
 Order, add, delete, copy or edit (double click or menu)
 
-## Keymap editing
 ![Keymap Editing](Doc/9.png)
 
 - You can enter directly keys in the Enter Keycode part, or use Send Keycode choices (for advanced use)
