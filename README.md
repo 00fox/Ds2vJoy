@@ -68,24 +68,26 @@ vJoy Button:
 - See a brief of what will be launched like vJoy, mouse action (different from mouse) 
 
 Tags:
-  * I: if mouse is actually in use
-  * F: force this mapping even if a source button has been disabled by another
-  * S: short press
-  * D: double press
-  * L: long press
-  * T: this is a toggle mapping
-  * R: an action will be effected on release
-  * M: if Mouse will be in used
+  * I: IfMouse condition is in use (see below)
+  * F: Force condition is in use (see below)
+  * S: Short press
+  * D: Double press (can be mixed, see below)
+  * L: Long press
+  * T: Toggle condition is in use (see below)
+  * R: An OnRelease condition is in use (see below)
+  * M: If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
 
 ## vJoy editing
 ![vJoy Editing](Doc/4.png)
 
 - First row is source
+- First source is the one used to calculate destination value, except if or/xor is in use, then it adapt
 - Solo is central led and battery status
-- Eight ones are destination
-- Group of checkboxes is for mouse
+- Eight ones are destination (all together, or in a timeline)
+- Group of checkboxes is for mouse choice (to use with special mouse action ACTIVE_MOUSE)
 - Group of numbers is either for special mouse actions,
-  - or to use mouse in a grid (divided or not) and not the full screen
+  - or to use mouse in a zone instead of the full screen, divided or not in a grid
+  - or to use mouse in the full screen, divided
 
 Over first source you can find special requirements
 - If mouse, if a mouse is already in use
