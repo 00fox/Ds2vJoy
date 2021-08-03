@@ -161,11 +161,12 @@ At the left of first 4 destinations, you'll find special mouse actions
   - (long press, can use timestamp and on release)
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
-	
+
 The mouse group of checkboxes at the bottom, let you use mouse in conjuction with ACTIVE_MOUSE special action
 - With left stick (left column)
 - With the touchpad (central column)
 - With the right stick (right column)
+  - double, deactivate this mouse
 
 There is different modes for each
 - Absolute, you move at a point which correspond to the coordinates of the stick or touchpad
@@ -178,6 +179,7 @@ There is different modes for each
 In this numbers group at the right
 - left ones are for first points, central ones for second point,
 - two last ones are to divide the zone in a grid, then you are always docked to a point of this grid (or whole screen)
+Or they are for MOVE_TO_XY/MOVE_TO_WH, SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH special mouse actions (two left/central numbers of the grid)
  
 A lot of buttons type has been added, for DS and for vJoy
 
