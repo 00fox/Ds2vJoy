@@ -65,7 +65,7 @@ DS Button:
 - '⊕' Indicate combination with xor condition
 - '-' Indicate this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
   - '--' Indicate this mapping won't be launched if this button is pressed, but continue if already launched
-- Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
+* Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
 - See a brief of what will be launched like vJoy, mouse action (different from mouse) 
