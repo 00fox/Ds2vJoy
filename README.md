@@ -61,7 +61,10 @@ Mappings are treated in order,
 
 DS Button:
 - '+' Indicate combination
-- '-' Indicate this mapping won't be launched if this button is pressed
+- '||' Indicate combination with or condition
+- '⊕' Indicate combination with xor condition
+- '-' Indicate this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
+  - '--' Indicate this mapping won't be launched if this button is pressed, but continue if already launched)
 - Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
@@ -75,6 +78,8 @@ F 	| Force condition is in use (see below)
 S 	| Short press
 D 	| Double press (can be mixed, see below)
 L 	| Long press
+C 	| Macro condition is in use (see below)
+P 	| Pause condition is in use (see below)
 T 	| Toggle condition is in use (see below)
 R 	| An OnRelease condition is in use (see below)
 M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
