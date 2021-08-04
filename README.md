@@ -143,7 +143,7 @@ Very long     | found in settings
 
 Under central led, you'll find 3 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
-- Pause: pause this mapping while a not condition instead of interrupting
+- Pause: pause this mapping while a not condition instead
   - otherwise:
     - if not is a simple, and not button is pressed, the mapping is interrupted
 	- if not is a double, and not button is pressed, the mapping still continue
