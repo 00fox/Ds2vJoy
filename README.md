@@ -42,7 +42,7 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 - You can specify a serial if you have multiples DS connected
   - or/and multiple copies of Ds2vJoy running
 - You can fix threshold of sticks, and set times more accurate to your senses
-  - Simultaneous is R1L1 or R2L2 the same time (with this 40ms as default delta)
+  - Simultaneous is R1L1 or R2L2 the same time (with this 100ms as default delta)
 - Multiple touchpad divide in multiple buttons,
   - But for more simple uses, there is multiple special buttons (see vJoy)
 - Led is calm wave fluctuating, and can color be stopped on exit
@@ -221,7 +221,7 @@ An example of a simple advanced script for mouse:
     if you press back R2 you get again quick mouse
     until both L2 and R2 are released,
     which can therefore be used for usual actions
-    (you may differ them by 40ms and add -[simple] DS L2R2)
+    (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
 An example of advanced script for targeting:
@@ -236,7 +236,7 @@ An example of advanced script for targeting:
   Do the same for the left, with button 127 and target backward target (you place on the button you wish)
     and then until you release Both L2 & R2, you can easily swap target
     and individual L2 and R2 stay free to be affected to usual actions
-    (you may differ them by 40ms and add -[simple] DS L2R2)
+    (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
 ![vJoy Help](Doc/5.png)
