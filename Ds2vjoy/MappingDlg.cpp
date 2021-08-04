@@ -26,14 +26,14 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
-	col.cx = 187;
+	col.cx = 179;
 	col.pszText = I18N.dsButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.vJoyButton;
-	col.cx = 188;
+	col.cx = 179;
 	ListView_InsertColumn(m_hList, 1, &col);
 	col.pszText = I18N.TagsButton;
-	col.cx = 74;
+	col.cx = 91;
 	ListView_InsertColumn(m_hList, 2, &col);
 }
 

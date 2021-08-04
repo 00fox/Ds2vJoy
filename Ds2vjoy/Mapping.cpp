@@ -57,23 +57,27 @@ const WCHAR* Mapping::dsString()
 			{
 				if (firstplus)
 				{
-					if (i > 0 && i < 3 && OrXorNot[i - 3] == 1)
+					if (i > 0 && i < 3 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"||%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-					else if (i > 0 && i < 3 && OrXorNot[i - 3] == 2)
+					else if (i > 0 && i < 3 && OrXorNot[i - 1] == 2)
 						head += wsprintf(head, L"⊕%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-					else if (i > 2 && OrXorNot[i - 1])
+					else if (i > 2 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"-%s", vJoyButton::String((vJoyButtonID)vjID[i]));
+					else if (i > 2 && OrXorNot[i - 1])
+						head += wsprintf(head, L"--%s", vJoyButton::String((vJoyButtonID)vjID[i]));
 					else
 						head += wsprintf(head, L"+%s", vJoyButton::String((vJoyButtonID)vjID[i]));
 				}
 				else
 				{
-					if (i > 0 && i < 3 && OrXorNot[i - 3] == 1)
+					if (i > 0 && i < 3 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"||%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-					else if (i > 0 && i < 3 && OrXorNot[i - 3] == 2)
+					else if (i > 0 && i < 3 && OrXorNot[i - 1] == 2)
 						head += wsprintf(head, L"⊕%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-					else if (i > 2 && OrXorNot[i - 1])
+					else if (i > 2 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"-%s", vJoyButton::String((vJoyButtonID)vjID[i]));
+					else if (i > 2 && OrXorNot[i - 1])
+						head += wsprintf(head, L"--%s", vJoyButton::String((vJoyButtonID)vjID[i]));
 					else
 						head += wsprintf(head, L"%s", vJoyButton::String((vJoyButtonID)vjID[i]));
 					firstplus = true;
@@ -86,23 +90,27 @@ const WCHAR* Mapping::dsString()
 			{
 				if (firstplus)
 				{
-					if (i > 0 && i < 3 && OrXorNot[i - 3] == 1)
+					if (i > 0 && i < 3 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"||%s", dsButton::String((dsButtonID)dsID[i]));
-					else if (i > 0 && i < 3 && OrXorNot[i - 3] == 2)
+					else if (i > 0 && i < 3 && OrXorNot[i - 1] == 2)
 						head += wsprintf(head, L"⊕%s", dsButton::String((dsButtonID)dsID[i]));
-					else if (i > 2 && OrXorNot[i - 1])
+					else if (i > 2 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"-%s", dsButton::String((dsButtonID)dsID[i]));
+					else if (i > 2 && OrXorNot[i - 1])
+						head += wsprintf(head, L"--%s", dsButton::String((dsButtonID)dsID[i]));
 					else
 						head += wsprintf(head, L"+%s", dsButton::String((dsButtonID)dsID[i]));
 				}
 				else
 				{
-					if (i > 0 && i < 3 && OrXorNot[i - 3] == 1)
+					if (i > 0 && i < 3 && OrXorNot[i - 1] == 1)
 						head += wsprintf(head, L"||%s", dsButton::String((dsButtonID)dsID[i]));
-					else if (i > 0 && i < 3 && OrXorNot[i - 3] == 2)
+					else if (i > 0 && i < 3 && OrXorNot[i - 1] == 2)
 						head += wsprintf(head, L"⊕%s", dsButton::String((dsButtonID)dsID[i]));
 					else if (i > 2 && OrXorNot[i - 1])
 						head += wsprintf(head, L"-%s", dsButton::String((dsButtonID)dsID[i]));
+					else if (i > 2 && OrXorNot[i - 1] == 1)
+						head += wsprintf(head, L"--%s", dsButton::String((dsButtonID)dsID[i]));
 					else
 						head += wsprintf(head, L"%s", dsButton::String((dsButtonID)dsID[i]));
 					firstplus = true;
@@ -184,6 +192,16 @@ const WCHAR* Mapping::TagsString()
 
 	if (Long)
 		head += wsprintf(head, L"L");
+	else
+		head += wsprintf(head, L"  ");
+
+	if (Macro)
+		head += wsprintf(head, L"C");
+	else
+		head += wsprintf(head, L"  ");
+
+	if (Pause)
+		head += wsprintf(head, L"P");
 	else
 		head += wsprintf(head, L"  ");
 
@@ -589,9 +607,9 @@ void Mapping::Run()
 					case ACTIVE_MOUSE:
 						if (Toggle)
 						{
-							if (!Toggledone[0])
+							if (!Toggledone[i])
 							{
-								Toggledone[0] = true;
+								Toggledone[i] = true;
 								mouse_toggle[i] = !mouse_toggle[i];
 							}
 						}
