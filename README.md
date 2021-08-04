@@ -85,7 +85,8 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
 - First row is source
 - First source is the one used to calculate destination value, except if or/xor is in use, then it adapt
 - Solo is central led and battery status
-- Eight ones are destination (all together, or in a timeline)
+  - central led is working as long as the mapping is active and doesn't react to conditions
+- Eight ones are destination (together, or in a timeline)
 - Group of checkboxes is for mouse choice (to use with special mouse action ACTIVE_MOUSE)
 - Group of numbers is either for special mouse actions,
   - or to use mouse in a zone instead of the full screen, divided or not in a grid
@@ -102,6 +103,7 @@ Over two next sources you'll find or/xor conditions instead of simple combinatio
 Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
   - double, except if this mapping is already running
+  - see 'Pause' for more informations about not condition
 
 Destinations can be effected with time stamps for tricky actions, macros or combos
 - Enter start (if not as soon as) or/and end (of not when release)
@@ -139,9 +141,12 @@ Double short* | ~first press and second press < long + second press duration > l
 Medium long   | ~press > twice the time as long
 Very long     | found in settings
 
-Under central led, you'll find 2 checkboxes
+Under central led, you'll find 3 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
-  - double, pause this mapping while a not condition instead of interrupting
+- Pause: pause this mapping while a not condition instead of interrupting
+  - otherwise:
+    - if not is a simple, and not button is pressed, the mapping is interrupted
+	- if not is a double, and not button is pressed, the mapping still continue
 - Toggle: satisfy mapping conditions one time to start, second one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
