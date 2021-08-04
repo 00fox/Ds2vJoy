@@ -170,13 +170,17 @@ const WCHAR* Mapping::TagsString()
 	buf[0] = 0;
 	WCHAR* head = buf;
 
-	if (Ifmouse)
+	if (Ifmouse == 1)
 		head += wsprintf(head, L"I");
+	else if (Ifmouse)
+		head += wsprintf(head, L"i");
 	else
 		head += wsprintf(head, L" ");
 
-	if (Force)
+	if (Force == 1)
 		head += wsprintf(head, L"F");
+	else if (Force)
+		head += wsprintf(head, L"f");
 	else
 		head += wsprintf(head, L"  ");
 
@@ -205,8 +209,10 @@ const WCHAR* Mapping::TagsString()
 	else
 		head += wsprintf(head, L"  ");
 
-	if (Toggle)
+	if (Toggle == 1)
 		head += wsprintf(head, L"T");
+	else if (Toggle)
+		head += wsprintf(head, L"t");
 	else
 		head += wsprintf(head, L"  ");
 
