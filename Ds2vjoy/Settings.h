@@ -38,6 +38,7 @@ class Settings
 		Mapping_Double,
 		Mapping_Long,
 		Mapping_Macro,
+		Mapping_Pause,
 		Mapping_Toggle,
 		Mapping_vJoy_1,
 		Mapping_vJoy_2,

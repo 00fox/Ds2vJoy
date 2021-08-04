@@ -15,7 +15,8 @@ Mapping::Mapping()
 	, Short(false)
 	, Double(false)
 	, Long(false)
-	, Macro(0)
+	, Macro(false)
+	, Pause(false)
 	, Toggle(0)
 	, OnRelease()
 	, Start()
@@ -295,7 +296,7 @@ void Mapping::RunFirst()
 	for (int i = 0; i < 5; i++)
 		grid[i] = 0;
 	defaultmouse = 0;
-	mouseactivated = FALSE;
+	mouseactivated = false;
 }
 
 void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
@@ -392,28 +393,28 @@ void Mapping::Run()
 			if (!isFired && !available)
 			{
 				start = std::chrono::system_clock::now();
-				killed = FALSE;
+				killed = false;
 			}
-			isFired = TRUE;
+			isFired = true;
 
 			end = std::chrono::system_clock::now();
 			switch (method)
 			{
 			case 1: //Simple
-				activated = TRUE;
+				activated = true;
 				break;
 			case 3: //Short
 				if (available)
-					killed = TRUE;
+					killed = true;
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
-						killed = TRUE;
+						killed = true;
 				break;
 			case 4: //Long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
-					killed = TRUE;
+					killed = true;
 				if (end - start >= std::chrono::milliseconds(tape.LongPress) && !killed)
-					activated = TRUE;
+					activated = true;
 				break;
 			case 2: //Double
 				if (available)
@@ -421,14 +422,14 @@ void Mapping::Run()
 					if (end - start < std::chrono::milliseconds(tape.LongPress))
 					{
 						method = 1;
-						activated = TRUE;
+						activated = true;
 					}
 					else
-						killed = TRUE;
+						killed = true;
 				}
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
-						killed = TRUE;
+						killed = true;
 				break;
 			case 5: //Double short
 				if (available)
@@ -437,14 +438,14 @@ void Mapping::Run()
 					{
 						start = std::chrono::system_clock::now();
 						method = 3;
-						available = FALSE;
+						available = false;
 					}
 					else
-						killed = TRUE;
+						killed = true;
 				}
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
-						killed = TRUE;
+						killed = true;
 				break;
 			case 6: //Double long
 				if (available)
@@ -456,23 +457,23 @@ void Mapping::Run()
 						method = 4;
 					}
 					else
-						killed = TRUE;
+						killed = true;
 				}
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
-						killed = TRUE;
+						killed = true;
 				break;
 			case 7: //Medium long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
-					killed = TRUE;
+					killed = true;
 				if (end - start > std::chrono::milliseconds(tape.LongPress * 2) && !killed)
-					activated = TRUE;
+					activated = true;
 				break;
 			case 8: //Very long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
-					killed = TRUE;
+					killed = true;
 				if (end - start > std::chrono::milliseconds(tape.VeryLongPress) && !killed)
-					activated = TRUE;
+					activated = true;
 				break;
 			}
 		}
@@ -486,32 +487,32 @@ void Mapping::Run()
 			case 3: //Short
 				if ((isFired && !killed) || available)
 				{
-					available = TRUE;
+					available = true;
 					end = std::chrono::system_clock::now();
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						if (!killed)
-							activated = TRUE;
-						available = FALSE;
+							activated = true;
+						available = false;
 					}
 				}
 				break;
 			case 4: //Long
-				killed = TRUE;
+				killed = true;
 				break;
 			case 2: //Double
 			case 5: //Double short
 			case 6: //Double long
 				if ((isFired && !killed) || available)
 				{
-					available = TRUE;
+					available = true;
 					end = std::chrono::system_clock::now();
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
-						available = FALSE;
+						available = false;
 				}
 				break;
 			}
-			isFired = FALSE;
+			isFired = false;
 		}
 	}
 
@@ -521,22 +522,22 @@ void Mapping::Run()
 		{
 			start2 = std::chrono::system_clock::now();
 			cycle = 0;
-			activated = FALSE;
-			isRunning = TRUE;
-			released = FALSE;
+			activated = false;
+			isRunning = true;
+			released = false;
 			for (int i = 0; i < 8; i++)
 			{
-				ran[i] = FALSE;
-				Toggledone[i] = FALSE;
+				ran[i] = false;
+				Toggledone[i] = false;
 				randStart[i] = std::chrono::milliseconds(Start[i] + ((Start[i] & 1) ? (rand() % 9) : 0));
 				randStop[i] = std::chrono::milliseconds(Stop[i] + ((Stop[i] & 1) ? (rand() % 9) : 0));
 			}
 			for (int i = 0; i < 4; i++)
-				MouseActiondone[i] = FALSE;
+				MouseActiondone[i] = false;
 		}
 		else if (!legit && !released)
 		{
-			released = TRUE;
+			released = true;
 			release2 = std::chrono::system_clock::now();
 		}
 
@@ -556,25 +557,33 @@ void Mapping::Run()
 
 		for (int i = 0; i < 8; i++)
 		{
-			if (Macro == 1 && released && OnRelease[i] != 1)
+			if (Macro && released && OnRelease[i] != 1)
 			{
-				started[i] = FALSE;
-				done[i] = TRUE;
+				started[i] = false;
+				done[i] = true;
 			}
 			else
 			{
-				started[i] = (OnRelease[i] == 1) ? ((released) ? (end2 - release2 >= randStart[i]) : FALSE) : (end2 - start2 >= randStart[i]);
-				done[i] = ran[i] ? ((OnRelease[i]) ? ((released) ? ((end2 - release2 >= randStop[i])) : FALSE) : ((Stop[i]) ? (end2 - start2 >= randStop[i]) : released)) : FALSE;
+				started[i] = (OnRelease[i] == 1) ? ((released) ? (end2 - release2 >= randStart[i]) : false) : (end2 - start2 >= randStart[i]);
+				done[i] = ran[i] ? ((OnRelease[i]) ? ((released) ? ((end2 - release2 >= randStop[i])) : false) : ((Stop[i]) ? (end2 - start2 >= randStop[i]) : released)) : false;
 			}
 
-			if (Macro == 2 && ((OrXorNot[2] == 2 && legits[3]) || (OrXorNot[3] == 2 && legits[4])))
-				started[i] = FALSE;
+			if ((OrXorNot[2] && legits[3]) || (OrXorNot[3] && legits[4]))
+			{
+				if (Pause)
+					started[i] = false;
+				else if ((OrXorNot[2] == 1 && legits[3]) || (OrXorNot[3] == 1 && legits[4]))
+				{
+					started[i] = false;
+					done[i] = true;
+				}
+			}
 
 			if (i < 4 && MouseAction[i])
 			{
 				if (started[i] && !done[i] && (!ran[i] || MouseAction[i] == SCROLL_UP_VARIABLE || MouseAction[i] == SCROLL_DOWN_VARIABLE))
 				{
-					ran[i] = TRUE;
+					ran[i] = true;
 					switch (MouseAction[i])
 					{
 					case ACTIVE_MOUSE:
@@ -582,7 +591,7 @@ void Mapping::Run()
 						{
 							if (!Toggledone[0])
 							{
-								Toggledone[0] = TRUE;
+								Toggledone[0] = true;
 								mouse_toggle[i] = !mouse_toggle[i];
 							}
 						}
@@ -725,7 +734,7 @@ void Mapping::Run()
 			{
 				if (!Mouse[i + 3])
 				{
-					mouseactivated = TRUE;
+					mouseactivated = true;
 					mousemode[i] = Mouse[i];
 					if (mousemode[i] == 1)
 						mouseabolute = i;
@@ -734,7 +743,7 @@ void Mapping::Run()
 				{
 					mousemode[i] = 0;
 					if (!mousemode[((i + 1) % 3)] && !mousemode[((i + 2) % 3)])
-						mouseactivated = FALSE;
+						mouseactivated = false;
 				}
 			}
 

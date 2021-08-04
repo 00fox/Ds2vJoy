@@ -67,7 +67,8 @@ public:
 	bool Short;
 	bool Double;
 	bool Long;
-	int Macro;
+	bool Macro;
+	bool Pause;
 	int Toggle;
 	int OnRelease[8];
 	int Start[8];

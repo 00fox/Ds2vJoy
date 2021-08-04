@@ -368,6 +368,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			CheckDlgButton(hWnd, IDC_MAPPING_DOUBLE, (WPARAM)mappingData.Double);
 			CheckDlgButton(hWnd, IDC_MAPPING_LONG, (WPARAM)mappingData.Long);
 			CheckDlgButton(hWnd, IDC_MAPPING_MACRO, (WPARAM)mappingData.Macro);
+			CheckDlgButton(hWnd, IDC_MAPPING_PAUSE, (WPARAM)mappingData.Pause);
 			CheckDlgButton(hWnd, IDC_MAPPING_TOGGLE, (WPARAM)mappingData.Toggle);
 			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_1, (WPARAM)mappingData.OnRelease[0]);
 			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_2, (WPARAM)mappingData.OnRelease[1]);
@@ -929,6 +930,9 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			break;
 		case IDC_MAPPING_MACRO:
 			mappingData.Macro = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			break;
+		case IDC_MAPPING_PAUSE:
+			mappingData.Pause = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_TOGGLE:
 			mappingData.Toggle = IsDlgButtonChecked(hWnd, LOWORD(wParam));
