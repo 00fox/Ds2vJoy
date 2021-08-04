@@ -64,7 +64,7 @@ DS Button:
 - '||' Indicate combination with or condition
 - '⊕' Indicate combination with xor condition
 - '-' Indicate this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
-  - '--' Indicate this mapping won't be launched if this button is pressed, but continue if already launched)
+  - '--' Indicate this mapping won't be launched if this button is pressed, but continue if already launched
 - Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
