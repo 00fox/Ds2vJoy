@@ -276,14 +276,11 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 	m_vj[11] = vjID[11] ? vjoy->GetButton(vjID[11]) : 0;
 	m_vj[12] = vjID[12] ? vjoy->GetButton(vjID[12]) : 0;
 
-	if (vjID[5]) { vjUsed.push_back(vjID[5]); }
-	if (vjID[6]) { vjUsed.push_back(vjID[6]); }
-	if (vjID[7]) { vjUsed.push_back(vjID[7]); }
-	if (vjID[8]) { vjUsed.push_back(vjID[8]); }
-	if (vjID[9]) { vjUsed.push_back(vjID[9]); }
-	if (vjID[10]) { vjUsed.push_back(vjID[10]); }
-	if (vjID[11]) { vjUsed.push_back(vjID[11]); }
-	if (vjID[12]) { vjUsed.push_back(vjID[12]); }
+	for (int i = 5; i < 13; i++)
+	{
+		if (!(std::find(vjUsed.begin(), vjUsed.end(), vjID[i]) != vjUsed.end()))
+			if (vjID[i]) { vjUsed.push_back(vjID[i]); }
+	}
 
 	if (Toggle == 2)
 	{
