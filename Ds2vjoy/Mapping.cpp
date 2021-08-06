@@ -394,12 +394,44 @@ void Mapping::Run()
 				(!Target[i] && (m_ds[i] == 0 || (m_ds[i]->isPushed() && !(std::find(dsDisabled.begin(), dsDisabled.end(), dsID[i]) != dsDisabled.end()))));
 		}
 
-	legit =
-		(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
-		((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : (OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1])) &&
-		((OrXorNot[1] == 2) ? (legits[0] ^ legits[2]) : (OrXorNot[0]) ? (legits[0] || legits[2]) : (legits[0] && legits[2])) &&
-		((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
-		((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
+	if (!OrXorNot[0] && !OrXorNot[1])
+	{
+		legit =
+			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			legits[0] &&
+			legits[1] &&
+			legits[2] &&
+			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
+			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
+	}
+	else if (OrXorNot[0] && !OrXorNot[1])
+	{
+		legit =
+			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : ((OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1]))) &&
+			legits[2] &&
+			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
+			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
+	}
+	else if (!OrXorNot[0] && OrXorNot[1])
+	{
+		legit =
+			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			legits[0] &&
+			((OrXorNot[1] == 2) ? (legits[1] ^ legits[2]) : ((OrXorNot[1]) ? (legits[1] || legits[2]) : (legits[1] && legits[2]))) &&
+			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
+			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
+	}
+	else
+	{
+		legit =
+			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : ((OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1]))) &&
+			((OrXorNot[1] == 2) ? (legits[0] ^ legits[2]) : ((OrXorNot[1]) ? (legits[0] || legits[2]) : (legits[0] && legits[2]))) &&
+			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
+			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
+	}
+
 
 	if (!isRunning)
 	{
@@ -573,14 +605,17 @@ void Mapping::Run()
 		if (Led)
 			Ledactive[Led - 1] = true;
 
-		if (Target[0] ? (m_vj[0] ? ((m_vj[0]->isPushed()) ? true : false) : false) : (m_ds[0] ? ((m_ds[0]->isPushed()) ? true : false) : false))
-			m_data = (BYTE)(Target[0] ? m_vj[0]->GetVal() : m_ds[0]->GetVal());
-		else if (OrXorNot[0] && (Target[1] ? (m_vj[1] ? ((m_vj[1]->isPushed()) ? true : false) : false) : (m_ds[1] ? ((m_ds[1]->isPushed()) ? true : false) : false)))
-			m_data = (BYTE)(Target[1] ? m_vj[1]->GetVal() : m_ds[1]->GetVal());
-		else if (OrXorNot[1] && (Target[2] ? (m_vj[2] ? ((m_vj[2]->isPushed()) ? true : false) : false) : (m_ds[2] ? ((m_ds[2]->isPushed()) ? true : false) : false)))
-			m_data = (BYTE)(Target[2] ? m_vj[2]->GetVal() : m_ds[2]->GetVal());
+		BYTE value0 = (BYTE)(Target[0] ? (m_vj[0] ? ((m_vj[0]->isPushed()) ? m_vj[0]->GetVal() : 0) : 0) : (m_ds[0] ? ((m_ds[0]->isPushed()) ? m_ds[0]->GetVal() : 0) : 0));
+		BYTE value1 = (BYTE)(Target[1] ? (m_vj[1] ? ((m_vj[1]->isPushed()) ? m_vj[1]->GetVal() : 0) : 0) : (m_ds[1] ? ((m_ds[1]->isPushed()) ? m_ds[1]->GetVal() : 0) : 0));
+		BYTE value2 = (BYTE)(Target[2] ? (m_vj[2] ? ((m_vj[2]->isPushed()) ? m_vj[2]->GetVal() : 0) : 0) : (m_ds[2] ? ((m_ds[2]->isPushed()) ? m_ds[2]->GetVal() : 0) : 0));
+		static BYTE release0 = (BYTE)((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0));
+
+		if (!OrXorNot[0])
+			m_data = (value0) ? value0 : ((method < 3) ? release0 : 0xFF);
+		else if (!OrXorNot[1])
+			m_data = (value0) ? value0 : ((value1) ? value1 : ((method < 3) ? release0 : 0xFF));
 		else
-			m_data = (BYTE)((method < 3) ? ((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0xFF) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0xFF)) : 0xFF);
+			m_data = (value0) ? value0 : ((value1) ? value1 : ((value2) ? value2 : ((method < 3) ? release0 : 0xFF)));
 
 		for (int i = 0; i < 8; i++)
 		{
