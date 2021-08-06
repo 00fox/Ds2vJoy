@@ -116,7 +116,7 @@ Over two next sources you'll find or/xor conditions instead of simple combinatio
    0    |  1/2   |     |   val   | & ( |   val   |OrXor|   val   |  )  |
 --------|--------|-----|---------|-----|---------|-----|---------|-----|
   1/2   |  1/2   |  (  |   val   |OrXor|   val   |  )  |         |  &  |
-        |        |  (  |   val   |     |         |OrXor|   val   |  )  |
+   /    |   /    |  (  |   val   |     |         |OrXor|   val   |  )  |
 --------|--------|-----|---------|-----|---------|-----|---------|-----|
 
 Over two last sources you'll find not condition,
