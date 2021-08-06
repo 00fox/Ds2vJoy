@@ -152,11 +152,17 @@ const WCHAR* Mapping::vJoyString()
 	if (Led)
 		if (firstplus)
 		{
-			head += wsprintf(head, L"+Led%d", Led);
+			if (Led == 6)
+				head += wsprintf(head, L"+Battery status");
+			else
+				head += wsprintf(head, L"+Led%d", Led);
 		}
 		else
 		{
-			head += wsprintf(head, L"Led%d", Led);
+			if (Led == 6)
+				head += wsprintf(head, L"Battery status");
+			else
+				head += wsprintf(head, L"Led%d", Led);
 			firstplus = true;
 		}
 
