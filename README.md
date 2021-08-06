@@ -120,6 +120,7 @@ Over two last sources you'll find not condition,
   - double, except if this mapping is already running
   - see 'Pause' for more informations about not condition
 - Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is lauched over those conditions:
+
  Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
 :----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
   0   |  0   |    val     |   &   |   val   |   &   |   val   |
