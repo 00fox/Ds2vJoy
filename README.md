@@ -110,14 +110,10 @@ Over two next sources you'll find or/xor conditions instead of simple combinatio
  OrXor1 | OrXor2 |     | Source0 |       | Source1 |       | Source2 |     |
 :------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
    0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
---------|--------| --- |---------|-------|---------|-------|---------| --- |
   1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
---------|--------| --- |---------|-------|---------|-------|---------| --- |
    0    |  1/2   |     |   val   |  & (  |   val   | OrXor |   val   |  )  |
---------|--------| --- |---------|-------|---------|-------|---------| --- |
   1/2   |  ...   |  (  |   val   | OrXor |   val   |   )   |         |  &  |
   ...   |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
---------|--------| --- |---------|-------|---------|-------|---------| --- |
 
 Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
