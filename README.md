@@ -105,7 +105,7 @@ Over first source you can find special requirements
   - double, this will work only if this mapping is already working
 
 Over two next sources you'll find or/xor conditions instead of simple combination
-- The mapping is lauched over those conditions:
+- The mapping is launched over those conditions:
 
  OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
 :------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
@@ -119,7 +119,7 @@ Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
   - double, except if this mapping is already running
   - see 'Pause' for more informations about not condition
-- Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is lauched over those conditions:
+- Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is launched over those conditions:
 
  Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
 :----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
