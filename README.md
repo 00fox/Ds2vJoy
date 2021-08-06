@@ -106,6 +106,7 @@ Over first source you can find special requirements
 
 Over two next sources you'll find or/xor conditions instead of simple combination
 - The mapping is lauched over those conditions:
+
 OrXor1 | OrXor2 |     | Source0 |     | Source1 |     | Source2 |     |
 ------ | ------ | --- | ------- | --- | ------- | --- | ------- | --- |
   0    |   0    |     |   val   |  &  |   val   |  &  |   val   |     |
