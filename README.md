@@ -107,7 +107,7 @@ Over first source you can find special requirements
 Over two next sources you'll find or/xor conditions instead of simple combination
 - The mapping is lauched over those conditions:
 
- OrXor1 | OrXor2 |     | Source0 |       | Source1 |       | Source2 |     |
+ OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
 :------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
    0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
   1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
@@ -119,6 +119,13 @@ Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
   - double, except if this mapping is already running
   - see 'Pause' for more informations about not condition
+- Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is lauched over those conditions:
+ Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
+:----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
+  0   |  0   |    val     |   &   |   val   |   &   |   val   |
+  1   |  0   |    val     | & Not |   val   |   &   |   val   |
+  0   |  1   |    val     |   &   |   val   | & Not |   val   |
+  1   |  1   |    val     | & Not |   val   | & Not |   val   |
 
 Destinations can be effected with time stamps for tricky actions, macros or combos
 - Enter start (if not as soon as) or/and end (of not when release)
