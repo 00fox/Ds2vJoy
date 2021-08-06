@@ -89,7 +89,7 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
 ![vJoy Editing](Doc/4.png)
 
 - First row is source
-- First source is the one used to calculate destination value, except if or/xor is in use, then it adapt
+- First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
 - Solo is central led and battery status
   - central led is working as long as the mapping is active and doesn't react to conditions
 - Eight ones are destination (together, or in a timeline)
@@ -97,46 +97,6 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
 - Group of numbers is either for special mouse actions,
   - or to use mouse in a zone instead of the full screen, divided or not in a grid
   - or to use mouse in the full screen, divided
-
-Over first source you can find special requirements
-- If mouse, if a mouse is already in use
-  - double, if none mouse is actually in use
-- And Force, to ignore if a button has been disabled by a precedent mapping
-  - double, this will work only if this mapping is already working
-
-Over two next sources you'll find or/xor conditions instead of simple combination
-- The mapping is launched over those conditions:
-
- OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
-:------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
-   0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
-  1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
-   0    |  1/2   |     |   val   |  & (  |   val   | OrXor |   val   |  )  |
-  1/2   |  ...   |  (  |   val   | OrXor |   val   |   )   |         |  &  |
-  ...   |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
-
-Over two last sources you'll find not condition,
-- The mapping won't be launched if this button is pressed
-  - double, except if this mapping is already running
-  - see 'Pause' for more informations about not condition
-- Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is launched over those conditions:
-
- Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
-:----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
-  0   |  0   |    val     |   &   |   val   |   &   |   val   |
-  1   |  0   |    val     | & Not |   val   |   &   |   val   |
-  0   |  1   |    val     |   &   |   val   | & Not |   val   |
-  1   |  1   |    val     | & Not |   val   | & Not |   val   |
-
-Destinations can be effected with time stamps for tricky actions, macros or combos
-- Enter start (if not as soon as) or/and end (of not when release)
-- If you enter an odd number, 0-9 milliseconds will be added, different each time
-- Middle check box, is to begin the action on release
-  - double, only the up press, even if some other timestamps are finished
-  
-Under each source and destination, you'll find disabling
-- this button will be disabled for next mappings if this mapping is running (except with Force)
-  - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
 
 Under first source you'll find 3 checkboxes which determine the method
 Checkboxes    | Method
@@ -163,6 +123,55 @@ Double        | ~first press and second press < long + second press duration < s
 Double short* | ~first press and second press < long + second press duration > long
 Medium long   | ~press > twice the time as long
 Very long     | found in settings
+
+Over first source you can find special requirements
+- If mouse, if a mouse is already in use
+  - double, if none mouse is actually in use
+- And Force, to ignore if a button has been disabled by a precedent mapping
+  - double, this will work only if this mapping is already working
+
+Over two next sources you'll find or/xor conditions instead of simple combination
+- The mapping is launched over those conditions:
+
+ OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
+:------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
+   0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
+  1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
+   0    |  1/2   |     |   val   |  & (  |   val   | OrXor |   val   |  )  |
+  1/2   |  ...   |  (  |   val   | OrXor |   val   |   )   |         |  &  |
+  ...   |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
+
+- The source value used to calculate destination value is then:
+
+ OrXor1 | OrXor2 | Source1 |     | Source2 |     | Source3 |     | method<3: simple or double only |
+:------:|:------:|:-------:|:---:|:-------:|:---:|:-------:|:---:|:-------------------------------:|
+   0    |   0    | val ? 0 |     |         |     |         |  >  | (method < 3) ? 0xFF : released1 |
+  1/2   |   0    | val ? 0 |  >  | val ? 0 |     |         |  >  | (method < 3) ? 0xFF : released1 |
+   0    |  1/2   | val ? 0 |     |         |     |         |  >  | (method < 3) ? 0xFF : released1 |
+  1/2   |  1/2   | val ? 0 |  >  | val ? 0 |  >  | val ? 0 |  >  | (method < 3) ? 0xFF : released1 |
+
+Over two last sources you'll find not condition,
+- The mapping won't be launched if this button is pressed
+  - double, except if this mapping is already running
+  - see 'Pause' for more informations about not condition
+- Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is launched over those conditions:
+
+ Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
+:----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
+  0   |  0   |    val     |   &   |   val   |   &   |   val   |
+  1   |  0   |    val     | & Not |   val   |   &   |   val   |
+  0   |  1   |    val     |   &   |   val   | & Not |   val   |
+  1   |  1   |    val     | & Not |   val   | & Not |   val   |
+
+Destinations can be effected with time stamps for tricky actions, macros or combos
+- Enter start (if not as soon as) or/and end (of not when release)
+- If you enter an odd number, 0-9 milliseconds will be added, different each time
+- Middle check box, is to begin the action on release
+  - double, only the up press, even if some other timestamps are finished
+  
+Under each source and destination, you'll find disabling
+- this button will be disabled for next mappings if this mapping is running (except with Force)
+  - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
 
 Under central led, you'll find 3 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
