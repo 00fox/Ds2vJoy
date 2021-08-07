@@ -310,7 +310,6 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 
 	release0 = (BYTE)((exists0) ? ((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0)) : 0);
 	OnReleaseValue = (Macro == 2) ? release0 : 0xFF;
-	echo("OnReleaseValue %d", OnReleaseValue);
 
 	GridCanbeUsed =
 		MouseAction[0] != MOVE_TO_XY && MouseAction[0] != SAVE_AND_MOVE_TO_XY && MouseAction[0] != MOVE_TO_WH && MouseAction[0] != SAVE_AND_MOVE_TO_WH &&
