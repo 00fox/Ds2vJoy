@@ -143,12 +143,12 @@ Over two next sources you'll find or/xor conditions instead of simple combinatio
 
 - The source value used to calculate destination value is then:
 
- OrXor1 | OrXor2 | Source1 |     | method >= 3 && released |     | Source2 |     | Source3 |     | Source1 |
-:------:|:------:|:-------:|:---:|:------------------------|:---:|:-------:|:---:|:-------:|:---:|:-------:|
-   0    |   0    | val ? 0 |  >  | 0xFF method >= 3 is     |     |         |     |         |  >  |released1|
-  1/2   |   0    | val ? 0 |  >  | 0xFF short, double short|  >  | val ? 0 |     |         |  >  |released1|
-   0    |  1/2   | val ? 0 |  >  | 0xFF long, double long  |     |         |     |         |  >  |released1|
-  1/2   |  1/2   | val ? 0 |  >  | 0xFF to sustain macro   |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
+ OrXor1 | OrXor2 | Source1 |     |     Released ?   |     | Source2 |     | Source3 |     | Source1 |
+:------:|:------:|:-------:|:---:|:-----------------|:---:|:-------:|:---:|:-------:|:---:|:-------:|
+   0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
+  1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
+   0    |  1/2   | val ? 0 |  >  |   (see Macro     |     |         |     |         |  >  |released1|
+  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
 
 Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
@@ -175,6 +175,7 @@ Under each source and destination, you'll find disabling
 
 Under central led, you'll find 3 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
+  - double, Sustain off: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
 - Pause: pause this mapping while a not condition
   - otherwise:
     - if not is a simple, and not button is pressed, the mapping is interrupted
