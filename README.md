@@ -143,12 +143,12 @@ Over two next sources you'll find or/xor conditions instead of simple combinatio
 
 - The source value used to calculate destination value is then:
 
- OrXor1 | OrXor2 | Source1 |     | Source2 |     | Source3 |     | method<3: simple or double only |
-:------:|:------:|:-------:|:---:|:-------:|:---:|:-------:|:---:|:-------------------------------:|
-   0    |   0    | val ? 0 |     |         |     |         |  >  | (method < 3) ? 0xFF : released1 |
-  1/2   |   0    | val ? 0 |  >  | val ? 0 |     |         |  >  | (method < 3) ? 0xFF : released1 |
-   0    |  1/2   | val ? 0 |     |         |     |         |  >  | (method < 3) ? 0xFF : released1 |
-  1/2   |  1/2   | val ? 0 |  >  | val ? 0 |  >  | val ? 0 |  >  | (method < 3) ? 0xFF : released1 |
+ OrXor1 | OrXor2 | Source1 |     | method >= 3 && released |     | Source2 |     | Source3 |     | Source1 |
+:------:|:------:|:-------:|:---:|:------------------------|:---:|:-------:|:---:|:-------:|:---:|:-------:|
+   0    |   0    | val ? 0 |  >  | 0xFF method >= 3 is     |     |         |     |         |  >  |released1|
+  1/2   |   0    | val ? 0 |  >  | 0xFF short, double short|  >  | val ? 0 |     |         |  >  |released1|
+   0    |  1/2   | val ? 0 |  >  | 0xFF long, double long  |     |         |     |         |  >  |released1|
+  1/2   |  1/2   | val ? 0 |  >  | 0xFF to sustain macro   |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
 
 Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
