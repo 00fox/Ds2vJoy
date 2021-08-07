@@ -144,7 +144,7 @@ Over two next sources you'll find or/xor conditions instead of simple combinatio
 - The source value used to calculate destination value is then:
 
  OrXor1 | OrXor2 | Source1 |     |     Released ?   |     | Source2 |     | Source3 |     | Source1 |
-:------:|:------:|:-------:|:---:|:-----------------|:---:|:-------:|:---:|:-------:|:---:|:-------:|
+:------:|:------:|:-------:|:---:|:----------------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
    0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
   1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
    0    |  1/2   | val ? 0 |  >  |   (see Macro     |     |         |     |         |  >  |released1|
