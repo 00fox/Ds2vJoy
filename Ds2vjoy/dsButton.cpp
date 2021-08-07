@@ -313,62 +313,17 @@ BYTE dsButton::GetReleasedVal()
 {
 	switch (m_type)
 	{
-	case typeConstant:
-		return m_constant;
-	case typeButton:
-		return *m_data &= ~m_mask;
-	case typeTrigger:
-		return 0;
-	case typeSimultaneous:
-		*m_data &= ~m_mask;
-		return *m_data2 &= ~m_mask2;
-	case typeTouch:
-		return *m_data &= ~m_mask;
-	case typeDPad:
-		return (*m_data & 0xF0) | 8;
-	case typeDPadUP:
-		switch (*m_data & 0xF)
-		{
-		case 7:
-			return (*m_data & 0xF0) | 6;
-		case 0:
-			return (*m_data & 0xF0) | 8;
-		case 1:
-			return (*m_data & 0xF0) | 2;
-		}
-	case typeDPadRIGHT:
-		switch (*m_data & 0xF)
-		{
-		case 1:
-			return (*m_data & 0xF0) | 0;
-		case 2:
-			return (*m_data & 0xF0) | 8;
-		case 3:
-			return (*m_data & 0xF0) | 4;
-		}
-	case typeDPadDOWN:
-		switch (*m_data & 0xF)
-		{
-		case 3:
-			return (*m_data & 0xF0) | 2;
-		case 4:
-			return (*m_data & 0xF0) | 8;
-		case 5:
-			return (*m_data & 0xF0) | 6;
-		}
-	case typeDPadLEFT:
-		switch (*m_data & 0xF)
-		{
-		case 5:
-			return (*m_data & 0xF0) | 4;
-		case 6:
-			return (*m_data & 0xF0) | 8;
-		case 7:
-			return (*m_data & 0xF0) | 0;
-		}
 	case typeAxis:
 	case typeAxisInv:
 		return 128;
+	case typeButton:
+	case typeTrigger:
+	case typeSimultaneous:
+	case typeTouch:
+	case typeDPadUP:
+	case typeDPadRIGHT:
+	case typeDPadDOWN:
+	case typeDPadLEFT:
 	case typeAxisLU:
 	case typeAxisRD:
 	case typeAxisDUL:
@@ -377,6 +332,10 @@ BYTE dsButton::GetReleasedVal()
 	case typeAxisDDL:
 	case typeData:
 		return 0;
+	case typeConstant:
+		return m_constant;
+	case typeDPad:
+		return (*m_data & 0xF0) | 8;
 	default:
 		return 0;
 	}
