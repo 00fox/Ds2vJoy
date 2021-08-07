@@ -15,7 +15,7 @@ Mapping::Mapping()
 	, Short(false)
 	, Double(false)
 	, Long(false)
-	, Macro(false)
+	, Macro(0)
 	, Pause(false)
 	, Toggle(0)
 	, OnRelease()
@@ -205,8 +205,10 @@ const WCHAR* Mapping::TagsString()
 	else
 		head += wsprintf(head, L"  ");
 
-	if (Macro)
+	if (Macro == 1)
 		head += wsprintf(head, L"C");
+	else if (Macro)
+		head += wsprintf(head, L"c");
 	else
 		head += wsprintf(head, L"  ");
 
@@ -301,6 +303,13 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 			}
 		}
 	}
+
+	exists0 = (Target[0]) ? ((m_vj[0]) ? true : false) : ((m_ds[0]) ? true : false);
+	exists1 = (Target[1]) ? ((m_vj[1]) ? true : false) : ((m_ds[1]) ? true : false);
+	exists2 = (Target[2]) ? ((m_vj[2]) ? true : false) : ((m_ds[2]) ? true : false);
+
+	release0 = (BYTE)((exists0) ? ((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0)) : 0);
+	OnReleaseValue = (Macro == 2) ? release0 : 0xFF;
 
 	GridCanbeUsed =
 		MouseAction[0] != MOVE_TO_XY && MouseAction[0] != SAVE_AND_MOVE_TO_XY && MouseAction[0] != MOVE_TO_WH && MouseAction[0] != SAVE_AND_MOVE_TO_WH &&
@@ -605,21 +614,30 @@ void Mapping::Run()
 		if (Led)
 			Ledactive[Led - 1] = true;
 
-		BYTE value0 = (BYTE)(Target[0] ? (m_vj[0] ? ((m_vj[0]->isPushed()) ? m_vj[0]->GetVal() : 0) : 0) : (m_ds[0] ? ((m_ds[0]->isPushed()) ? m_ds[0]->GetVal() : 0) : 0));
-		BYTE value1 = (BYTE)(Target[1] ? (m_vj[1] ? ((m_vj[1]->isPushed()) ? m_vj[1]->GetVal() : 0) : 0) : (m_ds[1] ? ((m_ds[1]->isPushed()) ? m_ds[1]->GetVal() : 0) : 0));
-		BYTE value2 = (BYTE)(Target[2] ? (m_vj[2] ? ((m_vj[2]->isPushed()) ? m_vj[2]->GetVal() : 0) : 0) : (m_ds[2] ? ((m_ds[2]->isPushed()) ? m_ds[2]->GetVal() : 0) : 0));
-		static BYTE release0 = (BYTE)((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0));
+		bool pushed0 = (exists0) ? ((Target[0]) ? ((m_vj[0]->isPushed()) ? true : false) : ((m_ds[0]->isPushed()) ? true : false)) : false;
+		bool pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
+		bool pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
+
+		BYTE value0 = (BYTE)((pushed0) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
+		BYTE value1 = (BYTE)((pushed1) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
+		BYTE value2 = (BYTE)((pushed2) ? ((Target[2]) ? m_vj[2]->GetVal() : m_ds[2]->GetVal()) : 0);
 
 		if (!OrXorNot[0])
-			m_data = (value0) ? value0 : ((method < 3) ? release0 : 0xFF);
+			m_data = (exists0) ?
+			((pushed0) ? value0 : ((released) ? OnReleaseValue : release0)) :
+			((released) ? 0xFF : 0);
 		else if (!OrXorNot[1])
-			m_data = (value0) ? value0 : ((value1) ? value1 : ((method < 3) ? release0 : 0xFF));
+			m_data = (exists0) ?
+			((pushed0) ? value0 : ((released) ? OnReleaseValue : ((exists1) ? ((pushed1) ? value1 : release0) : release0))) :
+			((released) ? 0xFF : ((exists1) ? ((pushed1) ? value1 : 0) : 0));
 		else
-			m_data = (value0) ? value0 : ((value1) ? value1 : ((value2) ? value2 : ((method < 3) ? release0 : 0xFF)));
+			m_data = (exists0) ?
+			((pushed0) ? value0 : ((released) ? OnReleaseValue : ((exists1) ? ((pushed1) ? value1 : ((exists2) ? ((pushed2) ? value2 : release0) : release0)) : ((exists2) ? ((pushed2) ? value2 : release0) : release0)))) :
+			((released) ? 0xFF : ((exists1) ? ((pushed1) ? value1 : ((exists2) ? ((pushed2) ? value2 : 0) : 0)) : ((exists2) ? ((pushed2) ? value2 : 0) : 0)));
 
 		for (int i = 0; i < 8; i++)
 		{
-			if (Macro && released && OnRelease[i] != 1)
+			if (Macro == 1 && released && OnRelease[i] != 1)
 			{
 				started[i] = false;
 				done[i] = true;

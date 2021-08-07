@@ -168,7 +168,7 @@ void Settings::Load()
 				btn.Short = mapdata[MappingName::Mapping_Short] == 1;
 				btn.Double = mapdata[MappingName::Mapping_Double] == 1;
 				btn.Long = mapdata[MappingName::Mapping_Long] == 1;
-				btn.Macro = mapdata[MappingName::Mapping_Macro] == 1;
+				btn.Macro = mapdata[MappingName::Mapping_Macro];
 				btn.Pause = mapdata[MappingName::Mapping_Pause] == 1;
 				btn.Toggle = mapdata[MappingName::Mapping_Toggle];
 				btn.vjID[5] = (vJoyButtonID)mapdata[MappingName::Mapping_vJoy_1];

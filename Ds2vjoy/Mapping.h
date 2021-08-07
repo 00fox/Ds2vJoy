@@ -67,7 +67,7 @@ public:
 	bool Short;
 	bool Double;
 	bool Long;
-	bool Macro;
+	int Macro;
 	bool Pause;
 	int Toggle;
 	int OnRelease[8];
@@ -96,6 +96,11 @@ private:
 	bool MouseActiondone[4] = { false };//If a mouse action necessite am ending action, and this one has been done
 	bool GridCanbeUsed = false;			//If this mapping necessite one or several x,y,w,h values, or none (used to determine if we use grid values or not)
 	bool Toggledone[8] = { false };		//If the toggle has been effectued for this macro for this run
+	bool exists0 = false;		//If first source is defined
+	bool exists1 = false;		//If first second is defined
+	bool exists2 = false;		//If first third is defined
+	BYTE release0 = 0;			//Released value of first source
+	BYTE OnReleaseValue = 0xFF;	//Used value when in On sustain mode (timestamp is sill in use and we have released all sources)
 	std::chrono::system_clock::time_point start;	//start time (of computing method)
 	std::chrono::system_clock::time_point end;		//actual time (of computing method)
 	std::chrono::system_clock::time_point release;	//realease time (of computing method), for double, or wait before eligible again
