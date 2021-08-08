@@ -97,9 +97,15 @@ private:
 	bool GridCanbeUsed = false;			//If this mapping necessite one or several x,y,w,h values, or none (used to determine if we use grid values or not)
 	bool Toggledone[8] = { false };		//If the toggle has been effectued for this macro for this run
 	bool exists0 = false;		//If first source is defined
-	bool exists1 = false;		//If first second is defined
-	bool exists2 = false;		//If first third is defined
+	bool exists1 = false;		//If second source is defined
+	bool exists2 = false;		//If third source is defined
+	bool pushed0 = false;		//If first source is pushed
+	bool pushed1 = false;		//If second second is pushed
+	bool pushed2 = false;		//If third source is pushed
 	BYTE release0 = 0;			//Released value of first source
+	bool killed0 = false;		//If first source is killed (like stay pushed more than tape.LongPress while method is short)
+	bool killed1 = false;		//If second source is killed (then we have to wait for release to have a chance to try again)
+	int secondpass = 0;			//If a source is killed but the second is activated, only with OrXorNot[0] && !OrXorNot[1] (except is second source available)
 	BYTE OnReleaseValue = 0xFF;	//Used value when in On sustain mode (timestamp is sill in use and we have released all sources)
 	std::chrono::system_clock::time_point start;	//start time (of computing method)
 	std::chrono::system_clock::time_point end;		//actual time (of computing method)

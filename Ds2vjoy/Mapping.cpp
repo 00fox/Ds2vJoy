@@ -441,6 +441,9 @@ void Mapping::Run()
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
 
+	pushed0 = (exists0) ? ((Target[0]) ? ((m_vj[0]->isPushed()) ? true : false) : ((m_ds[0]->isPushed()) ? true : false)) : false;
+	pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
+	pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
 
 	if (!isRunning)
 	{
@@ -456,12 +459,27 @@ void Mapping::Run()
 			else method = 1;
 		}
 
-		if (legit)
+		if (legit && ((secondpass) ? ((secondpass == 1) ? (killed0 || pushed0) : (killed1 && pushed1)) : true))
 		{
 			if (!isFired && !available)
 			{
 				start = std::chrono::system_clock::now();
 				killed = false;
+			}
+			else if ((killed) ? ((secondpass) ? false : (OrXorNot[0] && !OrXorNot[1])) : false)
+			{
+				if (pushed0 && !killed0)
+				{
+					secondpass = 1;
+					start = std::chrono::system_clock::now();
+					killed = false;
+				}
+				else if (pushed1 && !killed1)
+				{
+					secondpass = 2;
+					start = std::chrono::system_clock::now();
+					killed = false;
+				}
 			}
 			isFired = true;
 
@@ -476,7 +494,11 @@ void Mapping::Run()
 					killed = true;
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
+					{
 						killed = true;
+						if (pushed0) { killed0 = true; }
+						if (pushed1) { killed1 = true; }
+					}
 				break;
 			case 4: //Long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
@@ -497,7 +519,11 @@ void Mapping::Run()
 				}
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
+					{
 						killed = true;
+						if (pushed0) { killed0 = true; }
+						if (pushed1) { killed1 = true; }
+					}
 				break;
 			case 5: //Double short
 				if (available)
@@ -513,7 +539,11 @@ void Mapping::Run()
 				}
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
+					{
 						killed = true;
+						if (pushed0) { killed0 = true; }
+						if (pushed1) { killed1 = true; }
+					}
 				break;
 			case 6: //Double long
 				if (available)
@@ -529,7 +559,11 @@ void Mapping::Run()
 				}
 				else
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
+					{
 						killed = true;
+						if (pushed0) { killed0 = true; }
+						if (pushed1) { killed1 = true; }
+					}
 				break;
 			case 7: //Medium long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
@@ -581,6 +615,12 @@ void Mapping::Run()
 				break;
 			}
 			isFired = false;
+			if (!legit)
+			{
+				killed0 = false;
+				killed1 = false;
+				secondpass = 0;
+			}
 		}
 	}
 
@@ -613,10 +653,6 @@ void Mapping::Run()
 
 		if (Led)
 			Ledactive[Led - 1] = true;
-
-		bool pushed0 = (exists0) ? ((Target[0]) ? ((m_vj[0]->isPushed()) ? true : false) : ((m_ds[0]->isPushed()) ? true : false)) : false;
-		bool pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
-		bool pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
 
 		BYTE value0 = (BYTE)((pushed0) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
 		BYTE value1 = (BYTE)((pushed1) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
