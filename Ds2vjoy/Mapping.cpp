@@ -406,7 +406,7 @@ void Mapping::Run()
 	if (!OrXorNot[0] && !OrXorNot[1])
 	{
 		legit =
-			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			legits[0] &&
 			legits[1] &&
 			legits[2] &&
@@ -416,7 +416,7 @@ void Mapping::Run()
 	else if (OrXorNot[0] && !OrXorNot[1])
 	{
 		legit =
-			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : ((OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1]))) &&
 			legits[2] &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
@@ -425,7 +425,7 @@ void Mapping::Run()
 	else if (!OrXorNot[0] && OrXorNot[1])
 	{
 		legit =
-			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			legits[0] &&
 			((OrXorNot[1] == 2) ? (legits[1] ^ legits[2]) : ((OrXorNot[1]) ? (legits[1] || legits[2]) : (legits[1] && legits[2]))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
@@ -434,7 +434,7 @@ void Mapping::Run()
 	else
 	{
 		legit =
-			(!Ifmouse || (Ifmouse == 1 && mouseactivated) || (Ifmouse == 2 && !mouseactivated)) &&
+			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : ((OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1]))) &&
 			((OrXorNot[1] == 2) ? (legits[0] ^ legits[2]) : ((OrXorNot[1]) ? (legits[0] || legits[2]) : (legits[0] && legits[2]))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&

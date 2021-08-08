@@ -548,6 +548,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				Mapping m;
 				mDDlg.mappingData = m;
 				Hide();
+				firsttime = false;
 				Show();
 			}
 			else
