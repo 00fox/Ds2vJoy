@@ -541,6 +541,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		{
 		case IDOK:
 		{
+			if (mappingData.dsID[0] == 0 && mappingData.vjID[0] == 0)
+			{
+				RECT rect;
+				GetWindowRect(m_hWnd, &rect);
+				MessageBoxPos(hWnd, I18N.MBOX_NoButtonSelected, I18N.MBOX_ErrTitle, MB_ICONERROR, rect.left + 275, rect.top + 30);
+				return TRUE;
+			}
 			mappingData.Enable = true;
 			if (m_idx == -1)
 			{

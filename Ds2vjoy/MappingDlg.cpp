@@ -26,15 +26,21 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
-	col.cx = 179;
 	col.pszText = I18N.dsButton;
+	col.cx = 80;
 	ListView_InsertColumn(m_hList, 0, &col);
-	col.pszText = I18N.vJoyButton;
-	col.cx = 179;
+	col.pszText = L"";
+	col.cx = 85;
 	ListView_InsertColumn(m_hList, 1, &col);
-	col.pszText = I18N.TagsButton;
-	col.cx = 91;
+	col.pszText = L"";
+	col.cx = 85;
 	ListView_InsertColumn(m_hList, 2, &col);
+	col.pszText = I18N.vJoyButton;
+	col.cx = 127;
+	ListView_InsertColumn(m_hList, 3, &col);
+	col.pszText = I18N.TagsButton;
+	col.cx = 72;
+	ListView_InsertColumn(m_hList, 4, &col);
 }
 
 INT_PTR MappingDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -345,10 +351,20 @@ int MappingDlg::insertMapping(int idx, Mapping* m)
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 1;
 	item.lParam = 0;
-	item.pszText = (WCHAR*)m->vJoyString();
+	item.pszText = (WCHAR*)m->dsLastString();
 	ListView_SetItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 2;
+	item.lParam = 0;
+	item.pszText = (WCHAR*)m->dsNotString();
+	ListView_SetItem(m_hList, &item);
+	item.mask = LVIF_TEXT;
+	item.iSubItem = 3;
+	item.lParam = 0;
+	item.pszText = (WCHAR*)m->vJoyString();
+	ListView_SetItem(m_hList, &item);
+	item.mask = LVIF_TEXT;
+	item.iSubItem = 4;
 	item.lParam = 0;
 	item.pszText = (WCHAR*)m->TagsString();
 	ListView_SetItem(m_hList, &item);

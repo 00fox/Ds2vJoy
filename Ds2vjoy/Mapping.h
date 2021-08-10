@@ -45,6 +45,8 @@ public:
 	~Mapping();
 
 	const WCHAR* dsString();
+	const WCHAR* dsLastString();
+	const WCHAR* dsNotString();
 	const WCHAR* vJoyString();
 	const WCHAR* TagsString();
 	const WCHAR* vJoyButtons();
