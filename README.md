@@ -89,7 +89,9 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
 ![vJoy Editing](Doc/4.png)
 
 - First row is source
-- First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
+  - First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
+  - A popup reminds you if the first source is not filled in, because we need it to calculate the destination value
+  - You have null, half and full if you need a neutral source
 - Solo is central led and battery status
   - central led is working as long as the mapping is active and doesn't react to conditions
 - Eight ones are destination (together, or in a timeline)
