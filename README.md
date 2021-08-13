@@ -203,6 +203,10 @@ At the left of first 4 destinations, you'll find special mouse actions
   - (long press, can use timestamp and on release)
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
+- MUTE_SOUND
+- VOLUME_UP, VOLUME_DOWN
+  - if on trigger, variable speed following the pressure force, otherwise exponential
+* Other keystrokes that do not require adaptive pressure, can easily be added using a vJoy button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
 
 The mouse group of checkboxes at the bottom, let you use mouse in conjuction with ACTIVE_MOUSE special action
 - With left stick (left column)
@@ -283,9 +287,9 @@ You can set repeated hits with the assigned vJoy button
 Order, add, delete, copy or edit (double click or menu)
 
 After the first time has passed, release and press repeatedly
-- If you specify the simultaneous press condition,
-- you can also enable repeated hits of the cross key and □ △ × ○, 
-- for example, only when L2 or R2 is pressed
+- If you specify the simultaneous press condition, you can also enable repeated hits (of the D-pad keys or □ △ × ○ for example), only when another (L1 or R1 for example) is pressed
+- If you enter an odd number for 'Release time', 0-19 milliseconds will be added, different each press
+- If you enter an odd number for 'Press time', 0-19 milliseconds will be added, different each turn
 
 ![RapidFire Editing](Doc/7.png)
 
