@@ -24,6 +24,8 @@ private:
 	vJoyButton* m_button;
 	vJoyButton* m_button2;
 	double m_time;
+	int randPresstime;
+	int randReleasetime;
 };
 
 typedef std::vector<RapidFire> RapidFires;

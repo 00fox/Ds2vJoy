@@ -185,6 +185,9 @@ struct LANGSTRS
 	WCHAR* MouseAction_X2_DOWN;
 	WCHAR* MouseAction_SCROLL_UP_VARIABLE;
 	WCHAR* MouseAction_SCROLL_DOWN_VARIABLE;
+	WCHAR* MouseAction_MUTE_SOUND;
+	WCHAR* MouseAction_VOLUME_UP;
+	WCHAR* MouseAction_VOLUME_DOWN;
 	WCHAR* Setting;
 	WCHAR* SkipController;
 	WCHAR* Status_Wait;

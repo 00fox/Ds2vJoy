@@ -645,7 +645,7 @@ void Mapping::Run()
 		if (activated)
 		{
 			start2 = std::chrono::system_clock::now();
-			cycle = 0;
+			cycle = 1;
 			activated = false;
 			isRunning = true;
 			released = false;
@@ -713,7 +713,7 @@ void Mapping::Run()
 
 			if (i < 4 && MouseAction[i])
 			{
-				if (started[i] && !done[i] && (!ran[i] || MouseAction[i] == SCROLL_UP_VARIABLE || MouseAction[i] == SCROLL_DOWN_VARIABLE))
+				if (started[i] && !done[i] && (!ran[i] || MouseAction[i] == SCROLL_UP_VARIABLE || MouseAction[i] == SCROLL_DOWN_VARIABLE || MouseAction[i] == VOLUME_UP || MouseAction[i] == VOLUME_DOWN))
 				{
 					ran[i] = true;
 					switch (MouseAction[i])
@@ -731,13 +731,38 @@ void Mapping::Run()
 					case SCROLL_UP_VARIABLE:
 					case SCROLL_DOWN_VARIABLE:
 					{
-						int modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : 10) : (m_ds[0] ? m_ds[0]->GetScrollVal() : 10);
+						int modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : -1) : (m_ds[0] ? m_ds[0]->GetScrollVal() : -1);
 						if (modulo)
-							if (!(cycle % modulo))
+							if (modulo == -1)
 							{
-								double delta = cycle;
-								delta = delta * delta / 600;
-								std::thread (MouseActions, MouseAction[i], min(600, delta), 0, 0).detach();
+								if (!(cycle % 5))
+								{
+									double delta = cycle;
+									delta = delta * delta / 1600;
+									std::thread(MouseActions, MouseAction[i], min(240, delta), 0, 0).detach();
+								}
+							}
+							else
+							{
+								if (!(cycle % 18))
+									std::thread(MouseActions, MouseAction[i], 600 - (modulo * 5), 0, 0).detach();
+							}
+						break;
+					}
+					case VOLUME_UP:
+					case VOLUME_DOWN:
+					{
+						int modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : -1) : (m_ds[0] ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
+									std::thread(MouseActions, MouseAction[i], 0, 0, 0).detach();
+							}
+							else
+							{
+								if (!(cycle % modulo))
+									std::thread(MouseActions, MouseAction[i], 0, 0, 0).detach();
 							}
 						break;
 					}
@@ -780,26 +805,12 @@ void Mapping::Run()
 			}
 		}
 
-		if (MouseAction[0] && done[0] && !MouseActiondone[0])
-		{
-			MouseActiondone[0] = true;
-			std::thread (MouseActionEnd, MouseAction[0]).detach();
-		}
-		if (MouseAction[1] && done[1] && !MouseActiondone[1])
-		{
-			MouseActiondone[1] = true;
-			std::thread (MouseActionEnd, MouseAction[1]).detach();
-		}
-		if (MouseAction[2] && done[2] && !MouseActiondone[2])
-		{
-			MouseActiondone[2] = true;
-			std::thread (MouseActionEnd, MouseAction[2]).detach();
-		}
-		if (MouseAction[3] && done[3] && !MouseActiondone[3])
-		{
-			MouseActiondone[3] = true;
-			std::thread (MouseActionEnd, MouseAction[3]).detach();
-		}
+		for (int i = 0; i < 4; i++)
+			if (MouseAction[i] && done[i] && !MouseActiondone[i])
+			{
+				MouseActiondone[i] = true;
+				std::thread(MouseActionEnd, MouseAction[i]).detach();
+			}
 
 		if (done[0] && done[1] && done[2] && done[3] && done[4] && done[5] && done[6] && done[7])
 		{
@@ -922,6 +933,9 @@ WCHAR* Mapping::String(MouseActionID id)
 	case X2_DOWN: return I18N.MouseAction_X2_DOWN;
 	case SCROLL_UP_VARIABLE: return I18N.MouseAction_SCROLL_UP_VARIABLE;
 	case SCROLL_DOWN_VARIABLE: return I18N.MouseAction_SCROLL_DOWN_VARIABLE;
+	case MUTE_SOUND: return I18N.MouseAction_MUTE_SOUND;
+	case VOLUME_UP: return I18N.MouseAction_VOLUME_UP;
+	case VOLUME_DOWN: return I18N.MouseAction_VOLUME_DOWN;
 	default: return L"???";
 	}
 }
@@ -1200,6 +1214,48 @@ void MouseActions(int action, int delta, int x, int y)
 		input.mi.dwFlags = MOUSEEVENTF_WHEEL;
 		input.mi.mouseData = -delta;
 		SendInput(1, &input, sizeof(input));
+		break;
+	}
+	case MouseActionID::MUTE_SOUND:
+	{
+		INPUT sendkeys = { 0 };
+		ZeroMemory(&sendkeys, sizeof(sendkeys));
+		sendkeys.type = INPUT_KEYBOARD;
+		sendkeys.ki.wVk = VK_VOLUME_MUTE;
+		sendkeys.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+		sendkeys.ki.time = 0;
+		sendkeys.ki.dwExtraInfo = 0;
+		SendInput(1, &sendkeys, sizeof(INPUT));
+		sendkeys.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+		SendInput(1, &sendkeys, sizeof(INPUT));
+		break;
+	}
+	case MouseActionID::VOLUME_UP:
+	{
+		INPUT sendkeys = { 0 };
+		ZeroMemory(&sendkeys, sizeof(sendkeys));
+		sendkeys.type = INPUT_KEYBOARD;
+		sendkeys.ki.wVk = VK_VOLUME_UP;
+		sendkeys.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+		sendkeys.ki.time = 0;
+		sendkeys.ki.dwExtraInfo = 0;
+		SendInput(1, &sendkeys, sizeof(INPUT));
+		sendkeys.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+		SendInput(1, &sendkeys, sizeof(INPUT));
+		break;
+	}
+	case MouseActionID::VOLUME_DOWN:
+	{
+		INPUT sendkeys = { 0 };
+		ZeroMemory(&sendkeys, sizeof(sendkeys));
+		sendkeys.type = INPUT_KEYBOARD;
+		sendkeys.ki.wVk = VK_VOLUME_DOWN;
+		sendkeys.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+		sendkeys.ki.time = 0;
+		sendkeys.ki.dwExtraInfo = 0;
+		SendInput(1, &sendkeys, sizeof(INPUT));
+		sendkeys.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+		SendInput(1, &sendkeys, sizeof(INPUT));
 		break;
 	}
 	}

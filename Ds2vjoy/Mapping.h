@@ -38,6 +38,9 @@ public:
 		X2_DOWN,
 		SCROLL_UP_VARIABLE,
 		SCROLL_DOWN_VARIABLE,
+		MUTE_SOUND,
+		VOLUME_UP,
+		VOLUME_DOWN,
 		mouse_Count
 	};
 

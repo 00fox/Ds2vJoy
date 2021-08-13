@@ -38,6 +38,10 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 	}
 	else
 		m_button2 = 0;
+
+	randReleasetime = Releasetime + ((Releasetime & 1) ? (rand() % 19) : 0);
+	randPresstime = Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
+
 	return TRUE;
 }
 
@@ -71,24 +75,24 @@ BOOL RapidFire::Run(double now)
 {
 	if (tape.RapidFirePaused)
 		return FALSE;
-	if (ButtonID != 0 && !m_button->isPushed())
-		return FALSE;
-	if (ButtonID2 != 0 && !m_button2->isPushed())
-		return FALSE;
 	if (((ButtonID != 0) && (ButtonID2 != 0) && (m_button->isPushed()) && (m_button2->isPushed())) ||
 		((ButtonID == 0) && (m_button2->isPushed())) ||
 		((ButtonID2 == 0) && (m_button->isPushed())))
 	{
 		if (m_time == 0)
+		{
 			m_time = now;
+			randReleasetime = Releasetime + ((Releasetime & 1) ? (rand() % 19) : 0);
+		}
 		else
 		{
 			long time = (long)(now - m_time - Firsttime);
 			if (time > 0)
 			{
-				time = time % (Releasetime + Presstime);
-				if (time <= Releasetime)
+				time = time % (randReleasetime + randPresstime);
+				if (time <= randReleasetime)
 				{
+					randPresstime = Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
 					if (ButtonID == 0)
 						m_button2->Release();
 					else

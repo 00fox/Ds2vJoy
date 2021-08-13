@@ -24,6 +24,8 @@
 #include <filesystem>					//filesystem
 using namespace std::filesystem;
 #include <condition_variable>			//mutex
+#include <mmeapi.h>						//Sound control
+#pragma comment (lib, "winmm.lib")
 
 // any additional headers needed for your program
 //#include <commctrl.h>

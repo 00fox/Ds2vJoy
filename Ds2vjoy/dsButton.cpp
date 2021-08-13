@@ -364,7 +364,7 @@ int dsButton::GetScrollVal()
 	case typeAxisDUR:
 	case typeAxisDDR:
 	case typeAxisDDL:
-		return 10;
+		return -1;
 	case typeSimultaneous:
 	case typeDPad:
 	case typeData:

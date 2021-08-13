@@ -150,6 +150,9 @@ void LoadLanguage()
 	I18N.MouseAction_X2_DOWN = GetText(IDS_MOUSE_X2_DOWN, L"X2 Down");
 	I18N.MouseAction_SCROLL_UP_VARIABLE = GetText(IDS_MOUSE_SCROLL_UP_VARIABLE, L"Scroll ↑ incr");
 	I18N.MouseAction_SCROLL_DOWN_VARIABLE = GetText(IDS_MOUSE_SCROLL_DOWN_VARIABLE, L"Scroll ↓ incr");
+	I18N.MouseAction_MUTE_SOUND = GetText(IDS_MOUSE_MUTE_SOUND, L"Mute/Unmute");
+	I18N.MouseAction_VOLUME_UP = GetText(IDS_MOUSE_VOLUME_UP, L"Volume up");
+	I18N.MouseAction_VOLUME_DOWN = GetText(IDS_MOUSE_VOLUME_DOWN, L"Volume down");
 	I18N.Setting = GetText(IDS_SETTING, L"Setting");
 	I18N.SkipController = GetText(IDS_SKIPCONTROLLER, L"Skip %s Serial %s");
 	I18N.Status_Wait = GetText(IDS_STATUS_WAIT, L"waiting");
@@ -362,6 +365,9 @@ void FreeLanguage()
 	delete[] I18N.MouseAction_X2_DOWN;
 	delete[] I18N.MouseAction_SCROLL_UP_VARIABLE;
 	delete[] I18N.MouseAction_SCROLL_DOWN_VARIABLE;
+	delete[] I18N.MouseAction_MUTE_SOUND;
+	delete[] I18N.MouseAction_VOLUME_UP;
+	delete[] I18N.MouseAction_VOLUME_DOWN;
 	delete[] I18N.Setting;
 	delete[] I18N.SkipController;
 	delete[] I18N.Status_Wait;
