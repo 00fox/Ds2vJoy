@@ -102,7 +102,7 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
 
 Under first source you'll find 3 checkboxes which determine the method
 Checkboxes    | Method          | Description
-:------------ |:--------------- |:--------------------------------------------------
+:------------ | --------------- |:--------------------------------------------------
 None          | Simple:         | Start when pressed, stop when release
 First         | Short*:         | You have to press and release quickly
 Second        | Double:         | You'll have to double press in a limited time
@@ -189,7 +189,7 @@ Under central led, you'll find 3 checkboxes
   - can be used to time based mouse actions too,
   - and for mouse if ACTIVE_MOUSE mouse action is used (see below)
 
-At the left of first 4 destinations, you'll find special mouse actions
+At the left of first 4 destinations, you'll find special mouse actions and sound
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
@@ -203,6 +203,7 @@ At the left of first 4 destinations, you'll find special mouse actions
   - (long press, can use timestamp and on release)
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
+  - fixed scroll adjusted for games that don't support the number of wheel ticks signal
 - MUTE_SOUND
 - VOLUME_UP, VOLUME_DOWN
   - if on trigger, variable speed following the pressure force, otherwise exponential
