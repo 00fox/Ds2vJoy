@@ -101,7 +101,7 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
   - or to use mouse in the full screen, divided
 
 Under first source you'll find 3 checkboxes which determine the method
-Checkboxes    | Method
+Checkboxes    | Method          | Description
 ------------- | --------------- | --------------------------------------------------
 None          | Simple:         | start when pressed, stop when release
 First         | Short*:         | you have to press and release quickly
