@@ -203,7 +203,7 @@ At the left of first 4 destinations, you'll find special mouse actions and sound
   - (long press, can use timestamp and on release)
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
-  - fixed scroll adjusted for games that don't support the number of wheel ticks signal
+  - or fixed scroll adjusted for games that don't support the number of wheel ticks signal
 - MUTE_SOUND
 - VOLUME_UP, VOLUME_DOWN
   - if on trigger, variable speed following the pressure force, otherwise exponential
