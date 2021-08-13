@@ -103,16 +103,16 @@ M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkbo
 Under first source you'll find 3 checkboxes which determine the method
 Checkboxes    | Method
 ------------- | --------------------------------------------------------------------
-None          | Simple:        start when pressed, stop when release
-First         | Short*:        you have to press and release quickly
-Second        | Double:        you'll have to double press in a limited time
-Third         | Long:          you have to stay pressed from a certain time
-1 & 2         | Double short*: second press acting like short
-2 & 2         | Double long:   second press acting like long
-1 & 3         | Medium long:   like long but after double long
+None          | Simple:          start when pressed, stop when release
+First         | Short*:          you have to press and release quickly
+Second        | Double:          you'll have to double press in a limited time
+Third         | Long:            you have to stay pressed from a certain time
+1 & 2         | Double short(1): second press acting like short
+2 & 2         | Double long:     second press acting like long
+1 & 3         | Medium long:     like long but after double long
 All           | Very long
 
-  `* you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
+	(1) you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
 
 In terms of time:
 Method        | Press times
