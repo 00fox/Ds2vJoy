@@ -28,6 +28,12 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 ## Log
 ![Log](Doc/1.png)
 
+Satus is separated in 4 colums which are:
+- Battery
+- Delay
+- Buttons pressed (in vJoy and ViGEm tabs)
+- Profile (1-3)
+
 ## Settings
 ![Settings](Doc/2.png)
 
@@ -60,11 +66,12 @@ Mappings are treated in order,
 - to determine which action square button will launch
 
 DS Button:
-- '+' Indicate combination
-- '||' Indicate combination with or condition
-- '⊕' Indicate combination with xor condition
-- '-' Indicate this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
-  - '--' Indicate this mapping won't be launched if this button is pressed, but continue if already launched
+- '+' Indicates combination
+- '||' Indicates combination with or condition
+- '⊕' Indicates combination with xor condition
+- '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
+  - '--' Indicates this mapping won't be launched if this button is pressed, but continue if already launched
+- '#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
