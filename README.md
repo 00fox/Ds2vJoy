@@ -68,7 +68,7 @@ Mappings are treated in order,
 DS Button:
 - '+' Indicates combination
 - '||' Indicates combination with or condition
-- '⊕' Indicates combination with xor condition
+  - '⊕' Indicates combination with xor condition
 - '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
   - '--' Indicates this mapping won't be launched if this button is pressed, but continue if already launched
 - '#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated
@@ -77,7 +77,7 @@ DS Button:
 vJoy Button:
 - See a brief of what will be launched like vJoy, mouse action (different from mouse)
 - '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
-- '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
+  - '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
 
 Tags:
 Tag | Description
