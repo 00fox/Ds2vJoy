@@ -75,7 +75,9 @@ DS Button:
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
-- See a brief of what will be launched like vJoy, mouse action (different from mouse) 
+- See a brief of what will be launched like vJoy, mouse action (different from mouse)
+- '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
+- '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
 
 Tags:
 Tag | Description
