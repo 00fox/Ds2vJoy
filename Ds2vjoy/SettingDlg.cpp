@@ -469,5 +469,5 @@ void SettingDlg::Hide()
 
 BOOL SettingDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
-	return  ::MoveWindow(m_hDlg, x, y, w, h, r);
+	return ::MoveWindow(m_hDlg, x, y, w, h, r);
 }

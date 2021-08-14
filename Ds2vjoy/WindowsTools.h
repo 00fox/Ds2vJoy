@@ -1844,10 +1844,10 @@ inline BOOL StopDependentServices(SC_HANDLE scm_handle, SC_HANDLE service_handle
 	DWORD dwBytesNeeded;
 	DWORD dwCount;
 
-	LPENUM_SERVICE_STATUS   lpDependencies = NULL;
-	ENUM_SERVICE_STATUS     ess;
-	SC_HANDLE               hDepService;
-	SERVICE_STATUS_PROCESS  ssp = { };
+	LPENUM_SERVICE_STATUS lpDependencies = NULL;
+	ENUM_SERVICE_STATUS ess;
+	SC_HANDLE hDepService;
+	SERVICE_STATUS_PROCESS ssp = { };
 
 	DWORD dwWaitTime = ssp.dwWaitHint / 10;
 	ULONGLONG dwStartTime = GetTickCount64();

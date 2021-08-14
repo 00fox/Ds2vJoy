@@ -377,7 +377,7 @@ void RapidFireDlg::EndDrag(int x, int y)
 	setInsertMark(-1);
 	ReleaseCapture();
 
-	LV_HITTESTINFO  ht;
+	LV_HITTESTINFO ht;
 	ht.pt.x = x;
 	ht.pt.y = y;
 

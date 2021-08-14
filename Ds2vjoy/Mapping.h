@@ -64,7 +64,7 @@ public:
 	dsButtonID dsID[5] = { dsButtonID::none };
 	vJoyButtonID vjID[13] = { vJoyButtonID::none };
 	bool Target[5];
-	int Disbale[13];
+	int Disable[13];
 	int OrXorNot[4];
 	int Ifmouse;
 	int Force;

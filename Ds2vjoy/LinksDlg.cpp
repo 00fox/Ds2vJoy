@@ -287,7 +287,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (wParam == IDC_LINKS_WEBVJOY || wParam == IDC_LINKS_WEBPROJECT || wParam == IDC_LINKS_WEBVIGEM || wParam == IDC_LINKS_WEBGUARDIAN)
 			{
 				PNMLINK pNMLink = (PNMLINK)lParam;
-				LITEM   item = pNMLink->item;
+				LITEM item = pNMLink->item;
 
 				ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOWNORMAL);
 			}
@@ -314,5 +314,5 @@ void LinksDlg::Hide()
 
 BOOL LinksDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
-	return  ::MoveWindow(m_hDlg, x, y, w, h, r);
+	return ::MoveWindow(m_hDlg, x, y, w, h, r);
 }

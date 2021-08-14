@@ -308,11 +308,11 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_3, (WPARAM)mappingData.Target[2]);
 			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_4, (WPARAM)mappingData.Target[3]);
 			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_5, (WPARAM)mappingData.Target[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_1_DISABLE, (WPARAM)mappingData.Disbale[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_2_DISABLE, (WPARAM)mappingData.Disbale[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_3_DISABLE, (WPARAM)mappingData.Disbale[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_4_DISABLE, (WPARAM)mappingData.Disbale[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_5_DISABLE, (WPARAM)mappingData.Disbale[4]);
+			CheckDlgButton(hWnd, IDC_MAPPING_DS_1_DISABLE, (WPARAM)mappingData.Disable[0]);
+			CheckDlgButton(hWnd, IDC_MAPPING_DS_2_DISABLE, (WPARAM)mappingData.Disable[1]);
+			CheckDlgButton(hWnd, IDC_MAPPING_DS_3_DISABLE, (WPARAM)mappingData.Disable[2]);
+			CheckDlgButton(hWnd, IDC_MAPPING_DS_4_DISABLE, (WPARAM)mappingData.Disable[3]);
+			CheckDlgButton(hWnd, IDC_MAPPING_DS_5_DISABLE, (WPARAM)mappingData.Disable[4]);
 			if ((WPARAM)mappingData.MouseAction[0])
 			{
 				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, BST_UNCHECKED);
@@ -321,7 +321,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			else
 			{
 				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, (WPARAM)mappingData.Disbale[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, (WPARAM)mappingData.Disable[5]);
 			}
 			if ((WPARAM)mappingData.MouseAction[1])
 			{
@@ -331,7 +331,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			else
 			{
 				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, (WPARAM)mappingData.Disbale[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, (WPARAM)mappingData.Disable[6]);
 			}
 			if ((WPARAM)mappingData.MouseAction[2])
 			{
@@ -341,7 +341,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			else
 			{
 				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, (WPARAM)mappingData.Disbale[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, (WPARAM)mappingData.Disable[7]);
 			}
 			if ((WPARAM)mappingData.MouseAction[3])
 			{
@@ -351,12 +351,12 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			else
 			{
 				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, (WPARAM)mappingData.Disbale[8]);
+				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, (WPARAM)mappingData.Disable[8]);
 			}
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, (WPARAM)mappingData.Disbale[9]);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, (WPARAM)mappingData.Disbale[10]);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, (WPARAM)mappingData.Disbale[11]);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, (WPARAM)mappingData.Disbale[12]);
+			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, (WPARAM)mappingData.Disable[9]);
+			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, (WPARAM)mappingData.Disable[10]);
+			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, (WPARAM)mappingData.Disable[11]);
+			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, (WPARAM)mappingData.Disable[12]);
 			CheckDlgButton(hWnd, IDC_MAPPING_DS_2_OR, (WPARAM)mappingData.OrXorNot[0]);
 			CheckDlgButton(hWnd, IDC_MAPPING_DS_3_OR, (WPARAM)mappingData.OrXorNot[1]);
 			CheckDlgButton(hWnd, IDC_MAPPING_DS_4_NOT, (WPARAM)mappingData.OrXorNot[2]);
@@ -843,67 +843,67 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			Show();
 			break;
 		case IDC_MAPPING_DS_1_DISABLE:
-			mappingData.Disbale[0] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[0] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_DS_2_DISABLE:
-			mappingData.Disbale[1] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[1] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_DS_3_DISABLE:
-			mappingData.Disbale[2] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[2] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_DS_4_DISABLE:
-			mappingData.Disbale[3] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[3] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_DS_5_DISABLE:
-			mappingData.Disbale[4] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[4] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_1_DISABLE:
 			if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_ACTION_1))
 			{
-				mappingData.Disbale[5] = false;
+				mappingData.Disable[5] = false;
 				CheckDlgButton(hWnd, LOWORD(wParam), BST_UNCHECKED);
 			}
 			else
-				mappingData.Disbale[5] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				mappingData.Disable[5] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_2_DISABLE:
 			if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_ACTION_2))
 			{
-				mappingData.Disbale[6] = false;
+				mappingData.Disable[6] = false;
 				CheckDlgButton(hWnd, LOWORD(wParam), BST_UNCHECKED);
 			}
 			else
-				mappingData.Disbale[6] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				mappingData.Disable[6] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_3_DISABLE:
 			if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_ACTION_3))
 			{
-				mappingData.Disbale[7] = false;
+				mappingData.Disable[7] = false;
 				CheckDlgButton(hWnd, LOWORD(wParam), BST_UNCHECKED);
 			}
 			else
-				mappingData.Disbale[7] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				mappingData.Disable[7] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_4_DISABLE:
 			if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_ACTION_4))
 			{
-				mappingData.Disbale[8] = false;
+				mappingData.Disable[8] = false;
 				CheckDlgButton(hWnd, LOWORD(wParam), BST_UNCHECKED);
 			}
 			else
-				mappingData.Disbale[8] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				mappingData.Disable[8] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_5_DISABLE:
-			mappingData.Disbale[9] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[9] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_6_DISABLE:
-			mappingData.Disbale[10] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[10] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_7_DISABLE:
-			mappingData.Disbale[11] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[11] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_VJOY_8_DISABLE:
-			mappingData.Disbale[12] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			mappingData.Disable[12] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
 		case IDC_MAPPING_DS_2_OR:
 			mappingData.OrXorNot[0] = IsDlgButtonChecked(hWnd, LOWORD(wParam));
@@ -1055,7 +1055,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 			{
 				mappingData.vjID[5] = (vJoyButtonID)vJoyButtonID::none;
-				mappingData.Disbale[5] = false;
+				mappingData.Disable[5] = false;
 				for (int i = 0; i < MouseActionID::mouse_Count; i++)
 				{
 					WCHAR* str = Mapping::String((MouseActionID)i);
@@ -1077,7 +1077,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 			{
 				mappingData.vjID[6] = (vJoyButtonID)vJoyButtonID::none;
-				mappingData.Disbale[6] = false;
+				mappingData.Disable[6] = false;
 				for (int i = 0; i < MouseActionID::mouse_Count; i++)
 				{
 					WCHAR* str = Mapping::String((MouseActionID)i);
@@ -1099,7 +1099,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 			{
 				mappingData.vjID[7] = (vJoyButtonID)vJoyButtonID::none;
-				mappingData.Disbale[7] = false;
+				mappingData.Disable[7] = false;
 				for (int i = 0; i < MouseActionID::mouse_Count; i++)
 				{
 					WCHAR* str = Mapping::String((MouseActionID)i);
@@ -1121,7 +1121,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 			{
 				mappingData.vjID[8] = (vJoyButtonID)vJoyButtonID::none;
-				mappingData.Disbale[8] = false;
+				mappingData.Disable[8] = false;
 				for (int i = 0; i < MouseActionID::mouse_Count; i++)
 				{
 					WCHAR* str = Mapping::String((MouseActionID)i);

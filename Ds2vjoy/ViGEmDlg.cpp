@@ -2,7 +2,7 @@
 #include "ViGEmDlg.h"
 #include "ViGEm.h"
 #include "Ds2vJoy.h"
-#include <future>         // std::async, std::future
+#include <future>		// std::async, std::future
 
 ViGEmDlg::ViGEmDlg()
 {
@@ -1656,5 +1656,5 @@ void ViGEmDlg::Hide()
 
 BOOL ViGEmDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
-	return  ::MoveWindow(m_hDlg, x, y, w, h, r);
+	return ::MoveWindow(m_hDlg, x, y, w, h, r);
 }

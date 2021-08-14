@@ -7,7 +7,7 @@ Mapping::Mapping()
 	, dsID()
 	, vjID()
 	, Target()
-	, Disbale()
+	, Disable()
 	, OrXorNot()
 	, Ifmouse(0)
 	, Force(0)
@@ -28,7 +28,7 @@ Mapping::Mapping()
 	for (int i = 0; i < 5; i++) { dsID[i] = dsButtonID::none; }
 	for (int i = 0; i < 13; i++) { vjID[i] = vJoyButtonID::none; }
 	for (int i = 0; i < 5; i++) { Target[i] = false; }
-	for (int i = 0; i < 13; i++) { Disbale[i] = 0; }
+	for (int i = 0; i < 13; i++) { Disable[i] = 0; }
 	for (int i = 0; i < 4; i++) { OrXorNot[i] = 0; }
 	for (int i = 0; i < 4; i++) { MouseAction[i] = 0; }
 	for (int i = 0; i < 8; i++) { OnRelease[i] = 0; }
@@ -48,15 +48,25 @@ const WCHAR* Mapping::dsString()
 	buf[0] = 0;
 	WCHAR* head = buf;
 
+	std::wstring str;
 	if (Target[0])
 	{
 		if (vjID[0] != 0)
-			head += wsprintf(head, L"%s", vJoyButton::String((vJoyButtonID)vjID[0]));
+			str = vJoyButton::String((vJoyButtonID)vjID[0]);
 	}
 	else
 	{
 		if (dsID[0] != 0)
-			head += wsprintf(head, L"%s", dsButton::String((dsButtonID)dsID[0]));
+			str = dsButton::String((dsButtonID)dsID[0]);
+	}
+
+	head += wsprintf(head, L"%s", str.c_str());
+
+	if (Disable[0])
+	{
+		if (str.length() > 7)
+			*(--head) = 0;
+		head += wsprintf(head, L"#");
 	}
 
 	return buf;
@@ -68,35 +78,41 @@ const WCHAR* Mapping::dsLastString()
 	buf[0] = 0;
 	WCHAR* head = buf;
 
+	std::wstring str;
 	for (int i = 1; i < 5; i++)
 	{
+		str = L"";
 		if (Target[i])
 		{
 			if (vjID[i] != 0)
-			{
-				if (i < 3 && OrXorNot[i - 1] == 1)
-					head += wsprintf(head, L"||%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-				else if (i < 3 && OrXorNot[i - 1] == 2)
-					head += wsprintf(head, L" ⊕%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-				else if (i > 2 && OrXorNot[i - 1])
-					continue;
-				else
-					head += wsprintf(head, L" +%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-			}
+				str = vJoyButton::String((vJoyButtonID)vjID[i]);
+			else
+				continue;
 		}
 		else
 		{
 			if (dsID[i] != 0)
-			{
-				if (i > 0 && i < 3 && OrXorNot[i - 1] == 1)
-					head += wsprintf(head, L"||%s", dsButton::String((dsButtonID)dsID[i]));
-				else if (i > 0 && i < 3 && OrXorNot[i - 1] == 2)
-					head += wsprintf(head, L" ⊕%s", dsButton::String((dsButtonID)dsID[i]));
-				else if (i > 2 && OrXorNot[i - 1])
-					continue;
-				else
-					head += wsprintf(head, L" +%s", dsButton::String((dsButtonID)dsID[i]));
-			}
+				str = dsButton::String((dsButtonID)dsID[i]);
+			else
+				continue;
+		}
+
+		if (i < 3 && OrXorNot[i - 1] == 1)
+			head += wsprintf(head, L"||");
+		else if (i < 3 && OrXorNot[i - 1] == 2)
+			head += wsprintf(head, L" ⊕");
+		else if (i > 2 && OrXorNot[i - 1])
+			continue;
+		else
+			head += wsprintf(head, L" +");
+
+		head += wsprintf(head, L"%s", str.c_str());
+
+		if (Disable[i])
+		{
+			if (str.length() > 7)
+				*(--head) = 0;
+			head += wsprintf(head, L"#");
 		}
 	}
 
@@ -109,31 +125,39 @@ const WCHAR* Mapping::dsNotString()
 	buf[0] = 0;
 	WCHAR* head = buf;
 
+	std::wstring str;
 	for (int i = 3; i < 5; i++)
 	{
+		str = L"";
 		if (Target[i])
 		{
 			if (vjID[i] != 0)
-			{
-				if (i > 2 && OrXorNot[i - 1] == 1)
-					head += wsprintf(head, L" -%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-				else if (i > 2 && OrXorNot[i - 1])
-					head += wsprintf(head, L"--%s", vJoyButton::String((vJoyButtonID)vjID[i]));
-				else
-					continue;
-			}
+				str = vJoyButton::String((vJoyButtonID)vjID[i]);
+			else
+				continue;
 		}
 		else
 		{
 			if (dsID[i] != 0)
-			{
-				if (i > 2 && OrXorNot[i - 1] == 1)
-					head += wsprintf(head, L" -%s", dsButton::String((dsButtonID)dsID[i]));
-				else if (i > 2 && OrXorNot[i - 1])
-					head += wsprintf(head, L"--%s", dsButton::String((dsButtonID)dsID[i]));
-				else
-					continue;
-			}
+				str = dsButton::String((dsButtonID)dsID[i]);
+			else
+				continue;
+		}
+
+		if (i > 2 && OrXorNot[i - 1] == 1)
+			head += wsprintf(head, L" -");
+		else if (i > 2 && OrXorNot[i - 1])
+			head += wsprintf(head, L"--");
+		else
+			continue;
+
+		head += wsprintf(head, L"%s", str.c_str());
+
+		if (Disable[i])
+		{
+			if (str.length() > 7)
+				*(--head) = 0;
+			head += wsprintf(head, L"#");
 		}
 	}
 
@@ -824,7 +848,7 @@ void Mapping::Run()
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				if (Disbale[i])
+				if (Disable[i])
 					if (Target[i])
 					{
 						if (m_vj[i])
@@ -838,12 +862,12 @@ void Mapping::Run()
 			}
 			for (int i = 5; i < 13; i++)
 			{
-				if (Disbale[i] == 1 && started[i - 5] && !done[i - 5])
+				if (Disable[i] == 1 && started[i - 5] && !done[i - 5])
 				{
 					if (m_vj[i])
 						vjDisabled.push_back(vjID[i]);
 				}
-				else if (Disbale[i] == 2)
+				else if (Disable[i] == 2)
 				{
 					if (m_vj[i])
 						vjDisabled.push_back(vjID[i]);

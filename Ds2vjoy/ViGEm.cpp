@@ -197,17 +197,17 @@ void ViGEm::Run()
 
 		report_X360.wButtons = wButtons;
 
-		if (tape.target_X360[18]) { if (m_vj[18]) { report_X360.bLeftTrigger = (m_vj[18]->isPushed()) ? m_vj[18]->GetVal2() : 0; } }    //-Z
+		if (tape.target_X360[18]) { if (m_vj[18]) { report_X360.bLeftTrigger = (m_vj[18]->isPushed()) ? m_vj[18]->GetVal2() : 0; } }	//-Z
 		else { if (m_ds[18]) { report_X360.bLeftTrigger = (m_ds[18]->isPushed()) ? m_ds[18]->GetVal() : 0; } }
-		if (tape.target_X360[19]) { if (m_vj[19]) { report_X360.bRightTrigger = (m_vj[19]->isPushed()) ? m_vj[19]->GetVal2() : 0; } }   //+Z
+		if (tape.target_X360[19]) { if (m_vj[19]) { report_X360.bRightTrigger = (m_vj[19]->isPushed()) ? m_vj[19]->GetVal2() : 0; } }	//+Z
 		else { if (m_ds[19]) { report_X360.bRightTrigger = (m_ds[19]->isPushed()) ? m_ds[19]->GetVal() : 0; } }
-		if (tape.target_X360[20]) { if (m_vj[20]) { report_X360.sThumbLX = (m_vj[20]->isPushed()) ? (((m_vj[20]->GetVal2() + 1) * 256) - 32769) : 0; } }  //X
+		if (tape.target_X360[20]) { if (m_vj[20]) { report_X360.sThumbLX = (m_vj[20]->isPushed()) ? (((m_vj[20]->GetVal2() + 1) * 256) - 32769) : 0; } }	//X
 		else { if (m_ds[20]) { report_X360.sThumbLX = (m_ds[20]->isPushed()) ? (((m_ds[20]->GetVal() + 1) * 256) - 32769) : 0; } }
-		if (tape.target_X360[21]) { if (m_vj[21]) { report_X360.sThumbLY = (m_vj[21]->isPushed()) ? (((m_vj[21]->GetVal2() + 1) * 256) - 32769) : 0; } }  //Y
+		if (tape.target_X360[21]) { if (m_vj[21]) { report_X360.sThumbLY = (m_vj[21]->isPushed()) ? (((m_vj[21]->GetVal2() + 1) * 256) - 32769) : 0; } }	//Y
 		else { if (m_ds[21]) { report_X360.sThumbLY = (m_ds[21]->isPushed()) ? (((m_ds[21]->GetVal() + 1) * 256) - 32769) : 0; } }
-		if (tape.target_X360[22]) { if (m_vj[22]) { report_X360.sThumbRX = (m_vj[22]->isPushed()) ? (((m_vj[22]->GetVal2() + 1) * 256) - 32769) : 0; } }  //RX
+		if (tape.target_X360[22]) { if (m_vj[22]) { report_X360.sThumbRX = (m_vj[22]->isPushed()) ? (((m_vj[22]->GetVal2() + 1) * 256) - 32769) : 0; } }	//RX
 		else { if (m_ds[22]) { report_X360.sThumbRX = (m_ds[22]->isPushed()) ? (((m_ds[22]->GetVal() + 1) * 256) - 32769) : 0; } }
-		if (tape.target_X360[23]) { if (m_vj[23]) { report_X360.sThumbRY = (m_vj[23]->isPushed()) ? (((m_vj[23]->GetVal2() + 1) * 256) - 32769) : 0; } }  //RY
+		if (tape.target_X360[23]) { if (m_vj[23]) { report_X360.sThumbRY = (m_vj[23]->isPushed()) ? (((m_vj[23]->GetVal2() + 1) * 256) - 32769) : 0; } }	//RY
 		else { if (m_ds[23]) { report_X360.sThumbRY = (m_ds[23]->isPushed()) ? (((m_ds[23]->GetVal() + 1) * 256) - 32769) : 0; } }
 
 		if (report_X360.bLeftTrigger) { head += wsprintf(head, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_TRIGGER)); }
@@ -280,17 +280,17 @@ void ViGEm::Run()
 
 		DS4_SET_DPAD(&report_DS4, Dpad);
 
-		if (tape.target_DS4[18]) { if (m_vj[18]) { report_DS4.bTriggerL = (m_vj[18]->isPushed()) ? m_vj[18]->GetVal2() : 0; } }   //RX
+		if (tape.target_DS4[18]) { if (m_vj[18]) { report_DS4.bTriggerL = (m_vj[18]->isPushed()) ? m_vj[18]->GetVal2() : 0; } }		//RX
 		else { if (m_ds[18]) { report_DS4.bTriggerL = (m_ds[18]->isPushed()) ? m_ds[18]->GetVal() : 0; } }
-		if (tape.target_DS4[19]) { if (m_vj[19]) { report_DS4.bTriggerR = (m_vj[19]->isPushed()) ? m_vj[19]->GetVal2() : 0; } }   //RY
+		if (tape.target_DS4[19]) { if (m_vj[19]) { report_DS4.bTriggerR = (m_vj[19]->isPushed()) ? m_vj[19]->GetVal2() : 0; } }		//RY
 		else { if (m_ds[19]) { report_DS4.bTriggerR = (m_ds[19]->isPushed()) ? m_ds[19]->GetVal() : 0; } }
-		if (tape.target_DS4[20]) { if (m_vj[20]) { report_DS4.bThumbLX = (m_vj[20]->isPushed()) ? m_vj[20]->GetVal2() : 127; } }  //X
+		if (tape.target_DS4[20]) { if (m_vj[20]) { report_DS4.bThumbLX = (m_vj[20]->isPushed()) ? m_vj[20]->GetVal2() : 127; } }	//X
 		else { if (m_ds[20]) { report_DS4.bThumbLX = (m_ds[20]->isPushed()) ? m_ds[20]->GetVal() : 127; } }
-		if (tape.target_DS4[21]) { if (m_vj[21]) { report_DS4.bThumbLY = (m_vj[21]->isPushed()) ? m_vj[21]->GetVal2() : 127; } }  //Y
+		if (tape.target_DS4[21]) { if (m_vj[21]) { report_DS4.bThumbLY = (m_vj[21]->isPushed()) ? m_vj[21]->GetVal2() : 127; } }	//Y
 		else { if (m_ds[21]) { report_DS4.bThumbLY = (m_ds[21]->isPushed()) ? m_ds[21]->GetVal() : 127; } }
-		if (tape.target_DS4[22]) { if (m_vj[22]) { report_DS4.bThumbRX = (m_vj[22]->isPushed()) ? m_vj[22]->GetVal2() : 127; } }  //Z
+		if (tape.target_DS4[22]) { if (m_vj[22]) { report_DS4.bThumbRX = (m_vj[22]->isPushed()) ? m_vj[22]->GetVal2() : 127; } }	//Z
 		else { if (m_ds[22]) { report_DS4.bThumbRX = (m_ds[22]->isPushed()) ? m_ds[22]->GetVal() : 127; } }
-		if (tape.target_DS4[23]) { if (m_vj[23]) { report_DS4.bThumbRY = (m_vj[23]->isPushed()) ? m_vj[23]->GetVal2() : 127; } }  //RZ
+		if (tape.target_DS4[23]) { if (m_vj[23]) { report_DS4.bThumbRY = (m_vj[23]->isPushed()) ? m_vj[23]->GetVal2() : 127; } }	//RZ
 		else { if (m_ds[23]) { report_DS4.bThumbRY = (m_ds[23]->isPushed()) ? m_ds[23]->GetVal() : 127; } }
 
 		if (report_DS4.bTriggerL) { head += wsprintf(head, L"%s ", DS4_String(DS4_BUTTON_LEFT_TR)); }

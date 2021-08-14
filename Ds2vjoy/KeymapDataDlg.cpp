@@ -301,9 +301,9 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				return TRUE;
 			}
 			keymapData.Enable = true;
-			int key1 = SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1), CB_GETCURSEL, 0, 0);
-			int key2 = SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2), CB_GETCURSEL, 0, 0);
-			int key3 = SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3), CB_GETCURSEL, 0, 0);
+			int key1 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1), CB_GETCURSEL, 0, 0);
+			int key2 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2), CB_GETCURSEL, 0, 0);
+			int key3 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3), CB_GETCURSEL, 0, 0);
 			if (key1) { keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key1)); }
 			if (key1) { keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
 			if (key1) { keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
