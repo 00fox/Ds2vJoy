@@ -897,9 +897,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		{
 			hStatus = CreateStatusWindow(WS_CHILD | WS_VISIBLE | CCS_BOTTOM | SBARS_SIZEGRIP, NULL, hWnd, ID_STATUS);
-			int width[3] = { 80,160,-1 };
-			SendMessage(hStatus, SB_SETPARTS, 3, (LPARAM)width);
+			int width[4] = { 70,140,436,-1 };
+			SendMessage(hStatus, SB_SETPARTS, 4, (LPARAM)width);
 			SendMessage(hStatus, SB_SETTEXT, 0, (WPARAM)I18N.Status_Wait);
+			SendMessage(hStatus, SB_SETTEXT, 3, (WPARAM)(L"Pr:" + std::to_wstring(tape.Profile)).c_str());
 
 			HFONT hFont = CreateFont(12, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"MS Shell Dlg");
 			SendMessage(hStatus, WM_SETFONT, WPARAM(hFont), TRUE);
@@ -1202,6 +1203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tape.Profile = (int)wParam;
 				tape.Save(1);
 				echo(I18N.TT_ProfileChanged, tape.Profile);
+				SendMessage(hStatus, SB_SETTEXT, 3, (WPARAM)(L"Pr:" + std::to_wstring(tape.Profile)).c_str());
 			}
 			else
 				hid.RestartDevices(true);
