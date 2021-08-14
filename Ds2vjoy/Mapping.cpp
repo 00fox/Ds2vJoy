@@ -187,6 +187,11 @@ const WCHAR* Mapping::vJoyString()
 			else if (vjID[i] != 0)
 				{ head += wsprintf(head, L"%s", vJoyButton::String((vJoyButtonID)vjID[i])); firstplus = true; }
 		}
+
+		if (Disable[i] == 1)
+			head += wsprintf(head, L"#");
+		else if (Disable[i])
+			head += wsprintf(head, L">");
 	}
 
 	if (Led)
