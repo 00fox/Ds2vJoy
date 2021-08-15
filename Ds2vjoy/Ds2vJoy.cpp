@@ -698,8 +698,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
     case WM_COMMAND:
         {
-            int wmId = LOWORD(wParam);
-            switch (wmId)
+            switch (LOWORD(wParam))
             {
 			case ID_CHKBOXW:
 				if (SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED)
@@ -1370,6 +1369,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		GetWindowRect(hWnd, &win);
 		x = xtmp - win.left;
 		y = ytmp - win.top;
+		if (x > 345 && x < 392 && y >= 0 && y <= 30)
+			break;
+		else if (x > 437 && x < 485 && y >= 0 && y <= 30)
+			break;
 		mDDlg.movable = false;
 		SetFocus(hWnd);
 		if (!extended)
@@ -1400,6 +1403,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				close = true;
 		}
 		m_flag_drag = false;
+		if (minimize || (close && tape.CloseMinimize))
+			{ PostMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); break; }
+		else if (close)
+			{ PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0); break; }
 		RECT rect;
 		ClientArea(&rect, true);
 		if ((int)(short)HIWORD(lParam) < rect.top + 2)
@@ -1420,10 +1427,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (!topmost)
 				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 		}
-		if (minimize || (close && tape.CloseMinimize))
-			PostMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
-		else if (close)
-			PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
 		break;
 	}
 	case WM_EXITSIZEMOVE:
@@ -1626,10 +1629,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			PostMessage(hWnd, WM_DESTROY, 0, 0);
 			break;
 		case SC_MINIMIZE:
+			{ ::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); topmost = false; }
 			mDDlg.Hide();
 			ShowWindow(hWnd, SW_HIDE);
 			return FALSE;
 		case SC_RESTORE:
+			PostMessage(hWnd, WM_COMMAND, (WPARAM)ID_CHKBOXW, (LPARAM)GetDlgItem(hWnd, ID_CHKBOXW));
 			if (mDDlg.m_idx > -2)
 				mDDlg.Show();
 			break;
