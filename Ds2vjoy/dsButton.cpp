@@ -246,7 +246,7 @@ BYTE dsButton::GetVal()
 	case typeButton:
 		return (abs(*m_data) & m_mask) ? 0xFF : 0;
 	case typeTrigger:
-		return (*m_data * (255 - m_thrz) / 255) + m_thrz;
+		return (*m_data * (255 + m_thrz) / 255) - m_thrz;
 	case typeSimultaneous:
 		return isPushed() ? 0xFF : 0;
 	case typeTouch:
