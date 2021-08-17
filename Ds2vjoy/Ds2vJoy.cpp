@@ -213,7 +213,7 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 	if (vjoy->Active())
 	{
 		vjoy->ClearState();
-		p->mappings[0].RunFirst();
+		p->mappings[0].RunFirst(vjoy);
 
 		size_t n = p->mappings.size();
 		for (int i = 0; i < n; i++)

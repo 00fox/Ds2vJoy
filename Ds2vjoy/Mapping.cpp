@@ -367,7 +367,7 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 	return TRUE;
 }
 
-void Mapping::RunFirst()
+void Mapping::RunFirst(vJoyDevice* vjoy)
 {
 	dsDisabled.clear();
 	vjDisabled.clear();
@@ -378,6 +378,12 @@ void Mapping::RunFirst()
 		grid[i] = 0;
 	defaultmouse = 0;
 	mouseactivated = false;
+	for (int i = 0; i < vJoyButtonID::button_Count; i++)
+		if (m_toggle[i])
+		{
+			vjoy->GetButton((vJoyButtonID)i)->SetVal(0xFF);
+			vjoy->GetButton((vJoyButtonID)i)->SetPushed();
+		}
 }
 
 void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)

@@ -55,7 +55,7 @@ public:
 	const WCHAR* vJoyButtons();
 	void PreLoad();
 	BOOL LoadDevice(dsDevice*, vJoyDevice*);
-	void RunFirst();
+	void RunFirst(vJoyDevice* vjoy);
 	void RunLast(dsDevice* ds, vJoyDevice* vjoy);
 	void Run();
 	static WCHAR* String(MouseActionID id);
