@@ -304,6 +304,7 @@ An example of advanced script for targeting:
 ```
 
 ![vJoy](Doc/3c.png)
+
 Look at this third picture of vJoy section,
 
 ```
