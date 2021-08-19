@@ -303,6 +303,25 @@ An example of advanced script for targeting:
     (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
+![vJoy](Doc/3c.png)
+
+```
+  Look at this third picture of vJoy section,
+    this is an example of how enter a fictive mode when push simultanously L1 and R1
+    without using modes and the need of L1R1 special button
+  Mode exit when you release both L1 and R1
+  L1 and R1 specail actions are not triggered first,
+    they will if you have release L1 first before L1 special action, the same for R1
+  You can swap between both, as long as you don't release both buttons together
+  An example of utilisation: L1 and R1 are shifted keys
+    for example they add shift, control, and control shift together to other buttons
+	or simply act as L1 + Cross, L1 + L2 + Triangle etc.
+    when pushed together, you usualy never release one and pushed it again, without releasing the other
+    also, you can add the possibility to add two actions, to L1 and R1,
+	For example, taget previous/next ennemy
+  By using mode there is more simple methods
+```
+
 ![vJoy Help](Doc/5.png)
 
 You can find this help directly in Ds2vJoy by pressing help below grid entries
