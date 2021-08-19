@@ -304,9 +304,9 @@ An example of advanced script for targeting:
 ```
 
 ![vJoy](Doc/3c.png)
+Look at this third picture of vJoy section,
 
 ```
-  Look at this third picture of vJoy section,
     this is an example of how enter a fictive mode when push simultanously L1 and R1
     without using modes and the need of L1R1 special button
   Mode exit when you release both L1 and R1
