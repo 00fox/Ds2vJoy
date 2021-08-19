@@ -4,7 +4,7 @@ DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 Fork from @090 DS4vJoy and DS5vJoy projects
 - Bluetooth compatible
 - Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
-- Combinations, macros and time based operations allowed
+- Combinations, modes(known as shifted), macros and time based operations allowed
 - Control complex mouse operations
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
 
@@ -58,24 +58,39 @@ Satus is separated in 4 colums which are:
 
 Each line correspond to a different mapping
 
-Order, add, delete, copy or edit (double click or menu)
-
 Mappings are treated in order,
-- Then you can decide for complex actions or shifts
+- Then you can decide for complex actions or shifts with or without the need of modes(shifted)
 - For example you can use L1, and even L1R1 or more complex situations
 - to determine which action square button will launch
 
+Each tab corresponds to a drawer, in which you can organize the different mappings
+- Each of these tabs are by default, like the first one, set to 'Always', but just show their numbers.
+- 'Always' means that all mappings, if they are checked, will always work, just, the tabs are processed in the order of appearance
+- But you can assign a mode for each of these tabs, which allows you to say that the mappings they contain will only be active in this mode
+- The tabs left in the 'Always' position will remain active even if you are in another mode than the starting one: the 1 (see vJoy editing, special mouse actions, sound and modes, to know how)
+- The first tab is neutral and cannot be assigned to another mode, the others (1-8) all can. There is no order to follow, and two tabs can share the same mode. On the other hand, the order of processing is also the order of the tabs
+
+![vJoy](Doc/3b.png)
+
+Order, add, delete, copy or edit (double click or menu) your mappings easily
+Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
+- Delete, copy and move actions can process multiple mappings the same time
+  - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+
+![vJoy](Doc/3c.png)
+
 DS Button:
-- '+' Indicates combination
-- '||' Indicates combination with or condition
-  - '⊕' Indicates combination with xor condition
-- '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
-  - '--' Indicates this mapping won't be launched if this button is pressed, but continue if already launched
-- '#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated
+- First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
+- '+' Indicates combination (second column)
+- '||' Indicates combination with or condition (second column)
+  - '⊕' Indicates combination with xor condition (second column)
+- '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions) (third column)
+  - '--' Indicates this mapping won't be launched if this button is pressed, but continue if already launched (third column)
+- '#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated (all)
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
-- See a brief of what will be launched like vJoy, mouse action (different from mouse)
+- See a brief of what will be launched like vJoy, modes, mouse action (different from mouse)
 - '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
   - '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
 
@@ -198,11 +213,11 @@ Under central led, you'll find 3 checkboxes
   - can be used to time based mouse actions too,
   - and for mouse if ACTIVE_MOUSE mouse action is used (see below)
 
-At the left of first 4 destinations, you'll find special mouse actions and sound
+At the left of first 4 destinations, you'll find special mouse actions, sound and modes
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
-- SAVE_POSITION: save the mouse position
+- SAVE_POSITION: save the mouse position, each mapping save his individual 'mouse position'
 - MOVE_BACK: return to saved point
 - MOVE_TO_XY/MOVE_TO_WH: go to x,y/w,h (two left/central numbers of the grid)
 - SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH: both
@@ -216,7 +231,10 @@ At the left of first 4 destinations, you'll find special mouse actions and sound
 - MUTE_SOUND
 - VOLUME_UP, VOLUME_DOWN
   - if on trigger, variable speed following the pressure force, otherwise exponential
-* Other keystrokes that do not require adaptive pressure, can easily be added using a vJoy button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
+    - Other keystrokes that do not require adaptive pressure, can easily be added using a vJoy button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
+- MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
+- TO_MODE: Switch to mode 1-8
+- TO_LAST_MODE: Go back to last mode, memorized when MEMORIZE_MODE used
 
 The mouse group of checkboxes at the bottom, let you use mouse in conjuction with ACTIVE_MOUSE special action
 - With left stick (left column)
