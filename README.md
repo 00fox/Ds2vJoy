@@ -311,8 +311,9 @@ Look at this third picture of vJoy section,
     this is an example of how enter a fictive mode when push simultanously L1 and R1
     without using modes and the need of L1R1 special button
   Mode exit when you release both L1 and R1
-  L1 and R1 specail actions are not triggered first,
-    they will if you have release L1 first before L1 special action, the same for R1
+  L1 and R1 special actions are not triggered first,
+    they will if you have released L1 before pushed it again,
+	for L1 special action, the same for R1
   You can swap between both, as long as you don't release both buttons together
   An example of utilisation: L1 and R1 are shifted keys
     for example they add shift, control, and control shift together to other buttons
