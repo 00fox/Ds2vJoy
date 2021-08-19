@@ -1303,6 +1303,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return -1;
 		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
 		SendMessage(hWnd, WM_CREATE_MENU, 0, 0);
+		PostMessage(hWnd, WM_REDRAW_TABS, 0, 0);
 		SendMessage(hWnd, WM_DEVICE_VJOY_START, 0, lParam);
 		SendMessage(hWnd, WM_DEVICE_DS_START, 0, lParam);
 		break;
