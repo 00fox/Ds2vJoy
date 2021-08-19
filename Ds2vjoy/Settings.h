@@ -97,6 +97,7 @@ class Settings
 		Mapping_Grid_h,
 		Mapping_Grid_nw,
 		Mapping_Grid_nh,
+		Mapping_Tab,
 		Mapping_Count,
 	};
 
@@ -139,6 +140,7 @@ public:
 	RapidFires RapidFiredata;
 
 	int Profile;
+	int Mode[9];
 
 	int ActualDS = 0;				//0 Unknown
 	int DesiredDS;					//1 DS4, 2 DS5
@@ -218,6 +220,7 @@ private:
 	BOOL Open(WCHAR* file);
 	void SetProfile(int i);
 	void SetDesiredDS(int i);
+	void SetTabMode(int i, int mode);
 	void SetThreshold(int i);
 	void SetSimultaneous(int i);
 	void SetLongPress(int i);

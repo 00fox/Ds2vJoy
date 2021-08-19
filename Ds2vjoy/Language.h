@@ -188,6 +188,9 @@ struct LANGSTRS
 	WCHAR* MouseAction_MUTE_SOUND;
 	WCHAR* MouseAction_VOLUME_UP;
 	WCHAR* MouseAction_VOLUME_DOWN;
+	WCHAR* MouseAction_MEMORIZE_MODE;
+	WCHAR* MouseAction_TO_MODE;
+	WCHAR* MouseAction_TO_LAST_MODE;
 	WCHAR* Setting;
 	WCHAR* SkipController;
 	WCHAR* Status_Wait;

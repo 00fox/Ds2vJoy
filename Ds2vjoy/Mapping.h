@@ -41,6 +41,16 @@ public:
 		MUTE_SOUND,
 		VOLUME_UP,
 		VOLUME_DOWN,
+		MEMORIZE_MODE,
+		TO_MODE1,
+		TO_MODE2,
+		TO_MODE3,
+		TO_MODE4,
+		TO_MODE5,
+		TO_MODE6,
+		TO_MODE7,
+		TO_MODE8,
+		TO_LAST_MODE,
 		mouse_Count
 	};
 
@@ -81,10 +91,12 @@ public:
 	int MouseAction[4];
 	int Mouse[7];
 	int Grid[6];
+	int Tab;
 
 private:
 	dsButton* m_ds[5] = { 0 };
 	vJoyButton* m_vj[13] = { 0 };
+	int lastmode;						//Memorized mode stocked for this mapping only, when used a change to n(0-8, 0=Always) mode
 	bool legit = false;					//While pushing the good combination, method computing is eligible
 	int method = 0;						//Actual method to check, ie double short step 1, short step 2 of double short, reinitialized after all done and new legit
 	bool isFired = false;				//Computing the method is pending (short, double short etc.)
@@ -123,6 +135,7 @@ private:
 	vJoyButtonID m_vjUsed;
 };
 
+extern int mode;												//Actual mode, shared by all mappings
 static bool mouse_toggle[4] = { false };						//State of each possible 'Active mouse' toggle
 static bool m_toggle[vJoyButtonID::button_Count] = { false };	//State of each individual vJoy button toggle
 static std::vector<dsButtonID> dsDisabled;						//array of disabled dsButton to determine all nexts legit step

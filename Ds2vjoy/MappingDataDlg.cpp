@@ -551,7 +551,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			mappingData.Enable = true;
 			if (m_idx == -1)
 			{
-				SendMessage(m_hWnd, WM_ADDMAPPING, m_idx, 1);
+				SendMessage(m_hWnd, WM_ADDMAPPING, m_idx, 0);
 				Mapping m;
 				mDDlg.mappingData = m;
 				Hide();
@@ -560,13 +560,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			else
 			{
-				PostMessage(m_hWnd, WM_ADDMAPPING, m_idx, 1);
+				PostMessage(m_hWnd, WM_ADDMAPPING, m_idx, 0);
 				m_idx = -2;
 			}
 			break;
 		}
 		case IDCANCEL:
-			PostMessage(m_hWnd, WM_ADDMAPPING, 0, 0);
+			PostMessage(m_hWnd, WM_ADDMAPPING, 0, -1);
 			m_idx = -2;
 			break;
 		case IDHELP:

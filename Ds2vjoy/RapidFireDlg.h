@@ -21,8 +21,8 @@ private:
 	void save();
 	void addRapidFireDlg();
 	void editRapidFireDlg();
+	void deleteRapidFireDlg();
 	void duplicateRapidFireDlg();
-	void deleteRapidFire();
 	int insertRapidFire(int idx, RapidFire* af);
 	void BeginDrag(int idx);
 	void DragMove(int x, int y);

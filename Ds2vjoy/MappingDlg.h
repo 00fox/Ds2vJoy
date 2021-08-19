@@ -7,7 +7,7 @@ public:
 	MappingDlg();
 	~MappingDlg();
 
-	void Init(HINSTANCE hInst, HWND hWnd);
+	void Init(HINSTANCE hInst, HWND hWnd, int Tab);
 	void addMappingDlgBack();
 	void editMappingDlgBack(int idx);
 	void Show();
@@ -22,8 +22,9 @@ private:
 	void save();
 	void addMappingDlg();
 	void editMappingDlg();
+	void deleteMappingDlg();
 	void duplicateMappingDlg();
-	void deleteMapping();
+	void moveMappingDlg(int tab);
 	int insertMapping(int idx, Mapping* m);
 	void BeginDrag(int idx);
 	void DragMove(int x, int y);
@@ -35,6 +36,7 @@ private:
 	HWND m_hList;
 	HMENU m_hMenu;
 
+	int m_Tab;
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;

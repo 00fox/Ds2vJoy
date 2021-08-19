@@ -17,7 +17,7 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_LIST);
-	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_MAPPING));
+	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
 	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
@@ -135,10 +135,10 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			editKeymapDlg();
 			break;
 		case ID_MENU_MAPPING_DEL:
-			deleteKeymap();
+			deleteKeymapDlg();
 			break;
 		case ID_MENU_MAPPING_COPY:
-			duplicateKeymap();
+			duplicateKeymapDlg();
 			break;
 		}
 		break;
@@ -277,7 +277,31 @@ void KeymapDlg::editKeymapDlgBack(int idx)
 	m_active = true;
 }
 
-void KeymapDlg::duplicateKeymap()
+void KeymapDlg::deleteKeymapDlg()
+{
+	m_active = false;
+	kDDlg.Hide();
+	RECT rect;
+	GetWindowRect(m_hWnd, &rect);
+	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
+	{
+		int idx;
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			delete (Keymap*)item.lParam;
+			ListView_DeleteItem(m_hList, idx);
+		}
+		save();
+	}
+	m_active = true;
+}
+
+void KeymapDlg::duplicateKeymapDlg()
 {
 	kDDlg.Hide();
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
@@ -299,30 +323,6 @@ void KeymapDlg::duplicateKeymap()
 		kDDlg.keymapData = *data;
 		data = new Keymap(kDDlg.keymapData);
 		insertKeymap(idx + 1, data);
-		save();
-	}
-	m_active = true;
-}
-
-void KeymapDlg::deleteKeymap()
-{
-	m_active = false;
-	kDDlg.Hide();
-	RECT rect;
-	GetWindowRect(m_hWnd, &rect);
-	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
-	{
-		int idx;
-		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
-		{
-			LV_ITEM item = { 0 };
-			item.mask = LVIF_PARAM;
-			item.iItem = idx;
-			item.iSubItem = 0;
-			ListView_GetItem(m_hList, &item);
-			delete (Keymap*)item.lParam;
-			ListView_DeleteItem(m_hList, idx);
-		}
 		save();
 	}
 	m_active = true;

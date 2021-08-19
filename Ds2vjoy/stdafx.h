@@ -20,6 +20,7 @@
 //#include <locale>
 //#include <chrono>						//HTTPRequest timeout
 //#include <psapi.h>					//EnumDeviceDrivers & GetDeviceDriverBaseName
+#include <sstream>						//Settings stringstream
 
 #include <filesystem>					//filesystem
 using namespace std::filesystem;

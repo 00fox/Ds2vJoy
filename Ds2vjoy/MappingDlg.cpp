@@ -12,8 +12,9 @@ MappingDlg::~MappingDlg()
 {
 }
 
-void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
+void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, int Tab)
 {
+	m_Tab = Tab;
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING), hWnd, (DLGPROC)MappingDlg::Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_MAPPING_LIST);
@@ -144,10 +145,37 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			editMappingDlg();
 			break;
 		case ID_MENU_MAPPING_DEL:
-			deleteMapping();
+			deleteMappingDlg();
 			break;
 		case ID_MENU_MAPPING_COPY:
 			duplicateMappingDlg();
+			break;
+		case ID_MENU_MOVE_TO_0:
+			moveMappingDlg(0);
+			break;
+		case ID_MENU_MOVE_TO_1:
+			moveMappingDlg(1);
+			break;
+		case ID_MENU_MOVE_TO_2:
+			moveMappingDlg(2);
+			break;
+		case ID_MENU_MOVE_TO_3:
+			moveMappingDlg(3);
+			break;
+		case ID_MENU_MOVE_TO_4:
+			moveMappingDlg(4);
+			break;
+		case ID_MENU_MOVE_TO_5:
+			moveMappingDlg(5);
+			break;
+		case ID_MENU_MOVE_TO_6:
+			moveMappingDlg(6);
+			break;
+		case ID_MENU_MOVE_TO_7:
+			moveMappingDlg(7);
+			break;
+		case ID_MENU_MOVE_TO_8:
+			moveMappingDlg(8);
 			break;
 		}
 		break;
@@ -174,10 +202,15 @@ void MappingDlg::load()
 	ListView_DeleteAllItems(m_hList);
 //	SetFocus(m_hList);
 	size_t length = tape.Mappingdata.size();
+	int j = 0;
 	for (int i = 0; i < length; i++)
 	{
 		Mapping* m = new Mapping(tape.Mappingdata[i]);
-		insertMapping(i, m);
+		if (m->Tab == m_Tab)
+		{
+			insertMapping(j, m);
+			j++;
+		}
 	}
 	m_active = true;
 }
@@ -185,7 +218,12 @@ void MappingDlg::load()
 void MappingDlg::save()
 {
 	m_active = false;
+
 	Mappings newmap;
+	size_t length = tape.Mappingdata.size();
+	for (int i = 0; i < length; i++)
+		if (tape.Mappingdata[i].Tab != m_Tab)
+			newmap.push_back((Mapping)tape.Mappingdata[i]);
 
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 	{
@@ -203,7 +241,14 @@ void MappingDlg::save()
 	}
 	ListView_DeleteAllItems(m_hList);
 
-	tape.Mappingdata.swap(newmap);
+	Mappings newmap2;
+	length = newmap.size();
+	for (int j = 0; j < 9; j++)
+		for (int i = 0; i < length; i++)
+			if (newmap[i].Tab == j)
+				newmap2.push_back((Mapping)newmap[i]);
+
+	tape.Mappingdata.swap(newmap2);
 	tape.Save(200);
 	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
 
@@ -229,6 +274,7 @@ void MappingDlg::addMappingDlgBack()
 	if (idx == -1)
 		idx = ListView_GetItemCount(m_hList);
 	Mapping* data = new Mapping(mDDlg.mappingData);
+	data->Tab = m_Tab;
 	insertMapping(idx, data);
 	save();
 	m_active = true;
@@ -284,34 +330,7 @@ void MappingDlg::editMappingDlgBack(int idx)
 	m_active = true;
 }
 
-void MappingDlg::duplicateMappingDlg()
-{
-	mDDlg.Hide();
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-	if (idx == -1)
-	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			return;
-	}
-	m_active = false;
-	LV_ITEM item = { 0 };
-	item.mask = LVIF_PARAM;
-	item.iItem = idx;
-	item.iSubItem = 0;
-	ListView_GetItem(m_hList, &item);
-	if (item.lParam != NULL)
-	{
-		Mapping* data = (Mapping*)item.lParam;
-		mDDlg.mappingData = *data;
-		data = new Mapping(mDDlg.mappingData);
-		insertMapping(idx + 1, data);
-		save();
-	}
-	m_active = true;
-}
-
-void MappingDlg::deleteMapping()
+void MappingDlg::deleteMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
@@ -332,6 +351,91 @@ void MappingDlg::deleteMapping()
 		}
 		save();
 	}
+	m_active = true;
+}
+
+void MappingDlg::duplicateMappingDlg()
+{
+	mDDlg.Hide();
+	m_active = false;
+	int nselected = ListView_GetSelectedCount(m_hList);
+	if (nselected == 1)
+	{
+		int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
+		if (idx == -1)
+		{
+			idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+			if (idx == -1)
+				return;
+		}
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = idx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			Mapping* data = (Mapping*)item.lParam;
+			mDDlg.mappingData = *data;
+			data = new Mapping(mDDlg.mappingData);
+			insertMapping(idx + 1, data);
+			save();
+		}
+	}
+	else if (nselected >= 1)
+	{
+		int idx;
+		int lastitemindex = ListView_GetItemCount(m_hList);
+		ListView_GetNextItem(m_hList, 1, LVNI_ALL);
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			if (item.lParam != NULL)
+			{
+				Mapping* data1 = (Mapping*)item.lParam;
+				Mapping* data2 = (Mapping*)item.lParam;
+				mDDlg.mappingData = *data1;
+				data1 = new Mapping(mDDlg.mappingData);
+				mDDlg.mappingData = *data2;
+				data2 = new Mapping(mDDlg.mappingData);
+				ListView_DeleteItem(m_hList, idx);
+				insertMapping(idx, data1);
+				insertMapping(lastitemindex + 1, data2);
+				lastitemindex++;
+			}
+		}
+		save();
+	}
+	m_active = true;
+}
+
+void MappingDlg::moveMappingDlg(int tab)
+{
+	if (tab == m_Tab)
+		return;
+	mDDlg.Hide();
+	m_active = false;
+	int idx;
+	while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+	{
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = idx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			Mapping* data = (Mapping*)item.lParam;
+			data->Tab = tab;
+			ListView_DeleteItem(m_hList, idx);
+			insertMapping(idx, data);
+		}
+	}
+	save();
 	m_active = true;
 }
 

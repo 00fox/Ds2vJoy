@@ -153,6 +153,9 @@ void LoadLanguage()
 	I18N.MouseAction_MUTE_SOUND = GetText(IDS_MOUSE_MUTE_SOUND, L"Mute/Unmute");
 	I18N.MouseAction_VOLUME_UP = GetText(IDS_MOUSE_VOLUME_UP, L"Volume up");
 	I18N.MouseAction_VOLUME_DOWN = GetText(IDS_MOUSE_VOLUME_DOWN, L"Volume down");
+	I18N.MouseAction_MEMORIZE_MODE = GetText(IDS_MOUSE_MEMORIZE_MODE, L"Memorize mode");
+	I18N.MouseAction_TO_MODE = GetText(IDS_MOUSE_TO_MODE, L"To Mode: ");
+	I18N.MouseAction_TO_LAST_MODE = GetText(IDS_MOUSE_TO_LAST_MODE, L"To Last Mode");
 	I18N.Setting = GetText(IDS_SETTING, L"Setting");
 	I18N.SkipController = GetText(IDS_SKIPCONTROLLER, L"Skip %s Serial %s");
 	I18N.Status_Wait = GetText(IDS_STATUS_WAIT, L"waiting");
@@ -368,6 +371,9 @@ void FreeLanguage()
 	delete[] I18N.MouseAction_MUTE_SOUND;
 	delete[] I18N.MouseAction_VOLUME_UP;
 	delete[] I18N.MouseAction_VOLUME_DOWN;
+	delete[] I18N.MouseAction_MEMORIZE_MODE;
+	delete[] I18N.MouseAction_TO_MODE;
+	delete[] I18N.MouseAction_TO_LAST_MODE;
 	delete[] I18N.Setting;
 	delete[] I18N.SkipController;
 	delete[] I18N.Status_Wait;

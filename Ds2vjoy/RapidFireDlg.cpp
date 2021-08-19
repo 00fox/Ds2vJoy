@@ -16,7 +16,7 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_RAPIDFIRE_LIST);
-	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_MAPPING));
+	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
 	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
@@ -134,7 +134,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			editRapidFireDlg();
 			break;
 		case ID_MENU_MAPPING_DEL:
-			deleteRapidFire();
+			deleteRapidFireDlg();
 			break;
 		case ID_MENU_MAPPING_COPY:
 			duplicateRapidFireDlg();
@@ -274,6 +274,30 @@ void RapidFireDlg::editRapidFireDlgBack(int idx)
 	m_active = true;
 }
 
+void RapidFireDlg::deleteRapidFireDlg()
+{
+	m_active = false;
+	rDDlg.Hide();
+	RECT rect;
+	GetWindowRect(m_hWnd, &rect);
+	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
+	{
+		int idx;
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			delete (RapidFire*)item.lParam;
+			ListView_DeleteItem(m_hList, idx);
+		}
+		save();
+	}
+	m_active = true;
+}
+
 void RapidFireDlg::duplicateRapidFireDlg()
 {
 	rDDlg.Hide();
@@ -296,30 +320,6 @@ void RapidFireDlg::duplicateRapidFireDlg()
 		rDDlg.autoFireData = *data;
 		data = new RapidFire(rDDlg.autoFireData);
 		insertRapidFire(idx + 1, data);
-		save();
-	}
-	m_active = true;
-}
-
-void RapidFireDlg::deleteRapidFire()
-{
-	m_active = false;
-	rDDlg.Hide();
-	RECT rect;
-	GetWindowRect(m_hWnd, &rect);
-	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
-	{
-		int idx;
-		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
-		{
-			LV_ITEM item = { 0 };
-			item.mask = LVIF_PARAM;
-			item.iItem = idx;
-			item.iSubItem = 0;
-			ListView_GetItem(m_hList, &item);
-			delete (RapidFire*)item.lParam;
-			ListView_DeleteItem(m_hList, idx);
-		}
 		save();
 	}
 	m_active = true;

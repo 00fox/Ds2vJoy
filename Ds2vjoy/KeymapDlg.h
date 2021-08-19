@@ -22,8 +22,8 @@ private:
 	void save();
 	void addKeymapDlg();
 	void editKeymapDlg();
-	void duplicateKeymap();
-	void deleteKeymap();
+	void deleteKeymapDlg();
+	void duplicateKeymapDlg();
 	int insertKeymap(int idx, Keymap* km);
 	void BeginDrag(int idx);
 	void DragMove(int x, int y);

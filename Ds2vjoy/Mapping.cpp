@@ -24,6 +24,7 @@ Mapping::Mapping()
 	, MouseAction()
 	, Mouse()
 	, Grid()
+	, Tab(0)
 {
 	for (int i = 0; i < 5; i++) { dsID[i] = dsButtonID::none; }
 	for (int i = 0; i < 13; i++) { vjID[i] = vJoyButtonID::none; }
@@ -304,6 +305,8 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 	if (!Enable)
 		return FALSE;
 
+	lastmode = 1;
+	mode = 1;
 	m_ds[0] = dsID[0] ? ds->GetButton(dsID[0]) : 0;
 	m_ds[1] = dsID[1] ? ds->GetButton(dsID[1]) : 0;
 	m_ds[2] = dsID[2] ? ds->GetButton(dsID[2]) : 0;
@@ -454,7 +457,9 @@ void Mapping::Run()
 				(!Target[i] && (m_ds[i] == 0 || (m_ds[i]->isPushed() && !(std::find(dsDisabled.begin(), dsDisabled.end(), dsID[i]) != dsDisabled.end()))));
 		}
 
-	if (!OrXorNot[0] && !OrXorNot[1])
+	if (tape.Mode[Tab] != 0 && tape.Mode[Tab] != mode)
+		legit = false;
+	else if (!OrXorNot[0] && !OrXorNot[1])
 	{
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
@@ -809,6 +814,16 @@ void Mapping::Run()
 					case SAVE_AND_MOVE_TO_WH:
 						std::thread(MouseActions, MouseAction[i], 0, Grid[2], Grid[3]).detach();
 						break;
+					case MEMORIZE_MODE: { lastmode = mode; break;}
+					case TO_MODE1: { mode = 1; break;}
+					case TO_MODE2: { mode = 2; break;}
+					case TO_MODE3: { mode = 3; break;}
+					case TO_MODE4: { mode = 4; break;}
+					case TO_MODE5: { mode = 5; break;}
+					case TO_MODE6: { mode = 6; break;}
+					case TO_MODE7: { mode = 7; break;}
+					case TO_MODE8: { mode = 8; break;}
+					case TO_LAST_MODE: { mode = lastmode; break;}
 					default:
 						std::thread(MouseActions, MouseAction[i], 0, 0, 0).detach();
 						break;
@@ -937,6 +952,7 @@ void Mapping::Run()
 
 WCHAR* Mapping::String(MouseActionID id)
 {
+	WCHAR buff[100];
 	switch (id)
 	{
 	case none: return L"";
@@ -971,6 +987,16 @@ WCHAR* Mapping::String(MouseActionID id)
 	case MUTE_SOUND: return I18N.MouseAction_MUTE_SOUND;
 	case VOLUME_UP: return I18N.MouseAction_VOLUME_UP;
 	case VOLUME_DOWN: return I18N.MouseAction_VOLUME_DOWN;
+	case MEMORIZE_MODE: return I18N.MouseAction_MEMORIZE_MODE;
+	case TO_MODE1: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(1)).c_str());
+	case TO_MODE2: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(2)).c_str());
+	case TO_MODE3: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(3)).c_str());
+	case TO_MODE4: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(4)).c_str());
+	case TO_MODE5: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(5)).c_str());
+	case TO_MODE6: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(6)).c_str());
+	case TO_MODE7: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(7)).c_str());
+	case TO_MODE8: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(8)).c_str());
+	case TO_LAST_MODE: return I18N.MouseAction_TO_LAST_MODE;
 	default: return L"???";
 	}
 }
