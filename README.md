@@ -1,4 +1,4 @@
-﻿# # Ds2vJoy
+﻿# Ds2vJoy
 DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 
 Fork from @090 DS4vJoy and DS5vJoy projects
