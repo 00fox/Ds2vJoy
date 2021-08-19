@@ -4,7 +4,7 @@ DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
 Fork from @090 DS4vJoy and DS5vJoy projects
 - Bluetooth compatible
 - Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
-- Combinations, modes(known as shifted), macros and time based operations allowed
+- Combinations, modes (known as shifted), macros and time based operations allowed
 - Control complex mouse operations
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
 
