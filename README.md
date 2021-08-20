@@ -21,7 +21,7 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 
 - It is okay to connect DS4 after starting the game. VJoy and ViGEm are always visible in the game
 - When you change a setting, Ds2vJoy.ini is automatically and instantly saved
-- Ds2vJoy is portable, you can use multiple copy in different  directories with different parameters
+- Ds2vJoy is portable, you can use multiple copy in different directories with different parameters
 - Install for ViGEm, HidGuardian and HidCerberus are included, they will use subdirectories of C:\Program Files\Ds2vJoy removed as soon as you chose to uninstall them from Ds2vJoy menu tabs, the same for C:\Program Files\Ds2vJoy itself when no required anymore
 - You can see which button is pressed by launching Monitor vJoy but when under vJoy and ViGEm tabs, you can see them directly in status bar to easily test quick configurations
 
@@ -59,7 +59,7 @@ Satus is separated in 4 colums which are:
 Each line correspond to a different mapping
 
 Mappings are treated in order,
-- Then you can decide for complex actions or shifts with or without the need of modes(shifted)
+- Then you can decide for complex actions or shifts with or without the need of modes (shifted)
 - For example you can use L1, and even L1R1 or more complex situations
 - to determine which action square button will launch
 
@@ -69,6 +69,13 @@ Each tab corresponds to a drawer, in which you can organize the different mappin
 - But you can assign a mode for each of these tabs, which allows you to say that the mappings they contain will only be active in this mode
 - The tabs left in the 'Always' position will remain active even if you are in another mode than the starting one: the 1 (see vJoy editing, special mouse actions, sound and modes, to know how)
 - The first tab is neutral and cannot be assigned to another mode, the others (1-8) all can. There is no order to follow, and two tabs can share the same mode. On the other hand, the order of processing is also the order of the tabs
+
+There is a dual view mode, where you can clone a tab
+- For example to compare, move
+- Or simply fill ViGEm with the values of vJoy in front of you
+- The second window will stay opened in extended view (see Efficiency) for this purpose. You still can close it manually
+- Otherwise, automatically hidden, outside extended mode, if you change tabs
+- You get it back if you change again for vJoy Tab, until you manually close it
 
 ![vJoy](Doc/3b.png)
 
@@ -308,19 +315,19 @@ An example of advanced script for targeting:
 Look at this third picture of vJoy section,
 
 ```
-  This is an example of how enter a fictive mode when push simultanously L1 and R1
+  This is an example of how enter a fictive mode when push simultaneously L1 and R1
     without using modes and the need of L1R1 special button
   Mode exit when you release both L1 and R1
   L1 and R1 special actions are not triggered first,
     they will if you have released L1 before pushed it again,
 	for L1 special action, the same for R1
   You can swap between both, as long as you don't release both buttons together
-  An example of utilisation: L1 and R1 are shifted keys
+  An example of utilization: L1 and R1 are shifted keys
     for example they add shift, control, and control shift together to other buttons
 	or simply act as L1 + Cross, L1 + L2 + Triangle etc.
-    when pushed together, you usualy never release one and pushed it again, without releasing the other
+    when pushed together, you usually never release one and pushed it again, without releasing the other
     also, you can add the possibility to add two actions, to L1 and R1,
-	For example, taget previous/next ennemy
+	For example, target previous/next enemy
   By using mode there is more simple methods
 ```
 
