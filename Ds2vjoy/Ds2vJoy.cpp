@@ -35,15 +35,8 @@ ViGEm vg;
 
 LogDlg _log;
 static SettingDlg sDlg;
-static MappingDlg mDlg0;
-static MappingDlg mDlg1;
+static MappingDlg mDlg;
 static MappingDlg mDlg2;
-static MappingDlg mDlg3;
-static MappingDlg mDlg4;
-static MappingDlg mDlg5;
-static MappingDlg mDlg6;
-static MappingDlg mDlg7;
-static MappingDlg mDlg8;
 static RapidFireDlg rDlg;
 static KeymapDlg kDlg;
 static ViGEmDlg vDlg;
@@ -666,6 +659,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static bool load_dll;
 	static bool topmost;
 	static bool extended;
+	static bool cloned;
 	static int m_flag_drag;
 	static int x;
 	static int y;
@@ -823,6 +817,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_MENU_TO_MODE_8:
 				tape.Mode[tabrightclick] = 8; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
 				break;
+			case ID_MENU_SEE_VIEW2:
+				mDlg2.setCloned(true);
+				mDlg2.SetTab(tabrightclick);
+				mDlg2.Show();
+				break;
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
@@ -863,15 +862,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (load_dll)
 		{
 			sDlg.Init(hInst, hWnd);
-			mDlg0.Init(hInst, hWnd, 0);
-			mDlg1.Init(hInst, hWnd, 1);
-			mDlg2.Init(hInst, hWnd, 2);
-			mDlg3.Init(hInst, hWnd, 3);
-			mDlg4.Init(hInst, hWnd, 4);
-			mDlg5.Init(hInst, hWnd, 5);
-			mDlg6.Init(hInst, hWnd, 6);
-			mDlg7.Init(hInst, hWnd, 7);
-			mDlg8.Init(hInst, hWnd, 8);
+			mDlg.Init(hInst, hWnd);
+			mDlg2.Init2(hInst, hWnd);
 			rDlg.Init(hInst, hWnd);
 			kDlg.Init(hInst, hWnd);
 			vDlg.Init(hInst, hWnd);
@@ -898,7 +890,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hTab2, TCM_SETITEMSIZE, 0, MAKELPARAM(43, 17));	//Remove if TCS_RIGHTJUSTIFY
 			SendMessage(hTab2, TCM_SETPADDING, 0, MAKELPARAM(0, 2));
 
+			TabCtrl_SetCurSel(hTab2, 0);
 			ShowWindow(hTab2, SW_HIDE);
+			mDlg.Hide();
+			mDlg2.Hide();
 		}
 
 		{
@@ -930,6 +925,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hTab, WM_SETFONT, WPARAM(hFont), TRUE);
 			SendMessage(hTab, TCM_SETITEMSIZE, 0, MAKELPARAM(55, 17));	//Remove if TCS_RIGHTJUSTIFY
 			SendMessage(hTab, TCM_SETPADDING, 0, MAKELPARAM(0, 2));
+
+			TabCtrl_SetCurSel(hTab, 0);
 		}
 
 		if (!load_dll)
@@ -1245,19 +1242,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		vjoy.Close();
 		{
 			TabCtrl_SetCurSel(hTab, 0);
+			TabCtrl_SetCurSel(hTab2, 0);
+			mDlg2.SetTab(0);
+			mDlg2.setCloned(false);
 			mDDlg.Hide();
 			kDDlg.Hide();
 			rDDlg.Hide();
 			sDlg.Hide();
-			mDlg0.Hide();
-			mDlg1.Hide();
+			mDlg.Hide();
 			mDlg2.Hide();
-			mDlg3.Hide();
-			mDlg4.Hide();
-			mDlg5.Hide();
-			mDlg6.Hide();
-			mDlg7.Hide();
-			mDlg8.Hide();
 			rDlg.Hide();
 			kDlg.Hide();
 			vDlg.Hide();
@@ -1333,47 +1326,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TabCtrl_InsertItem(hTab2, i, &tc_item);
 			TabCtrl_SetCurSel(hTab2, wParam);
 			if (TabCtrl_GetCurSel(hTab) == 2)
-			{
-				mDlg0.Hide();
-				mDlg1.Hide();
-				mDlg2.Hide();
-				mDlg3.Hide();
-				mDlg4.Hide();
-				mDlg5.Hide();
-				mDlg6.Hide();
-				mDlg7.Hide();
-				mDlg8.Hide();
-				switch (wParam)
-				{
-				case 0:
-					mDlg0.Show();
-					break;
-				case 1:
-					mDlg1.Show();
-					break;
-				case 2:
-					mDlg2.Show();
-					break;
-				case 3:
-					mDlg3.Show();
-					break;
-				case 4:
-					mDlg4.Show();
-					break;
-				case 5:
-					mDlg5.Show();
-					break;
-				case 6:
-					mDlg6.Show();
-					break;
-				case 7:
-					mDlg7.Show();
-					break;
-				case 8:
-					mDlg8.Show();
-					break;
-				}
-			}
+				mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
+				mDlg.Show();
 		}
 		ShowWindow(hTab2, SW_HIDE);
 		ShowWindow(hTab2, SW_SHOW);
@@ -1399,101 +1353,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_ADDMAPPING:
 		if ((int)wParam > -1)
 			mDDlg.Hide();
-		switch (TabCtrl_GetCurSel(hTab2))
-		{
-		case 0:
-			mDlg0.Show();
-			break;
-		case 1:
-			mDlg1.Show();
-			break;
-		case 2:
-			mDlg2.Show();
-			break;
-		case 3:
-			mDlg3.Show();
-			break;
-		case 4:
-			mDlg4.Show();
-			break;
-		case 5:
-			mDlg5.Show();
-			break;
-		case 6:
-			mDlg6.Show();
-			break;
-		case 7:
-			mDlg7.Show();
-			break;
-		case 8:
-			mDlg8.Show();
-			break;
-		}
+		mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
 		PostMessage(hWnd, WM_SIZE, 0, 0);
 		if ((int)lParam != -1)
 		{
 			if ((int)wParam < 0)
-				switch (TabCtrl_GetCurSel(hTab2))
-				{
-				case 0:
-					mDlg0.addMappingDlgBack();
-					break;
-				case 1:
-					mDlg1.addMappingDlgBack();
-					break;
-				case 2:
-					mDlg2.addMappingDlgBack();
-					break;
-				case 3:
-					mDlg3.addMappingDlgBack();
-					break;
-				case 4:
-					mDlg4.addMappingDlgBack();
-					break;
-				case 5:
-					mDlg5.addMappingDlgBack();
-					break;
-				case 6:
-					mDlg6.addMappingDlgBack();
-					break;
-				case 7:
-					mDlg7.addMappingDlgBack();
-					break;
-				case 8:
-					mDlg8.addMappingDlgBack();
-					break;
-				}
+				mDlg.addMappingDlgBack();
 			else
-				switch (TabCtrl_GetCurSel(hTab2))
-				{
-				case 0:
-					mDlg0.editMappingDlgBack((int)wParam);
-					break;
-				case 1:
-					mDlg1.editMappingDlgBack((int)wParam);
-					break;
-				case 2:
-					mDlg2.editMappingDlgBack((int)wParam);
-					break;
-				case 3:
-					mDlg3.editMappingDlgBack((int)wParam);
-					break;
-				case 4:
-					mDlg4.editMappingDlgBack((int)wParam);
-					break;
-				case 5:
-					mDlg5.editMappingDlgBack((int)wParam);
-					break;
-				case 6:
-					mDlg6.editMappingDlgBack((int)wParam);
-					break;
-				case 7:
-					mDlg7.editMappingDlgBack((int)wParam);
-					break;
-				case 8:
-					mDlg8.editMappingDlgBack((int)wParam);
-					break;
-				}
+				mDlg.editMappingDlgBack((int)wParam);
+		}
+		mDlg.Show();
+		if (mDlg2.isCloned())
+		{
+			mDlg2.SetTab(tabrightclick);
+			mDlg2.Show();
 		}
 		break;
 	case WM_CHANGE_PAD:
@@ -1601,6 +1474,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else if (x > 437 && x < 485 && y >= 0 && y <= 30)
 			break;
 		mDDlg.movable = false;
+		if (TabCtrl_GetCurSel(hTab) != 2)
+			mDlg2.Hide();
 		SetFocus(hWnd);
 		if (!extended)
 		{
@@ -1645,7 +1520,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				extended = true;
 			}
 			if (mDDlg.docked == 2) { mDDlg.docked_last = mDDlg.docked; mDDlg.docked = 1; }
-			PostMessage(hWnd, WM_SIZE, 0, -2);
+			SendMessage(hWnd, WM_SIZE, 0, -2);
+			if (mDlg2.isCloned())
+			{
+				mDlg2.SetTab(tabrightclick);
+				mDlg2.Show();
+			}
 			break;
 		}
 		else
@@ -1653,8 +1533,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			extended = false;
 			if (!topmost)
 				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+			if (mDlg2.isCloned() && TabCtrl_GetCurSel(hTab) == 2)
+			{
+				mDlg2.SetTab(tabrightclick);
+				mDlg2.Show();
+			}
+			break;
 		}
-		break;
 	}
 	case WM_EXITSIZEMOVE:
 		PostMessage(hWnd, WM_SIZE, -1, -1);
@@ -1670,6 +1555,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			if (extended)
 			{
+				mDlg2.MoveWindow(win.right - 7, rect.top + 31, 474, rect.bottom - 39, TRUE);
 				switch (TabCtrl_GetCurSel(hTab))
 				{
 				case 0:
@@ -1690,13 +1576,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					switch (mDDlg.docked)
 					{
 					case 1:
-					case 2: mDDlg.MoveWindow(win.right - 6, win.top + 62, 474, 287, TRUE);	break;				//docked center >, right
-					case 3: mDDlg.MoveWindow(win.left + 6 - 474, win.top + 62, 474, 287, TRUE); break;			//docked left
+					case 2: mDDlg.MoveWindow(win.right - 6, win.top + 63, 474, 287, TRUE);	break;				//docked center >, right
+					case 3: mDDlg.MoveWindow(win.left + 6 - 474, win.top + 63, 474, 287, TRUE); break;			//docked left
 					}
 				}
 			}
 			else
 			{
+				mDlg2.MoveWindow(win.right - 7, win.top + 31, 474, 288, TRUE);
 				if (wParam != -1)
 					SetWindowPos(hWnd, HWND_NOTOPMOST, win.left, win.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
 				if (lParam < -1)
@@ -1705,9 +1592,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					int heightmp = (lParam == -3) ? mDDlg.m_y : 31;
 					switch (mDDlg.docked)
 					{
-					case 1: mDDlg.MoveWindow(win.right - 6, win.top + heightmp, 474, 287, TRUE); break;			//docked right
-					case 2: mDDlg.MoveWindow(win.left + 9, win.top + 31, 474, 287, TRUE); break;				//docked center
-					case 3: mDDlg.MoveWindow(win.left + 6 - 474, win.top + heightmp, 474, 287, TRUE); break;	//docked left
+					case 1: mDDlg.MoveWindow(win.right - 7, win.top + heightmp, 474, 287, TRUE); break;		//docked right
+					case 2: mDDlg.MoveWindow(win.left + 9, win.top + 31, 474, 287, TRUE); break;			//docked center
+					case 3: mDDlg.MoveWindow(win.left + 6 - 474, win.top + heightmp, 474, 287, TRUE); break;//docked left
 					}
 				}
 			}
@@ -1721,6 +1608,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MoveWindow(hTab, 0, 0, rect.right, rect.bottom, FALSE);
 		MoveWindow(hTab2, 3, 19, rect.right + 2, rect.bottom - 19, FALSE);
 		MoveWindow(hStatus, 0, rect.bottom -24, rect.right, rect.bottom, FALSE);
+
 		rect.left += 3;
 		rect.top += 21;
 		rect.right -= 6;
@@ -1728,15 +1616,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		_log.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		sDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
-		mDlg0.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg1.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg2.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg3.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg4.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg5.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg6.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg7.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
-		mDlg8.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
+		mDlg.MoveWindow(rect.left, rect.top + 14, rect.right, rect.bottom - 14, FALSE);
 		rDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		kDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		vDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
@@ -1751,6 +1631,87 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_NOTIFY:
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
+		case ID_TABMENU:
+			switch (((NMHDR*)lParam)->code)
+			{
+			case TCN_SELCHANGING:
+				mDDlg.m_idx = -2;
+//				kDDlg.m_idx = -2;
+//				rDDlg.m_idx = -2;
+				mDDlg.Hide();
+				rDDlg.Hide();
+				kDDlg.Hide();
+				switch (TabCtrl_GetCurSel(hTab))
+				{
+				case 0:
+					_log.Hide();
+					break;
+				case 1:
+					sDlg.Hide();
+					break;
+				case 2:
+					ShowWindow(hTab2, SW_HIDE);
+					mDlg.Hide();
+					if (!extended)
+						mDlg2.Hide();
+					break;
+				case 3:
+					rDlg.Hide();
+					break;
+				case 4:
+					kDlg.Hide();
+					break;
+				case 5:
+					vDlg.Hide();
+					break;
+				case 6:
+					gDlg.Hide();
+					break;
+				case 7:
+					iDlg.Hide();
+					break;
+				}
+				break;
+			case TCN_SELCHANGE:
+				SendMessage(hWnd, WM_EXITSIZEMOVE, 0, 0);
+				switch (TabCtrl_GetCurSel(hTab))
+				{
+				case 0:
+					_log.Show();
+					break;
+				case 1:
+					sDlg.Show();
+					break;
+				case 2:
+					mDlg.Show();
+					ShowWindow(hTab2, SW_SHOW);
+					if (mDlg2.isCloned())
+					{
+						mDlg2.SetTab(tabrightclick);
+						mDlg2.Show();
+					}
+					break;
+				case 3:
+					rDlg.Show();
+					break;
+				case 4:
+					kDlg.Show();
+					break;
+				case 5:
+					vDlg.Show();
+					break;
+				case 6:
+					gDlg.Show();
+					break;
+				case 7:
+					iDlg.Show();
+					break;
+				}
+				break;
+			default:
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			break;
 		case ID_TABVJOY:
 			switch (((LPNMLISTVIEW)lParam)->hdr.code)
 			{
@@ -1782,121 +1743,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					TrackPopupMenu((HMENU)GetSubMenu(hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, hWnd, NULL);
 				break;
 			}
-		}
-		switch (((NMHDR *)lParam)->code)
-		{
-		case TCN_SELCHANGING:
-			mDDlg.m_idx = -2;
-//			kDDlg.m_idx = -2;
-//			rDDlg.m_idx = -2;
-			mDDlg.Hide();
-			rDDlg.Hide();
-			kDDlg.Hide();
-			switch (TabCtrl_GetCurSel(hTab))
+			switch (((NMHDR*)lParam)->code)
 			{
-			case 0:
-				_log.Hide();
-				break;
-			case 1:
-				sDlg.Hide();
-				break;
-			case 2:
-				mDlg0.Hide();
-				mDlg1.Hide();
-				mDlg2.Hide();
-				mDlg3.Hide();
-				mDlg4.Hide();
-				mDlg5.Hide();
-				mDlg6.Hide();
-				mDlg7.Hide();
-				mDlg8.Hide();
-				break;
-			case 3:
-				rDlg.Hide();
-				break;
-			case 4:
-				kDlg.Hide();
-				break;
-			case 5:
-				vDlg.Hide();
-				break;
-			case 6:
-				gDlg.Hide();
-				break;
-			case 7:
-				iDlg.Hide();
+			case TCN_SELCHANGE:
+				mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
+				mDlg.Show();
 				break;
 			}
-			break;
-		case TCN_SELCHANGE:
-			SendMessage(hWnd, WM_EXITSIZEMOVE, 0, 0);
-			switch (TabCtrl_GetCurSel(hTab))
-			{
-			case 0:
-				ShowWindow(hTab2, SW_HIDE);
-				_log.Show();
-				break;
-			case 1:
-				ShowWindow(hTab2, SW_HIDE);
-				sDlg.Show();
-				break;
-			case 2:
-				ShowWindow(hTab2, SW_SHOW);
-				switch (TabCtrl_GetCurSel(hTab2))
-				{
-				case 0:
-					mDlg0.Show();
-					break;
-				case 1:
-					mDlg1.Show();
-					break;
-				case 2:
-					mDlg2.Show();
-					break;
-				case 3:
-					mDlg3.Show();
-					break;
-				case 4:
-					mDlg4.Show();
-					break;
-				case 5:
-					mDlg5.Show();
-					break;
-				case 6:
-					mDlg6.Show();
-					break;
-				case 7:
-					mDlg7.Show();
-					break;
-				case 8:
-					mDlg8.Show();
-					break;
-				}
-				break;
-			case 3:
-				ShowWindow(hTab2, SW_HIDE);
-				rDlg.Show();
-				break;
-			case 4:
-				ShowWindow(hTab2, SW_HIDE);
-				kDlg.Show();
-				break;
-			case 5:
-				ShowWindow(hTab2, SW_HIDE);
-				vDlg.Show();
-				break;
-			case 6:
-				ShowWindow(hTab2, SW_HIDE);
-				gDlg.Show();
-				break;
-			case 7:
-				ShowWindow(hTab2, SW_HIDE);
-				iDlg.Show();
-				break;
-			}
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
 	case WM_TASKTRAY:
@@ -1946,6 +1799,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case SC_MINIMIZE:
 			{ ::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); topmost = false; }
 			mDDlg.Hide();
+			mDlg2.Hide();
 			ShowWindow(hWnd, SW_HIDE);
 			return FALSE;
 		case SC_RESTORE:

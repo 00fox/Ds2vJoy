@@ -15,8 +15,8 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	docked = 1;
 	docked_last = 1;
 	m_idx = -2;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING_ADD), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hWnd = hWnd;
+	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING_ADD), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	LONG lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
 //	lStyle |= WS_THICKFRAME;
 	lStyle = lStyle & ~WS_CAPTION;

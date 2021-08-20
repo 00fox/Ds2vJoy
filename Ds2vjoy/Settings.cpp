@@ -112,7 +112,7 @@ void Settings::Load()
 	}
 
 	{
-		const int n = sizeof(WCHAR) * 32 * 1024 *2;
+		const int n = sizeof(WCHAR) * 128 * 1024 *2;
 		WCHAR* buf = (WCHAR*)malloc(n);
 		if (buf == 0)
 			return;
@@ -130,7 +130,7 @@ void Settings::Load()
 					break;
 				*value++ = 0;
 				int j = _wtoi(key);
-				if (j <= 0 || j >= 128)
+				if (j < 1 || j > 512)
 				{
 					key = head;
 					continue;
@@ -532,7 +532,7 @@ void Settings::Load()
 					break;
 				*value++ = 0;
 				int j = _wtoi(key);
-				if (j <= 0 || j >= 128)
+				if (j < 1 || j > 128)
 				{
 					key = head;
 					continue;

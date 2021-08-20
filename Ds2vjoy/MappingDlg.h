@@ -7,7 +7,11 @@ public:
 	MappingDlg();
 	~MappingDlg();
 
-	void Init(HINSTANCE hInst, HWND hWnd, int Tab);
+	void Init(HINSTANCE hInst, HWND hWnd);
+	void Init2(HINSTANCE hInst, HWND hWnd);
+	bool isCloned();
+	void setCloned(bool cloned);
+	void SetTab(int tab);
 	void addMappingDlgBack();
 	void editMappingDlgBack(int idx);
 	void Show();
@@ -19,7 +23,7 @@ private:
 	INT_PTR CALLBACK _proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	void load();
-	void save();
+	void save(bool closeeditor = true);
 	void addMappingDlg();
 	void editMappingDlg();
 	void deleteMappingDlg();
@@ -40,6 +44,8 @@ private:
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;
+	bool m_isClonedList;
+	bool m_isCloned;
 };
 
 extern MappingDlg mDlg;
