@@ -107,6 +107,7 @@ void MappingDlg::SetTab(int tab)
 		else
 			m_Tab = 0;
 	}
+	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC), (L" Clone of Tab " + std::to_wstring(m_Tab)).c_str());
 	load();
 	if (m_isCloned)
 	{
