@@ -1259,7 +1259,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			gDlg.Hide();
 			iDlg.Hide();
 			_log.Show();
-			Sleep(200);
 		}
 		{
 			if ((wParam == 1) || (wParam == 2) || (wParam == 3))
@@ -1287,6 +1286,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			kDDlg = kDDlgtmp;
 		}
 		tape.Load();
+		SendMessage(hWnd, WM_REDRAW_TABS, 0, 0);
+		ShowWindow(hTab2, SW_HIDE);
+		mDlg.Hide();
 		mDDlg.Init(hInst, hWnd);
 		rDDlg.Init(hInst, hWnd);
 		kDDlg.Init(hInst, hWnd);
@@ -1298,7 +1300,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return -1;
 		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
 		SendMessage(hWnd, WM_CREATE_MENU, 0, 0);
-		PostMessage(hWnd, WM_REDRAW_TABS, 0, 0);
 		SendMessage(hWnd, WM_DEVICE_VJOY_START, 0, lParam);
 		SendMessage(hWnd, WM_DEVICE_DS_START, 0, lParam);
 		break;
