@@ -234,90 +234,79 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return FALSE;
 	}
 	case WM_NOTIFY:
-		if (m_isClonedList)
-			break;
-		else
+		switch (((LPNMHDR)lParam)->idFrom)
 		{
-			switch (((LPNMHDR)lParam)->idFrom)
+		case IDC_MAPPING_LIST:
+/*			if (((LPNMHEADER)lParam)->iItem)
 			{
-			case IDC_MAPPING_LIST:
-				/*			if (((LPNMHEADER)lParam)->iItem)
-							{
-								switch (((LPNMHDR)lParam)->code)
-								{
-								case HDN_OVERFLOWCLICK:
-								case -166:
-									m_isCloned = false;
-									Hide();
-									break;
-								}
-							}*/
-				switch (((LPNMLISTVIEW)lParam)->hdr.code)
+				switch (((LPNMHDR)lParam)->code)
 				{
-				case NM_DBLCLK:
-					editMappingDlg();
+				case HDN_OVERFLOWCLICK:
+				case -166:
+					m_isCloned = false;
+					Hide();
 					break;
-				case NM_RCLICK:
-					POINT pt;
-					GetCursorPos(&pt);
-					TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
+				}
+			}*/
+			switch (((LPNMLISTVIEW)lParam)->hdr.code)
+			{
+			case NM_DBLCLK:
+				if (m_isClonedList)
 					break;
-				case LVN_BEGINDRAG:
-					BeginDrag(((LPNMLISTVIEW)lParam)->iItem);
-					SetFocus(m_hList);
+				editMappingDlg();
+				break;
+			case NM_RCLICK:
+				if (m_isClonedList)
 					break;
-				case LVN_ITEMCHANGED:
+				POINT pt;
+				GetCursorPos(&pt);
+				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
+				break;
+			case LVN_BEGINDRAG:
+				BeginDrag(((LPNMLISTVIEW)lParam)->iItem);
+				SetFocus(m_hList);
+				break;
+			case LVN_ITEMCHANGED:
+			{
+				if (m_active && !m_flag_drag)
 				{
-					if (m_active && !m_flag_drag)
+					DWORD newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
+					if (newstate != (((LPNMLISTVIEW)lParam)->uOldState & LVIS_STATEIMAGEMASK))
 					{
-						DWORD newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
-						if (newstate != (((LPNMLISTVIEW)lParam)->uOldState & LVIS_STATEIMAGEMASK))
+						Mapping* m = (Mapping*)((LPNMLISTVIEW)lParam)->lParam;
+						if (m != 0)
 						{
-							Mapping* m = (Mapping*)((LPNMLISTVIEW)lParam)->lParam;
-							if (m != 0)
+							int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
+							if (idx == -1)
 							{
-								int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-								if (idx == -1)
-								{
-									idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-									m->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-									save();
-								}
+								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+								m->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+								save();
 							}
 						}
 					}
-					break;
-				}
-				default:
-					return FALSE;
 				}
 				break;
+			}
 			default:
 				return FALSE;
 			}
 			break;
+		default:
+			return FALSE;
 		}
+		break;
 	case WM_MOUSEMOVE:
-		if (m_isClonedList)
-			break;
-		else
-		{
-			if (m_flag_drag && GetCapture() == hWnd)
-				DragMove(LOWORD(lParam), HIWORD(lParam));
-			break;
-		}
+		if (m_flag_drag && GetCapture() == hWnd)
+			DragMove(LOWORD(lParam), HIWORD(lParam));
+		break;
 	case WM_LBUTTONUP:
-		if (m_isClonedList)
-			break;
-		else
+		if (m_flag_drag && GetCapture() == hWnd)
 		{
-			if (m_flag_drag && GetCapture() == hWnd)
-			{
-				EndDrag(LOWORD(lParam), HIWORD(lParam));
-				InvalidateRect(hWnd, NULL, FALSE);
-			}
-			break;
+			EndDrag(LOWORD(lParam), HIWORD(lParam));
+			InvalidateRect(hWnd, NULL, FALSE);
 		}
+		break;
 	case WM_COMMAND:
 		if (m_isClonedList)
 		{

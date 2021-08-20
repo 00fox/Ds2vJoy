@@ -655,6 +655,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static HWND hStatus;
 	static HWND hTab2;
 	static HMENU hMenu;
+	static HMENU hMenu2;
 	static int tabrightclick;
 	static bool load_dll;
 	static bool topmost;
@@ -882,7 +883,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		{
 			hTab2 = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH | TCS_BUTTONS | TCS_FLATBUTTONS, 0, 0, 0, 0, hWnd, (HMENU)ID_TABVJOY, hInst, NULL);
-			hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TAB));
+			hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TAB0));
+			hMenu2 = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
 			SendMessage(hWnd, WM_REDRAW_TABS, 0, 0);
 
 			HFONT hFont = CreateFont(13, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
@@ -1740,6 +1742,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else
 					tabrightclick = 8;
 				if (tabrightclick)
+					TrackPopupMenu((HMENU)GetSubMenu(hMenu2, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, hWnd, NULL);
+				else
 					TrackPopupMenu((HMENU)GetSubMenu(hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, hWnd, NULL);
 				break;
 			}

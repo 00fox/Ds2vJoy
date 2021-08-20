@@ -561,7 +561,7 @@ WCHAR* ViGEm::X360_String(int id)
 	case XUSB_GAMEPAD_RIGHT_SHOULDER: return I18N.Gamepad_RIGHT_BUMPER;
 	case XUSB_GAMEPAD_LEFT_TRIGGER: return I18N.Gamepad_LEFT_TRIGGER;
 	case XUSB_GAMEPAD_RIGHT_TRIGGER: return I18N.Gamepad_RIGHT_TRIGGER;
-	default: L"???";
+	default: return L"???";
 	}
 }
 
@@ -593,6 +593,6 @@ WCHAR* ViGEm::DS4_String(int id)
 	case DS4_BUTTON_TRIGGER_RIGHT: return I18N.Button_R2;
 	case DS4_BUTTON_LEFT_TR: return I18N.Button_L2TRIGGER;
 	case DS4_BUTTON_RIGHT_TR: return I18N.Button_R2TRIGGER;
-	default: L"???";
+	default: return L"???";
 	}
 }

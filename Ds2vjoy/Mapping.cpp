@@ -952,7 +952,6 @@ void Mapping::Run()
 
 WCHAR* Mapping::String(MouseActionID id)
 {
-	WCHAR buff[100];
 	switch (id)
 	{
 	case none: return L"";
