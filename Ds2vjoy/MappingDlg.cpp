@@ -163,9 +163,9 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_NCCALCSIZE:
 		if (wParam)
 		{
-			//			NCCALCSIZE_PARAMS FAR* lpncsp = (NCCALCSIZE_PARAMS FAR*)lParam;
-			//			lpncsp->rgrc[0].top -= 6;
-			//			return FALSE;
+//			NCCALCSIZE_PARAMS FAR* lpncsp = (NCCALCSIZE_PARAMS FAR*)lParam;
+//			lpncsp->rgrc[0].top -= 6;
+//			return FALSE;
 			return TRUE;
 		}
 	case WM_CTLCOLORSCROLLBAR:
@@ -298,12 +298,20 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_MOUSEMOVE:
 		if (m_flag_drag && GetCapture() == hWnd)
-			DragMove(LOWORD(lParam), HIWORD(lParam));
+		{
+			if (m_isClonedList)
+				DragMove(LOWORD(lParam), HIWORD(lParam) - 35);
+			else
+				DragMove(LOWORD(lParam), HIWORD(lParam));
+		}
 		break;
 	case WM_LBUTTONUP:
 		if (m_flag_drag && GetCapture() == hWnd)
 		{
-			EndDrag(LOWORD(lParam), HIWORD(lParam));
+			if (m_isClonedList)
+				EndDrag(LOWORD(lParam), HIWORD(lParam) - 35);
+			else
+				EndDrag(LOWORD(lParam), HIWORD(lParam));
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
 		break;
