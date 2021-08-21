@@ -66,6 +66,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //			return FALSE;
 			return TRUE;
 		}
+		return FALSE;
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORMSGBOX:
 	case WM_CTLCOLORSCROLLBAR:

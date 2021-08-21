@@ -17,7 +17,22 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_Tab = 0;
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING), hWnd, (DLGPROC)Proc, (LPARAM)this);
+
+	m_TabsID[0] = ID_MENU_MAPPING_ADD;
+	m_TabsID[1] = ID_MENU_MAPPING_EDIT;
+	m_TabsID[2] = ID_MENU_MAPPING_DEL;
+	m_TabsID[3] = ID_MENU_MAPPING_COPY;
+	m_TabsID[4] = ID_MENU_MOVE_TO_0;
+	m_TabsID[5] = ID_MENU_MOVE_TO_1;
+	m_TabsID[6] = ID_MENU_MOVE_TO_2;
+	m_TabsID[7] = ID_MENU_MOVE_TO_3;
+	m_TabsID[8] = ID_MENU_MOVE_TO_4;
+	m_TabsID[9] = ID_MENU_MOVE_TO_5;
+	m_TabsID[10] = ID_MENU_MOVE_TO_6;
+	m_TabsID[11] = ID_MENU_MOVE_TO_7;
+	m_TabsID[12] = ID_MENU_MOVE_TO_8;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_MAPPING));
+	redrawMenu(13);
 
 	m_hList = GetDlgItem(m_hDlg, IDC_MAPPING_LIST);
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
@@ -56,9 +71,19 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	SetWindowLong(m_hDlg, GWL_STYLE, lStyle);
 	Hide();
 
+	m_TabsID[0] = ID_MENU_TO_MODE_0;
+	m_TabsID[1] = ID_MENU_TO_MODE_1;
+	m_TabsID[2] = ID_MENU_TO_MODE_2;
+	m_TabsID[3] = ID_MENU_TO_MODE_3;
+	m_TabsID[4] = ID_MENU_TO_MODE_4;
+	m_TabsID[5] = ID_MENU_TO_MODE_5;
+	m_TabsID[6] = ID_MENU_TO_MODE_6;
+	m_TabsID[7] = ID_MENU_TO_MODE_7;
+	m_TabsID[8] = ID_MENU_TO_MODE_8;
+	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_CLONE));
+
 	m_hList = GetDlgItem(m_hDlg, IDC_MAPPING_LIST);
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-	//	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
 	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_FLATSB;
 	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
 	LVCOLUMN col;
@@ -107,13 +132,32 @@ void MappingDlg::SetTab(int tab)
 		else
 			m_Tab = 0;
 	}
-	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC), (L" Clone of Tab " + std::to_wstring(m_Tab)).c_str());
+	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), (L" Clone of Tab " + std::to_wstring(m_Tab)).c_str());
 	load();
+	redrawMenu(9);
 	if (m_isCloned)
 	{
 		RECT win;
 		GetWindowRect(m_hDlg, &win);
 		::MoveWindow(m_hList, 2, 35, win.right - win.left, win.bottom - win.top - 36, FALSE);
+	}
+}
+
+void MappingDlg::redrawMenu(int ntabs)
+{
+	MENUITEMINFO info;
+	for (int i = 0; i < ntabs; i++)
+	{
+		ZeroMemory(&info, sizeof(info));
+		info.cbSize = sizeof(info);
+		info.fMask = MIIM_FTYPE | MIIM_STATE;
+		GetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
+		info.fType = MFT_RADIOCHECK | MFT_OWNERDRAW;
+		if (i == m_Tab && m_isClonedList)
+			info.fState = MFS_DISABLED | MFS_DEFAULT | MFS_HILITE;
+		else
+			info.fState = 0;
+		SetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 	}
 }
 
@@ -160,14 +204,194 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else
 			::MoveWindow(m_hList, 2, 0, LOWORD(lParam), HIWORD(lParam), FALSE);
 		break;
-	case WM_NCCALCSIZE:
-		if (wParam)
+	case WM_MEASUREITEM:
+	{
+		LPMEASUREITEMSTRUCT DrawMenuSize = (LPMEASUREITEMSTRUCT)lParam;
+		if (DrawMenuSize->CtlType == ODT_MENU)
 		{
-//			NCCALCSIZE_PARAMS FAR* lpncsp = (NCCALCSIZE_PARAMS FAR*)lParam;
-//			lpncsp->rgrc[0].top -= 6;
-//			return FALSE;
-			return TRUE;
+			int nEdgeWidth = ::GetSystemMetrics(SM_CYEDGE);
+			DrawMenuSize->itemWidth = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
+//			DrawMenuSize->itemHeight = 13 + nEdgeWidth + nEdgeWidth;
+			if (m_isClonedList)
+				DrawMenuSize->itemHeight = 10 + nEdgeWidth + nEdgeWidth;
+			else
+				DrawMenuSize->itemHeight = 12 + nEdgeWidth + nEdgeWidth;
+
+			WCHAR wszBuffer[256];
+			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			if (nCharCount > 0)
+			{
+				int nAcceleratorDelimiter;
+				for (nAcceleratorDelimiter = 0;
+					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
+					if (wszBuffer[nAcceleratorDelimiter] == L'\t' || wszBuffer[nAcceleratorDelimiter] == L'\b')
+						break;
+
+				RECT rTextMetric = { 0, 0, 0, 0 };
+				HDC hDC = ::GetDC(m_hDlg);
+
+				if (hDC != NULL)
+				{
+					NONCLIENTMETRICSW nm;
+					nm.cbSize = sizeof(NONCLIENTMETRICS);
+					::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, nm.cbSize, &nm, 0);
+					HFONT font = ::CreateFontIndirect(&(nm.lfMenuFont));
+
+					HFONT hOldFont = NULL;
+					if (font != NULL)
+						hOldFont = (HFONT)::SelectObject(hDC, font);
+
+					::DrawTextW(hDC, wszBuffer, nAcceleratorDelimiter, &rTextMetric, DT_CALCRECT);
+					long _CaptionWidth = rTextMetric.right - rTextMetric.left;
+
+					long _AcceleratorWidth = 0;
+					if (nAcceleratorDelimiter < nCharCount - 1)
+					{
+						::DrawTextW(hDC, &(wszBuffer[nAcceleratorDelimiter + 1]), nCharCount - nAcceleratorDelimiter - 1, &rTextMetric, DT_CALCRECT);
+						_AcceleratorWidth = rTextMetric.right - rTextMetric.left;
+					}
+					if (hOldFont == NULL)
+						::SelectObject(hDC, hOldFont);
+
+					::ReleaseDC(m_hDlg, hDC);
+
+					DrawMenuSize->itemWidth = _CaptionWidth + _AcceleratorWidth + (_AcceleratorWidth > 0 ? 1 : 0) + 12;
+				}
+			}
 		}
+		break;
+	}
+	case WM_DRAWITEM:
+	{
+		DRAWITEMSTRUCT* DrawMenuStructure = (DRAWITEMSTRUCT*)lParam;
+		if (DrawMenuStructure->CtlType == ODT_MENU)
+		{
+//			BOOL bDisabled = DrawMenuStructure->itemState & ODS_GRAYED;
+			BOOL bSelected = DrawMenuStructure->itemState & ODS_SELECTED;
+//			BOOL bChecked = DrawMenuStructure->itemState & ODS_CHECKED;
+
+			// Background
+			HBRUSH hBrushColor;
+			if (m_isClonedList)
+				hBrushColor = ::CreateSolidBrush(RGB(200, 200, 205));
+			else
+				hBrushColor = ::CreateSolidBrush(RGB(205, 205, 210));
+			::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
+/*
+			// Delimiter
+			COLORREF crCurrPen = 0;
+			crCurrPen = ::GetSysColor(COLOR_3DLIGHT);
+			int nEdgeWidth = ::GetSystemMetrics(SM_CYEDGE);
+			int nImageOffsetX = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
+			HPEN hNewPen = ::CreatePen(PS_SOLID, 1, crCurrPen);
+			HGDIOBJ hOldPen = ::SelectObject(DrawMenuStructure->hDC, hNewPen);
+			::MoveToEx(DrawMenuStructure->hDC, DrawMenuStructure->rcItem.left + nImageOffsetX + 1, DrawMenuStructure->rcItem.top, NULL);
+			::LineTo(DrawMenuStructure->hDC, DrawMenuStructure->rcItem.left + nImageOffsetX + 1, DrawMenuStructure->rcItem.bottom);
+			::SelectObject(DrawMenuStructure->hDC, ::GetStockObject(WHITE_PEN));
+			::MoveToEx(DrawMenuStructure->hDC, DrawMenuStructure->rcItem.left + nImageOffsetX + 2, DrawMenuStructure->rcItem.top, NULL);
+			::LineTo(DrawMenuStructure->hDC, DrawMenuStructure->rcItem.left + nImageOffsetX + 2, DrawMenuStructure->rcItem.bottom);
+			::SelectObject(DrawMenuStructure->hDC, hOldPen);
+*/
+			int itemnumber = 0;
+			switch (DrawMenuStructure->itemID)
+			{
+			case ID_MENU_TO_MODE_0:
+				itemnumber = 0;
+				break;
+			case ID_MENU_TO_MODE_1:
+				itemnumber = 1;
+				break;
+			case ID_MENU_TO_MODE_2:
+				itemnumber = 2;
+				break;
+			case ID_MENU_TO_MODE_3:
+				itemnumber = 3;
+				break;
+			case ID_MENU_TO_MODE_4:
+				itemnumber = 4;
+				break;
+			case ID_MENU_TO_MODE_5:
+				itemnumber = 5;
+				break;
+			case ID_MENU_TO_MODE_6:
+				itemnumber = 6;
+				break;
+			case ID_MENU_TO_MODE_7:
+				itemnumber = 7;
+				break;
+			case ID_MENU_TO_MODE_8:
+				itemnumber = 8;
+				break;
+			}
+
+			// Highlight
+			if (m_isClonedList && itemnumber == m_Tab)
+			{
+				HBRUSH hBrushColor = ::CreateSolidBrush(RGB(153, 160, 157));
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
+			}
+			else if (bSelected)
+			{
+				HBRUSH hBrushColor = ::CreateSolidBrush(::GetSysColor(COLOR_HIGHLIGHT));
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
+			}
+
+			// Caption
+			WCHAR wszBuffer[256];
+			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			if (nCharCount > 0)
+			{
+				COLORREF crPrevText = 0;
+				COLORREF crCurrText = 0;
+				crCurrText = ::GetSysColor((itemnumber == m_Tab && m_isClonedList) ? COLOR_INFOBK : (bSelected ? COLOR_HIGHLIGHTTEXT : ((m_isClonedList) ? RGB(166, 134, 170) : RGB(176, 144, 180))));
+				crPrevText = ::SetTextColor(DrawMenuStructure->hDC, crCurrText);
+
+				int nAcceleratorDelimiter;
+				for (nAcceleratorDelimiter = 0;
+					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
+					if (wszBuffer[nAcceleratorDelimiter] == L'\t' ||
+						wszBuffer[nAcceleratorDelimiter] == L'\b')
+						break;
+
+				NONCLIENTMETRICSW nm;
+				nm.cbSize = sizeof(NONCLIENTMETRICS);
+				::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, nm.cbSize, &nm, 0);
+				HFONT _hMenuFontNormal = ::CreateFontIndirect(&(nm.lfMenuFont));
+				HFONT hOldFont = (HFONT)::SelectObject(DrawMenuStructure->hDC, _hMenuFontNormal);
+
+				int nOldBkMode = ::SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
+				int nEdgeWidth = ::GetSystemMetrics(SM_CYEDGE);
+//				int nImageOffsetX = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
+				int nImageOffsetX = nEdgeWidth + nEdgeWidth + 12;
+				DrawMenuStructure->rcItem.left += nImageOffsetX;
+				DrawMenuStructure->rcItem.top += 0;
+				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nAcceleratorDelimiter, &(DrawMenuStructure->rcItem), 0);
+
+				if (nAcceleratorDelimiter < nCharCount - 1)
+				{
+					DrawMenuStructure->rcItem.left += 21;
+					if (wszBuffer[nAcceleratorDelimiter] == L'\t')
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
+							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+							DT_LEFT | DT_SINGLELINE);
+					else
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
+							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+							DT_RIGHT | DT_SINGLELINE);
+					DrawMenuStructure->rcItem.left -=  + 21;
+				}
+				DrawMenuStructure->rcItem.left -= nImageOffsetX;
+				DrawMenuStructure->rcItem.top -= 0;
+
+				::SetBkMode(DrawMenuStructure->hDC, nOldBkMode);
+				::SetTextColor(DrawMenuStructure->hDC, crPrevText);
+
+				if (hOldFont == NULL)
+					::SelectObject(DrawMenuStructure->hDC, hOldFont);
+			}
+		}
+		break;
+	}
 	case WM_CTLCOLORSCROLLBAR:
 	{
 		HDC hdcStatic = (HDC)wParam;
@@ -320,9 +544,46 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			switch (LOWORD(wParam))
 			{
+			case IDC_STATIC_CLONE:
+				switch (HIWORD(wParam))
+				{
+				case BN_CLICKED:
+					POINT pt;
+					GetCursorPos(&pt);
+					TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
+					break;
+				}
+				break;
 			case IDCANCEL:
 				m_isCloned = false;
 				Hide();
+				break;
+			case ID_MENU_TO_MODE_0:
+				SetTab(0);
+				break;
+			case ID_MENU_TO_MODE_1:
+				SetTab(1);
+				break;
+			case ID_MENU_TO_MODE_2:
+				SetTab(2);
+				break;
+			case ID_MENU_TO_MODE_3:
+				SetTab(3);
+				break;
+			case ID_MENU_TO_MODE_4:
+				SetTab(4);
+				break;
+			case ID_MENU_TO_MODE_5:
+				SetTab(5);
+				break;
+			case ID_MENU_TO_MODE_6:
+				SetTab(6);
+				break;
+			case ID_MENU_TO_MODE_7:
+				SetTab(7);
+				break;
+			case ID_MENU_TO_MODE_8:
+				SetTab(8);
 				break;
 			}
 			break;

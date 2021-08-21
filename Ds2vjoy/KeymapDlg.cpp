@@ -17,7 +17,13 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_LIST);
+
+	m_TabsID[0] = ID_MENU_MAPPING_ADD;
+	m_TabsID[1] = ID_MENU_MAPPING_EDIT;
+	m_TabsID[2] = ID_MENU_MAPPING_DEL;
+	m_TabsID[3] = ID_MENU_MAPPING_COPY;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
+	redrawMenu(4);
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
 	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
@@ -30,8 +36,23 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	col.pszText = L"vJoy Button";
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = L"Keyboard";
-	col.cx = 379;
+	col.cx = 373;
 	ListView_InsertColumn(m_hList, 1, &col);
+}
+
+void KeymapDlg::redrawMenu(int ntabs)
+{
+	MENUITEMINFO info;
+	for (int i = 0; i < ntabs; i++)
+	{
+		ZeroMemory(&info, sizeof(info));
+		info.cbSize = sizeof(info);
+		info.fMask = MIIM_FTYPE | MIIM_STATE;
+		GetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
+		info.fType = MFT_OWNERDRAW;
+		info.fState = 0;
+		SetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
+	}
 }
 
 INT_PTR CALLBACK KeymapDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -54,6 +75,132 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
+	case WM_MEASUREITEM:
+	{
+		LPMEASUREITEMSTRUCT DrawMenuSize = (LPMEASUREITEMSTRUCT)lParam;
+		if (DrawMenuSize->CtlType == ODT_MENU)
+		{
+			int nEdgeWidth = ::GetSystemMetrics(SM_CYEDGE);
+			DrawMenuSize->itemWidth = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
+			DrawMenuSize->itemHeight = 12 + nEdgeWidth + nEdgeWidth;
+
+			WCHAR wszBuffer[256];
+			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			if (nCharCount > 0)
+			{
+				int nAcceleratorDelimiter;
+				for (nAcceleratorDelimiter = 0;
+					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
+					if (wszBuffer[nAcceleratorDelimiter] == L'\t' || wszBuffer[nAcceleratorDelimiter] == L'\b')
+						break;
+
+				RECT rTextMetric = { 0, 0, 0, 0 };
+				HDC hDC = ::GetDC(m_hDlg);
+
+				if (hDC != NULL)
+				{
+					NONCLIENTMETRICSW nm;
+					nm.cbSize = sizeof(NONCLIENTMETRICS);
+					::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, nm.cbSize, &nm, 0);
+					HFONT font = ::CreateFontIndirect(&(nm.lfMenuFont));
+
+					HFONT hOldFont = NULL;
+					if (font != NULL)
+						hOldFont = (HFONT)::SelectObject(hDC, font);
+
+					::DrawTextW(hDC, wszBuffer, nAcceleratorDelimiter, &rTextMetric, DT_CALCRECT);
+					long _CaptionWidth = rTextMetric.right - rTextMetric.left;
+
+					long _AcceleratorWidth = 0;
+					if (nAcceleratorDelimiter < nCharCount - 1)
+					{
+						::DrawTextW(hDC, &(wszBuffer[nAcceleratorDelimiter + 1]), nCharCount - nAcceleratorDelimiter - 1, &rTextMetric, DT_CALCRECT);
+						_AcceleratorWidth = rTextMetric.right - rTextMetric.left;
+					}
+					if (hOldFont == NULL)
+						::SelectObject(hDC, hOldFont);
+
+					::ReleaseDC(m_hDlg, hDC);
+
+					DrawMenuSize->itemWidth = _CaptionWidth + _AcceleratorWidth + (_AcceleratorWidth > 0 ? 1 : 0) + 12;
+				}
+			}
+		}
+		break;
+	}
+	case WM_DRAWITEM:
+	{
+		DRAWITEMSTRUCT* DrawMenuStructure = (DRAWITEMSTRUCT*)lParam;
+		if (DrawMenuStructure->CtlType == ODT_MENU)
+		{
+			BOOL bSelected = DrawMenuStructure->itemState & ODS_SELECTED;
+
+			// Background
+			HBRUSH hBrushColor = ::CreateSolidBrush(RGB(205, 205, 210));
+			::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
+
+			// Highlight
+			if (DrawMenuStructure->itemState & ODS_SELECTED)
+			{
+				hBrushColor = ::CreateSolidBrush(::GetSysColor(COLOR_HIGHLIGHT));
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
+			}
+
+			// Caption
+			WCHAR wszBuffer[256];
+			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			if (nCharCount > 0)
+			{
+				COLORREF crPrevText = 0;
+				COLORREF crCurrText = 0;
+				crCurrText = ::GetSysColor((bSelected) ? COLOR_HIGHLIGHTTEXT : RGB(176, 144, 180));
+				crPrevText = ::SetTextColor(DrawMenuStructure->hDC, crCurrText);
+
+				int nAcceleratorDelimiter;
+				for (nAcceleratorDelimiter = 0;
+					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
+					if (wszBuffer[nAcceleratorDelimiter] == L'\t' ||
+						wszBuffer[nAcceleratorDelimiter] == L'\b')
+						break;
+
+				NONCLIENTMETRICSW nm;
+				nm.cbSize = sizeof(NONCLIENTMETRICS);
+				::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, nm.cbSize, &nm, 0);
+				HFONT _hMenuFontNormal = ::CreateFontIndirect(&(nm.lfMenuFont));
+				HFONT hOldFont = (HFONT)::SelectObject(DrawMenuStructure->hDC, _hMenuFontNormal);
+
+				int nOldBkMode = ::SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
+				int nEdgeWidth = ::GetSystemMetrics(SM_CYEDGE);
+				int nImageOffsetX = nEdgeWidth + nEdgeWidth + 12;
+				DrawMenuStructure->rcItem.left += nImageOffsetX;
+				DrawMenuStructure->rcItem.top += 0;
+				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nAcceleratorDelimiter, &(DrawMenuStructure->rcItem), 0);
+
+				if (nAcceleratorDelimiter < nCharCount - 1)
+				{
+					DrawMenuStructure->rcItem.left += 21;
+					if (wszBuffer[nAcceleratorDelimiter] == L'\t')
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
+							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+							DT_LEFT | DT_SINGLELINE);
+					else
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
+							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+							DT_RIGHT | DT_SINGLELINE);
+					DrawMenuStructure->rcItem.left -= +21;
+				}
+				DrawMenuStructure->rcItem.left -= nImageOffsetX;
+				DrawMenuStructure->rcItem.top -= 0;
+
+				::SetBkMode(DrawMenuStructure->hDC, nOldBkMode);
+				::SetTextColor(DrawMenuStructure->hDC, crPrevText);
+
+				if (hOldFont == NULL)
+					::SelectObject(DrawMenuStructure->hDC, hOldFont);
+			}
+		}
+		break;
+	}
 	case WM_SHOWWINDOW:
 	{
 		SendMessage(m_hList, LVM_SETBKCOLOR, 0, (LPARAM)RGB(210, 210, 215));

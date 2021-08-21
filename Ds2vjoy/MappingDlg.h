@@ -22,6 +22,7 @@ private:
 	static INT_PTR CALLBACK Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	INT_PTR CALLBACK _proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+	void redrawMenu(int ntabs);
 	void load();
 	void save(bool closeeditor = true);
 	void addMappingDlg();
@@ -41,6 +42,7 @@ private:
 	HMENU m_hMenu;
 
 	int m_Tab;
+	int m_TabsID[13];
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;
