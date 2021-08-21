@@ -125,6 +125,7 @@ void MappingDlg::setCloned(bool cloned)
 
 void MappingDlg::SetTab(int tab)
 {
+	ShowWindow(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), SW_HIDE);
 	if (m_Tab != tab)
 	{
 		if (mode >= 0 && mode < 9)
@@ -132,15 +133,21 @@ void MappingDlg::SetTab(int tab)
 		else
 			m_Tab = 0;
 	}
-	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), (L" Clone of Tab " + std::to_wstring(m_Tab)).c_str());
 	load();
 	redrawMenu(9);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), (L" Clone of Tab " + std::to_wstring(m_Tab)).c_str());
 	if (m_isCloned)
 	{
 		RECT win;
 		GetWindowRect(m_hDlg, &win);
 		::MoveWindow(m_hList, 2, 35, win.right - win.left, win.bottom - win.top - 36, FALSE);
 	}
+	ShowWindow(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), SW_SHOW);
+}
+
+int MappingDlg::GetTab()
+{
+	return m_Tab;
 }
 
 void MappingDlg::redrawMenu(int ntabs)

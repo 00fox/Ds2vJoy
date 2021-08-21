@@ -1521,7 +1521,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		mDlg.Show();
 		if (mDlg2.isCloned())
 		{
-			mDlg2.SetTab(tabrightclick);
+			mDlg2.SetTab(mDlg2.GetTab());
 			mDlg2.Show();
 		}
 		break;
@@ -1679,7 +1679,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hWnd, WM_SIZE, 0, -2);
 			if (mDlg2.isCloned())
 			{
-				mDlg2.SetTab(tabrightclick);
+				mDlg2.SetTab(mDlg2.GetTab());
 				mDlg2.Show();
 			}
 			break;
@@ -1691,7 +1691,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 			if (mDlg2.isCloned() && TabCtrl_GetCurSel(hTab) == 2)
 			{
-				mDlg2.SetTab(tabrightclick);
+				mDlg2.SetTab(mDlg2.GetTab());
 				mDlg2.Show();
 			}
 			break;
@@ -1843,7 +1843,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					ShowWindow(hTab2, SW_SHOW);
 					if (mDlg2.isCloned())
 					{
-						mDlg2.SetTab(tabrightclick);
+						mDlg2.SetTab(mDlg2.GetTab());
 						mDlg2.Show();
 					}
 					break;

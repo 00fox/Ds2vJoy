@@ -12,6 +12,7 @@ public:
 	bool isCloned();
 	void setCloned(bool cloned);
 	void SetTab(int tab);
+	int GetTab();
 	void addMappingDlgBack();
 	void editMappingDlgBack(int idx);
 	void Show();
