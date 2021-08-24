@@ -114,7 +114,7 @@ P 	| Pause condition is in use (see below)
 T 	| Toggle condition is in use (see below)
 R 	| An OnRelease condition is in use (see below, under time stamps)
 M 	| If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
-- a minuscule indicates that the checkbox is double checked for this condition
+- a lowercase indicates that the checkbox is double checked for this condition
 
 ## vJoy editing
 ![vJoy Editing](Doc/4.png)
