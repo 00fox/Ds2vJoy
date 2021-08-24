@@ -107,6 +107,7 @@ void LoadLanguage()
 	I18N.Gamepad_LEFT_TRIGGER = GetText(IDS_GAMEPAD_LEFT_TRIGGER, L"Ltrigger");
 	I18N.Gamepad_RIGHT_TRIGGER = GetText(IDS_GAMEPAD_RIGHT_TRIGGER, L"Rtrigger");
 	I18N.Change_Settings = GetText(IDS_LOG_SETTINGS, L"Reconnecting for change settings.");
+	I18N.Clone_of_Tab = GetText(IDS_CLONE_OF_TAB, L" Clone of Tab ");
 	I18N.ConnectController = GetText(IDS_CONNECTCONTROLLER, L"Connect %s Serial %s");
 	I18N.ConnectionStarted = GetText(IDS_CONNECTIONSTARTED, L"Connection started %s");
 	I18N.DisconnectController = GetText(IDS_DISCONNECTCONTROLLER, L"Disconnect %s");
@@ -325,6 +326,7 @@ void FreeLanguage()
 	delete[] I18N.Gamepad_LEFT_TRIGGER;
 	delete[] I18N.Gamepad_RIGHT_TRIGGER;
 	delete[] I18N.Change_Settings;
+	delete[] I18N.Clone_of_Tab;
 	delete[] I18N.ConnectController;
 	delete[] I18N.ConnectionStarted;
 	delete[] I18N.DisconnectController;

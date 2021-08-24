@@ -190,7 +190,7 @@ void MappingDlg::SetTab(int tab)
 	}
 	load();
 	redrawMenu(9, true);
-	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), (L" Clone of Tab " + std::to_wstring(m_Tab)).c_str());
+	SetWindowText(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), (I18N.Clone_of_Tab + std::to_wstring(m_Tab)).c_str());
 	if (m_isCloned)
 		redrawListReminder();
 	ShowWindow(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), SW_SHOW);
@@ -497,33 +497,15 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			int itemnumber = -1;
 			switch (DrawMenuStructure->itemID)
 			{
-			case ID_MENU_TO_MODE_0:
-				itemnumber = 0;
-				break;
-			case ID_MENU_TO_MODE_1:
-				itemnumber = 1;
-				break;
-			case ID_MENU_TO_MODE_2:
-				itemnumber = 2;
-				break;
-			case ID_MENU_TO_MODE_3:
-				itemnumber = 3;
-				break;
-			case ID_MENU_TO_MODE_4:
-				itemnumber = 4;
-				break;
-			case ID_MENU_TO_MODE_5:
-				itemnumber = 5;
-				break;
-			case ID_MENU_TO_MODE_6:
-				itemnumber = 6;
-				break;
-			case ID_MENU_TO_MODE_7:
-				itemnumber = 7;
-				break;
-			case ID_MENU_TO_MODE_8:
-				itemnumber = 8;
-				break;
+			case ID_MENU_TO_MODE_0:itemnumber = 0; break;
+			case ID_MENU_TO_MODE_1:itemnumber = 1; break;
+			case ID_MENU_TO_MODE_2:itemnumber = 2; break;
+			case ID_MENU_TO_MODE_3:itemnumber = 3; break;
+			case ID_MENU_TO_MODE_4:itemnumber = 4; break;
+			case ID_MENU_TO_MODE_5:itemnumber = 5; break;
+			case ID_MENU_TO_MODE_6:itemnumber = 6; break;
+			case ID_MENU_TO_MODE_7:itemnumber = 7; break;
+			case ID_MENU_TO_MODE_8:itemnumber = 8; break;
 			}
 
 			// Highlight
@@ -686,7 +668,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
 					rect.right -= 1;
 					rect.bottom -= 1;
-					brush = CreateSolidBrush(RGB(180, 180, 180));
+					brush = CreateSolidBrush(RGB(170, 170, 170));
 					FillRect(hDC, &rect, brush);
 					if (tape.vJoyUsed[i])
 					{
@@ -694,7 +676,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						rect.right -= 1;
 						POINT Pt;
 						SelectObject(hDC, GetStockObject(DC_PEN));
-						SetDCPenColor(hDC, RGB(130, 130, 130));
+						SetDCPenColor(hDC, RGB(125, 125, 125));
 						if (i & 1)
 						{
 							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
@@ -745,7 +727,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						rect.right -= 1;
 						POINT Pt;
 						SelectObject(hDC, GetStockObject(DC_PEN));
-						SetDCPenColor(hDC, RGB(160, 160, 160));
+						SetDCPenColor(hDC, RGB(150, 150, 150));
 						if (i & 1)
 						{
 							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
@@ -870,81 +852,33 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 				break;
-			case IDCANCEL:
-				m_isCloned = false;
-				Hide();
-				break;
-			case ID_MENU_TO_MODE_0:
-				SetTab(0);
-				break;
-			case ID_MENU_TO_MODE_1:
-				SetTab(1);
-				break;
-			case ID_MENU_TO_MODE_2:
-				SetTab(2);
-				break;
-			case ID_MENU_TO_MODE_3:
-				SetTab(3);
-				break;
-			case ID_MENU_TO_MODE_4:
-				SetTab(4);
-				break;
-			case ID_MENU_TO_MODE_5:
-				SetTab(5);
-				break;
-			case ID_MENU_TO_MODE_6:
-				SetTab(6);
-				break;
-			case ID_MENU_TO_MODE_7:
-				SetTab(7);
-				break;
-			case ID_MENU_TO_MODE_8:
-				SetTab(8);
-				break;
+			case IDCANCEL:m_isCloned = false; Hide(); break;
+			case ID_MENU_TO_MODE_0:SetTab(0); break;
+			case ID_MENU_TO_MODE_1:SetTab(1); break;
+			case ID_MENU_TO_MODE_2:SetTab(2); break;
+			case ID_MENU_TO_MODE_3:SetTab(3); break;
+			case ID_MENU_TO_MODE_4:SetTab(4); break;
+			case ID_MENU_TO_MODE_5:SetTab(5); break;
+			case ID_MENU_TO_MODE_6:SetTab(6); break;
+			case ID_MENU_TO_MODE_7:SetTab(7); break;
+			case ID_MENU_TO_MODE_8:SetTab(8); break;
 			}
 		}
 		switch (LOWORD(wParam))
 		{
-		case ID_MENU_MAPPING_ADD:
-			addMappingDlg();
-			break;
-		case ID_MENU_MAPPING_EDIT:
-			editMappingDlg();
-			break;
-		case ID_MENU_MAPPING_DEL:
-			echo("del");
-			deleteMappingDlg();
-			break;
-		case ID_MENU_MAPPING_COPY:
-			duplicateMappingDlg();
-			break;
-		case ID_MENU_MOVE_TO_0:
-			moveMappingDlg(0);
-			break;
-		case ID_MENU_MOVE_TO_1:
-			moveMappingDlg(1);
-			break;
-		case ID_MENU_MOVE_TO_2:
-			moveMappingDlg(2);
-			break;
-		case ID_MENU_MOVE_TO_3:
-			moveMappingDlg(3);
-			break;
-		case ID_MENU_MOVE_TO_4:
-			moveMappingDlg(4);
-			break;
-		case ID_MENU_MOVE_TO_5:
-			moveMappingDlg(5);
-			break;
-		case ID_MENU_MOVE_TO_6:
-			moveMappingDlg(6);
-			break;
-		case ID_MENU_MOVE_TO_7:
-			moveMappingDlg(7);
-			break;
-		case ID_MENU_MOVE_TO_8:
-			moveMappingDlg(8);
-			break;
+		case ID_MENU_MAPPING_ADD:addMappingDlg(); break;
+		case ID_MENU_MAPPING_EDIT:editMappingDlg(); break;
+		case ID_MENU_MAPPING_DEL:deleteMappingDlg(); break;
+		case ID_MENU_MAPPING_COPY:duplicateMappingDlg(); break;
+		case ID_MENU_MOVE_TO_0:moveMappingDlg(0); break;
+		case ID_MENU_MOVE_TO_1:moveMappingDlg(1); break;
+		case ID_MENU_MOVE_TO_2:moveMappingDlg(2); break;
+		case ID_MENU_MOVE_TO_3:moveMappingDlg(3); break;
+		case ID_MENU_MOVE_TO_4:moveMappingDlg(4); break;
+		case ID_MENU_MOVE_TO_5:moveMappingDlg(5); break;
+		case ID_MENU_MOVE_TO_6:moveMappingDlg(6); break;
+		case ID_MENU_MOVE_TO_7:moveMappingDlg(7); break;
+		case ID_MENU_MOVE_TO_8:moveMappingDlg(8); break;
 		case IDC_CLEAR:for (int i = 0; i < 32; i++) { tape.Reminder[i] = 0; m_Randcolor[i] = rand() % 4; } tape.Save(119); Hide(); Show(); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
 		case IDC_POST_ITS_1:tape.Reminder[0] = !tape.Reminder[0]; CheckDlgButton(hWnd, IDC_POST_ITS_1, (WPARAM)tape.Reminder[0]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
 		case IDC_POST_ITS_2:tape.Reminder[1] = !tape.Reminder[1]; CheckDlgButton(hWnd, IDC_POST_ITS_2, (WPARAM)tape.Reminder[1]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;

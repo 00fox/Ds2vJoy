@@ -142,6 +142,7 @@ struct LANGSTRS
 	WCHAR* vJoy_DPAD4_DOWN;
 	WCHAR* vJoy_DPAD4_DOWN_LEFT;
 	WCHAR* Change_Settings;
+	WCHAR* Clone_of_Tab;
 	WCHAR* ConnectController;
 	WCHAR* ConnectionStarted;
 	WCHAR* DisconnectController;

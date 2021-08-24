@@ -334,102 +334,38 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 				vjUsed.push_back(vjID[i]);
 				switch (vjID[i])
 				{
-				case vJoyButton::ButtonID::Button1:
-					tape.vJoyUsed[0] = true;
-					break;
-				case vJoyButton::ButtonID::Button2:
-					tape.vJoyUsed[1] = true;
-					break;
-				case vJoyButton::ButtonID::Button3:
-					tape.vJoyUsed[2] = true;
-					break;
-				case vJoyButton::ButtonID::Button4:
-					tape.vJoyUsed[3] = true;
-					break;
-				case vJoyButton::ButtonID::Button5:
-					tape.vJoyUsed[4] = true;
-					break;
-				case vJoyButton::ButtonID::Button6:
-					tape.vJoyUsed[5] = true;
-					break;
-				case vJoyButton::ButtonID::Button7:
-					tape.vJoyUsed[6] = true;
-					break;
-				case vJoyButton::ButtonID::Button8:
-					tape.vJoyUsed[7] = true;
-					break;
-				case vJoyButton::ButtonID::Button9:
-					tape.vJoyUsed[8] = true;
-					break;
-				case vJoyButton::ButtonID::Button10:
-					tape.vJoyUsed[9] = true;
-					break;
-				case vJoyButton::ButtonID::Button11:
-					tape.vJoyUsed[10] = true;
-					break;
-				case vJoyButton::ButtonID::Button12:
-					tape.vJoyUsed[11] = true;
-					break;
-				case vJoyButton::ButtonID::Button13:
-					tape.vJoyUsed[12] = true;
-					break;
-				case vJoyButton::ButtonID::Button14:
-					tape.vJoyUsed[13] = true;
-					break;
-				case vJoyButton::ButtonID::Button15:
-					tape.vJoyUsed[14] = true;
-					break;
-				case vJoyButton::ButtonID::Button16:
-					tape.vJoyUsed[15] = true;
-					break;
-				case vJoyButton::ButtonID::Button17:
-					tape.vJoyUsed[16] = true;
-					break;
-				case vJoyButton::ButtonID::Button18:
-					tape.vJoyUsed[17] = true;
-					break;
-				case vJoyButton::ButtonID::Button19:
-					tape.vJoyUsed[18] = true;
-					break;
-				case vJoyButton::ButtonID::Button20:
-					tape.vJoyUsed[19] = true;
-					break;
-				case vJoyButton::ButtonID::Button21:
-					tape.vJoyUsed[20] = true;
-					break;
-				case vJoyButton::ButtonID::Button22:
-					tape.vJoyUsed[21] = true;
-					break;
-				case vJoyButton::ButtonID::Button23:
-					tape.vJoyUsed[22] = true;
-					break;
-				case vJoyButton::ButtonID::Button24:
-					tape.vJoyUsed[23] = true;
-					break;
-				case vJoyButton::ButtonID::Button25:
-					tape.vJoyUsed[24] = true;
-					break;
-				case vJoyButton::ButtonID::Button26:
-					tape.vJoyUsed[25] = true;
-					break;
-				case vJoyButton::ButtonID::Button27:
-					tape.vJoyUsed[26] = true;
-					break;
-				case vJoyButton::ButtonID::Button28:
-					tape.vJoyUsed[27] = true;
-					break;
-				case vJoyButton::ButtonID::Button29:
-					tape.vJoyUsed[28] = true;
-					break;
-				case vJoyButton::ButtonID::Button30:
-					tape.vJoyUsed[29] = true;
-					break;
-				case vJoyButton::ButtonID::Button31:
-					tape.vJoyUsed[30] = true;
-					break;
-				case vJoyButton::ButtonID::Button32:
-					tape.vJoyUsed[31] = true;
-					break;
+				case vJoyButton::ButtonID::Button1:tape.vJoyUsed[0] = true; break;
+				case vJoyButton::ButtonID::Button2:tape.vJoyUsed[1] = true; break;
+				case vJoyButton::ButtonID::Button3:tape.vJoyUsed[2] = true; break;
+				case vJoyButton::ButtonID::Button4:tape.vJoyUsed[3] = true; break;
+				case vJoyButton::ButtonID::Button5:tape.vJoyUsed[4] = true; break;
+				case vJoyButton::ButtonID::Button6:tape.vJoyUsed[5] = true; break;
+				case vJoyButton::ButtonID::Button7:tape.vJoyUsed[6] = true; break;
+				case vJoyButton::ButtonID::Button8:tape.vJoyUsed[7] = true; break;
+				case vJoyButton::ButtonID::Button9:tape.vJoyUsed[8] = true; break;
+				case vJoyButton::ButtonID::Button10:tape.vJoyUsed[9] = true; break;
+				case vJoyButton::ButtonID::Button11:tape.vJoyUsed[10] = true; break;
+				case vJoyButton::ButtonID::Button12:tape.vJoyUsed[11] = true; break;
+				case vJoyButton::ButtonID::Button13:tape.vJoyUsed[12] = true; break;
+				case vJoyButton::ButtonID::Button14:tape.vJoyUsed[13] = true; break;
+				case vJoyButton::ButtonID::Button15:tape.vJoyUsed[14] = true; break;
+				case vJoyButton::ButtonID::Button16:tape.vJoyUsed[15] = true; break;
+				case vJoyButton::ButtonID::Button17:tape.vJoyUsed[16] = true; break;
+				case vJoyButton::ButtonID::Button18:tape.vJoyUsed[17] = true; break;
+				case vJoyButton::ButtonID::Button19:tape.vJoyUsed[18] = true; break;
+				case vJoyButton::ButtonID::Button20:tape.vJoyUsed[19] = true; break;
+				case vJoyButton::ButtonID::Button21:tape.vJoyUsed[20] = true; break;
+				case vJoyButton::ButtonID::Button22:tape.vJoyUsed[21] = true; break;
+				case vJoyButton::ButtonID::Button23:tape.vJoyUsed[22] = true; break;
+				case vJoyButton::ButtonID::Button24:tape.vJoyUsed[23] = true; break;
+				case vJoyButton::ButtonID::Button25:tape.vJoyUsed[24] = true; break;
+				case vJoyButton::ButtonID::Button26:tape.vJoyUsed[25] = true; break;
+				case vJoyButton::ButtonID::Button27:tape.vJoyUsed[26] = true; break;
+				case vJoyButton::ButtonID::Button28:tape.vJoyUsed[27] = true; break;
+				case vJoyButton::ButtonID::Button29:tape.vJoyUsed[28] = true; break;
+				case vJoyButton::ButtonID::Button30:tape.vJoyUsed[29] = true; break;
+				case vJoyButton::ButtonID::Button31:tape.vJoyUsed[30] = true; break;
+				case vJoyButton::ButtonID::Button32:tape.vJoyUsed[31] = true; break;
 				}
 			}
 	}
