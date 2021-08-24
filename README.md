@@ -408,8 +408,8 @@ Picture talk by itself
 There is no resize but some other stuff
 
 On bottom right, you can see a Reminder to remember dispatch of attributed buttons
-- You can use it as you wish, it is saved as soon as you change a state, ang you get it back next session 
-- Corner indicator automiatically indicates all vJoy buttons (1-32) used in all mappings
+- You can use it as you wish, it is saved as soon as you change a state, and you get it back next session 
+- Corner indicator automatically indicates all vJoy buttons (1-32) used in all mappings
 
 ## Thanks
 * https://github.com/090 (a lot)
