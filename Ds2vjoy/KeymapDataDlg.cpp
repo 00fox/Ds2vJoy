@@ -120,9 +120,6 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetClientRect(hWnd, &rect);
 
 			HBRUSH brush = CreateSolidBrush(RGB(210, 210, 215));
-//			SelectObject(hDC, GetStockObject(DC_PEN));
-//			SetDCPenColor(hDC, RGB(191, 200, 196));
-
 			FillRect(hDC, &rect, brush);
 
 			POINT Pt;

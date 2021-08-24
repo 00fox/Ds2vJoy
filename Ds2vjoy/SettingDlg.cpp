@@ -116,7 +116,6 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetClientRect(ledbutton, &rect);
 
 			brush = CreateSolidBrush(RGB(128, 128, 128));
-//			DrawEdge(hDC, &rect, EDGE_SUNKEN, BF_RECT);
 			DrawEdge(hDC, &rect, EDGE_RAISED, BF_RECT);
 
 			brush = CreateSolidBrush(RGB(210, 210, 215));
