@@ -668,7 +668,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
 					rect.right -= 1;
 					rect.bottom -= 1;
-					brush = CreateSolidBrush(RGB(170, 170, 170));
+					brush = CreateSolidBrush(RGB(175, 175, 175));
 					FillRect(hDC, &rect, brush);
 					if (tape.vJoyUsed[i])
 					{
@@ -676,7 +676,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						rect.right -= 1;
 						POINT Pt;
 						SelectObject(hDC, GetStockObject(DC_PEN));
-						SetDCPenColor(hDC, RGB(125, 125, 125));
+						SetDCPenColor(hDC, RGB(90, 90, 90));
 						if (i & 1)
 						{
 							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
@@ -727,7 +727,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						rect.right -= 1;
 						POINT Pt;
 						SelectObject(hDC, GetStockObject(DC_PEN));
-						SetDCPenColor(hDC, RGB(150, 150, 150));
+						SetDCPenColor(hDC, RGB(95, 95, 95));
 						if (i & 1)
 						{
 							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
