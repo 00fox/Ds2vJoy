@@ -21,6 +21,7 @@ public:
 	Mapping mappingData;
 
 	HWND m_hDlg;
+	bool m_isClonedList;
 	int m_idx;
 
 private:

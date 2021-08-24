@@ -141,6 +141,8 @@ public:
 
 	int Profile;
 	int Mode[9];
+	bool Reminder[32];
+	bool vJoyUsed[32];
 
 	int ActualDS = 0;				//0 Unknown
 	int DesiredDS;					//1 DS4, 2 DS5
@@ -221,6 +223,7 @@ private:
 	void SetProfile(int i);
 	void SetDesiredDS(int i);
 	void SetTabMode(int i, int mode);
+	void SetReminder(int i, int reminder);
 	void SetThreshold(int i);
 	void SetSimultaneous(int i);
 	void SetLongPress(int i);

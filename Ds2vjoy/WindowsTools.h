@@ -55,6 +55,7 @@ BOOL LaunchProcess(LPWSTR lpCommandLine, bool wait = false)
 std::string LaunchCmd(const char* cmd)
 BOOL ClientArea(RECT* rect, bool points = false)	//x, y, w, h, true x, y, x', y'
 int MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, int x, int y)
+void CreateToolTip(HWND hWndParent, HWND hControlItem, PTSTR tooltipText)
 
 ////////////////////////////////////////////////////////////////////// Process
 BOOL IsWow64()
@@ -1331,6 +1332,34 @@ inline int MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uTyp
 	int result = MessageBox(hWnd, lpText, lpCaption, uType);
 	if (hHook) UnhookWindowsHookEx(hHook);
 	return result;
+}
+
+//-----------------------------------------------------------------------------
+inline void CreateToolTip(
+	HWND hWndParent,	/*HWND handle for the parent window, for example dialog box*/
+	HWND hControlItem,	/*HWND handle for the control item, for example checkbox*/
+	PTSTR tooltipText	/*text for the tool-tip*/)
+{
+	if (!hControlItem || !hWndParent || !tooltipText)
+		return;
+
+	HWND hwndTip = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
+		WS_POPUP | TTS_ALWAYSTIP /*| TTS_BALLOON*/,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		hWndParent, NULL, GetModuleHandle(0), NULL);
+
+	if (!hwndTip)
+		return;
+
+	TOOLINFO toolInfo = { 0 };
+	toolInfo.cbSize = sizeof(toolInfo);
+	toolInfo.hwnd = hWndParent;
+	toolInfo.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+	toolInfo.uId = (UINT_PTR)hControlItem;
+	toolInfo.lpszText = tooltipText;
+
+	if (!SendMessage(hwndTip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo))
+		MessageBox(0, TEXT("TTM_ADDTOOL failed\nWrong project manifest!"), 0, 0);
 }
 ////////////////////////////////////////////////////////////////////// Process
 // 

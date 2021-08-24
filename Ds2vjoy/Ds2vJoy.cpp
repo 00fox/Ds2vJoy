@@ -1021,7 +1021,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			m_TabsID[7] = ID_MENU_TO_MODE_6;
 			m_TabsID[8] = ID_MENU_TO_MODE_7;
 			m_TabsID[9] = ID_MENU_TO_MODE_8;
-			hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TAB0));
+			hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_0, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_1, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_2, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_3, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_4, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_5, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_6, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_7, FALSE);
+			DeleteMenu(hMenu, ID_MENU_TO_MODE_8, FALSE);
 			hMenu2 = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
 			MENUITEMINFO info;
 			for (int i = 0; i < 10; i++)
@@ -1322,7 +1331,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			cbParams.mappings.clear();
 			cbParams.mappings[0].PreLoad();
 			size_t max = tape.Mappingdata.size();
-			for (int i = 0; i < max;++i){
+			for (int i = 0; i < 32; i++)
+				tape.vJoyUsed[i] = false;
+			for (int i = 0; i < max; i++)
+			{
 				Mapping *data = &tape.Mappingdata[i];
 				if ( data->LoadDevice(&ds, &vjoy))
 					cbParams.mappings.push_back(*data);
@@ -1350,7 +1362,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			cbParams.keymaps.clear();
 			size_t max = tape.Keymapdata.size();
-			for (int i = 0; i < max; ++i)
+			for (int i = 0; i < max; i++)
 			{
 				Keymap *data = &tape.Keymapdata[i];
 				if ( data->LoadDevice(&vjoy) )
@@ -1507,16 +1519,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_ADDMAPPING:
-		if ((int)wParam > -1)
+		if ((int)wParam != -1)
 			mDDlg.Hide();
 		mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
 		PostMessage(hWnd, WM_SIZE, 0, 0);
 		if ((int)lParam != -1)
 		{
 			if ((int)wParam < 0)
-				mDlg.addMappingDlgBack();
+			{
+				if ((int)lParam)
+					mDlg2.addMappingDlgBack();
+				else
+					mDlg.addMappingDlgBack();
+			}
 			else
-				mDlg.editMappingDlgBack((int)wParam);
+			{
+				if ((int)lParam)
+					mDlg2.editMappingDlgBack((int)wParam);
+				else
+					mDlg.editMappingDlgBack((int)wParam);
+			}
 		}
 		mDlg.Show();
 		if (mDlg2.isCloned())
@@ -1632,6 +1654,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		mDDlg.movable = false;
 		if (TabCtrl_GetCurSel(hTab) != 2)
 			mDlg2.Hide();
+		if (mDlg2.isCloned() && TabCtrl_GetCurSel(hTab) == 2)
+		{
+			mDlg2.moving = true;
+			mDlg2.SetTab(mDlg2.GetTab());
+			mDlg2.Hide();
+			mDlg2.Show();
+			SetFocus(hWnd);
+		}
 		SetFocus(hWnd);
 		if (!extended)
 		{
@@ -1679,8 +1709,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hWnd, WM_SIZE, 0, -2);
 			if (mDlg2.isCloned())
 			{
+				mDlg2.moving = false;
 				mDlg2.SetTab(mDlg2.GetTab());
+				mDlg2.Hide();
 				mDlg2.Show();
+				SetFocus(hWnd);
 			}
 			break;
 		}
@@ -1691,8 +1724,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 			if (mDlg2.isCloned() && TabCtrl_GetCurSel(hTab) == 2)
 			{
+				mDlg2.moving = false;
 				mDlg2.SetTab(mDlg2.GetTab());
+				mDlg2.Hide();
 				mDlg2.Show();
+				SetFocus(hWnd);
 			}
 			break;
 		}

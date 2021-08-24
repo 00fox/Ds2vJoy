@@ -92,8 +92,19 @@ public:
 		Button19,
 		Button20,
 		Button21,
-		Button128 = Button21 + 107,
-		button_Count,
+		Button22,
+		Button23,
+		Button24,
+		Button25,
+		Button26,
+		Button27,
+		Button28,
+		Button29,
+		Button30,
+		Button31,
+		Button32,
+		Button128 = Button32 + 96,
+		button_Count
 	};
 
 	vJoyButton();

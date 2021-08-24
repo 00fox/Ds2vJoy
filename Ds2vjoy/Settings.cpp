@@ -112,6 +112,20 @@ void Settings::Load()
 	}
 
 	{
+		WCHAR buf[MAX_PATH] = { 0 };
+		GetPrivateProfileString(Settingstxt, L"Reminder", L"0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0", buf, sizeof(buf) / sizeof(buf[0]), m_file);
+		std::string buftmp;
+		ws2s(buf, &buftmp);
+		std::stringstream ss(buftmp);
+		for (int i = 0; i < 32; i++)
+		{
+			std::string substr;
+			getline(ss, substr, ',');
+			SetReminder(i, atoi(substr.c_str()));
+		}
+	}
+
+	{
 		const int n = sizeof(WCHAR) * 128 * 1024 *2;
 		WCHAR* buf = (WCHAR*)malloc(n);
 		if (buf == 0)
@@ -599,8 +613,7 @@ void Settings::Load()
 
 void Settings::Save(int category)
 {
-	WCHAR buffer[20];
-
+	WCHAR buffer[MAX_PATH];
 	WCHAR Settingstxt[20];
 	WCHAR Mappingtxt[20];
 	WCHAR ViGEmtxt[20];
@@ -801,6 +814,15 @@ void Settings::Save(int category)
 	case 118:
 		wsprintf(buffer, L"%d,%d,%d,%d,%d,%d,%d,%d,%d", Mode[0], Mode[1], Mode[2], Mode[3], Mode[4], Mode[5], Mode[6], Mode[7], Mode[8]);
 		WritePrivateProfileString(Settingstxt, TEXT("TabToMode"), buffer, m_file);
+		if (category)
+			break;
+	case 119:
+		wsprintf(buffer, L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+			Reminder[0], Reminder[1], Reminder[2], Reminder[3], Reminder[4], Reminder[5], Reminder[6], Reminder[7], Reminder[8], Reminder[9],
+			Reminder[10], Reminder[11], Reminder[12], Reminder[13], Reminder[14], Reminder[15], Reminder[16], Reminder[17], Reminder[18], Reminder[19],
+			Reminder[20], Reminder[21], Reminder[22], Reminder[23], Reminder[24], Reminder[25], Reminder[26], Reminder[7], Reminder[28], Reminder[29],
+			Reminder[30], Reminder[31]);
+		WritePrivateProfileString(Settingstxt, TEXT("Reminder"), buffer, m_file);
 		if (category)
 			break;
 	case 200:
@@ -1184,6 +1206,14 @@ void Settings::SetTabMode(int i, int mode)
 		Mode[i] = mode;
 	else
 		Mode[i] = 0;
+}
+
+void Settings::SetReminder(int i, int reminder)
+{
+	if (reminder >= 0 && reminder < 3)
+		Reminder[i] = reminder;
+	else
+		Reminder[i] = 0;
 }
 
 void Settings::SetThreshold(int i)
