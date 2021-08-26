@@ -131,7 +131,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App1Name, buf1) != 0)
 				{
 					tape.setAppName(buf1, 1);
-					tape.Save(701);
+					tape.Save(tape.Setting_App1Name);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -146,7 +146,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App2Name, buf2) != 0)
 				{
 					tape.setAppName(buf2, 2);
-					tape.Save(702);
+					tape.Save(tape.Setting_App2Name);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -161,7 +161,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App3Name, buf3) != 0)
 				{
 					tape.setAppName(buf3, 3);
-					tape.Save(703);
+					tape.Save(tape.Setting_App3Name);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -176,7 +176,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App4Name, buf4) != 0)
 				{
 					tape.setAppName(buf4, 4);
-					tape.Save(704);
+					tape.Save(tape.Setting_App4Name);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -191,7 +191,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App5Name, buf5) != 0)
 				{
 					tape.setAppName(buf5, 5);
-					tape.Save(705);
+					tape.Save(tape.Setting_App5Name);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -206,7 +206,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App1Location, buf6) != 0)
 				{
 					tape.setAppLocation(buf6, 1);
-					tape.Save(706);
+					tape.Save(tape.Setting_App1Location);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -221,7 +221,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App2Location, buf7) != 0)
 				{
 					tape.setAppLocation(buf7, 2);
-					tape.Save(707);
+					tape.Save(tape.Setting_App2Location);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -236,7 +236,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App3Location, buf8) != 0)
 				{
 					tape.setAppLocation(buf8, 3);
-					tape.Save(708);
+					tape.Save(tape.Setting_App3Location);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -251,7 +251,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App4Location, buf9) != 0)
 				{
 					tape.setAppLocation(buf9, 4);
-					tape.Save(709);
+					tape.Save(tape.Setting_App4Location);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
@@ -266,7 +266,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.App5Location, buf10) != 0)
 				{
 					tape.setAppLocation(buf10, 5);
-					tape.Save(710);
+					tape.Save(tape.Setting_App5Location);
 					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;

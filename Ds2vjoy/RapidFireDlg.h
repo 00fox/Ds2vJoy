@@ -21,10 +21,11 @@ private:
 	void load();
 	void save();
 	void addRapidFireDlg();
+	void addSeparator();
 	void editRapidFireDlg();
 	void deleteRapidFireDlg();
 	void duplicateRapidFireDlg();
-	int insertRapidFire(int idx, RapidFire* af);
+	int insertRapidFire(int idx, RapidFire* rf);
 	void BeginDrag(int idx);
 	void DragMove(int x, int y);
 	void EndDrag(int x, int y);
@@ -35,7 +36,7 @@ private:
 	HWND m_hList;
 	HMENU m_hMenu;
 
-	int m_TabsID[4];
+	int m_TabsID[5];
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;

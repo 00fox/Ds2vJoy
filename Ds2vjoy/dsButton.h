@@ -5,7 +5,7 @@ class dsButton
 public:
 	enum ButtonType
 	{
-		typeNone = 0,
+		typeNone,
 		typeConstant,
 		typeButton,
 		typeTrigger,
@@ -28,7 +28,7 @@ public:
 	};
 
 	enum ButtonID {
-		none = 0,
+		none,
 		LX,
 		LY,
 		RX,

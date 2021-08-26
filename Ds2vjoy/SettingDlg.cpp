@@ -150,8 +150,8 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == TRUE)
 		{
-			CheckDlgButton(hWnd, IDC_DS4, tape.DesiredDS == 1);
-			CheckDlgButton(hWnd, IDC_DS5, tape.DesiredDS == 2);
+			CheckDlgButton(hWnd, IDC_DS4, tape.PreferredDS == 1);
+			CheckDlgButton(hWnd, IDC_DS5, tape.PreferredDS == 2);
 			SendDlgItemMessage(hWnd, IDC_VJOY_DEV, CB_SETCURSEL, (LPARAM)tape.vJoyDeviceID - 1, 0);
 
 			CheckDlgButton(hWnd, IDC_STARTUP, CheckStartUp());
@@ -237,8 +237,8 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 					CheckDlgButton(hWnd, IDC_DS5, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_DS4, BST_CHECKED);
-				tape.DesiredDS = 1;
-				tape.Save(100);
+				tape.PreferredDS = 1;
+				tape.Save(tape.Setting_PreferredDS);
 				PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 0);
 				break;
 			}
@@ -246,22 +246,71 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_DS5:
 			switch (HIWORD(wParam))
 			{
+			case IDC_STARTUP:
+			{
+				bool startup = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				if (startup)
+				{
+					if (!CheckStartUp())
+						CreateStartUp();
+				}
+				else if (CheckStartUp())
+					DeleteStartUp();
+				break;
+			}
 			case BN_CLICKED:
 				if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 					CheckDlgButton(hWnd, IDC_DS4, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_DS5, BST_CHECKED);
-				tape.DesiredDS = 2;
-				tape.Save(100);
+				tape.PreferredDS = 2;
+				tape.Save(tape.Setting_PreferredDS);
 				PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 0);
 				break;
 			}
+			break;
+		case IDC_TASKTRAY:
+			tape.Tasktray = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_Tasktray);
+			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
+			break;
+		case IDC_CLOSEMINIMIZE:
+			tape.CloseMinimize = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_CloseMinimize);
+			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
+			break;
+		case IDC_DISCONNECT_BT:
+			tape.DisconnectBT = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_DisconnectBT);
+			break;
+		case IDC_LOWBATT:
+			tape.LowBattAlert = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_LowBattAlert);
+			break;
+		case IDC_DS_SERIAL:
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+				WCHAR buf[13];
+				GetWindowText(GetDlgItem(hWnd, IDC_DS_SERIAL), buf, 13);
+				if (lstrcmpW(tape.getSerial(), buf) != 0)
+				{
+					tape.setSerial(buf);
+					tape.Save(tape.Setting_dsSerial);
+					PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 0);
+				}
+				break;
+			}
+			break;
+		case IDC_LED:
+			tape.BlackLedOnExit = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_BlackLedOnExit);
 			break;
 		case IDC_VJOY_DEV:
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 				tape.setvJoyDeviceID((int)SendMessage(GetDlgItem(hWnd, IDC_VJOY_DEV), CB_GETCURSEL, 0, 0) + 1);
-				tape.Save(113);
+				tape.Save(tape.Setting_vJoyDeviceID);
 				PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 0);
 				break;
 			}
@@ -270,59 +319,29 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			WCHAR bufThreshold[MAX_PATH];
 			GetWindowText(GetDlgItem(hWnd, IDC_THRESHOLD), bufThreshold, MAX_PATH);
 			tape.Threshold = max(0, min(100, _wtoi(bufThreshold)));
-			tape.Save(107);
+			tape.Save(tape.Setting_Threshold);
 			break;
 		case IDC_SIMULTANEOUS:
 			WCHAR bufSimultaneous[MAX_PATH];
 			GetWindowText(GetDlgItem(hWnd, IDC_SIMULTANEOUS), bufSimultaneous, MAX_PATH);
 			tape.Simultaneous = max(1, min(9999, _wtoi(bufSimultaneous)));
-			tape.Save(108);
+			tape.Save(tape.Setting_Simultaneous);
 			break;
 		case IDC_LONGPRESS:
 			WCHAR bufLongPress[MAX_PATH];
 			GetWindowText(GetDlgItem(hWnd, IDC_LONGPRESS), bufLongPress, MAX_PATH);
 			tape.LongPress = max(1, min(9999, _wtoi(bufLongPress)));
-			tape.Save(109);
+			tape.Save(tape.Setting_LongPress);
 			break;
 		case IDC_VERYLONGPRESS:
 			WCHAR bufVeryLongPress[MAX_PATH];
 			GetWindowText(GetDlgItem(hWnd, IDC_VERYLONGPRESS), bufVeryLongPress, MAX_PATH);
 			tape.VeryLongPress = max(1, min(9999, _wtoi(bufVeryLongPress)));
-			tape.Save(110);
-			break;
-		case IDC_STARTUP:
-		{
-			bool startup = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			if (startup)
-			{
-				if (!CheckStartUp())
-					CreateStartUp();
-			}
-			else if (CheckStartUp())
-				DeleteStartUp();
-			break;
-		}
-		case IDC_TASKTRAY:
-			tape.Tasktray = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(101);
-			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
-			break;
-		case IDC_CLOSEMINIMIZE:
-			tape.CloseMinimize = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(102);
-			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
-			break;
-		case IDC_DISCONNECT_BT:
-			tape.DisconnectBT = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(103);
-			break;
-		case IDC_LOWBATT:
-			tape.LowBattAlert = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(104);
+			tape.Save(tape.Setting_VeryLongPress);
 			break;
 		case IDC_FFB:
 			tape.FFB = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(111);
+			tape.Save(tape.Setting_FFB);
 			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
 			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
 			break;
@@ -338,7 +357,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				CheckDlgButton(hWnd, IDC_TRIGGERS_NONE, BST_CHECKED);
 				tape.TriggersMode = 0;
-				tape.Save(112);
+				tape.Save(tape.Setting_TriggersMode);
 				PostMessage(m_hWnd, WM_SETTRIGGERS, 0, 0);
 				break;
 			}
@@ -355,7 +374,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				CheckDlgButton(hWnd, IDC_TRIGGERS_RESIST, BST_CHECKED);
 				tape.TriggersMode = 1;
-				tape.Save(112);
+				tape.Save(tape.Setting_TriggersMode);
 				PostMessage(m_hWnd, WM_SETTRIGGERS, 1, 0);
 				break;
 			}
@@ -372,7 +391,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				CheckDlgButton(hWnd, IDC_TRIGGERS_SHOOT, BST_CHECKED);
 				tape.TriggersMode = 2;
-				tape.Save(112);
+				tape.Save(tape.Setting_TriggersMode);
 				PostMessage(m_hWnd, WM_SETTRIGGERS, 2, 0);
 				break;
 			}
@@ -389,44 +408,25 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				CheckDlgButton(hWnd, IDC_TRIGGERS_PROACTIVE, BST_CHECKED);
 				tape.TriggersMode = 3;
-				tape.Save(112);
+				tape.Save(tape.Setting_TriggersMode);
 				PostMessage(m_hWnd, WM_SETTRIGGERS, 3, 0);
 				break;
 			}
 			break;
 		case IDC_TOUCHPAD:
 			tape.SetTouchPadButton((int)SendMessage(GetDlgItem(hWnd, IDC_TOUCHPAD), CB_GETCURSEL, 0, 0));
-			tape.Save(114);
-			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-			break;
-		case IDC_ROW:
-			tape.SetTouchRow((int)SendMessage(GetDlgItem(hWnd, IDC_ROW), CB_GETCURSEL, 0, 0) + 1);
-			tape.Save(115);
+			tape.Save(tape.Setting_TouchPadButton);
 			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
 			break;
 		case IDC_COL:
 			tape.SetTouchCol((int)SendMessage(GetDlgItem(hWnd, IDC_COL), CB_GETCURSEL, 0, 0) + 1);
-			tape.Save(116);
+			tape.Save(tape.Setting_TouchCol);
 			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
 			break;
-		case IDC_DS_SERIAL:
-			switch (HIWORD(wParam))
-			{
-			case EN_UPDATE:
-				WCHAR buf[13];
-				GetWindowText(GetDlgItem(hWnd, IDC_DS_SERIAL), buf, 13);
-				if (lstrcmpW(tape.getSerial(), buf) != 0)
-				{
-					tape.setSerial(buf);
-					tape.Save(105);
-					PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 0);
-				}
-				break;
-			}
-			break;
-		case IDC_LED:
-			tape.BlackLedOnExit = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(106);
+		case IDC_ROW:
+			tape.SetTouchRow((int)SendMessage(GetDlgItem(hWnd, IDC_ROW), CB_GETCURSEL, 0, 0) + 1);
+			tape.Save(tape.Setting_TouchRow);
+			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
 			break;
 		case IDC_COLOR:
 		{
@@ -436,7 +436,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (ChooseColor(&cc))
 				{
 					tape.SetLED(cc.rgbResult);
-					tape.Save(117);
+					tape.Save(tape.Setting_LED_Color);
 					PostMessage(hWnd, WM_DEVICE_DS_START, 0, 1);
 					RedrawWindow(m_hDlg, NULL, NULL, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_UPDATENOW);
 				}

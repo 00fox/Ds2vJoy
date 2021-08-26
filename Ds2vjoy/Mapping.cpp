@@ -3,7 +3,7 @@
 #include "Ds2vJoy.h"
 
 Mapping::Mapping()
-	:Enable(false)
+	:Enable(0)
 	, dsID()
 	, vjID()
 	, Target()
@@ -45,6 +45,9 @@ Mapping::~Mapping()
 
 const WCHAR* Mapping::dsString()
 {
+	if (Enable == 2)
+	    return L"▒▒▒▒▒▒";
+
 	static WCHAR buf[256];
 	buf[0] = 0;
 	WCHAR* head = buf;
@@ -75,6 +78,9 @@ const WCHAR* Mapping::dsString()
 
 const WCHAR* Mapping::dsLastString()
 {
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒▒";
+
 	static WCHAR buf[256];
 	buf[0] = 0;
 	WCHAR* head = buf;
@@ -122,6 +128,9 @@ const WCHAR* Mapping::dsLastString()
 
 const WCHAR* Mapping::dsNotString()
 {
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒▒";
+
 	static WCHAR buf[256];
 	buf[0] = 0;
 	WCHAR* head = buf;
@@ -167,6 +176,9 @@ const WCHAR* Mapping::dsNotString()
 
 const WCHAR* Mapping::vJoyString()
 {
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒▒▒▒▒▒";
+
 	bool firstplus = false;
 	static WCHAR buf[256];
 	buf[0] = 0;
@@ -217,6 +229,9 @@ const WCHAR* Mapping::vJoyString()
 
 const WCHAR* Mapping::TagsString()
 {
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒";
+
 	bool firstplus = false;
 	static WCHAR buf[256];
 	buf[0] = 0;
@@ -302,7 +317,7 @@ void Mapping::PreLoad()
 
 BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 {
-	if (!Enable)
+	if (Enable != 1)
 		return FALSE;
 
 	lastmode = 1;

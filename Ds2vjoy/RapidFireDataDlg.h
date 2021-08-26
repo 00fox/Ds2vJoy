@@ -12,7 +12,7 @@ public:
 	void Hide();
 	BOOL MoveWindow(int, int, int, int, BOOL);
 
-	RapidFire autoFireData;
+	RapidFire rapidFireData;
 
 	HWND m_hDlg;
 	int m_idx;

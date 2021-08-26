@@ -2,12 +2,12 @@
 #include "Keymap.h"
 
 Keymap::Keymap()
-	:ButtonID(vJoyButtonID::none)
+	:Enable(0)
+	, ButtonID(vJoyButtonID::none)
 	, vk()
 	, usePostmessage(false)
 	, useActivating(false)
 	, findWindow()
-	, Enable(false)
 	, m_button(0)
 {
 	Findwindow fw;
@@ -27,6 +27,30 @@ struct _virtualkey2str
 
 #define KS1(v) { v , L#v , false },
 #define KS2(v) { #@v , L"VK_" #v , true },
+
+WCHAR* Keymap::KeyString()
+{
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒";
+
+	return vJoyButton::String(ButtonID);
+}
+
+WCHAR* Keymap::ValueString()
+{
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒";
+
+	WCHAR* head = bufstring;
+
+	for (int i = 0; i < vk.size(); i++)
+		head += wsprintfW(head, L"%s ", String(BytetoKeyboardID(vk[i])));
+
+	if (bufstring < head)
+		*(--head) = 0;
+
+	return bufstring;
+}
 
 static const struct _virtualkey2str keystr[] = {
 //KS1(VK_LBUTTON)
@@ -288,7 +312,10 @@ void Keymap::keyupPM()
 
 BOOL Keymap::LoadDevice(vJoyDevice* vjoy)
 {
-	if (!ButtonID || !Enable)
+	if (Enable != 1)
+		return FALSE;
+
+	if (!ButtonID)
 		return FALSE;
 
 	m_button = vjoy->GetButton(ButtonID);
@@ -373,24 +400,6 @@ void Keymap::GetState()
 			}
 		}
 	}
-}
-
-WCHAR* Keymap::KeyString()
-{
-	return vJoyButton::String(ButtonID);
-}
-
-WCHAR* Keymap::ValueString()
-{
-	WCHAR* head = bufstring;
-
-	for (int i = 0; i < vk.size(); i++)
-		head += wsprintfW(head, L"%s ", String(BytetoKeyboardID(vk[i])));
-
-	if (bufstring < head)
-		*(--head) = 0;
-
-	return bufstring;
 }
 
 KeyboardID Keymap::BytetoKeyboardID(BYTE id)

@@ -8,12 +8,12 @@ public:
 	RapidFire();
 	~RapidFire();
 
-	BOOL LoadDevice(vJoyDevice*);
 	WCHAR* KeyString();
 	WCHAR* ValueString();
+	BOOL LoadDevice(vJoyDevice*);
 	BOOL Run(double now);
 
-	bool Enable;
+	int Enable;
 	vJoyButtonID ButtonID;
 	vJoyButtonID ButtonID2;
 	int Firsttime;

@@ -50,7 +50,7 @@ void Settings::Load()
 	wsprintf(RapidFiretxt, L"%dRapidFire", Profile);
 	wsprintf(Guardiantxt, L"%dGuardian", Profile);
 
-	SetDesiredDS(GetPrivateProfileInt(TEXT("Profile"), TEXT("PreferredDS"), 2, m_file));
+	SetPreferredDS(GetPrivateProfileInt(TEXT("Profile"), TEXT("PreferredDS"), 2, m_file));
 	Tasktray = GetPrivateProfileInt(TEXT("Profile"), TEXT("Tasktray"), 0, m_file) == 1 ? true : false;
 	CloseMinimize = GetPrivateProfileInt(TEXT("Profile"), TEXT("CloseMinimize"), 0, m_file) == 1 ? true : false;
 	DisconnectBT = GetPrivateProfileInt(TEXT("Profile"), TEXT("DisconnectBT"), 0, m_file) == 1 ? true : false;
@@ -58,39 +58,13 @@ void Settings::Load()
 	GetPrivateProfileString(L"Profile", L"dsSerial", L"", dsSerial, sizeof(dsSerial) / sizeof(dsSerial[0]), m_file);
 	BlackLedOnExit = GetPrivateProfileInt(TEXT("Profile"), TEXT("BlackLedOnExit"), 1, m_file) == 1 ? true : false;
 
-	vJoyPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("vJoyPaused"), 0, m_file) == 1 ? true : false;
-	ViGEmPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("ViGEmPaused"), 0, m_file) == 1 ? true : false;
-	KeymapPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("KeymapPaused"), 0, m_file) == 1 ? true : false;
-	RapidFirePaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("RapidFirePaused"), 0, m_file) == 1 ? true : false;
-	GuardianPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("GuardianPaused"), 0, m_file) == 1 ? true : false;
-
-	GetPrivateProfileString(L"Guardian", L"dsHID1", LR"(HID\VID_054C&PID_0BA0&MI_03)", dsHID1, sizeof(dsHID1) / sizeof(dsHID1[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"dsHID2", LR"(HID\VID_054C&PID_0CE6&MI_03)", dsHID2, sizeof(dsHID2) / sizeof(dsHID2[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"dsHID3", L"", dsHID3, sizeof(dsHID3) / sizeof(dsHID3[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"Exe1Name", L"RemotePlay.exe", Exe1Name, sizeof(Exe1Name) / sizeof(Exe1Name[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"Exe2Name", L"", Exe2Name, sizeof(Exe2Name) / sizeof(Exe2Name[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"Exe3Name", L"", Exe3Name, sizeof(Exe3Name) / sizeof(Exe3Name[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"Exe4Name", L"", Exe4Name, sizeof(Exe4Name) / sizeof(Exe4Name[0]), m_file);
-	GetPrivateProfileString(L"Guardian", L"Exe5Name", L"", Exe5Name, sizeof(Exe5Name) / sizeof(Exe5Name[0]), m_file);
-
-	GetPrivateProfileString(L"Links", L"App1Name", L"Avoid", App1Name, sizeof(App1Name) / sizeof(App1Name[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App2Name", L"Prefer", App2Name, sizeof(App2Name) / sizeof(App2Name[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App3Name", L"", App3Name, sizeof(App3Name) / sizeof(App3Name[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App4Name", L"", App4Name, sizeof(App4Name) / sizeof(App4Name[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App5Name", L"", App5Name, sizeof(App5Name) / sizeof(App5Name[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App1Location", LR"(C:\Windows\System32\cmd.exe /C "joy.cpl")", App1Location, sizeof(App1Location) / sizeof(App1Location[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App2Location", LR"(rundll32.exe shell32.dll,Control_RunDLL joy.cpl)", App2Location, sizeof(App2Location) / sizeof(App2Location[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App3Location", L"", App3Location, sizeof(App3Location) / sizeof(App3Location[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App4Location", L"", App4Location, sizeof(App4Location) / sizeof(App4Location[0]), m_file);
-	GetPrivateProfileString(L"Links", L"App5Location", L"", App5Location, sizeof(App5Location) / sizeof(App5Location[0]), m_file);
-
+	setvJoyDeviceID(GetPrivateProfileInt(Settingstxt, TEXT("vJoyDeviceID"), 1, m_file));
 	SetThreshold(GetPrivateProfileInt(Settingstxt, TEXT("Threshold"), 7, m_file));
 	SetSimultaneous(GetPrivateProfileInt(Settingstxt, TEXT("Simultaneous"), 40, m_file));
 	SetLongPress(GetPrivateProfileInt(Settingstxt, TEXT("LongPress"), 255, m_file));
 	SetVeryLongPress(GetPrivateProfileInt(Settingstxt, TEXT("VeryLongPress"), 3287, m_file));
 	FFB = GetPrivateProfileInt(Settingstxt, TEXT("FFB"), 0, m_file) == 1 ? true : false;
 	SetTriggersMode(GetPrivateProfileInt(Settingstxt, TEXT("TriggersMode"), 0, m_file));
-	setvJoyDeviceID(GetPrivateProfileInt(Settingstxt, TEXT("vJoyDeviceID"), 1, m_file));
 	SetTouchPadButton(GetPrivateProfileInt(Settingstxt, TEXT("TouchPadButton"), 0, m_file));
 	SetSplitTouch();
 	SetTouchCol(GetPrivateProfileInt(Settingstxt, TEXT("TouchCol"), 1, m_file));
@@ -124,6 +98,12 @@ void Settings::Load()
 			SetReminder(i, atoi(substr.c_str()));
 		}
 	}
+
+	vJoyPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("vJoyPaused"), 0, m_file) == 1 ? true : false;
+	RapidFirePaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("RapidFirePaused"), 0, m_file) == 1 ? true : false;
+	KeymapPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("KeymapPaused"), 0, m_file) == 1 ? true : false;
+	ViGEmPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("ViGEmPaused"), 0, m_file) == 1 ? true : false;
+	GuardianPaused = GetPrivateProfileInt(TEXT("Tray"), TEXT("GuardianPaused"), 0, m_file) == 1 ? true : false;
 
 	{
 		const int n = sizeof(WCHAR) * 128 * 1024 *2;
@@ -165,7 +145,7 @@ void Settings::Load()
 						break;
 				}
 				Mapping btn;
-				btn.Enable = mapdata[MappingName::Mapping_Enable] == 1;
+				btn.Enable = mapdata[MappingName::Mapping_Enable];
 				btn.dsID[0] = (dsButtonID)mapdata[MappingName::Mapping_ds_1];
 				btn.dsID[1] = (dsButtonID)mapdata[MappingName::Mapping_ds_2];
 				btn.dsID[2] = (dsButtonID)mapdata[MappingName::Mapping_ds_3];
@@ -258,6 +238,132 @@ void Settings::Load()
 				btn.Grid[5] = max(0, min(99, mapdata[MappingName::Mapping_Grid_nh]));
 				btn.Tab = max(0, min(8, mapdata[MappingName::Mapping_Tab]));
 				Mappingdata.push_back(std::move(btn));
+				key = head;
+			}
+		}
+	}
+
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			return;
+
+		WCHAR* head = buf;
+		int ret = GetPrivateProfileSectionW(RapidFiretxt, buf, n, m_file);
+		if (ret > 0 && ret - 2 != n)
+		{
+			WCHAR* key = head, * value;
+			while (*key != 0)
+			{
+				head += lstrlenW(key) + 1;
+				value = wcschr(key, L'=');
+				if (value == 0)
+					break;
+				*value++ = 0;
+				int j = _wtoi(key);
+				if (j < 1 || j > 128)
+				{
+					key = head;
+					continue;
+				}
+
+				int mapdata[RapidFireName::RapidFire_Count] = { 0 };
+				for (int i = 0; i < RapidFireName::RapidFire_Count; i++)
+				{
+					key = value;
+					value = wcschr(key, L',');
+					if (value != 0)
+						*value++ = 0;
+					int j = _wtoi(key);
+					if (j < 0 || j >= 0x10000)
+						break;
+					mapdata[i] = j;
+					if (value == 0)
+						break;
+				}
+				RapidFire rf;
+				rf.Enable = mapdata[RapidFireName::RapidFire_Enable];
+				rf.ButtonID = (vJoyButtonID)mapdata[RapidFireName::RapidFire_Button];
+				rf.ButtonID2 = (vJoyButtonID)mapdata[RapidFireName::RapidFire_Button2];
+				rf.Firsttime = mapdata[RapidFireName::RapidFire_FirstTime];
+				rf.Releasetime = mapdata[RapidFireName::RapidFire_Release];
+				rf.Presstime = mapdata[RapidFireName::RapidFire_PressTime];
+				RapidFiredata.push_back(std::move(rf));
+
+				key = head;
+			}
+		}
+	}
+
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			return;
+
+		WCHAR* head = buf;
+		int ret = GetPrivateProfileSectionW(Keymaptxt, buf, n, m_file);
+		if (ret > 0 && ret - 2 != n)
+		{
+			WCHAR* key = head, * value;
+			while (*key != 0)
+			{
+				head += lstrlenW(key) + 1;
+				value = wcschr(key, L'=');
+				if (value == 0)
+					break;
+				*value++ = 0;
+				std::string header = SubString(key, "=", 0, 0);
+				Keymap keymap;
+				int btnid = _wtoi(key);
+				if (btnid < vJoyButtonID::none || btnid >= vJoyButtonID::button_Count)
+				{
+					key = head;
+					continue;
+				}
+				keymap.ButtonID = (vJoyButtonID)btnid;
+
+				key = value;
+				value = wcschr(key, L',');
+				if (value == 0)
+					break;
+				*value++ = 0;
+				keymap.Enable = _wtoi(key);
+
+				key = value;
+				value = wcschr(key, L',');
+				if (value != 0)
+					*value++ = 0;
+				if (_wtoi(key) != 0)
+					keymap.usePostmessage = true;
+
+				key = value;
+				value = wcschr(key, L',');
+				if (value != 0)
+					*value++ = 0;
+				if (_wtoi(key) != 0)
+					keymap.useActivating = true;
+
+				for (int i = 0; i < KEYMAP_MAX_KEYS; i++)
+				{
+					key = value;
+					value = wcschr(key, L',');
+					if (value != 0)
+						*value++ = 0;
+					if (_wcsnicmp(key, L"**", 2) == 0)
+					{
+						keymap.findWindow.Val(value);
+						break;
+					}
+					int _vk = _wtoi(key);
+					if (_vk <= 0 || _vk >= 0x100)
+						break;
+					keymap.vk.push_back((BYTE)_vk);
+					if (value == 0)
+						break;
+				}
+				Keymapdata.push_back(std::move(keymap));
 				key = head;
 			}
 		}
@@ -453,132 +559,14 @@ void Settings::Load()
 		}
 	}
 
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			return;
-
-		WCHAR* head = buf;
-		int ret = GetPrivateProfileSectionW(Keymaptxt, buf, n, m_file);
-		if (ret > 0 && ret - 2 != n)
-		{
-			WCHAR* key = head, * value;
-			while (*key != 0)
-			{
-				head += lstrlenW(key) + 1;
-				value = wcschr(key, L'=');
-				if (value == 0)
-					break;
-				*value++ = 0;
-				std::string header = SubString(key, "=", 0, 0);
-				Keymap keymap;
-				int btnid = _wtoi(key);
-				if (btnid <= vJoyButtonID::none || btnid >= vJoyButtonID::button_Count)
-				{
-					key = head;
-					continue;
-				}
-				keymap.ButtonID = (vJoyButtonID)btnid;
-
-				key = value;
-				value = wcschr(key, L',');
-				if (value == 0)
-					break;
-				*value++ = 0;
-				if (_wtoi(key) != 0)
-					keymap.Enable = true;
-
-				key = value;
-				value = wcschr(key, L',');
-				if (value != 0)
-					*value++ = 0;
-				if (_wtoi(key) != 0)
-					keymap.usePostmessage = true;
-
-				key = value;
-				value = wcschr(key, L',');
-				if (value != 0)
-					*value++ = 0;
-				if (_wtoi(key) != 0)
-					keymap.useActivating = true;
-
-				for (int i = 0; i < KEYMAP_MAX_KEYS; i++)
-				{
-					key = value;
-					value = wcschr(key, L',');
-					if (value != 0)
-						*value++ = 0;
-					if (_wcsnicmp(key, L"**", 2) == 0)
-					{
-						keymap.findWindow.Val(value);
-						break;
-					}
-					int _vk = _wtoi(key);
-					if (_vk <= 0 || _vk >= 0x100)
-						break;
-					keymap.vk.push_back((BYTE)_vk);
-					if (value == 0)
-						break;
-				}
-				Keymapdata.push_back(std::move(keymap));
-				key = head;
-			}
-		}
-	}
-
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			return;
-
-		WCHAR* head = buf;
-		int ret = GetPrivateProfileSectionW(RapidFiretxt, buf, n, m_file);
-		if (ret > 0 && ret - 2 != n)
-		{
-			WCHAR* key = head, * value;
-			while (*key != 0)
-			{
-				head += lstrlenW(key) + 1;
-				value = wcschr(key, L'=');
-				if (value == 0)
-					break;
-				*value++ = 0;
-				int j = _wtoi(key);
-				if (j < 1 || j > 128)
-				{
-					key = head;
-					continue;
-				}
-
-				int mapdata[RapidFireName::RapidFire_Count] = { 0 };
-				for (int i = 0; i < RapidFireName::RapidFire_Count; i++)
-				{
-					key = value;
-					value = wcschr(key, L',');
-					if (value != 0)
-						*value++ = 0;
-					int j = _wtoi(key);
-					if (j < 0 || j >= 0x10000)
-						break;
-					mapdata[i] = j;
-					if (value == 0)
-						break;
-				}
-				RapidFire rf;
-				rf.Enable = mapdata[RapidFireName::RapidFire_Enable] == 1;
-				rf.ButtonID = (vJoyButtonID)mapdata[RapidFireName::RapidFire_Button];
-				rf.ButtonID2 = (vJoyButtonID)mapdata[RapidFireName::RapidFire_Button2];
-				rf.Firsttime = mapdata[RapidFireName::RapidFire_FirstTime];
-				rf.Releasetime = mapdata[RapidFireName::RapidFire_Release];
-				rf.Presstime = mapdata[RapidFireName::RapidFire_PressTime];
-				RapidFiredata.push_back(std::move(rf));
-
-				key = head;
-			}
-		}
-	}
+	GetPrivateProfileString(L"Guardian", L"dsHID1", LR"(HID\VID_054C&PID_0BA0&MI_03)", dsHID1, sizeof(dsHID1) / sizeof(dsHID1[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"dsHID2", LR"(HID\VID_054C&PID_0CE6&MI_03)", dsHID2, sizeof(dsHID2) / sizeof(dsHID2[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"dsHID3", L"", dsHID3, sizeof(dsHID3) / sizeof(dsHID3[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"Exe1Name", L"RemotePlay.exe", Exe1Name, sizeof(Exe1Name) / sizeof(Exe1Name[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"Exe2Name", L"", Exe2Name, sizeof(Exe2Name) / sizeof(Exe2Name[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"Exe3Name", L"", Exe3Name, sizeof(Exe3Name) / sizeof(Exe3Name[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"Exe4Name", L"", Exe4Name, sizeof(Exe4Name) / sizeof(Exe4Name[0]), m_file);
+	GetPrivateProfileString(L"Guardian", L"Exe5Name", L"", Exe5Name, sizeof(Exe5Name) / sizeof(Exe5Name[0]), m_file);
 
 	GuardianActive = GetPrivateProfileInt(Guardiantxt, TEXT("GuardianActive"), 0, m_file) == 1 ? true : false;
 	RemoveBlacklist = GetPrivateProfileInt(Guardiantxt, TEXT("RemoveBlacklist"), 1, m_file) == 1 ? true : false;
@@ -592,6 +580,17 @@ void Settings::Load()
 	Exe4NameEnable = GetPrivateProfileInt(Guardiantxt, TEXT("Exe4NameEnable"), 0, m_file) == 1 ? true : false;
 	Exe5NameEnable = GetPrivateProfileInt(Guardiantxt, TEXT("Exe5NameEnable"), 0, m_file) == 1 ? true : false;
 
+	GetPrivateProfileString(L"Links", L"App1Name", L"Avoid", App1Name, sizeof(App1Name) / sizeof(App1Name[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App2Name", L"Prefer", App2Name, sizeof(App2Name) / sizeof(App2Name[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App3Name", L"", App3Name, sizeof(App3Name) / sizeof(App3Name[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App4Name", L"", App4Name, sizeof(App4Name) / sizeof(App4Name[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App5Name", L"", App5Name, sizeof(App5Name) / sizeof(App5Name[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App1Location", LR"(C:\Windows\System32\cmd.exe /C "joy.cpl")", App1Location, sizeof(App1Location) / sizeof(App1Location[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App2Location", LR"(rundll32.exe shell32.dll,Control_RunDLL joy.cpl)", App2Location, sizeof(App2Location) / sizeof(App2Location[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App3Location", L"", App3Location, sizeof(App3Location) / sizeof(App3Location[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App4Location", L"", App4Location, sizeof(App4Location) / sizeof(App4Location[0]), m_file);
+	GetPrivateProfileString(L"Links", L"App5Location", L"", App5Location, sizeof(App5Location) / sizeof(App5Location[0]), m_file);
+
 	{
 		const int n = sizeof(WCHAR) * 32 * 1024;
 		WCHAR* buf = (WCHAR*)malloc(n);
@@ -603,7 +602,7 @@ void Settings::Load()
 		if (ret == 0)
 		{
 			Save();
-			Save(1000);
+			Save(Setting_GiveMapping);
 			Load();
 		}
 
@@ -629,194 +628,102 @@ void Settings::Save(int category)
 
 	switch (category)
 	{
-	case 0:
-	case 1:
+	case Setting_All:
+	case Setting_Profile:
 		wsprintf(buffer, L"%d", Profile);
 		WritePrivateProfileString(TEXT("Profile"), TEXT("Profile"), buffer, m_file);
 		if (category)
 			break;
-	case 100:
-		wsprintf(buffer, L"%d", DesiredDS);
+	case Setting_PreferredDS:
+		wsprintf(buffer, L"%d", PreferredDS);
 		WritePrivateProfileString(TEXT("Profile"), TEXT("PreferredDS"), buffer, m_file);
 		if (category)
 			break;
-	case 101:
+	case Setting_Tasktray:
 		WritePrivateProfileString(TEXT("Profile"), TEXT("Tasktray"), Tasktray ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 102:
+	case Setting_CloseMinimize:
 		WritePrivateProfileString(TEXT("Profile"), TEXT("CloseMinimize"), CloseMinimize ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 103:
+	case Setting_DisconnectBT:
 		WritePrivateProfileString(TEXT("Profile"), TEXT("DisconnectBT"), DisconnectBT ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 104:
+	case Setting_LowBattAlert:
 		WritePrivateProfileString(TEXT("Profile"), TEXT("LowBattAlert"), LowBattAlert ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 105:
+	case Setting_dsSerial:
 		WritePrivateProfileString(TEXT("Profile"), TEXT("dsSerial"), dsSerial, m_file);
 		if (category)
 			break;
-	case 106:
+	case Setting_BlackLedOnExit:
 		WritePrivateProfileString(TEXT("Profile"), TEXT("BlackLedOnExit"), BlackLedOnExit ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 2:
-		WritePrivateProfileString(TEXT("Tray"), TEXT("vJoyPaused"), vJoyPaused ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 3:
-		WritePrivateProfileString(TEXT("Tray"), TEXT("ViGEmPaused"), ViGEmPaused ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 4:
-		WritePrivateProfileString(TEXT("Tray"), TEXT("KeymapPaused"), KeymapPaused ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 5:
-		WritePrivateProfileString(TEXT("Tray"), TEXT("RapidFirePaused"), RapidFirePaused ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 6:
-		WritePrivateProfileString(TEXT("Tray"), TEXT("GuardianPaused"), GuardianPaused ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 605:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID1"), dsHID1, m_file);
-		if (category)
-			break;
-	case 606:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID2"), dsHID2, m_file);
-		if (category)
-			break;
-	case 607:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID3"), dsHID3, m_file);
-		if (category)
-			break;
-	case 614:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe1Name"), Exe1Name, m_file);
-		if (category)
-			break;
-	case 615:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe2Name"), Exe2Name, m_file);
-		if (category)
-			break;
-	case 616:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe3Name"), Exe3Name, m_file);
-		if (category)
-			break;
-	case 617:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe4Name"), Exe4Name, m_file);
-		if (category)
-			break;
-	case 618:
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe5Name"), Exe5Name, m_file);
-		if (category)
-			break;
-	case 701:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App1Name"), App1Name, m_file);
-		if (category)
-			break;
-	case 702:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App2Name"), App2Name, m_file);
-		if (category)
-			break;
-	case 703:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App3Name"), App3Name, m_file);
-		if (category)
-			break;
-	case 704:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App4Name"), App4Name, m_file);
-		if (category)
-			break;
-	case 705:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App5Name"), App5Name, m_file);
-		if (category)
-			break;
-	case 706:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App1Location"), App1Location, m_file);
-		if (category)
-			break;
-	case 707:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App2Location"), App2Location, m_file);
-		if (category)
-			break;
-	case 708:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App3Location"), App3Location, m_file);
-		if (category)
-			break;
-	case 709:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App4Location"), App4Location, m_file);
-		if (category)
-			break;
-	case 710:
-		WritePrivateProfileString(TEXT("Links"), TEXT("App5Location"), App5Location, m_file);
-		if (category)
-			break;
-	case 107:
-		wsprintf(buffer, L"%d", Threshold);
-		WritePrivateProfileString(Settingstxt, TEXT("Threshold"), buffer, m_file);
-		if (category)
-			break;
-	case 108:
-		wsprintf(buffer, L"%d", Simultaneous);
-		WritePrivateProfileString(Settingstxt, TEXT("Simultaneous"), buffer, m_file);
-		if (category)
-			break;
-	case 109:
-		wsprintf(buffer, L"%d", LongPress);
-		WritePrivateProfileString(Settingstxt, TEXT("LongPress"), buffer, m_file);
-		if (category)
-			break;
-	case 110:
-		wsprintf(buffer, L"%d", VeryLongPress);
-		WritePrivateProfileString(Settingstxt, TEXT("VeryLongPress"), buffer, m_file);
-		if (category)
-			break;
-	case 111:
-		WritePrivateProfileString(Settingstxt, TEXT("FFB"), FFB ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 112:
-		wsprintf(buffer, L"%d", TriggersMode);
-		WritePrivateProfileString(Settingstxt, TEXT("TriggersMode"), buffer, m_file);
-		if (category)
-			break;
-	case 113:
+	case Setting_vJoyDeviceID:
 		wsprintf(buffer, L"%d", vJoyDeviceID);
 		WritePrivateProfileString(Settingstxt, TEXT("vJoyDeviceID"), buffer, m_file);
 		if (category)
 			break;
-	case 114:
+	case Setting_Threshold:
+		wsprintf(buffer, L"%d", Threshold);
+		WritePrivateProfileString(Settingstxt, TEXT("Threshold"), buffer, m_file);
+		if (category)
+			break;
+	case Setting_Simultaneous:
+		wsprintf(buffer, L"%d", Simultaneous);
+		WritePrivateProfileString(Settingstxt, TEXT("Simultaneous"), buffer, m_file);
+		if (category)
+			break;
+	case Setting_LongPress:
+		wsprintf(buffer, L"%d", LongPress);
+		WritePrivateProfileString(Settingstxt, TEXT("LongPress"), buffer, m_file);
+		if (category)
+			break;
+	case Setting_VeryLongPress:
+		wsprintf(buffer, L"%d", VeryLongPress);
+		WritePrivateProfileString(Settingstxt, TEXT("VeryLongPress"), buffer, m_file);
+		if (category)
+			break;
+	case Setting_FFB:
+		WritePrivateProfileString(Settingstxt, TEXT("FFB"), FFB ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_TriggersMode:
+		wsprintf(buffer, L"%d", TriggersMode);
+		WritePrivateProfileString(Settingstxt, TEXT("TriggersMode"), buffer, m_file);
+		if (category)
+			break;
+	case Setting_TouchPadButton:
 		wsprintf(buffer, L"%d", TouchPadButton);
 		WritePrivateProfileString(Settingstxt, TEXT("TouchPadButton"), buffer, m_file);
 		SetSplitTouch();
 		if (category)
 			break;
-	case 115:
+	case Setting_TouchCol:
 		wsprintf(buffer, L"%d", TouchCol);
 		WritePrivateProfileString(Settingstxt, TEXT("TouchCol"), buffer, m_file);
 		if (category)
 			break;
-	case 116:
+	case Setting_TouchRow:
 		wsprintf(buffer, L"%d", TouchRow);
 		WritePrivateProfileString(Settingstxt, TEXT("TouchRow"), buffer, m_file);
 		if (category)
 			break;
-	case 117:
+	case Setting_LED_Color:
 		wsprintf(buffer, L"%d", LED_Color);
 		WritePrivateProfileString(Settingstxt, TEXT("LED_Color"), buffer, m_file);
 		if (category)
 			break;
-	case 118:
+	case Setting_TabToMode:
 		wsprintf(buffer, L"%d,%d,%d,%d,%d,%d,%d,%d,%d", Mode[0], Mode[1], Mode[2], Mode[3], Mode[4], Mode[5], Mode[6], Mode[7], Mode[8]);
 		WritePrivateProfileString(Settingstxt, TEXT("TabToMode"), buffer, m_file);
 		if (category)
 			break;
-	case 119:
+	case Setting_Reminder:
 		wsprintf(buffer, L"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
 			Reminder[0], Reminder[1], Reminder[2], Reminder[3], Reminder[4], Reminder[5], Reminder[6], Reminder[7], Reminder[8], Reminder[9],
 			Reminder[10], Reminder[11], Reminder[12], Reminder[13], Reminder[14], Reminder[15], Reminder[16], Reminder[17], Reminder[18], Reminder[19],
@@ -825,7 +732,27 @@ void Settings::Save(int category)
 		WritePrivateProfileString(Settingstxt, TEXT("Reminder"), buffer, m_file);
 		if (category)
 			break;
-	case 200:
+	case Setting_vJoyPaused:
+		WritePrivateProfileString(TEXT("Tray"), TEXT("vJoyPaused"), vJoyPaused ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_RapidFirePaused:
+		WritePrivateProfileString(TEXT("Tray"), TEXT("RapidFirePaused"), RapidFirePaused ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_KeymapPaused:
+		WritePrivateProfileString(TEXT("Tray"), TEXT("KeymapPaused"), KeymapPaused ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_ViGEmPaused:
+		WritePrivateProfileString(TEXT("Tray"), TEXT("ViGEmPaused"), ViGEmPaused ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_GuardianPaused:
+		WritePrivateProfileString(TEXT("Tray"), TEXT("GuardianPaused"), GuardianPaused ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_Mappingdata:
 	{
 		const int n = sizeof(WCHAR) * 32 * 1024 *2;
 		WCHAR* buf = (WCHAR*)malloc(n);
@@ -941,134 +868,7 @@ void Settings::Save(int category)
 		if (category)
 			break;
 	}
-	case 306:
-		WritePrivateProfileString(ViGEmtxt, TEXT("ViGEmActive"), ViGEmActive ? L"1" : L"0", m_file);
-		if (category)
-			break;
-	case 307:
-		wsprintf(buffer, L"%d", DesiredVirtualPad);
-		WritePrivateProfileString(ViGEmtxt, TEXT("DesiredVirtualPad"), buffer, m_file);
-		if (category)
-			break;
-	case 300:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		for (int i = 0; i < 24; i++)
-			head += wsprintf(head, L"%d,", target_X360[i]);
-		WritePrivateProfileString(ViGEmtxt, TEXT("1"), buf, m_file);
-		if (category)
-			break;
-	}
-	case 301:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		for (int i = 0; i < 24; i++)
-			head += wsprintf(head, L"%d,", dstarget_X360[i]);
-		WritePrivateProfileString(ViGEmtxt, TEXT("2"), buf, m_file);
-		if (category)
-			break;
-	}
-	case 302:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		for (int i = 0; i < 24; i++)
-			head += wsprintf(head, L"%d,", vjtarget_X360[i]);
-		WritePrivateProfileString(ViGEmtxt, TEXT("3"), buf, m_file);
-		if (category)
-			break;
-	}
-	case 303:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		for (int i = 0; i < 24; i++)
-			head += wsprintf(head, L"%d,", target_DS4[i]);
-		WritePrivateProfileString(ViGEmtxt, TEXT("4"), buf, m_file);
-		if (category)
-			break;
-	}
-	case 304:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		for (int i = 0; i < 24; i++)
-			head += wsprintf(head, L"%d,", dstarget_DS4[i]);
-		WritePrivateProfileString(ViGEmtxt, TEXT("5"), buf, m_file);
-		if (category)
-			break;
-	}
-	case 305:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		for (int i = 0; i < 24; i++)
-			head += wsprintf(head, L"%d,", vjtarget_DS4[i]);
-		WritePrivateProfileString(ViGEmtxt, TEXT("6"), buf, m_file);
-		if (category)
-			break;
-	}
-	case 400:
-	{
-		const int n = sizeof(WCHAR) * 32 * 1024;
-		WCHAR* buf = (WCHAR*)malloc(n);
-		if (buf == 0)
-			break;
-
-		memset(buf, 0, n);
-		WCHAR* head = buf;
-		size_t length = Keymapdata.size();
-		for (int i = 0; i < length; ++i)
-		{
-			Keymap* keymap = &Keymapdata[i];
-			if (keymap->vk.empty())
-				continue;
-			head += wsprintf(head, L"%d=%d,%d,%d,", keymap->ButtonID, keymap->Enable ? 1 : 0, keymap->usePostmessage ? 1 : 0, keymap->useActivating ? 1 : 0);
-			for (auto itr = keymap->vk.begin(); itr != keymap->vk.end(); ++itr)
-			{
-				if (*itr == 0)
-					break;
-				head += wsprintf(head, L"%d,", *itr);
-			}
-			head += wsprintf(head, L"**,%s", keymap->findWindow.Val().c_str());
-			head++;
-		}
-		WritePrivateProfileSection(Keymaptxt, buf, m_file);
-		if (category)
-			break;
-	}
-	case 500:
+	case Setting_RapidFiredata:
 	{
 		const int n = sizeof(WCHAR) * 32 * 1024;
 		WCHAR* buf = (WCHAR*)malloc(n);
@@ -1099,52 +899,251 @@ void Settings::Save(int category)
 		if (category)
 			break;
 	}
-	case 601:
+	case Setting_Keymapdata:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		size_t length = Keymapdata.size();
+		for (int i = 0; i < length; ++i)
+		{
+			Keymap* keymap = &Keymapdata[i];
+//			if (keymap->vk.empty())
+//				continue;
+			head += wsprintf(head, L"%d=%d,%d,%d,", keymap->ButtonID, keymap->Enable, keymap->usePostmessage ? 1 : 0, keymap->useActivating ? 1 : 0);
+			for (auto itr = keymap->vk.begin(); itr != keymap->vk.end(); ++itr)
+			{
+				if (*itr == 0)
+					break;
+				head += wsprintf(head, L"%d,", *itr);
+			}
+			head += wsprintf(head, L"**,%s", keymap->findWindow.Val().c_str());
+			head++;
+		}
+		WritePrivateProfileSection(Keymaptxt, buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_ViGEmActive:
+		WritePrivateProfileString(ViGEmtxt, TEXT("ViGEmActive"), ViGEmActive ? L"1" : L"0", m_file);
+		if (category)
+			break;
+	case Setting_DesiredVirtualPad:
+		wsprintf(buffer, L"%d", DesiredVirtualPad);
+		WritePrivateProfileString(ViGEmtxt, TEXT("DesiredVirtualPad"), buffer, m_file);
+		if (category)
+			break;
+	case Setting_target_X360:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		for (int i = 0; i < 24; i++)
+			head += wsprintf(head, L"%d,", target_X360[i]);
+		WritePrivateProfileString(ViGEmtxt, TEXT("1"), buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_dstarget_X360:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		for (int i = 0; i < 24; i++)
+			head += wsprintf(head, L"%d,", dstarget_X360[i]);
+		WritePrivateProfileString(ViGEmtxt, TEXT("2"), buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_vjtarget_X360:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		for (int i = 0; i < 24; i++)
+			head += wsprintf(head, L"%d,", vjtarget_X360[i]);
+		WritePrivateProfileString(ViGEmtxt, TEXT("3"), buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_target_DS4:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		for (int i = 0; i < 24; i++)
+			head += wsprintf(head, L"%d,", target_DS4[i]);
+		WritePrivateProfileString(ViGEmtxt, TEXT("4"), buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_dstarget_DS4:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		for (int i = 0; i < 24; i++)
+			head += wsprintf(head, L"%d,", dstarget_DS4[i]);
+		WritePrivateProfileString(ViGEmtxt, TEXT("5"), buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_vjtarget_DS4:
+	{
+		const int n = sizeof(WCHAR) * 32 * 1024;
+		WCHAR* buf = (WCHAR*)malloc(n);
+		if (buf == 0)
+			break;
+
+		memset(buf, 0, n);
+		WCHAR* head = buf;
+		for (int i = 0; i < 24; i++)
+			head += wsprintf(head, L"%d,", vjtarget_DS4[i]);
+		WritePrivateProfileString(ViGEmtxt, TEXT("6"), buf, m_file);
+		if (category)
+			break;
+	}
+	case Setting_dsHID1:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID1"), dsHID1, m_file);
+		if (category)
+			break;
+	case Setting_dsHID2:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID2"), dsHID2, m_file);
+		if (category)
+			break;
+	case Setting_dsHID3:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID3"), dsHID3, m_file);
+		if (category)
+			break;
+	case Setting_Exe1Name:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe1Name"), Exe1Name, m_file);
+		if (category)
+			break;
+	case Setting_Exe2Name:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe2Name"), Exe2Name, m_file);
+		if (category)
+			break;
+	case Setting_Exe3Name:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe3Name"), Exe3Name, m_file);
+		if (category)
+			break;
+	case Setting_Exe4Name:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe4Name"), Exe4Name, m_file);
+		if (category)
+			break;
+	case Setting_Exe5Name:
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("Exe5Name"), Exe5Name, m_file);
+		if (category)
+			break;
+	case Setting_GuardianActive:
 		WritePrivateProfileString(Guardiantxt, TEXT("GuardianActive"), GuardianActive ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 608:
+	case Setting_RemoveBlacklist:
 		WritePrivateProfileString(Guardiantxt, TEXT("RemoveBlacklist"), RemoveBlacklist ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 619:
+	case Setting_PurgeWhitelist:
 		WritePrivateProfileString(Guardiantxt, TEXT("PurgeWhitelist"), PurgeWhitelist ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 602:
+	case Setting_dsHID1Enable:
 		WritePrivateProfileString(Guardiantxt, TEXT("dsHID1Enable"), dsHID1Enable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 603:
+	case Setting_dsHID2Enable:
 		WritePrivateProfileString(Guardiantxt, TEXT("dsHID2Enable"), dsHID2Enable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 604:
+	case Setting_dsHID3Enable:
 		WritePrivateProfileString(Guardiantxt, TEXT("dsHID3Enable"), dsHID3Enable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 609:
+	case Setting_Exe1NameEnable:
 		WritePrivateProfileString(Guardiantxt, TEXT("Exe1NameEnable"), Exe1NameEnable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 610:
+	case Setting_Exe2NameEnable:
 		WritePrivateProfileString(Guardiantxt, TEXT("Exe2NameEnable"), Exe2NameEnable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 611:
+	case Setting_Exe3NameEnable:
 		WritePrivateProfileString(Guardiantxt, TEXT("Exe3NameEnable"), Exe3NameEnable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 612:
+	case Setting_Exe4NameEnable:
 		WritePrivateProfileString(Guardiantxt, TEXT("Exe4NameEnable"), Exe4NameEnable ? L"1" : L"0", m_file);
 		if (category)
 			break;
-	case 613:
+	case Setting_Exe5NameEnable:
 		WritePrivateProfileString(Guardiantxt, TEXT("Exe5NameEnable"), Exe5NameEnable ? L"1" : L"0", m_file);
 		if (category)
 			break;
 		break;
-	case 1000:
+	case Setting_App1Name:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App1Name"), App1Name, m_file);
+		if (category)
+			break;
+	case Setting_App2Name:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App2Name"), App2Name, m_file);
+		if (category)
+			break;
+	case Setting_App3Name:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App3Name"), App3Name, m_file);
+		if (category)
+			break;
+	case Setting_App4Name:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App4Name"), App4Name, m_file);
+		if (category)
+			break;
+	case Setting_App5Name:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App5Name"), App5Name, m_file);
+		if (category)
+			break;
+	case Setting_App1Location:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App1Location"), App1Location, m_file);
+		if (category)
+			break;
+	case Setting_App2Location:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App2Location"), App2Location, m_file);
+		if (category)
+			break;
+	case Setting_App3Location:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App3Location"), App3Location, m_file);
+		if (category)
+			break;
+	case Setting_App4Location:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App4Location"), App4Location, m_file);
+		if (category)
+			break;
+	case Setting_App5Location:
+		WritePrivateProfileString(TEXT("Links"), TEXT("App5Location"), App5Location, m_file);
+		if (category)
+			break;
+	case Setting_GiveMapping:
 		const int n = sizeof(WCHAR) * 32 * 1024;
 		WCHAR* buf = (WCHAR*)malloc(n);
 		if (buf == 0)
@@ -1192,12 +1191,12 @@ void Settings::SetProfile(int i)
 		Profile = 1;
 }
 
-void Settings::SetDesiredDS(int i)
+void Settings::SetPreferredDS(int i)
 {
 	if (i > 0 && i < 3)
-		DesiredDS = i;
+		PreferredDS = i;
 	else
-		DesiredDS = 2;
+		PreferredDS = 2;
 }
 
 void Settings::SetTabMode(int i, int mode)

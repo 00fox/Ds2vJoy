@@ -30,6 +30,7 @@ private:
 	void load();
 	void save(bool closeeditor = true);
 	void addMappingDlg();
+	void addSeparator();
 	void editMappingDlg();
 	void deleteMappingDlg();
 	void duplicateMappingDlg();
@@ -47,7 +48,7 @@ private:
 	HMENU m_hMenu2;
 
 	int m_Tab;
-	int m_TabsID[13];
+	int m_TabsID[14];
 	int m_ReminderId[32];
 	int m_Randcolor[32];
 	bool m_active;

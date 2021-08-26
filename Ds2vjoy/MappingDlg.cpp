@@ -20,41 +20,42 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING), hWnd, (DLGPROC)Proc, (LPARAM)this);
 
-	m_TabsID[0] = ID_MENU_MAPPING_ADD;
-	m_TabsID[1] = ID_MENU_MAPPING_EDIT;
-	m_TabsID[2] = ID_MENU_MAPPING_DEL;
-	m_TabsID[3] = ID_MENU_MAPPING_COPY;
-	m_TabsID[4] = ID_MENU_MOVE_TO_0;
-	m_TabsID[5] = ID_MENU_MOVE_TO_1;
-	m_TabsID[6] = ID_MENU_MOVE_TO_2;
-	m_TabsID[7] = ID_MENU_MOVE_TO_3;
-	m_TabsID[8] = ID_MENU_MOVE_TO_4;
-	m_TabsID[9] = ID_MENU_MOVE_TO_5;
-	m_TabsID[10] = ID_MENU_MOVE_TO_6;
-	m_TabsID[11] = ID_MENU_MOVE_TO_7;
-	m_TabsID[12] = ID_MENU_MOVE_TO_8;
+	m_TabsID[0] = ID_MENU_ADD;
+	m_TabsID[1] = ID_MENU_EDIT;
+	m_TabsID[2] = ID_MENU_DEL;
+	m_TabsID[3] = ID_MENU_COPY;
+	m_TabsID[4] = ID_MENU_SEPARATOR;
+	m_TabsID[5] = ID_MENU_MOVE_TO_0;
+	m_TabsID[6] = ID_MENU_MOVE_TO_1;
+	m_TabsID[7] = ID_MENU_MOVE_TO_2;
+	m_TabsID[8] = ID_MENU_MOVE_TO_3;
+	m_TabsID[9] = ID_MENU_MOVE_TO_4;
+	m_TabsID[10] = ID_MENU_MOVE_TO_5;
+	m_TabsID[11] = ID_MENU_MOVE_TO_6;
+	m_TabsID[12] = ID_MENU_MOVE_TO_7;
+	m_TabsID[13] = ID_MENU_MOVE_TO_8;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
-	redrawMenu(13);
+	redrawMenu(14);
 
 	m_hList = GetDlgItem(m_hDlg, IDC_MAPPING_LIST);
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
+	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES | LVS_NOCOLUMNHEADER;
 	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.pszText = I18N.dsButton;
-	col.cx = 80;
+	col.cx = 83;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = L"";
-	col.cx = 85;
+	col.cx = 84;
 	ListView_InsertColumn(m_hList, 1, &col);
 	col.pszText = L"";
-	col.cx = 85;
+	col.cx = 84;
 	ListView_InsertColumn(m_hList, 2, &col);
 	col.pszText = I18N.vJoyButton;
-	col.cx = 121;
+	col.cx = 120;
 	ListView_InsertColumn(m_hList, 3, &col);
 	col.pszText = I18N.TagsButton;
 	col.cx = 78;
@@ -109,21 +110,22 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	m_ReminderId[30] = IDC_POST_ITS_31;
 	m_ReminderId[31] = IDC_POST_ITS_32;
 
-	m_TabsID[0] = ID_MENU_MAPPING_ADD;
-	m_TabsID[1] = ID_MENU_MAPPING_EDIT;
-	m_TabsID[2] = ID_MENU_MAPPING_DEL;
-	m_TabsID[3] = ID_MENU_MAPPING_COPY;
-	m_TabsID[4] = ID_MENU_MOVE_TO_0;
-	m_TabsID[5] = ID_MENU_MOVE_TO_1;
-	m_TabsID[6] = ID_MENU_MOVE_TO_2;
-	m_TabsID[7] = ID_MENU_MOVE_TO_3;
-	m_TabsID[8] = ID_MENU_MOVE_TO_4;
-	m_TabsID[9] = ID_MENU_MOVE_TO_5;
-	m_TabsID[10] = ID_MENU_MOVE_TO_6;
-	m_TabsID[11] = ID_MENU_MOVE_TO_7;
-	m_TabsID[12] = ID_MENU_MOVE_TO_8;
+	m_TabsID[0] = ID_MENU_ADD;
+	m_TabsID[1] = ID_MENU_EDIT;
+	m_TabsID[2] = ID_MENU_DEL;
+	m_TabsID[3] = ID_MENU_COPY;
+	m_TabsID[4] = ID_MENU_SEPARATOR;
+	m_TabsID[5] = ID_MENU_MOVE_TO_0;
+	m_TabsID[6] = ID_MENU_MOVE_TO_1;
+	m_TabsID[7] = ID_MENU_MOVE_TO_2;
+	m_TabsID[8] = ID_MENU_MOVE_TO_3;
+	m_TabsID[9] = ID_MENU_MOVE_TO_4;
+	m_TabsID[10] = ID_MENU_MOVE_TO_5;
+	m_TabsID[11] = ID_MENU_MOVE_TO_6;
+	m_TabsID[12] = ID_MENU_MOVE_TO_7;
+	m_TabsID[13] = ID_MENU_MOVE_TO_8;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
-	redrawMenu(13);
+	redrawMenu(14);
 
 	m_TabsID[0] = ID_MENU_TO_MODE_0;
 	m_TabsID[1] = ID_MENU_TO_MODE_1;
@@ -152,16 +154,16 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.pszText = I18N.dsButton;
-	col.cx = 80;
+	col.cx = 83;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = L"";
-	col.cx = 85;
+	col.cx = 84;
 	ListView_InsertColumn(m_hList, 1, &col);
 	col.pszText = L"";
-	col.cx = 85;
+	col.cx = 84;
 	ListView_InsertColumn(m_hList, 2, &col);
 	col.pszText = I18N.vJoyButton;
-	col.cx = 121;
+	col.cx = 120;
 	ListView_InsertColumn(m_hList, 3, &col);
 	col.pszText = I18N.TagsButton;
 	col.cx = 78;
@@ -760,6 +762,12 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return FALSE;
 	}
 	case WM_NOTIFY:
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case HDN_BEGINTRACK:
+			SetWindowLong(m_hDlg, 0, TRUE);  // prevent resizing
+			return TRUE;
+		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_MAPPING_LIST:
@@ -782,7 +790,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case NM_RCLICK:
 				POINT pt;
 				GetCursorPos(&pt);
-				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
+				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y - 25, 0, m_hDlg, NULL);
 				break;
 			case LVN_BEGINDRAG:
 				BeginDrag(((LPNMLISTVIEW)lParam)->iItem);
@@ -802,8 +810,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							if (idx == -1)
 							{
 								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-								m->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-								save();
+								if(m->Enable != 2)
+								{
+									m->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+									save();
+								}
 							}
 						}
 					}
@@ -866,10 +877,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		switch (LOWORD(wParam))
 		{
-		case ID_MENU_MAPPING_ADD:addMappingDlg(); break;
-		case ID_MENU_MAPPING_EDIT:editMappingDlg(); break;
-		case ID_MENU_MAPPING_DEL:deleteMappingDlg(); break;
-		case ID_MENU_MAPPING_COPY:duplicateMappingDlg(); break;
+		case ID_MENU_ADD:addMappingDlg(); break;
+		case ID_MENU_EDIT:editMappingDlg(); break;
+		case ID_MENU_DEL:deleteMappingDlg(); break;
+		case ID_MENU_COPY:duplicateMappingDlg(); break;
+		case ID_MENU_SEPARATOR:addSeparator(); break;
 		case ID_MENU_MOVE_TO_0:moveMappingDlg(0); break;
 		case ID_MENU_MOVE_TO_1:moveMappingDlg(1); break;
 		case ID_MENU_MOVE_TO_2:moveMappingDlg(2); break;
@@ -879,39 +891,39 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case ID_MENU_MOVE_TO_6:moveMappingDlg(6); break;
 		case ID_MENU_MOVE_TO_7:moveMappingDlg(7); break;
 		case ID_MENU_MOVE_TO_8:moveMappingDlg(8); break;
-		case IDC_CLEAR:for (int i = 0; i < 32; i++) { tape.Reminder[i] = 0; m_Randcolor[i] = rand() % 4; } tape.Save(119); Hide(); Show(); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_1:tape.Reminder[0] = !tape.Reminder[0]; CheckDlgButton(hWnd, IDC_POST_ITS_1, (WPARAM)tape.Reminder[0]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_2:tape.Reminder[1] = !tape.Reminder[1]; CheckDlgButton(hWnd, IDC_POST_ITS_2, (WPARAM)tape.Reminder[1]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_3:tape.Reminder[2] = !tape.Reminder[2]; CheckDlgButton(hWnd, IDC_POST_ITS_3, (WPARAM)tape.Reminder[2]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_4:tape.Reminder[3] = !tape.Reminder[3]; CheckDlgButton(hWnd, IDC_POST_ITS_4, (WPARAM)tape.Reminder[3]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_5:tape.Reminder[4] = !tape.Reminder[4]; CheckDlgButton(hWnd, IDC_POST_ITS_5, (WPARAM)tape.Reminder[4]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_6:tape.Reminder[5] = !tape.Reminder[5]; CheckDlgButton(hWnd, IDC_POST_ITS_6, (WPARAM)tape.Reminder[5]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_7:tape.Reminder[6] = !tape.Reminder[6]; CheckDlgButton(hWnd, IDC_POST_ITS_7, (WPARAM)tape.Reminder[6]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_8:tape.Reminder[7] = !tape.Reminder[7]; CheckDlgButton(hWnd, IDC_POST_ITS_8, (WPARAM)tape.Reminder[7]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_9:tape.Reminder[8] = !tape.Reminder[8]; CheckDlgButton(hWnd, IDC_POST_ITS_9, (WPARAM)tape.Reminder[8]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_10:tape.Reminder[9] = !tape.Reminder[9]; CheckDlgButton(hWnd, IDC_POST_ITS_10, (WPARAM)tape.Reminder[9]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_11:tape.Reminder[10] = !tape.Reminder[10]; CheckDlgButton(hWnd, IDC_POST_ITS_11, (WPARAM)tape.Reminder[10]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_12:tape.Reminder[11] = !tape.Reminder[11]; CheckDlgButton(hWnd, IDC_POST_ITS_12, (WPARAM)tape.Reminder[11]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_13:tape.Reminder[12] = !tape.Reminder[12]; CheckDlgButton(hWnd, IDC_POST_ITS_13, (WPARAM)tape.Reminder[12]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_14:tape.Reminder[13] = !tape.Reminder[13]; CheckDlgButton(hWnd, IDC_POST_ITS_14, (WPARAM)tape.Reminder[13]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_15:tape.Reminder[14] = !tape.Reminder[14]; CheckDlgButton(hWnd, IDC_POST_ITS_15, (WPARAM)tape.Reminder[14]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_16:tape.Reminder[15] = !tape.Reminder[15]; CheckDlgButton(hWnd, IDC_POST_ITS_16, (WPARAM)tape.Reminder[15]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_17:tape.Reminder[16] = !tape.Reminder[16]; CheckDlgButton(hWnd, IDC_POST_ITS_17, (WPARAM)tape.Reminder[16]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_18:tape.Reminder[17] = !tape.Reminder[17]; CheckDlgButton(hWnd, IDC_POST_ITS_18, (WPARAM)tape.Reminder[17]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_19:tape.Reminder[18] = !tape.Reminder[18]; CheckDlgButton(hWnd, IDC_POST_ITS_19, (WPARAM)tape.Reminder[18]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_20:tape.Reminder[19] = !tape.Reminder[19]; CheckDlgButton(hWnd, IDC_POST_ITS_20, (WPARAM)tape.Reminder[19]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_21:tape.Reminder[20] = !tape.Reminder[20]; CheckDlgButton(hWnd, IDC_POST_ITS_21, (WPARAM)tape.Reminder[20]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_22:tape.Reminder[21] = !tape.Reminder[21]; CheckDlgButton(hWnd, IDC_POST_ITS_22, (WPARAM)tape.Reminder[21]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_23:tape.Reminder[22] = !tape.Reminder[22]; CheckDlgButton(hWnd, IDC_POST_ITS_23, (WPARAM)tape.Reminder[22]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_24:tape.Reminder[23] = !tape.Reminder[23]; CheckDlgButton(hWnd, IDC_POST_ITS_24, (WPARAM)tape.Reminder[23]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_25:tape.Reminder[24] = !tape.Reminder[24]; CheckDlgButton(hWnd, IDC_POST_ITS_25, (WPARAM)tape.Reminder[24]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_26:tape.Reminder[25] = !tape.Reminder[25]; CheckDlgButton(hWnd, IDC_POST_ITS_26, (WPARAM)tape.Reminder[25]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_27:tape.Reminder[26] = !tape.Reminder[26]; CheckDlgButton(hWnd, IDC_POST_ITS_27, (WPARAM)tape.Reminder[26]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_28:tape.Reminder[27] = !tape.Reminder[27]; CheckDlgButton(hWnd, IDC_POST_ITS_28, (WPARAM)tape.Reminder[27]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_29:tape.Reminder[28] = !tape.Reminder[28]; CheckDlgButton(hWnd, IDC_POST_ITS_29, (WPARAM)tape.Reminder[28]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_30:tape.Reminder[29] = !tape.Reminder[29]; CheckDlgButton(hWnd, IDC_POST_ITS_30, (WPARAM)tape.Reminder[29]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_31:tape.Reminder[30] = !tape.Reminder[30]; CheckDlgButton(hWnd, IDC_POST_ITS_31, (WPARAM)tape.Reminder[30]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
-		case IDC_POST_ITS_32:tape.Reminder[31] = !tape.Reminder[31]; CheckDlgButton(hWnd, IDC_POST_ITS_32, (WPARAM)tape.Reminder[31]); tape.Save(119); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_CLEAR:for (int i = 0; i < 32; i++) { tape.Reminder[i] = 0; m_Randcolor[i] = rand() % 4; }tape.Save(tape.Setting_Reminder); Hide(); Show(); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_1:tape.Reminder[0] = !tape.Reminder[0]; CheckDlgButton(hWnd, IDC_POST_ITS_1, (WPARAM)tape.Reminder[0]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_2:tape.Reminder[1] = !tape.Reminder[1]; CheckDlgButton(hWnd, IDC_POST_ITS_2, (WPARAM)tape.Reminder[1]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_3:tape.Reminder[2] = !tape.Reminder[2]; CheckDlgButton(hWnd, IDC_POST_ITS_3, (WPARAM)tape.Reminder[2]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_4:tape.Reminder[3] = !tape.Reminder[3]; CheckDlgButton(hWnd, IDC_POST_ITS_4, (WPARAM)tape.Reminder[3]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_5:tape.Reminder[4] = !tape.Reminder[4]; CheckDlgButton(hWnd, IDC_POST_ITS_5, (WPARAM)tape.Reminder[4]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_6:tape.Reminder[5] = !tape.Reminder[5]; CheckDlgButton(hWnd, IDC_POST_ITS_6, (WPARAM)tape.Reminder[5]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_7:tape.Reminder[6] = !tape.Reminder[6]; CheckDlgButton(hWnd, IDC_POST_ITS_7, (WPARAM)tape.Reminder[6]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_8:tape.Reminder[7] = !tape.Reminder[7]; CheckDlgButton(hWnd, IDC_POST_ITS_8, (WPARAM)tape.Reminder[7]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_9:tape.Reminder[8] = !tape.Reminder[8]; CheckDlgButton(hWnd, IDC_POST_ITS_9, (WPARAM)tape.Reminder[8]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_10:tape.Reminder[9] = !tape.Reminder[9]; CheckDlgButton(hWnd, IDC_POST_ITS_10, (WPARAM)tape.Reminder[9]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_11:tape.Reminder[10] = !tape.Reminder[10]; CheckDlgButton(hWnd, IDC_POST_ITS_11, (WPARAM)tape.Reminder[10]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_12:tape.Reminder[11] = !tape.Reminder[11]; CheckDlgButton(hWnd, IDC_POST_ITS_12, (WPARAM)tape.Reminder[11]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_13:tape.Reminder[12] = !tape.Reminder[12]; CheckDlgButton(hWnd, IDC_POST_ITS_13, (WPARAM)tape.Reminder[12]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_14:tape.Reminder[13] = !tape.Reminder[13]; CheckDlgButton(hWnd, IDC_POST_ITS_14, (WPARAM)tape.Reminder[13]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_15:tape.Reminder[14] = !tape.Reminder[14]; CheckDlgButton(hWnd, IDC_POST_ITS_15, (WPARAM)tape.Reminder[14]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_16:tape.Reminder[15] = !tape.Reminder[15]; CheckDlgButton(hWnd, IDC_POST_ITS_16, (WPARAM)tape.Reminder[15]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_17:tape.Reminder[16] = !tape.Reminder[16]; CheckDlgButton(hWnd, IDC_POST_ITS_17, (WPARAM)tape.Reminder[16]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_18:tape.Reminder[17] = !tape.Reminder[17]; CheckDlgButton(hWnd, IDC_POST_ITS_18, (WPARAM)tape.Reminder[17]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_19:tape.Reminder[18] = !tape.Reminder[18]; CheckDlgButton(hWnd, IDC_POST_ITS_19, (WPARAM)tape.Reminder[18]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_20:tape.Reminder[19] = !tape.Reminder[19]; CheckDlgButton(hWnd, IDC_POST_ITS_20, (WPARAM)tape.Reminder[19]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_21:tape.Reminder[20] = !tape.Reminder[20]; CheckDlgButton(hWnd, IDC_POST_ITS_21, (WPARAM)tape.Reminder[20]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_22:tape.Reminder[21] = !tape.Reminder[21]; CheckDlgButton(hWnd, IDC_POST_ITS_22, (WPARAM)tape.Reminder[21]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_23:tape.Reminder[22] = !tape.Reminder[22]; CheckDlgButton(hWnd, IDC_POST_ITS_23, (WPARAM)tape.Reminder[22]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_24:tape.Reminder[23] = !tape.Reminder[23]; CheckDlgButton(hWnd, IDC_POST_ITS_24, (WPARAM)tape.Reminder[23]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_25:tape.Reminder[24] = !tape.Reminder[24]; CheckDlgButton(hWnd, IDC_POST_ITS_25, (WPARAM)tape.Reminder[24]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_26:tape.Reminder[25] = !tape.Reminder[25]; CheckDlgButton(hWnd, IDC_POST_ITS_26, (WPARAM)tape.Reminder[25]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_27:tape.Reminder[26] = !tape.Reminder[26]; CheckDlgButton(hWnd, IDC_POST_ITS_27, (WPARAM)tape.Reminder[26]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_28:tape.Reminder[27] = !tape.Reminder[27]; CheckDlgButton(hWnd, IDC_POST_ITS_28, (WPARAM)tape.Reminder[27]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_29:tape.Reminder[28] = !tape.Reminder[28]; CheckDlgButton(hWnd, IDC_POST_ITS_29, (WPARAM)tape.Reminder[28]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_30:tape.Reminder[29] = !tape.Reminder[29]; CheckDlgButton(hWnd, IDC_POST_ITS_30, (WPARAM)tape.Reminder[29]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_31:tape.Reminder[30] = !tape.Reminder[30]; CheckDlgButton(hWnd, IDC_POST_ITS_31, (WPARAM)tape.Reminder[30]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
+		case IDC_POST_ITS_32:tape.Reminder[31] = !tape.Reminder[31]; CheckDlgButton(hWnd, IDC_POST_ITS_32, (WPARAM)tape.Reminder[31]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
 		}
 		break;
 	default:
@@ -923,6 +935,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void MappingDlg::load()
 {
 	m_active = false;
+
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 	{
 		LV_ITEM item = { 0 };
@@ -947,6 +960,7 @@ void MappingDlg::load()
 			j++;
 		}
 	}
+
 	m_active = true;
 }
 
@@ -984,7 +998,7 @@ void MappingDlg::save(bool closeeditor)
 				newmap2.push_back((Mapping)newmap[i]);
 
 	tape.Mappingdata.swap(newmap2);
-	tape.Save(200);
+	tape.Save(tape.Setting_Mappingdata);
 
 	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
 	if (closeeditor)
@@ -999,37 +1013,65 @@ void MappingDlg::addMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+
 	Mapping m;
 	mDDlg.mappingData = m;
 	mDDlg.m_isClonedList = m_isClonedList;
 	mDDlg.Open(m_hDlg, -1);
+
 	m_active = true;
 }
 
 void MappingDlg::addMappingDlgBack()
 {
 	m_active = false;
+
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 	if (idx == -1)
 		idx = ListView_GetItemCount(m_hList);
+
 	Mapping* data = new Mapping(mDDlg.mappingData);
 	data->Tab = m_Tab;
 	insertMapping(idx, data);
 	save(false);
+
+	m_active = true;
+}
+
+void MappingDlg::addSeparator()
+{
+	m_active = false;
+	mDDlg.Hide();
+
+	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+	if (idx == -1)
+		idx = ListView_GetItemCount(m_hList);
+
+	Mapping m;
+	mDDlg.mappingData = m;
+	Mapping* data = new Mapping(mDDlg.mappingData);
+	data->Tab = m_Tab;
+	data->Enable = 2;
+
+	insertMapping(idx, data);
+	save(false);
+
 	m_active = true;
 }
 
 void MappingDlg::editMappingDlg()
 {
+	m_active = false;
 	mDDlg.Hide();
+
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
 	if (idx == -1)
 	{
 		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 		if (idx == -1)
-			return;
+			{ m_active = true; return; }
 	}
-	m_active = false;
+
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
 	item.iItem = idx;
@@ -1038,22 +1080,28 @@ void MappingDlg::editMappingDlg()
 	if (item.lParam != NULL)
 	{
 		Mapping* data = (Mapping*)item.lParam;
-		mDDlg.mappingData = *data;
-		mDDlg.m_isClonedList = m_isClonedList;
-		mDDlg.Open(m_hDlg, idx);
+		if (data->Enable != 2)
+		{
+			mDDlg.mappingData = *data;
+			mDDlg.m_isClonedList = m_isClonedList;
+			mDDlg.Open(m_hDlg, idx);
+		}
 	}
+
 	m_active = true;
 }
 
 void MappingDlg::editMappingDlgBack(int idx)
 {
+	m_active = false;
+
 	if (idx == -1)
 	{
 		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 		if (idx == -1)
-			return;
+			{ m_active = true; return; }
 	}
-	m_active = false;
+
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
 	item.iItem = idx;
@@ -1067,6 +1115,7 @@ void MappingDlg::editMappingDlgBack(int idx)
 		insertMapping(idx, data);
 		save();
 	}
+
 	m_active = true;
 }
 
@@ -1074,6 +1123,7 @@ void MappingDlg::deleteMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+
 	RECT rect;
 	GetWindowRect(m_hWnd, &rect);
 	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
@@ -1091,13 +1141,15 @@ void MappingDlg::deleteMappingDlg()
 		}
 		save();
 	}
+
 	m_active = true;
 }
 
 void MappingDlg::duplicateMappingDlg()
 {
-	mDDlg.Hide();
 	m_active = false;
+	mDDlg.Hide();
+
 	int nselected = ListView_GetSelectedCount(m_hList);
 	if (nselected == 1)
 	{
@@ -1106,7 +1158,7 @@ void MappingDlg::duplicateMappingDlg()
 		{
 			idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 			if (idx == -1)
-				return;
+				{ m_active = false; return; }
 		}
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
@@ -1150,15 +1202,18 @@ void MappingDlg::duplicateMappingDlg()
 		}
 		save();
 	}
+
 	m_active = true;
 }
 
 void MappingDlg::moveMappingDlg(int tab)
 {
-	if (tab == m_Tab)
-		return;
-	mDDlg.Hide();
 	m_active = false;
+	mDDlg.Hide();
+
+	if (tab == m_Tab)
+		{ m_active = true; return; }
+
 	int idx;
 	while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
 	{
@@ -1176,16 +1231,19 @@ void MappingDlg::moveMappingDlg(int tab)
 		}
 	}
 	save();
+
 	m_active = true;
 }
 
 int MappingDlg::insertMapping(int idx, Mapping* m)
 {
-	if (idx < 0)
-		return FALSE;
 	m_active = false;
+
+	if (idx < 0)
+		{ m_active = true; return FALSE; }
+
 	LVITEM item = { 0 };
-	bool enable = m->Enable;
+	bool enable = m->Enable == 1;
 	item.mask = LVIF_TEXT | LVIF_PARAM;
 	item.iItem = idx;
 	item.iSubItem = 0;
@@ -1267,6 +1325,7 @@ void MappingDlg::EndDrag(int x, int y)
 		ListView_GetItem(m_hList, &item);
 		if (item.state & LVIS_SELECTED)
 			return;
+
 		int idx;
 		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
 		{
@@ -1284,6 +1343,7 @@ void MappingDlg::EndDrag(int x, int y)
 		}
 		save();
 	}
+
 	m_flag_drag = false;
 }
 

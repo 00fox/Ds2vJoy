@@ -219,7 +219,8 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 
 		size_t n = p->mappings.size();
 		for (int i = 0; i < n; i++)
-			p->mappings[i].Run();
+			if (p->mappings[i].Enable == 1)
+				p->mappings[i].Run();
 
 		p->mappings[0].RunLast(p->ds, vjoy);
 		lstrcpynW(vJoySatusString, p->mappings[0].vJoyButtons(), sizeof(vJoySatusString) / sizeof(vJoySatusString[0]));
@@ -623,8 +624,9 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 		size_t max = p->rapidfires.size();
 		for (int i = 0; i < max; i++)
 		{
-			if (p->rapidfires[i].Run(now))
-				flag = true;
+			if (p->rapidfires[i].Enable == 1)
+				if (p->rapidfires[i].Run(now))
+					flag = true;
 		}
 		p->NextStepFlag = flag;
 	}
@@ -640,7 +642,8 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 	{
 		size_t max = p->keymaps.size();
 		for (int i = 0; i < max; i++)
-			p->keymaps[i].Run();
+			if (p->keymaps[i].Enable == 1)
+				p->keymaps[i].Run();
 	}
 }
 
@@ -845,22 +848,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_VJOY:
 				tape.vJoyPaused = !tape.vJoyPaused;
 				tasktray.SwapMenuitem(0);
-				tape.Save(2);
+				tape.Save(tape.Setting_vJoyPaused);
 				break;
 			case IDM_RAPIDFIRE:
 				tape.RapidFirePaused = !tape.RapidFirePaused;
 				tasktray.SwapMenuitem(3);
-				tape.Save(5);
+				tape.Save(tape.Setting_RapidFirePaused);
 				break;
 			case IDM_KEYMAP:
 				tape.KeymapPaused = !tape.KeymapPaused;
 				tasktray.SwapMenuitem(2);
-				tape.Save(4);
+				tape.Save(tape.Setting_KeymapPaused);
 				break;
 			case IDM_VIGEM:
 				tape.ViGEmPaused = !tape.ViGEmPaused;
 				tasktray.SwapMenuitem(1);
-				tape.Save(3);
+				tape.Save(tape.Setting_ViGEmPaused);
 				if (tape.ViGEmPaused)
 					vg.ClosePad();
 				else
@@ -869,7 +872,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_GUARDIAN:
 				tape.GuardianPaused = !tape.GuardianPaused;
 				tasktray.SwapMenuitem(4);
-				tape.Save(6);
+				tape.Save(tape.Setting_GuardianPaused);
 				hid.WhitelistInit();
 				hid.BlacklistInit(-1);
 				break;
@@ -917,33 +920,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_ABOUT:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
-			case ID_MENU_TO_MODE_0:
-				tape.Mode[tabrightclick] = 0; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_1:
-				tape.Mode[tabrightclick] = 1; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_2:
-				tape.Mode[tabrightclick] = 2; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_3:
-				tape.Mode[tabrightclick] = 3; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_4:
-				tape.Mode[tabrightclick] = 4; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_5:
-				tape.Mode[tabrightclick] = 5; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_6:
-				tape.Mode[tabrightclick] = 6; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_7:
-				tape.Mode[tabrightclick] = 7; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
-			case ID_MENU_TO_MODE_8:
-				tape.Mode[tabrightclick] = 8; tape.Save(118); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(118);
-				break;
+			case ID_MENU_TO_MODE_0:tape.Mode[tabrightclick] = 0; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_1:tape.Mode[tabrightclick] = 1; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_2:tape.Mode[tabrightclick] = 2; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_3:tape.Mode[tabrightclick] = 3; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_4:tape.Mode[tabrightclick] = 4; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_5:tape.Mode[tabrightclick] = 5; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_6:tape.Mode[tabrightclick] = 6; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_7:tape.Mode[tabrightclick] = 7; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
+			case ID_MENU_TO_MODE_8:tape.Mode[tabrightclick] = 8; tape.Save(tape.Setting_TabToMode); PostMessage(hWnd, WM_REDRAW_TABS, tabrightclick, 0); tape.Save(tape.Setting_TabToMode); break;
 			case ID_MENU_SEE_VIEW2:
 				mDlg2.setCloned(true);
 				mDlg2.SetTab(tabrightclick);
@@ -1429,7 +1414,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if ((wParam == 1) || (wParam == 2) || (wParam == 3))
 			{
 				tape.Profile = (int)wParam;
-				tape.Save(1);
+				tape.Save(tape.Setting_Profile);
 				echo(I18N.TT_ProfileChanged, tape.Profile);
 			}
 			else
@@ -1551,7 +1536,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (wParam == 0)
 		{
 			tape.ViGEmActive = 0;
-			tape.Save(306);
+			tape.Save(tape.Setting_ViGEmActive);
 			vg.CloseClient();
 		}
 		else if (wParam == 1)
@@ -1559,7 +1544,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			vg.LoadDevice(&ds, &vjoy);
 			vg.InitClient();
 			tape.ViGEmActive = true;
-			tape.Save(306);
+			tape.Save(tape.Setting_ViGEmActive);
 		}
 		else if (wParam == 2)
 			if (tape.ViGEmActive)
@@ -1952,7 +1937,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
 	{
 		DeleteObject((HBRUSH)GetClassLongPtr(hWnd, GCLP_HBRBACKGROUND));
-		tape.Save(0);
+		tape.Save(tape.Setting_All);
 		ds.SetTriggers(0);
 		if (tape.BlackLedOnExit)
 			ds.SetLED(0, 0, 0);

@@ -111,11 +111,11 @@ void dsDevice::PreOpen()
 
 		if (0x5C4 == Attributes.ProductID || 0x9CC == Attributes.ProductID || 0xBA0 == Attributes.ProductID)
 		{
-			if (tape.DesiredDS == 1 && SerialTest(1)) { tape.ActualDS = 1; return; }
+			if (tape.PreferredDS == 1 && SerialTest(1)) { tape.ActualDS = 1; return; }
 		}
 		else if (0x0CE6 == Attributes.ProductID)
 		{
-			if (tape.DesiredDS == 2 && SerialTest(2)) { tape.ActualDS = 2; return; }
+			if (tape.PreferredDS == 2 && SerialTest(2)) { tape.ActualDS = 2; return; }
 		}
 
 		continue;
@@ -1089,7 +1089,6 @@ void dsDevice::DisconnectBT()
 
 dsButton* dsDevice::GetButton(dsButtonID id)
 {
-//	if (id >= dsButtonID::none && id < dsButtonID::button_Count && m_buttons[id].Enable())
 	if (id >= dsButtonID::none && id < dsButtonID::button_Count)
 		return &m_buttons[id];
 

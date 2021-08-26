@@ -2,12 +2,12 @@
 #include "RapidFire.h"
 
 RapidFire::RapidFire()
-	:Firsttime(75)
-	, Releasetime(75)
-	, Presstime(150)
+	:Enable(0)
 	, ButtonID(vJoyButtonID::none)
 	, ButtonID2(vJoyButtonID::none)
-	, Enable(false)
+	, Firsttime(75)
+	, Releasetime(75)
+	, Presstime(150)
 	, m_time(0)
 	, m_button(0)
 	, m_button2(0)
@@ -18,10 +18,46 @@ RapidFire::~RapidFire()
 {
 }
 
+WCHAR* RapidFire::KeyString()
+{
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒";
+
+	static WCHAR buf[256];
+	buf[0] = 0;
+	WCHAR* head = buf;
+
+	if (ButtonID != 0)
+	{
+		head += wsprintf(head, L"%s", vJoyButton::String(ButtonID));
+		if (ButtonID2 != 0)
+			head += wsprintf(head, L"+%s", vJoyButton::String(ButtonID2));
+	}
+	else if (ButtonID2 != 0)
+		head += wsprintf(head, L"%s", vJoyButton::String(ButtonID2));
+
+	return buf;
+}
+
+WCHAR* RapidFire::ValueString()
+{
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒";
+
+	static WCHAR buf[256];
+	WCHAR* head = buf;
+	head += wsprintf(buf, I18N.RapidFire_State, Firsttime, Releasetime, Presstime);
+	return buf;
+}
+
 BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 {
-	if ((!ButtonID && !ButtonID2) || !Enable)
+	if (Enable != 1)
 		return FALSE;
+
+	if (!ButtonID && !ButtonID2)
+		return FALSE;
+
 	if (ButtonID)
 	{
 		m_button = vjoy->GetButton(ButtonID);
@@ -43,32 +79,6 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 	randPresstime = Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
 
 	return TRUE;
-}
-
-WCHAR* RapidFire::KeyString()
-{
-	static WCHAR buf[256];
-	buf[0] = 0;
-	WCHAR* head = buf;
-
-	if (ButtonID != 0)
-	{
-		head += wsprintf(head, L"%s", vJoyButton::String(ButtonID));
-		if (ButtonID2 != 0)
-			head += wsprintf(head, L"+%s", vJoyButton::String(ButtonID2));
-	}
-	else if (ButtonID2 != 0)
-		head += wsprintf(head, L"%s", vJoyButton::String(ButtonID2));
-
-	return buf;
-}
-
-WCHAR* RapidFire::ValueString()
-{
-	static WCHAR buf[256];
-	WCHAR* head = buf;
-	head += wsprintf(buf, I18N.RapidFire_State, Firsttime, Releasetime, Presstime);
-	return buf;
 }
 
 BOOL RapidFire::Run(double now)

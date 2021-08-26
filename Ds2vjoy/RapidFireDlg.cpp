@@ -17,25 +17,35 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_RAPIDFIRE_LIST);
 
-	m_TabsID[0] = ID_MENU_MAPPING_ADD;
-	m_TabsID[1] = ID_MENU_MAPPING_EDIT;
-	m_TabsID[2] = ID_MENU_MAPPING_DEL;
-	m_TabsID[3] = ID_MENU_MAPPING_COPY;
+	m_TabsID[0] = ID_MENU_ADD;
+	m_TabsID[1] = ID_MENU_EDIT;
+	m_TabsID[2] = ID_MENU_DEL;
+	m_TabsID[3] = ID_MENU_COPY;
+	m_TabsID[4] = ID_MENU_SEPARATOR;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
-	redrawMenu(4);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_0, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_1, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_2, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_3, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_4, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_5, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_6, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_7, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_8, FALSE);
+	redrawMenu(5);
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
+	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES | LVS_NOCOLUMNHEADER;
 	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
-	col.cx = 76;
+	col.cx = 83;
 	col.pszText = I18N.vJoyButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.Setting;
-	col.cx = 373;
+	col.cx = 366;
 	ListView_InsertColumn(m_hList, 1, &col);
 }
 
@@ -214,6 +224,12 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		::MoveWindow(m_hList, 0, 0, LOWORD(lParam), HIWORD(lParam), FALSE);
 		break;
 	case WM_NOTIFY:
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case HDN_BEGINTRACK:
+			SetWindowLong(m_hDlg, 0, TRUE);  // prevent resizing
+			return TRUE;
+		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_RAPIDFIRE_LIST:
@@ -225,7 +241,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case NM_RCLICK:
 				POINT pt;
 				GetCursorPos(&pt);
-				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
+				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y - 25, 0, m_hDlg, NULL);
 				break;
 			case LVN_BEGINDRAG:
 				BeginDrag(((LPNMLISTVIEW)lParam)->iItem);
@@ -238,15 +254,18 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					DWORD newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
 					if (newstate != (((LPNMLISTVIEW)lParam)->uOldState & LVIS_STATEIMAGEMASK))
 					{
-						RapidFire* af = (RapidFire*)((LPNMLISTVIEW)lParam)->lParam;
-						if (af != 0)
+						RapidFire* rf = (RapidFire*)((LPNMLISTVIEW)lParam)->lParam;
+						if (rf != 0)
 						{
 							int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
 							if (idx == -1)
 							{
-								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-								af->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-								save();
+								if (rf->Enable != 2)
+								{
+									idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+									rf->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+									save();
+								}
 							}
 						}
 					}
@@ -274,18 +293,11 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case ID_MENU_MAPPING_ADD:
-			addRapidFireDlg();
-			break;
-		case ID_MENU_MAPPING_EDIT:
-			editRapidFireDlg();
-			break;
-		case ID_MENU_MAPPING_DEL:
-			deleteRapidFireDlg();
-			break;
-		case ID_MENU_MAPPING_COPY:
-			duplicateRapidFireDlg();
-			break;
+		case ID_MENU_ADD:addRapidFireDlg(); break;
+		case ID_MENU_EDIT:editRapidFireDlg(); break;
+		case ID_MENU_DEL:deleteRapidFireDlg(); break;
+		case ID_MENU_COPY:duplicateRapidFireDlg(); break;
+		case ID_MENU_SEPARATOR:addSeparator(); break;
 		}
 		break;
 	default:
@@ -297,6 +309,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void RapidFireDlg::load()
 {
 	m_active = false;
+
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 	{
 		LV_ITEM item = { 0 };
@@ -313,17 +326,18 @@ void RapidFireDlg::load()
 	size_t length = tape.RapidFiredata.size();
 	for (int i = 0; i < length; i++)
 	{
-		RapidFire* af = new RapidFire(tape.RapidFiredata[i]);
-		insertRapidFire(i, af);
+		RapidFire* rf = new RapidFire(tape.RapidFiredata[i]);
+		insertRapidFire(i, rf);
 	}
+
 	m_active = true;
 }
 
 void RapidFireDlg::save()
 {
 	m_active = false;
-	RapidFires newmap;
 
+	RapidFires newmap;
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 	{
 		LV_ITEM item = { 0 };
@@ -341,47 +355,73 @@ void RapidFireDlg::save()
 	ListView_DeleteAllItems(m_hList);
 
 	tape.RapidFiredata.swap(newmap);
-	tape.Save(500);
+	tape.Save(tape.Setting_RapidFiredata);
 	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-
 	load();
 	RedrawWindow(m_hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_UPDATENOW);
+
 	m_active = true;
 }
 
 void RapidFireDlg::addRapidFireDlg()
 {
 	m_active = false;
+
 	rDDlg.Hide();
-	RapidFire af;
-	rDDlg.autoFireData = af;
+	RapidFire rf;
+	rDDlg.rapidFireData = rf;
 	rDDlg.Open(m_hDlg, -1);
+
 	m_active = true;
 }
 
 void RapidFireDlg::addRapidFireDlgBack()
 {
 	m_active = false;
+
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 	if (idx == -1)
 		idx = ListView_GetItemCount(m_hList);
-	RapidFire* data = new RapidFire(rDDlg.autoFireData);
+	RapidFire* data = new RapidFire(rDDlg.rapidFireData);
 	insertRapidFire(idx, data);
 	save();
+
+	m_active = true;
+}
+
+void RapidFireDlg::addSeparator()
+{
+	m_active = false;
+	rDDlg.Hide();
+
+	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+	if (idx == -1)
+		idx = ListView_GetItemCount(m_hList);
+
+	RapidFire rf;
+	rDDlg.rapidFireData = rf;
+	RapidFire* data = new RapidFire(rDDlg.rapidFireData);
+	data->Enable = 2;
+
+	insertRapidFire(idx, data);
+	save();
+
 	m_active = true;
 }
 
 void RapidFireDlg::editRapidFireDlg()
 {
+	m_active = false;
 	rDDlg.Hide();
+
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
 	if (idx == -1)
 	{
 		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 		if (idx == -1)
-			return;
+			{ m_active = false; return; }
 	}
-	m_active = false;
+
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
 	item.iItem = idx;
@@ -390,21 +430,27 @@ void RapidFireDlg::editRapidFireDlg()
 	if (item.lParam != NULL)
 	{
 		RapidFire* data = (RapidFire*)item.lParam;
-		rDDlg.autoFireData = *data;
-		rDDlg.Open(m_hDlg, idx);
+		if (data->Enable != 2)
+		{
+			rDDlg.rapidFireData = *data;
+			rDDlg.Open(m_hDlg, idx);
+		}
 	}
+
 	m_active = true;
 }
 
 void RapidFireDlg::editRapidFireDlgBack(int idx)
 {
+	m_active = false;
+
 	if (idx == -1)
 	{
 		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 		if (idx == -1)
-			return;
+			{ m_active = false; return; }
 	}
-	m_active = false;
+
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
 	item.iItem = idx;
@@ -413,11 +459,12 @@ void RapidFireDlg::editRapidFireDlgBack(int idx)
 	if (item.lParam != NULL)
 	{
 		RapidFire* data = (RapidFire*)item.lParam;
-		*data = rDDlg.autoFireData;
+		*data = rDDlg.rapidFireData;
 		ListView_DeleteItem(m_hList, idx);
 		insertRapidFire(idx, data);
 		save();
 	}
+
 	m_active = true;
 }
 
@@ -425,6 +472,7 @@ void RapidFireDlg::deleteRapidFireDlg()
 {
 	m_active = false;
 	rDDlg.Hide();
+
 	RECT rect;
 	GetWindowRect(m_hWnd, &rect);
 	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
@@ -442,53 +490,92 @@ void RapidFireDlg::deleteRapidFireDlg()
 		}
 		save();
 	}
+
 	m_active = true;
 }
 
 void RapidFireDlg::duplicateRapidFireDlg()
 {
-	rDDlg.Hide();
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-	if (idx == -1)
-	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			return;
-	}
 	m_active = false;
-	LV_ITEM item = { 0 };
-	item.mask = LVIF_PARAM;
-	item.iItem = idx;
-	item.iSubItem = 0;
-	ListView_GetItem(m_hList, &item);
-	if (item.lParam != NULL)
+	rDDlg.Hide();
+
+	int nselected = ListView_GetSelectedCount(m_hList);
+	if (nselected == 1)
 	{
-		RapidFire* data = (RapidFire*)item.lParam;
-		rDDlg.autoFireData = *data;
-		data = new RapidFire(rDDlg.autoFireData);
-		insertRapidFire(idx + 1, data);
+		int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
+		if (idx == -1)
+		{
+			idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+			if (idx == -1)
+			{
+				m_active = false; return;
+			}
+		}
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = idx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			RapidFire* data = (RapidFire*)item.lParam;
+			rDDlg.rapidFireData = *data;
+			data = new RapidFire(rDDlg.rapidFireData);
+			insertRapidFire(idx + 1, data);
+			save();
+		}
+	}
+	else if (nselected >= 1)
+	{
+		int idx;
+		int lastitemindex = ListView_GetItemCount(m_hList);
+		ListView_GetNextItem(m_hList, 1, LVNI_ALL);
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			if (item.lParam != NULL)
+			{
+				RapidFire* data1 = (RapidFire*)item.lParam;
+				RapidFire* data2 = (RapidFire*)item.lParam;
+				rDDlg.rapidFireData = *data1;
+				data1 = new RapidFire(rDDlg.rapidFireData);
+				rDDlg.rapidFireData = *data2;
+				data2 = new RapidFire(rDDlg.rapidFireData);
+				ListView_DeleteItem(m_hList, idx);
+				insertRapidFire(idx, data1);
+				insertRapidFire(lastitemindex + 1, data2);
+				lastitemindex++;
+			}
+		}
 		save();
 	}
+
 	m_active = true;
 }
 
-int RapidFireDlg::insertRapidFire(int idx, RapidFire* af)
+int RapidFireDlg::insertRapidFire(int idx, RapidFire* rf)
 {
-	if (idx < 0)
-		return FALSE;
 	m_active = false;
+
+	if (idx < 0)
+		{ m_active = false; return FALSE; }
+
 	LVITEM item = { 0 };
-	bool enable = af->Enable;
+	bool enable = rf->Enable == 1;
 	item.mask = LVIF_TEXT | LVIF_PARAM;
 	item.iItem = idx;
 	item.iSubItem = 0;
-	item.lParam = (LPARAM)af;
-	item.pszText = (WCHAR*)af->KeyString();
+	item.lParam = (LPARAM)rf;
+	item.pszText = (WCHAR*)rf->KeyString();
 	int ret = ListView_InsertItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 1;
 	item.lParam = 0;
-	item.pszText = (WCHAR*)af->ValueString();
+	item.pszText = (WCHAR*)rf->ValueString();
 	ListView_SetItem(m_hList, &item);
 	ListView_SetCheckState(m_hList, idx, enable);
 

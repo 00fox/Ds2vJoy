@@ -549,7 +549,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				MessageBoxPos(hWnd, I18N.MBOX_NoButtonSelected, I18N.MBOX_ErrTitle, MB_ICONERROR, rect.left + 275, rect.top + 30);
 				return TRUE;
 			}
-			mappingData.Enable = true;
+			mappingData.Enable = 1;
 			if (m_idx == -1)
 			{
 				if (m_isClonedList)

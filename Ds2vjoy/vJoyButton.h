@@ -6,7 +6,7 @@ class vJoyButton {
 public:
 	enum ButtonType
 	{
-		typeNone = 0,
+		typeNone,
 		typeButton,
 		typeTrigger,
 		typeAxis,
@@ -14,7 +14,7 @@ public:
 		typeDPad,
 	};
 	enum ButtonID {
-		none = 0,
+		none,
 		X,
 		Y,
 		Z,

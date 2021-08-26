@@ -9,7 +9,7 @@ class Mapping
 {
 public:
 	enum MouseActionID {
-		none = 0,
+		none,
 		ACTIVE_MOUSE,
 		SAVE_POSITION,
 		MOVE_BACK,
@@ -70,7 +70,7 @@ public:
 	void Run();
 	static WCHAR* String(MouseActionID id);
 
-	bool Enable;
+	int Enable;
 	dsButtonID dsID[5] = { dsButtonID::none };
 	vJoyButtonID vjID[13] = { vJoyButtonID::none };
 	bool Target[5];
@@ -113,23 +113,23 @@ private:
 	bool MouseActiondone[4] = { false };//If a mouse action necessite am ending action, and this one has been done
 	bool GridCanbeUsed = false;			//If this mapping necessite one or several x,y,w,h values, or none (used to determine if we use grid values or not)
 	bool Toggledone[8] = { false };		//If the toggle has been effectued for this macro for this run
-	bool exists0 = false;		//If first source is defined
-	bool exists1 = false;		//If second source is defined
-	bool exists2 = false;		//If third source is defined
-	bool pushed0 = false;		//If first source is pushed
-	bool pushed1 = false;		//If second second is pushed
-	bool pushed2 = false;		//If third source is pushed
-	BYTE release0 = 0;			//Released value of first source
-	bool killed0 = false;		//If first source is killed (like stay pushed more than tape.LongPress while method is short)
-	bool killed1 = false;		//If second source is killed (then we have to wait for release to have a chance to try again)
-	int secondpass = 0;			//If a source is killed but the second is activated, only with OrXorNot[0] && !OrXorNot[1] (except is second source available)
-	BYTE OnReleaseValue = 0xFF;	//Used value when in On sustain mode (timestamp is sill in use and we have released all sources)
-	std::chrono::system_clock::time_point start;	//start time (of computing method)
-	std::chrono::system_clock::time_point end;		//actual time (of computing method)
-	std::chrono::system_clock::time_point release;	//realease time (of computing method), for double, or wait before eligible again
-	std::chrono::system_clock::time_point start2;	//start time (of running method)
-	std::chrono::system_clock::time_point end2;		//actual time (of running method)
-	std::chrono::system_clock::time_point release2;	//realeased time (when running method), to determine state of a macro and to launch onRelease actions
+	bool exists0 = false;				//If first source is defined
+	bool exists1 = false;				//If second source is defined
+	bool exists2 = false;				//If third source is defined
+	bool pushed0 = false;				//If first source is pushed
+	bool pushed1 = false;				//If second second is pushed
+	bool pushed2 = false;				//If third source is pushed
+	BYTE release0 = 0;					//Released value of first source
+	bool killed0 = false;				//If first source is killed (like stay pushed more than tape.LongPress while method is short)
+	bool killed1 = false;				//If second source is killed (then we have to wait for release to have a chance to try again)
+	int secondpass = 0;					//If a source is killed but the second is activated, only with OrXorNot[0] && !OrXorNot[1] (except is second source available)
+	BYTE OnReleaseValue = 0xFF;			//Used value when in On sustain mode (timestamp is sill in use and we have released all sources)
+	std::chrono::system_clock::time_point start;		//start time (of computing method)
+	std::chrono::system_clock::time_point end;			//actual time (of computing method)
+	std::chrono::system_clock::time_point release;		//realease time (of computing method), for double, or wait before eligible again
+	std::chrono::system_clock::time_point start2;		//start time (of running method)
+	std::chrono::system_clock::time_point end2;			//actual time (of running method)
+	std::chrono::system_clock::time_point release2;		//realeased time (when running method), to determine state of a macro and to launch onRelease actions
 	std::chrono::milliseconds randStart[8] = { std::chrono::milliseconds(0) };	//repalce Start[8], and memorize + 0-9ms if Start[i] is odd
 	std::chrono::milliseconds randStop[8] = { std::chrono::milliseconds(0) };	//replace Stop[8], and memorize + 0-9ms if Stop[i] is odd
 	vJoyButtonID m_vjUsed;
@@ -144,14 +144,14 @@ static std::vector<vJoyButtonID> vjUsed;						//memorize all vJoyButton used to 
 static POINT movebackpoint = { 0, 0 };							//memorized mouse point, to move back in, in a futur possible action
 static bool Ledactive[6] = { false };
 
-static WCHAR vJoyButtonsString[80];
+static WCHAR vJoyButtonsString[80];		//String of vJoy buttons in use, to show in status bar
 
-static bool mouseactivated;	//mouse is running, used to determine legit if we use Ifmouse condition
-extern int mousemode[3];	//[0]left axis, [1]touchpad, [2]right axis
-							//0: deactivate, 1: absolute, 2: mouse, 3: move or slow, 4: sniper or accuracy, 5: raid or grid
-extern int mouseabolute;	//Which one is absolute ([0]left axis, [1]touchpad or [2]right axis)(last one activated)
-extern int grid[6];			//Grid to move cursor inside (x,y,w,h,nw,nh)
-extern bool defaultmouse;	//false:all expept grid, true grid
+static bool mouseactivated;				//mouse is running, used to determine legit if we use Ifmouse condition
+extern int mousemode[3];				//[0]left axis, [1]touchpad, [2]right axis
+										//0: deactivate, 1: absolute, 2: mouse, 3: move or slow, 4: sniper or accuracy, 5: raid or grid
+extern int mouseabolute;				//Which one is absolute ([0]left axis, [1]touchpad or [2]right axis)(last one activated)
+extern int grid[6];						//Grid to move cursor inside (x,y,w,h,nw,nh)
+extern bool defaultmouse;				//false:all expept grid, true grid
 
 typedef std::vector<Mapping> Mappings;
 typedef Mapping::MouseActionID MouseActionID;

@@ -18,25 +18,35 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_LIST);
 
-	m_TabsID[0] = ID_MENU_MAPPING_ADD;
-	m_TabsID[1] = ID_MENU_MAPPING_EDIT;
-	m_TabsID[2] = ID_MENU_MAPPING_DEL;
-	m_TabsID[3] = ID_MENU_MAPPING_COPY;
+	m_TabsID[0] = ID_MENU_ADD;
+	m_TabsID[1] = ID_MENU_EDIT;
+	m_TabsID[2] = ID_MENU_DEL;
+	m_TabsID[3] = ID_MENU_COPY;
+	m_TabsID[4] = ID_MENU_SEPARATOR;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
-	redrawMenu(4);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_0, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_1, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_2, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_3, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_4, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_5, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_6, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_7, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_8, FALSE);
+	redrawMenu(5);
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
+	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES | LVS_NOCOLUMNHEADER;
 	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
-	col.cx = 76;
-	col.pszText = L"vJoy Button";
+	col.cx = 83;
+	col.pszText = I18N.vJoyButton;
 	ListView_InsertColumn(m_hList, 0, &col);
-	col.pszText = L"Keyboard";
-	col.cx = 373;
+	col.pszText = I18N.Setting;
+	col.cx = 366;
 	ListView_InsertColumn(m_hList, 1, &col);
 }
 
@@ -215,6 +225,12 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		::MoveWindow(m_hList, 0, 0, LOWORD(lParam), HIWORD(lParam), FALSE);
 		break;
 	case WM_NOTIFY:
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case HDN_BEGINTRACK:
+			SetWindowLong(m_hDlg, 0, TRUE);  // prevent resizing
+			return TRUE;
+		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_KEYMAP_LIST:
@@ -226,7 +242,7 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case NM_RCLICK:
 				POINT pt;
 				GetCursorPos(&pt);
-				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
+				TrackPopupMenu((HMENU)GetSubMenu(m_hMenu, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y - 25, 0, m_hDlg, NULL);
 				break;
 			case LVN_BEGINDRAG:
 				BeginDrag(((LPNMLISTVIEW)lParam)->iItem);
@@ -246,8 +262,11 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							if (idx == -1)
 							{
 								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-								km->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-								save();
+								if (km->Enable != 2)
+								{
+									km->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+									save();
+								}
 							}
 						}
 					}
@@ -275,18 +294,11 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case ID_MENU_MAPPING_ADD:
-			addKeymapDlg();
-			break;
-		case ID_MENU_MAPPING_EDIT:
-			editKeymapDlg();
-			break;
-		case ID_MENU_MAPPING_DEL:
-			deleteKeymapDlg();
-			break;
-		case ID_MENU_MAPPING_COPY:
-			duplicateKeymapDlg();
-			break;
+		case ID_MENU_ADD:addKeymapDlg(); break;
+		case ID_MENU_EDIT:editKeymapDlg(); break;
+		case ID_MENU_DEL:deleteKeymapDlg(); break;
+		case ID_MENU_COPY:duplicateKeymapDlg(); break;
+		case ID_MENU_SEPARATOR:addSeparator(); break;
 		}
 		break;
 	default:
@@ -298,6 +310,7 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void KeymapDlg::load()
 {
 	m_active = false;
+
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 		{
 		LV_ITEM item = { 0 };
@@ -317,14 +330,15 @@ void KeymapDlg::load()
 		Keymap* km = new Keymap(tape.Keymapdata[i]);
 		insertKeymap(i, km);
 	}
+
 	m_active = true;
 }
 
 void KeymapDlg::save()
 {
 	m_active = false;
-	Keymaps newmap;
 
+	Keymaps newmap;
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 	{
 		LV_ITEM item = { 0 };
@@ -342,11 +356,11 @@ void KeymapDlg::save()
 	ListView_DeleteAllItems(m_hList);
 
 	tape.Keymapdata.swap(newmap);
-	tape.Save(400);
+	tape.Save(tape.Setting_Keymapdata);
 	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-
 	load();
 	RedrawWindow(m_hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_UPDATENOW);
+
 	m_active = true;
 }
 
@@ -354,36 +368,64 @@ void KeymapDlg::addKeymapDlg()
 {
 	m_active = false;
 	kDDlg.Hide();
+
 	Keymap km;
 	kDDlg.keymapData = km;
 	kDDlg.alreadydone = false;
 	kDDlg.Open(m_hDlg, -1);
+
 	m_active = true;
 }
 
 void KeymapDlg::addKeymapDlgBack()
 {
 	m_active = false;
+
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 	if (idx == -1)
 		idx = ListView_GetItemCount(m_hList);
+
 	Keymap* data = new Keymap(kDDlg.keymapData);
 	insertKeymap(idx, data);
 	save();
+
+	m_active = true;
+}
+
+void KeymapDlg::addSeparator()
+{
+	m_active = false;
+	kDDlg.Hide();
+
+	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+	if (idx == -1)
+		idx = ListView_GetItemCount(m_hList);
+
+	Keymap km;
+	kDDlg.keymapData = km;
+	Keymap* data = new Keymap(kDDlg.keymapData);
+	data->ButtonID = vJoyButtonID::none;
+	data->Enable = 2;
+
+	insertKeymap(idx, data);
+	save();
+
 	m_active = true;
 }
 
 void KeymapDlg::editKeymapDlg()
 {
+	m_active = false;
 	kDDlg.Hide();
+
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
 	if (idx == -1)
 	{
 		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 		if (idx == -1)
-			return;
+			{ m_active = false; return; }
 	}
-	m_active = false;
+
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
 	item.iItem = idx;
@@ -392,22 +434,28 @@ void KeymapDlg::editKeymapDlg()
 	if (item.lParam != NULL)
 	{
 		Keymap* data = (Keymap*)item.lParam;
-		kDDlg.keymapData = *data;
-		kDDlg.alreadydone = false;
-		kDDlg.Open(m_hDlg, idx);
+		if (data->Enable != 2)
+		{
+			kDDlg.keymapData = *data;
+			kDDlg.alreadydone = false;
+			kDDlg.Open(m_hDlg, idx);
+		}
 	}
+
 	m_active = true;
 }
 
 void KeymapDlg::editKeymapDlgBack(int idx)
 {
+	m_active = false;
+
 	if (idx == -1)
 	{
 		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 		if (idx == -1)
-			return;
+			{ m_active = false; return; }
 	}
-	m_active = false;
+
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
 	item.iItem = idx;
@@ -421,12 +469,14 @@ void KeymapDlg::editKeymapDlgBack(int idx)
 		insertKeymap(idx, data);
 		save();
 	}
+
 	m_active = true;
 }
 
 void KeymapDlg::deleteKeymapDlg()
 {
 	m_active = false;
+
 	kDDlg.Hide();
 	RECT rect;
 	GetWindowRect(m_hWnd, &rect);
@@ -445,43 +495,80 @@ void KeymapDlg::deleteKeymapDlg()
 		}
 		save();
 	}
+
 	m_active = true;
 }
 
 void KeymapDlg::duplicateKeymapDlg()
 {
-	kDDlg.Hide();
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-	if (idx == -1)
-	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			return;
-	}
 	m_active = false;
-	LV_ITEM item = { 0 };
-	item.mask = LVIF_PARAM;
-	item.iItem = idx;
-	item.iSubItem = 0;
-	ListView_GetItem(m_hList, &item);
-	if (item.lParam != NULL)
+	kDDlg.Hide();
+
+	int nselected = ListView_GetSelectedCount(m_hList);
+	if (nselected == 1)
 	{
-		Keymap* data = (Keymap*)item.lParam;
-		kDDlg.keymapData = *data;
-		data = new Keymap(kDDlg.keymapData);
-		insertKeymap(idx + 1, data);
+		int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
+		if (idx == -1)
+		{
+			idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+			if (idx == -1)
+			{ m_active = false; return; }
+		}
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = idx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			Keymap* data = (Keymap*)item.lParam;
+			kDDlg.keymapData = *data;
+			data = new Keymap(kDDlg.keymapData);
+			insertKeymap(idx + 1, data);
+			save();
+		}
+	}
+	else if (nselected >= 1)
+	{
+		int idx;
+		int lastitemindex = ListView_GetItemCount(m_hList);
+		ListView_GetNextItem(m_hList, 1, LVNI_ALL);
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			if (item.lParam != NULL)
+			{
+				Keymap* data1 = (Keymap*)item.lParam;
+				Keymap* data2 = (Keymap*)item.lParam;
+				kDDlg.keymapData = *data1;
+				data1 = new Keymap(kDDlg.keymapData);
+				kDDlg.keymapData = *data2;
+				data2 = new Keymap(kDDlg.keymapData);
+				ListView_DeleteItem(m_hList, idx);
+				insertKeymap(idx, data1);
+				insertKeymap(lastitemindex + 1, data2);
+				lastitemindex++;
+			}
+		}
 		save();
 	}
+
 	m_active = true;
 }
 
 int KeymapDlg::insertKeymap(int idx, Keymap* km)
 {
-	if (idx < 0)
-		return FALSE;
 	m_active = false;
+
+	if (idx < 0)
+		{ m_active = false; return FALSE; }
+
 	LVITEM item = { 0 };
-	bool enable = km->Enable;
+	bool enable = km->Enable == 1;
 	item.mask = LVIF_TEXT | LVIF_PARAM;
 	item.iItem = idx;
 	item.iSubItem = 0;

@@ -360,27 +360,6 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND: {
 		switch (LOWORD(wParam))
 		{
-		case IDC_HID_ACTIVE:
-			tape.GuardianActive = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(601);
-			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 0, 0);
-			break;
-		case IDC_HID_HID1_ENABLE:
-			tape.dsHID1Enable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(602);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 1);
-			break;
-		case IDC_HID_HID2_ENABLE:
-			tape.dsHID2Enable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(603);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 2);
-			break;
-		case IDC_HID_HID3_ENABLE:
-			tape.dsHID3Enable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(604);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 3);
-			break;
 		case IDC_HID_HID1:
 			switch (HIWORD(wParam))
 			{
@@ -390,7 +369,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.dsHID1, buf1) != 0)
 				{
 					tape.setPID(buf1, 1);
-					tape.Save(605);
+					tape.Save(tape.Setting_dsHID1);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 1);
 				}
 				break;
@@ -405,7 +384,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.dsHID2, buf2) != 0)
 				{
 					tape.setPID(buf2, 2);
-					tape.Save(606);
+					tape.Save(tape.Setting_dsHID2);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 2);
 				}
 				break;
@@ -420,40 +399,11 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.dsHID3, buf3) != 0)
 				{
 					tape.setPID(buf3, 3);
-					tape.Save(607);
+					tape.Save(tape.Setting_dsHID3);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 3);
 				}
 				break;
 			}
-			break;
-		case IDC_HID_REMOVE:
-			tape.RemoveBlacklist = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(608);
-			break;
-		case IDC_HID_EXE1_ENABLE:
-			tape.Exe1NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(609);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 1);
-			break;
-		case IDC_HID_EXE2_ENABLE:
-			tape.Exe2NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(610);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 2);
-			break;
-		case IDC_HID_EXE3_ENABLE:
-			tape.Exe3NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(611);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 3);
-			break;
-		case IDC_HID_EXE4_ENABLE:
-			tape.Exe4NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(612);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 4);
-			break;
-		case IDC_HID_EXE5_ENABLE:
-			tape.Exe5NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(613);
-			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 5);
 			break;
 		case IDC_HID_EXE1:
 			switch (HIWORD(wParam))
@@ -464,7 +414,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.Exe1Name, buf4) != 0)
 				{
 					tape.setExeName(buf4, 1);
-					tape.Save(614);
+					tape.Save(tape.Setting_Exe1Name);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 1);
 				}
 				break;
@@ -479,7 +429,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.Exe2Name, buf5) != 0)
 				{
 					tape.setExeName(buf5, 2);
-					tape.Save(615);
+					tape.Save(tape.Setting_Exe2Name);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 2);
 				}
 				break;
@@ -494,7 +444,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.Exe3Name, buf6) != 0)
 				{
 					tape.setExeName(buf6, 3);
-					tape.Save(616);
+					tape.Save(tape.Setting_Exe3Name);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 3);
 				}
 				break;
@@ -509,7 +459,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.Exe4Name, buf7) != 0)
 				{
 					tape.setExeName(buf7, 4);
-					tape.Save(617);
+					tape.Save(tape.Setting_Exe4Name);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 4);
 				}
 				break;
@@ -524,15 +474,65 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (lstrcmpW(tape.Exe5Name, buf8) != 0)
 				{
 					tape.setExeName(buf8, 5);
-					tape.Save(618);
+					tape.Save(tape.Setting_Exe5Name);
 					PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 5);
 				}
 				break;
 			}
 			break;
+		case IDC_HID_ACTIVE:
+			tape.GuardianActive = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_GuardianActive);
+			PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 0, 0);
+			break;
+		case IDC_HID_REMOVE:
+			tape.RemoveBlacklist = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_RemoveBlacklist);
+			break;
 		case IDC_HID_PURGE:
 			tape.PurgeWhitelist = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-			tape.Save(619);
+			tape.Save(tape.Setting_PurgeWhitelist);
+			break;
+		case IDC_HID_HID1_ENABLE:
+			tape.dsHID1Enable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_dsHID1Enable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 1);
+			break;
+		case IDC_HID_HID2_ENABLE:
+			tape.dsHID2Enable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_dsHID2Enable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 2);
+			break;
+		case IDC_HID_HID3_ENABLE:
+			tape.dsHID3Enable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_dsHID3Enable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 1, 3);
+			break;
+		case IDC_HID_EXE1_ENABLE:
+			tape.Exe1NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_Exe1NameEnable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 1);
+			break;
+		case IDC_HID_EXE2_ENABLE:
+			tape.Exe2NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_Exe2NameEnable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 2);
+			break;
+		case IDC_HID_EXE3_ENABLE:
+			tape.Exe3NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_Exe3NameEnable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 3);
+			break;
+		case IDC_HID_EXE4_ENABLE:
+			tape.Exe4NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_Exe4NameEnable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 4);
+			break;
+		case IDC_HID_EXE5_ENABLE:
+			tape.Exe5NameEnable = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_Exe5NameEnable);
+			PostMessage(m_hWnd, WM_CHANGE_HIDS, 2, 5);
 			break;
 		case IDC_HID_GUARDIAN_INSTALL:
 		{

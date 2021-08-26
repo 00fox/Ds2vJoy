@@ -5,6 +5,185 @@
 
 class Settings
 {
+public:
+	enum SettingName {
+		Setting_All,				//All
+		Setting_Profile,			//Profile
+		Setting_PreferredDS,		//Settings
+		Setting_Tasktray,
+		Setting_CloseMinimize,
+		Setting_DisconnectBT,
+		Setting_LowBattAlert,
+		Setting_dsSerial,
+		Setting_BlackLedOnExit,
+		Setting_vJoyDeviceID,
+		Setting_Threshold,
+		Setting_Simultaneous,
+		Setting_LongPress,
+		Setting_VeryLongPress,
+		Setting_FFB,
+		Setting_TriggersMode,
+		Setting_TouchPadButton,
+		Setting_TouchCol,
+		Setting_TouchRow,
+		Setting_LED_Color,
+		Setting_TabToMode,
+		Setting_Reminder,
+		Setting_vJoyPaused,			//Tasktray
+		Setting_RapidFirePaused,
+		Setting_KeymapPaused,
+		Setting_ViGEmPaused,
+		Setting_GuardianPaused,
+		Setting_Mappingdata,		//vJoy
+		Setting_RapidFiredata,		//RapidFire
+		Setting_Keymapdata,			//Keymap
+		Setting_ViGEmActive,		//ViGEm
+		Setting_DesiredVirtualPad,
+		Setting_target_X360,
+		Setting_dstarget_X360,
+		Setting_vjtarget_X360,
+		Setting_target_DS4,
+		Setting_dstarget_DS4,
+		Setting_vjtarget_DS4,
+		Setting_dsHID1,				//Guardian
+		Setting_dsHID2,
+		Setting_dsHID3,
+		Setting_Exe1Name,
+		Setting_Exe2Name,
+		Setting_Exe3Name,
+		Setting_Exe4Name,
+		Setting_Exe5Name,
+		Setting_GuardianActive,
+		Setting_RemoveBlacklist,
+		Setting_PurgeWhitelist,
+		Setting_dsHID1Enable,
+		Setting_dsHID2Enable,
+		Setting_dsHID3Enable,
+		Setting_Exe1NameEnable,
+		Setting_Exe2NameEnable,
+		Setting_Exe3NameEnable,
+		Setting_Exe4NameEnable,
+		Setting_Exe5NameEnable,
+		Setting_App1Name,			//Links
+		Setting_App2Name,
+		Setting_App3Name,
+		Setting_App4Name,
+		Setting_App5Name,
+		Setting_App1Location,
+		Setting_App2Location,
+		Setting_App3Location,
+		Setting_App4Location,
+		Setting_App5Location,
+		Setting_GiveMapping			//First time
+	};
+
+	Settings();
+	~Settings();
+
+	BOOL OpenIni(WCHAR* inifile);
+	void Load();
+	void Save(int category = 0);
+
+	const WCHAR* getSerial();
+	const std::string getHID(int ds);
+	void setvJoyDeviceID(int id);
+	void SetTouchPadButton(DWORD);
+	void SetTouchRow(int);
+	void SetTouchCol(int i);
+	void setSerial(const WCHAR*);
+	void SetLED(DWORD i);
+	void setPID(const WCHAR* buf, int ds);
+	void setExeName(const WCHAR*, int exe);
+	void setAppName(const WCHAR*, int app);
+	void setAppLocation(const WCHAR*, int app);
+
+	HWND ActualhWnd;
+	HWND LoghWnd;
+
+	Mappings Mappingdata;
+	Keymaps Keymapdata;
+	RapidFires RapidFiredata;
+
+	int Profile;
+	int Mode[9];
+	bool Reminder[32];
+	bool vJoyUsed[32];
+
+	int ActualDS = 0;				//0 Unknown
+	int PreferredDS;				//1 DS4, 2 DS5
+
+	int vJoyDeviceID;
+	bool Tasktray;
+	bool CloseMinimize;
+	bool DisconnectBT;
+	bool LowBattAlert;
+
+	bool FFB;
+	int TriggersMode;				//0 None, 1 Resist, 2 Shoot, 3 Proactive
+
+	bool SplitTouch;
+	int TouchPadButton;
+	int TouchCol;
+	int TouchRow;
+
+	WCHAR dsSerial[13] = { 0 };
+	DWORD LED_Color;
+	bool BlackLedOnExit;
+
+	int Threshold;					//7%
+	int Simultaneous;				//40 ms
+	int LongPress;					//255 ms
+	int VeryLongPress;				//3287 ms
+
+	bool vJoyPaused;
+	bool ViGEmPaused;
+	bool KeymapPaused;
+	bool RapidFirePaused;
+	bool GuardianPaused;
+
+	bool ViGEmActive;
+	int DesiredVirtualPad;			//1 Xbox360, 2 DS4
+	bool target_X360[24];
+	dsButtonID dstarget_X360[24];
+	vJoyButtonID vjtarget_X360[24];
+	bool target_DS4[24];
+	dsButtonID dstarget_DS4[24];
+	vJoyButtonID vjtarget_DS4[24];
+	LONG FFBvJoyLeft;
+	LONG FFBvJoyRight;
+
+	bool GuardianActive;
+	bool RemoveBlacklist;
+	bool PurgeWhitelist;
+	WCHAR dsHID1[MAX_PATH] = { 0 };
+	WCHAR dsHID2[MAX_PATH] = { 0 };
+	WCHAR dsHID3[MAX_PATH] = { 0 };
+	bool dsHID1Enable;
+	bool dsHID2Enable;
+	bool dsHID3Enable;
+	WCHAR Exe1Name[MAX_PATH] = { 0 };
+	WCHAR Exe2Name[MAX_PATH] = { 0 };
+	WCHAR Exe3Name[MAX_PATH] = { 0 };
+	WCHAR Exe4Name[MAX_PATH] = { 0 };
+	WCHAR Exe5Name[MAX_PATH] = { 0 };
+	bool Exe1NameEnable;
+	bool Exe2NameEnable;
+	bool Exe3NameEnable;
+	bool Exe4NameEnable;
+	bool Exe5NameEnable;
+
+	WCHAR App1Name[MAX_PATH] = { 0 };
+	WCHAR App2Name[MAX_PATH] = { 0 };
+	WCHAR App3Name[MAX_PATH] = { 0 };
+	WCHAR App4Name[MAX_PATH] = { 0 };
+	WCHAR App5Name[MAX_PATH] = { 0 };
+	WCHAR App1Location[MAX_PATH] = { 0 };
+	WCHAR App2Location[MAX_PATH] = { 0 };
+	WCHAR App3Location[MAX_PATH] = { 0 };
+	WCHAR App4Location[MAX_PATH] = { 0 };
+	WCHAR App5Location[MAX_PATH] = { 0 };
+
+private:
 	enum MappingName {
 		Mapping_Enable,
 		Mapping_ds_1,
@@ -102,7 +281,7 @@ class Settings
 	};
 
 	enum RapidFireName {
-		RapidFire_Enable = 0,
+		RapidFire_Enable,
 		RapidFire_Button,
 		RapidFire_Button2,
 		RapidFire_FirstTime,
@@ -111,117 +290,9 @@ class Settings
 		RapidFire_Count,
 	};
 
-public:
-	Settings();
-	~Settings();
-
-	BOOL OpenIni(WCHAR* inifile);
-	void Load();
-	void Save(int category = 0);
-
-	const WCHAR* getSerial();
-	const std::string getHID(int ds);
-	void setvJoyDeviceID(int id);
-	void SetTouchPadButton(DWORD);
-	void SetTouchRow(int);
-	void SetTouchCol(int i);
-	void setSerial(const WCHAR*);
-	void SetLED(DWORD i);
-	void setPID(const WCHAR* buf, int ds);
-	void setExeName(const WCHAR*, int exe);
-	void setAppName(const WCHAR*, int app);
-	void setAppLocation(const WCHAR*, int app);
-
-	HWND ActualhWnd;
-	HWND LoghWnd;
-
-	Mappings Mappingdata;
-	Keymaps Keymapdata;
-	RapidFires RapidFiredata;
-
-	int Profile;
-	int Mode[9];
-	bool Reminder[32];
-	bool vJoyUsed[32];
-
-	int ActualDS = 0;				//0 Unknown
-	int DesiredDS;					//1 DS4, 2 DS5
-
-	int vJoyDeviceID;
-	bool Tasktray;
-	bool CloseMinimize;
-	bool DisconnectBT;
-	bool LowBattAlert;
-
-	bool FFB;
-	int TriggersMode;				//0 None, 1 Resist, 2 Shoot, 3 Proactive
-
-	bool SplitTouch;
-	int TouchPadButton;
-	int TouchCol;
-	int TouchRow;
-
-	WCHAR dsSerial[13] = { 0 };
-	DWORD LED_Color;
-	bool BlackLedOnExit;
-
-	int Threshold;					//7%
-	int Simultaneous;				//40 ms
-	int LongPress;					//255 ms
-	int VeryLongPress;				//3287 ms
-
-	bool vJoyPaused;
-	bool ViGEmPaused;
-	bool KeymapPaused;
-	bool RapidFirePaused;
-	bool GuardianPaused;
-
-	bool ViGEmActive;
-	int DesiredVirtualPad;			//1 Xbox360, 2 DS4
-	bool target_X360[24];
-	dsButtonID dstarget_X360[24];
-	vJoyButtonID vjtarget_X360[24];
-	bool target_DS4[24];
-	dsButtonID dstarget_DS4[24];
-	vJoyButtonID vjtarget_DS4[24];
-	LONG FFBvJoyLeft;
-	LONG FFBvJoyRight;
-
-	bool GuardianActive;
-	bool RemoveBlacklist;
-	bool PurgeWhitelist;
-	WCHAR dsHID1[MAX_PATH] = { 0 };
-	WCHAR dsHID2[MAX_PATH] = { 0 };
-	WCHAR dsHID3[MAX_PATH] = { 0 };
-	bool dsHID1Enable;
-	bool dsHID2Enable;
-	bool dsHID3Enable;
-	WCHAR Exe1Name[MAX_PATH] = { 0 };
-	WCHAR Exe2Name[MAX_PATH] = { 0 };
-	WCHAR Exe3Name[MAX_PATH] = { 0 };
-	WCHAR Exe4Name[MAX_PATH] = { 0 };
-	WCHAR Exe5Name[MAX_PATH] = { 0 };
-	bool Exe1NameEnable;
-	bool Exe2NameEnable;
-	bool Exe3NameEnable;
-	bool Exe4NameEnable;
-	bool Exe5NameEnable;
-
-	WCHAR App1Name[MAX_PATH] = { 0 };
-	WCHAR App2Name[MAX_PATH] = { 0 };
-	WCHAR App3Name[MAX_PATH] = { 0 };
-	WCHAR App4Name[MAX_PATH] = { 0 };
-	WCHAR App5Name[MAX_PATH] = { 0 };
-	WCHAR App1Location[MAX_PATH] = { 0 };
-	WCHAR App2Location[MAX_PATH] = { 0 };
-	WCHAR App3Location[MAX_PATH] = { 0 };
-	WCHAR App4Location[MAX_PATH] = { 0 };
-	WCHAR App5Location[MAX_PATH] = { 0 };
-
-private:
 	BOOL Open(WCHAR* file);
 	void SetProfile(int i);
-	void SetDesiredDS(int i);
+	void SetPreferredDS(int i);
 	void SetTabMode(int i, int mode);
 	void SetReminder(int i, int reminder);
 	void SetThreshold(int i);

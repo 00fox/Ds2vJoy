@@ -22,6 +22,7 @@ private:
 	void load();
 	void save();
 	void addKeymapDlg();
+	void addSeparator();
 	void editKeymapDlg();
 	void deleteKeymapDlg();
 	void duplicateKeymapDlg();
@@ -36,7 +37,7 @@ private:
 	HWND m_hList;
 	HMENU m_hMenu;
 
-	int m_TabsID[4];
+	int m_TabsID[5];
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;
