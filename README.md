@@ -45,12 +45,12 @@ Satus is separated in 4 colums which are:
   - May be used only for touch pleasure
   - But in conjunction with L2, L2LOW, L2HIGH, L2FULL (same for R2),
   - you may use distinctly 2 or 3 separate actions on the same trigger
-- You can specify a serial if you have multiples DS connected
-  - or/and multiple copies of Ds2vJoy running
+- You can specify a serial if you have multiple DS connected
+  - or/and several copies of Ds2vJoy running
 - You can fix threshold of sticks, and set times more accurate to your senses
   - Simultaneous is R1L1 or R2L2 the same time (with this 100ms as default delta)
 - Multiple touchpad divide in multiple buttons,
-  - But for more simple uses, there is multiple special buttons (see vJoy)
+  - But for more simple uses, there is a lot of special buttons (see vJoy)
 - Led is calm wave fluctuating, and can color be stopped on exit
 
 ## vJoy
@@ -83,6 +83,8 @@ Order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Delete, copy and move actions can process multiple mappings the same time
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+- Add, move a sepator, for clarity or organization, at the end or specified location
+  - Cant't be edited, and does not interfere with the operation
 
 ![vJoy](Doc/3c.png)
 
@@ -341,6 +343,10 @@ You can find this help directly in Ds2vJoy by pressing help below grid entries
 You can set repeated hits with the assigned vJoy button
 
 Order, add, delete, copy or edit (double click or menu)
+- Delete, copy and move actions can process multiple rapid fires the same time
+  - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+- Add, move a sepator, for clarity or organization, at the end or specified location
+  - Cant't be edited, and does not interfere with the operation
 
 After the first time has passed, release and press repeatedly
 - If you specify the simultaneous press condition, you can also enable repeated hits (of the D-pad keys or □ △ × ○ for example), only when another (L1 or R1 for example) is pressed
@@ -357,6 +363,10 @@ Removed DS4vJoy/DS5vJoy limits of time
 You can send a keydown when the button is pressed and a keyup when it is released
 
 Order, add, delete, copy or edit (double click or menu)
+- Delete, copy and move actions can process multiple keymap the same time
+  - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+- Add, move a sepator, for clarity or organization, at the end or specified location
+  - Cant't be edited, and does not interfere with the operation
 
 ![Keymap Editing](Doc/9.png)
 
