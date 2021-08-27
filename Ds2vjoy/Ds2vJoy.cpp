@@ -1810,6 +1810,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (((NMHDR*)lParam)->code)
 			{
 			case TCN_SELCHANGING:
+				SendMessage(hStatus, SB_SETTEXT, 2, (WPARAM)L"");
 				mDDlg.m_mode = 0;
 				rDDlg.m_mode = 0;
 				kDDlg.m_mode = 0;
