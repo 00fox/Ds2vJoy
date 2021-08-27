@@ -81,7 +81,8 @@ There is a dual view mode, where you can clone a tab
 
 Order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
-- Delete, copy and move actions can process multiple mappings the same time
+- Edit, delete, copy and move actions can process multiple mappings the same time
+  - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
@@ -205,7 +206,7 @@ Destinations can be effected with time stamps for tricky actions, macros or comb
 - If you enter an odd number, 0-9 milliseconds will be added, different each time
 - Middle check box, is to begin the action on release
   - double, only the up press, even if some other timestamps are finished
-  
+
 Under each source and destination, you'll find disabling
 - this button will be disabled for next mappings if this mapping is running (except with Force)
   - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
@@ -343,7 +344,8 @@ You can find this help directly in Ds2vJoy by pressing help below grid entries
 You can set repeated hits with the assigned vJoy button
 
 Order, add, delete, copy or edit (double click or menu)
-- Delete, copy and move actions can process multiple rapid fires the same time
+- Edit, delete, copy and move actions can process multiple mappings the same time
+  - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
@@ -363,10 +365,26 @@ Removed DS4vJoy/DS5vJoy limits of time
 You can send a keydown when the button is pressed and a keyup when it is released
 
 Order, add, delete, copy or edit (double click or menu)
-- Delete, copy and move actions can process multiple keymap the same time
+- Edit, delete, copy and move actions can process multiple mappings the same time
+  - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
+
+Tags:
+Tag | Description
+--- | ------------------------------------------------------------------------------
+    | Nothing is checked
+P 	| 'Send to' is checked
+ A 	| 'By Postmessage / activation window' is checked
+
+Tags:
+Tags| In practice
+--- | ------------------------------------------------------------------------------
+    | The keys will be sent to your actual focus
+P   | It will use Postmessage to send keys to specified process
+PA  | It will activate window of the specified process before
+ A  | Act like if nothing were checked, the keys will be sent to your actual focus
 
 ![Keymap Editing](Doc/9.png)
 
