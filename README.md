@@ -350,14 +350,12 @@ Order, add, delete, copy or edit (double click or menu)
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
+![RapidFire Editing](Doc/7.png)
+
 After the first time has passed, release and press repeatedly
 - If you specify the simultaneous press condition, you can also enable repeated hits (of the D-pad keys or □ △ × ○ for example), only when another (L1 or R1 for example) is pressed
 - If you enter an odd number for 'Release time', 0-19 milliseconds will be added, different each press
 - If you enter an odd number for 'Press time', 0-19 milliseconds will be added, different each turn
-
-![RapidFire Editing](Doc/7.png)
-
-Removed DS4vJoy/DS5vJoy limits of time
 
 ## Keymap
 ![Keymap](Doc/8.png)
@@ -375,10 +373,9 @@ Tags:
 Tag | Description
 --- | ------------------------------------------------------------------------------
     | Nothing is checked
-P 	| 'Send to' is checked
- A 	| 'By Postmessage / activation window' is checked
+P 	| \'Send to' is checked
+ A 	| \'By Postmessage / activation window' is checked
 
-Tags:
 Tags| In practice
 --- | ------------------------------------------------------------------------------
     | The keys will be sent to your actual focus
