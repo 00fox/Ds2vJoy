@@ -372,13 +372,13 @@ Order, add, delete, copy or edit (double click or menu)
 Tags:
 Tag | Description
 --- | ------------------------------------------------------------------------------
-    | Nothing is checked
+\   | Nothing is checked
 P 	| \'Send to' is checked
  A 	| \'By Postmessage / activation window' is checked
 
 Tags| In practice
 --- | ------------------------------------------------------------------------------
-    | The keys will be sent to your actual focus
+\   | The keys will be sent to your actual focus
 P   | It will use Postmessage to send keys to specified process
 PA  | It will activate window of the specified process before
  A  | Act like if nothing were checked, the keys will be sent to your actual focus
