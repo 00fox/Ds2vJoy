@@ -370,18 +370,18 @@ Order, add, delete, copy or edit (double click or menu)
   - Cant't be edited, and does not interfere with the operation
 
 Tags:
-Tag | Description
---- | ------------------------------------------------------------------------------
-\   | Nothing is checked
-P 	| \'Send to' is checked
- A 	| \'By Postmessage / activation window' is checked
+Tag   | Description
+----- | ------------------------------------------------------------------------------
+Empty | Nothing is checked
+P 	  | \'Send to' is checked
+ A    | \'By Postmessage / activation window' is checked
 
-Tags| In practice
---- | ------------------------------------------------------------------------------
-\   | The keys will be sent to your actual focus
-P   | It will use Postmessage to send keys to specified process
-PA  | It will activate window of the specified process before
- A  | Act like if nothing were checked, the keys will be sent to your actual focus
+Tags  | In practice
+----- | ------------------------------------------------------------------------------
+Empty | The keys will be sent to your actual focus
+P     | It will use Postmessage to send keys to specified process
+PA    | It will activate window of the specified process before
+ A    | Act like if nothing were checked, the keys will be sent to your actual focus
 
 ![Keymap Editing](Doc/9.png)
 
