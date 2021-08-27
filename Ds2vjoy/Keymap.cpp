@@ -31,25 +31,57 @@ struct _virtualkey2str
 WCHAR* Keymap::KeyString()
 {
 	if (Enable == 2)
-		return L"▒▒▒▒▒▒";
+		return L"▒▒▒▒▒▒▒▒▒▒";
 
 	return vJoyButton::String(ButtonID);
 }
 
-WCHAR* Keymap::ValueString()
+WCHAR* Keymap::ValueString(int column)
 {
-	if (Enable == 2)
-		return L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒";
+	switch (column)
+	{
+	case 1:
+	{
+		if (Enable == 2)
+			return L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒";
 
-	WCHAR* head = bufstring;
+		WCHAR* head = bufstring;
 
-	for (int i = 0; i < vk.size(); i++)
-		head += wsprintfW(head, L"%s ", String(BytetoKeyboardID(vk[i])));
+		for (int i = 0; i < vk.size(); i++)
+			head += wsprintfW(head, L"%s ", String(BytetoKeyboardID(vk[i])));
 
-	if (bufstring < head)
-		*(--head) = 0;
+		if (bufstring < head)
+			*(--head) = 0;
 
-	return bufstring;
+		return bufstring;
+		break;
+	}
+	case 2:
+	{
+		if (Enable == 2)
+			return L"▒▒▒▒▒▒▒▒▒";
+
+		return (WCHAR*)findWindow.Val().c_str();
+	}
+	case 3:
+	{
+		if (Enable == 2)
+			return L"▒▒▒";
+
+		static WCHAR buf[MAX_PATH];
+		WCHAR* head = buf;
+		if (usePostmessage)
+			head += wsprintf(head, L"P");
+		else
+			head += wsprintf(head, L" ");
+		if (useActivating)
+			head += wsprintf(head, L"A");
+		else
+			head += wsprintf(head, L" ");
+		return buf;
+	}
+	default: return L"";
+	}
 }
 
 static const struct _virtualkey2str keystr[] = {

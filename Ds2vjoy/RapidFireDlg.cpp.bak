@@ -40,22 +40,13 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
-	col.cx = 114;
+	col.fmt = LVCFMT_LEFT;
+	col.cx = 83;
 	col.pszText = I18N.vJoyButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.Setting;
-	col.cx = 112;
+	col.cx = 366;
 	ListView_InsertColumn(m_hList, 1, &col);
-	col.pszText = L"";
-	col.cx = 112;
-	ListView_InsertColumn(m_hList, 2, &col);
-	col.pszText = L"";
-	col.cx = 111;
-	ListView_InsertColumn(m_hList, 3, &col);
-
-	HWND hTip = ListView_GetToolTips(m_hList);
-	SetWindowPos(hTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 void RapidFireDlg::redrawMenu(int ntabs)
@@ -102,8 +93,8 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			DrawMenuSize->itemWidth = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
 			DrawMenuSize->itemHeight = 12 + nEdgeWidth + nEdgeWidth;
 
-			WCHAR wszBuffer[MAX_PATH];
-			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
+			WCHAR wszBuffer[256];
+			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				int nAcceleratorDelimiter;
@@ -165,8 +156,8 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			// Caption
-			WCHAR wszBuffer[MAX_PATH];
-			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
+			WCHAR wszBuffer[256];
+			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, 255, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				COLORREF crPrevText = 0;
@@ -318,6 +309,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void RapidFireDlg::load()
 {
 	m_active = false;
+	rDDlg.Hide();
 
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
 	{
@@ -425,55 +417,24 @@ void RapidFireDlg::editRapidFireDlg()
 {
 	m_active = false;
 	rDDlg.Hide();
+	
+	if (ListView_GetSelectedCount(m_hList) != 1)
+		{ m_active = false; return; }
+	lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 
-	int nselected = ListView_GetSelectedCount(m_hList);
-	if (nselected == 1)
+	LV_ITEM item = { 0 };
+	item.mask = LVIF_PARAM;
+	item.iItem = lastidx;
+	item.iSubItem = 0;
+	ListView_GetItem(m_hList, &item);
+	if (item.lParam != NULL)
 	{
-		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-
-		LV_ITEM item = { 0 };
-		item.mask = LVIF_PARAM;
-		item.iItem = lastidx;
-		item.iSubItem = 0;
-		ListView_GetItem(m_hList, &item);
-		if (item.lParam != NULL)
+		RapidFire* data = (RapidFire*)item.lParam;
+		if (data->Enable != 2)
 		{
-			RapidFire* data = (RapidFire*)item.lParam;
-			if (data->Enable != 2)
-			{
-				rDDlg.rapidFireData = *data;
-				rDDlg.Open(m_hDlg, 2);
-			}
+			rDDlg.rapidFireData = *data;
+			rDDlg.Open(m_hDlg, 2);
 		}
-	}
-	else if (nselected >= 1)
-	{
-		lastidxs.clear();
-		for (int i = 0; i < RapidFireDataDlg::Mofified_count; i++)
-			rDDlg.Modified[i] = false;
-		int idx;
-		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
-		{
-			ListView_SetItemState(m_hList, idx, LVIF_STATE, LVIS_SELECTED);
-			LV_ITEM item = { 0 };
-			item.mask = LVIF_PARAM;
-			item.iItem = idx;
-			item.iSubItem = 0;
-			ListView_GetItem(m_hList, &item);
-			if (item.lParam != NULL)
-			{
-				RapidFire* data = (RapidFire*)item.lParam;
-				if (data->Enable != 2)
-					lastidxs.push_back(idx);
-			}
-		}
-
-		for (int i = 0; i < lastidxs.size(); i++)
-			ListView_SetItemState(m_hList, lastidxs[i], LVIS_SELECTED, LVIS_SELECTED);
-
-		RapidFire rf;
-		rDDlg.rapidFireData = rf;
-		rDDlg.Open(m_hDlg, 3);
 	}
 
 	m_active = true;
@@ -500,52 +461,10 @@ void RapidFireDlg::editRapidFireDlgBack()
 	m_active = true;
 }
 
-void RapidFireDlg::editRapidFireDlgBackMulti()
-{
-	m_active = false;
-
-	RapidFire* data1 = new RapidFire(rDDlg.rapidFireData);
-
-	for (int i = 0; i < lastidxs.size(); i++)
-	{
-		LV_ITEM item = { 0 };
-		item.mask = LVIF_PARAM;
-		item.iItem = lastidxs[i];
-		item.iSubItem = 0;
-		ListView_GetItem(m_hList, &item);
-		if (item.lParam != NULL)
-		{
-			RapidFire rf;
-			RapidFire* data2 = (RapidFire*)item.lParam;
-			rf = *data2;
-			data2 = new RapidFire(rf);
-			for (int i = 0; i < RapidFireDataDlg::Mofified_count; i++)
-				if (rDDlg.Modified[i])
-					switch (i)
-					{
-					default:
-					case RapidFireDataDlg::Mofified_ButtonID:data2->ButtonID = data1->ButtonID; break;
-					case RapidFireDataDlg::Mofified_ButtonID2:data2->ButtonID2 = data1->ButtonID2; break;
-					case RapidFireDataDlg::Mofified_Firsttime:data2->Firsttime = data1->Firsttime; break;
-					case RapidFireDataDlg::Mofified_Releasetime:data2->Releasetime = data1->Releasetime; break;
-					case RapidFireDataDlg::Mofified_Presstime:data2->Presstime = data1->Presstime; break;
-					}
-			ListView_DeleteItem(m_hList, lastidxs[i]);
-			insertRapidFire(lastidxs[i], data2);
-		}
-	}
-	save();
-
-	m_active = true;
-}
-
 void RapidFireDlg::deleteRapidFireDlg()
 {
 	m_active = false;
 	rDDlg.Hide();
-
-	if (ListView_GetSelectedCount(m_hList) == 0)
-		{ m_active = true; return; }
 
 	RECT rect;
 	GetWindowRect(m_hWnd, &rect);
@@ -641,17 +560,7 @@ int RapidFireDlg::insertRapidFire(int idx, RapidFire* rf)
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 1;
 	item.lParam = 0;
-	item.pszText = (WCHAR*)rf->ValueString(1);
-	ListView_SetItem(m_hList, &item);
-	item.mask = LVIF_TEXT;
-	item.iSubItem = 2;
-	item.lParam = 0;
-	item.pszText = (WCHAR*)rf->ValueString(2);
-	ListView_SetItem(m_hList, &item);
-	item.mask = LVIF_TEXT;
-	item.iSubItem = 3;
-	item.lParam = 0;
-	item.pszText = (WCHAR*)rf->ValueString(3);
+	item.pszText = (WCHAR*)rf->ValueString();
 	ListView_SetItem(m_hList, &item);
 	ListView_SetCheckState(m_hList, idx, enable);
 

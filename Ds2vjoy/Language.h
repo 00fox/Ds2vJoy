@@ -4,7 +4,6 @@ struct LANGSTRS
 {
 	WCHAR* DS2VJOY;
 	WCHAR* APP_TITLE;
-	WCHAR* RapidFire_State;
 	WCHAR* BT_Size;
 	WCHAR* BT_CRC;
 	WCHAR* Button_LX;
@@ -192,6 +191,9 @@ struct LANGSTRS
 	WCHAR* MouseAction_MEMORIZE_MODE;
 	WCHAR* MouseAction_TO_MODE;
 	WCHAR* MouseAction_TO_LAST_MODE;
+	WCHAR* RapidFire_State1;
+	WCHAR* RapidFire_State2;
+	WCHAR* RapidFire_State3;
 	WCHAR* Setting;
 	WCHAR* SkipController;
 	WCHAR* Status_Wait;

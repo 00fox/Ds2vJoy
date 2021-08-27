@@ -21,9 +21,9 @@ RapidFire::~RapidFire()
 WCHAR* RapidFire::KeyString()
 {
 	if (Enable == 2)
-		return L"▒▒▒▒▒▒";
+		return L"▒▒▒▒▒▒▒▒▒▒";
 
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 
@@ -39,14 +39,21 @@ WCHAR* RapidFire::KeyString()
 	return buf;
 }
 
-WCHAR* RapidFire::ValueString()
+WCHAR* RapidFire::ValueString(int column)
 {
 	if (Enable == 2)
-		return L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒";
+		return L"▒▒▒▒▒▒▒▒▒▒▒▒▒";
 
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	WCHAR* head = buf;
-	head += wsprintf(buf, I18N.RapidFire_State, Firsttime, Releasetime, Presstime);
+	switch (column)
+	{
+	case 1:head += wsprintf(buf, I18N.RapidFire_State1, Firsttime); break;
+	case 2:head += wsprintf(buf, I18N.RapidFire_State2, Releasetime); break;
+	case 3:head += wsprintf(buf, I18N.RapidFire_State3, Presstime); break;
+	default: return L"";
+	}
+
 	return buf;
 }
 

@@ -41,13 +41,22 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-	col.fmt = LVCFMT_LEFT;
-	col.cx = 83;
+	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
+	col.cx = 114;
 	col.pszText = I18N.vJoyButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.Setting;
-	col.cx = 366;
+	col.cx = 201;
 	ListView_InsertColumn(m_hList, 1, &col);
+	col.pszText = L"";
+	col.cx = 93;
+	ListView_InsertColumn(m_hList, 2, &col);
+	col.pszText = I18N.TagsButton;
+	col.cx = 41;
+	ListView_InsertColumn(m_hList, 3, &col);
+
+	HWND hTip = ListView_GetToolTips(m_hList);
+	SetWindowPos(hTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 void KeymapDlg::redrawMenu(int ntabs)
@@ -94,8 +103,8 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			DrawMenuSize->itemWidth = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
 			DrawMenuSize->itemHeight = 12 + nEdgeWidth + nEdgeWidth;
 
-			WCHAR wszBuffer[256];
-			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			WCHAR wszBuffer[MAX_PATH];
+			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				int nAcceleratorDelimiter;
@@ -157,8 +166,8 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			// Caption
-			WCHAR wszBuffer[256];
-			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			WCHAR wszBuffer[MAX_PATH];
+			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				COLORREF crPrevText = 0;
@@ -312,7 +321,7 @@ void KeymapDlg::load()
 	m_active = false;
 
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
-		{
+	{
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
 		if (!ListView_GetItem(m_hList, &item))
@@ -337,6 +346,7 @@ void KeymapDlg::load()
 void KeymapDlg::save()
 {
 	m_active = false;
+	kDDlg.Hide();
 
 	Keymaps newmap;
 	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
@@ -369,10 +379,15 @@ void KeymapDlg::addKeymapDlg()
 	m_active = false;
 	kDDlg.Hide();
 
+	if (ListView_GetSelectedCount(m_hList) == 1)
+		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+	else
+		lastidx = ListView_GetItemCount(m_hList);
+
 	Keymap km;
 	kDDlg.keymapData = km;
 	kDDlg.alreadydone = false;
-	kDDlg.Open(m_hDlg, -1);
+	kDDlg.Open(m_hDlg, 1);
 
 	m_active = true;
 }
@@ -381,12 +396,8 @@ void KeymapDlg::addKeymapDlgBack()
 {
 	m_active = false;
 
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-	if (idx == -1)
-		idx = ListView_GetItemCount(m_hList);
-
 	Keymap* data = new Keymap(kDDlg.keymapData);
-	insertKeymap(idx, data);
+	insertKeymap(lastidx, data);
 	save();
 
 	m_active = true;
@@ -418,57 +429,117 @@ void KeymapDlg::editKeymapDlg()
 	m_active = false;
 	kDDlg.Hide();
 
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-	if (idx == -1)
+	int nselected = ListView_GetSelectedCount(m_hList);
+	if (nselected == 1)
 	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			{ m_active = false; return; }
-	}
+		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 
-	LV_ITEM item = { 0 };
-	item.mask = LVIF_PARAM;
-	item.iItem = idx;
-	item.iSubItem = 0;
-	ListView_GetItem(m_hList, &item);
-	if (item.lParam != NULL)
-	{
-		Keymap* data = (Keymap*)item.lParam;
-		if (data->Enable != 2)
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = lastidx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
 		{
-			kDDlg.keymapData = *data;
-			kDDlg.alreadydone = false;
-			kDDlg.Open(m_hDlg, idx);
+			Keymap* data = (Keymap*)item.lParam;
+			if (data->Enable != 2)
+			{
+				kDDlg.keymapData = *data;
+				kDDlg.alreadydone = false;
+				kDDlg.Open(m_hDlg, 2);
+			}
 		}
+	}
+	else if (nselected >= 1)
+	{
+		lastidxs.clear();
+		for (int i = 0; i < KeymapDataDlg::Mofified_count; i++)
+			kDDlg.Modified[i] = false;
+		int idx;
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			ListView_SetItemState(m_hList, idx, LVIF_STATE, LVIS_SELECTED);
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			if (item.lParam != NULL)
+			{
+				Keymap* data = (Keymap*)item.lParam;
+				if (data->Enable != 2)
+					lastidxs.push_back(idx);
+			}
+		}
+
+		for (int i = 0; i < lastidxs.size(); i++)
+			ListView_SetItemState(m_hList, lastidxs[i], LVIS_SELECTED, LVIS_SELECTED);
+
+		Keymap m;
+		kDDlg.keymapData = m;
+		kDDlg.alreadydone = false;
+		kDDlg.Open(m_hDlg, 3);
 	}
 
 	m_active = true;
 }
 
-void KeymapDlg::editKeymapDlgBack(int idx)
+void KeymapDlg::editKeymapDlgBack()
 {
 	m_active = false;
 
-	if (idx == -1)
-	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			{ m_active = false; return; }
-	}
-
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
-	item.iItem = idx;
+	item.iItem = lastidx;
 	item.iSubItem = 0;
 	ListView_GetItem(m_hList, &item);
 	if (item.lParam != NULL)
 	{
 		Keymap* data = (Keymap*)item.lParam;
 		*data = kDDlg.keymapData;
-		ListView_DeleteItem(m_hList, idx);
-		insertKeymap(idx, data);
+		ListView_DeleteItem(m_hList, lastidx);
+		insertKeymap(lastidx, data);
 		save();
 	}
+
+	m_active = true;
+}
+
+void KeymapDlg::editKeymapDlgBackMulti()
+{
+	m_active = false;
+
+	Keymap* data1 = new Keymap(kDDlg.keymapData);
+
+	for (int i = 0; i < lastidxs.size(); i++)
+	{
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = lastidxs[i];
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			Keymap km;
+			Keymap* data2 = (Keymap*)item.lParam;
+			km = *data2;
+			data2 = new Keymap(km);
+			for (int i = 0; i < KeymapDataDlg::Mofified_count; i++)
+				if (kDDlg.Modified[i])
+					switch (i)
+					{
+					default:
+					case KeymapDataDlg::Mofified_ButtonID:data2->ButtonID = data1->ButtonID; break;
+					case KeymapDataDlg::Mofified_vk:data2->vk = data1->vk; break;
+					case KeymapDataDlg::Mofified_usePostmessage:data2->usePostmessage = data1->usePostmessage; break;
+					case KeymapDataDlg::Mofified_useActivating:data2->useActivating = data1->useActivating; break;
+					case KeymapDataDlg::Mofified_findWindow:data2->findWindow = data1->findWindow; break;
+					}
+			ListView_DeleteItem(m_hList, lastidxs[i]);
+			insertKeymap(lastidxs[i], data2);
+		}
+	}
+	save();
 
 	m_active = true;
 }
@@ -476,8 +547,11 @@ void KeymapDlg::editKeymapDlgBack(int idx)
 void KeymapDlg::deleteKeymapDlg()
 {
 	m_active = false;
-
 	kDDlg.Hide();
+
+	if (ListView_GetSelectedCount(m_hList) == 0)
+		{ m_active = true; return; }
+
 	RECT rect;
 	GetWindowRect(m_hWnd, &rect);
 	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, rect.left + 160, rect.top + 60) == IDYES)
@@ -507,13 +581,8 @@ void KeymapDlg::duplicateKeymapDlg()
 	int nselected = ListView_GetSelectedCount(m_hList);
 	if (nselected == 1)
 	{
-		int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-		if (idx == -1)
-		{
-			idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-			if (idx == -1)
-			{ m_active = false; return; }
-		}
+		int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
 		item.iItem = idx;
@@ -532,7 +601,6 @@ void KeymapDlg::duplicateKeymapDlg()
 	{
 		int idx;
 		int lastitemindex = ListView_GetItemCount(m_hList);
-		ListView_GetNextItem(m_hList, 1, LVNI_ALL);
 		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
 		{
 			LV_ITEM item = { 0 };
@@ -578,7 +646,17 @@ int KeymapDlg::insertKeymap(int idx, Keymap* km)
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 1;
 	item.lParam = 0;
-	item.pszText = (WCHAR*)km->ValueString();
+	item.pszText = (WCHAR*)km->ValueString(1);
+	ListView_SetItem(m_hList, &item);
+	item.mask = LVIF_TEXT;
+	item.iSubItem = 2;
+	item.lParam = 0;
+	item.pszText = (WCHAR*)km->ValueString(2);
+	ListView_SetItem(m_hList, &item);
+	item.mask = LVIF_TEXT;
+	item.iSubItem = 3;
+	item.lParam = 0;
+	item.pszText = (WCHAR*)km->ValueString(3);
 	ListView_SetItem(m_hList, &item);
 	ListView_SetCheckState(m_hList, idx, enable);
 
@@ -590,6 +668,7 @@ void KeymapDlg::BeginDrag(int idx)
 {
 	if (ListView_GetNextItem(m_hList, -1, LVNI_SELECTED) == -1)
 		return;
+	kDDlg.Hide();
 	m_flag_drag = true;
 	SetCapture(m_hDlg);
 }
@@ -601,10 +680,7 @@ void KeymapDlg::DragMove(int x, int y)
 	ht.pt.y = y;
 	ListView_HitTest(m_hList, &ht);
 	if ((ht.flags & LVHT_ONITEM) != 0)
-	{
 		setInsertMark(ht.iItem);
-		//ListView_Scroll(m_hList, 0 , 2);
-	}
 	else
 		setInsertMark(-1);
 }

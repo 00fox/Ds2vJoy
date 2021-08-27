@@ -265,7 +265,7 @@ BOOL Guardian::GuardianInstall(bool verbose)
 
 	std::wstring installpath = PrfPathW() + L"\\" + ProgramFilesDirName;
 
-	if (ExtractEmbededResource(installpath, IDC_HIDGUARDIAN_ZIP, true))
+	if (ExtractEmbededResource(installpath, IDR_HIDGUARDIAN_ZIP, true))
 	{
 		std::string devconpath = "Devcon.exe install \"" + PrfPath() + "\\" + rws2s(ProgramFilesDirName) + "\\HidGuardian\\HidGuardian.inf\" Root\\HidGuardian";
 		LaunchCmd(devconpath.c_str());
@@ -442,7 +442,7 @@ BOOL Guardian::HidCerberusInstall(bool verbose)
 
 	std::wstring installpath = PrfPathW() + L"\\" + ProgramFilesDirName;
 
-	if (ExtractEmbededResource(installpath, IDC_HIDCERBERUS_ZIP, true))
+	if (ExtractEmbededResource(installpath, IDR_HIDCERBERUS_ZIP, true))
 	{
 		std::wstring exepath = installpath + L"/HidCerberus/HidCerberus.exe";
 

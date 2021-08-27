@@ -291,7 +291,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf[13];
-				GetWindowText(GetDlgItem(hWnd, IDC_DS_SERIAL), buf, 13);
+				GetWindowText((HWND)lParam, buf, 13);
 				if (lstrcmpW(tape.getSerial(), buf) != 0)
 				{
 					tape.setSerial(buf);
@@ -317,25 +317,25 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDC_THRESHOLD:
 			WCHAR bufThreshold[MAX_PATH];
-			GetWindowText(GetDlgItem(hWnd, IDC_THRESHOLD), bufThreshold, MAX_PATH);
+			GetWindowText((HWND)lParam, bufThreshold, MAX_PATH);
 			tape.Threshold = max(0, min(100, _wtoi(bufThreshold)));
 			tape.Save(tape.Setting_Threshold);
 			break;
 		case IDC_SIMULTANEOUS:
 			WCHAR bufSimultaneous[MAX_PATH];
-			GetWindowText(GetDlgItem(hWnd, IDC_SIMULTANEOUS), bufSimultaneous, MAX_PATH);
+			GetWindowText((HWND)lParam, bufSimultaneous, MAX_PATH);
 			tape.Simultaneous = max(1, min(9999, _wtoi(bufSimultaneous)));
 			tape.Save(tape.Setting_Simultaneous);
 			break;
 		case IDC_LONGPRESS:
 			WCHAR bufLongPress[MAX_PATH];
-			GetWindowText(GetDlgItem(hWnd, IDC_LONGPRESS), bufLongPress, MAX_PATH);
+			GetWindowText((HWND)lParam, bufLongPress, MAX_PATH);
 			tape.LongPress = max(1, min(9999, _wtoi(bufLongPress)));
 			tape.Save(tape.Setting_LongPress);
 			break;
 		case IDC_VERYLONGPRESS:
 			WCHAR bufVeryLongPress[MAX_PATH];
-			GetWindowText(GetDlgItem(hWnd, IDC_VERYLONGPRESS), bufVeryLongPress, MAX_PATH);
+			GetWindowText((HWND)lParam, bufVeryLongPress, MAX_PATH);
 			tape.VeryLongPress = max(1, min(9999, _wtoi(bufVeryLongPress)));
 			tape.Save(tape.Setting_VeryLongPress);
 			break;

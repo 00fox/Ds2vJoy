@@ -362,7 +362,7 @@ BOOL ViGEm::ViGEmInstall(bool verbose)
 
 	std::wstring installpath = PrfPathW() + L"\\" + ProgramFilesDirName;
 
-	if (ExtractEmbededResource(installpath, IDC_VIGEMBUS_ZIP, true))
+	if (ExtractEmbededResource(installpath, IDR_VIGEMBUS_ZIP, true))
 	{
 		std::string devconpath = "Devcon.exe install \"" + PrfPath() + "\\" + rws2s(ProgramFilesDirName) + "\\ViGEmBus\\ViGEmBus.inf\" Nefarius\\ViGEmBus\\Gen1";
 		LaunchCmd(devconpath.c_str());

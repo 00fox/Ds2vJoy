@@ -9,7 +9,8 @@ public:
 
 	void Init(HINSTANCE, HWND);
 	void addKeymapDlgBack();
-	void editKeymapDlgBack(int idx);
+	void editKeymapDlgBack();
+	void editKeymapDlgBackMulti();
 	void Show();
 	void Hide();
 	BOOL MoveWindow(int, int, int, int, BOOL);
@@ -41,6 +42,8 @@ private:
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;
+	int lastidx;
+	std::vector<int> lastidxs;
 };
 
 extern KeymapDlg kDlg;

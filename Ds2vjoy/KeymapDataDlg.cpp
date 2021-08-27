@@ -12,17 +12,18 @@ KeymapDataDlg::~KeymapDataDlg()
 
 void KeymapDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 {
-	m_idx = -2;
+	m_mode = 0;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP_ADD), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hWnd = hWnd;
 	Hide();
 }
 
-void KeymapDataDlg::Open(HWND parent, int idx)
+void KeymapDataDlg::Open(HWND parent, int mode)
 {
-	m_idx = idx;
+	m_mode = mode;
 	dlgPage = 0;
 	firsttime = false;
+	canprint = false;
 	ShowWindow(parent, SW_HIDE);
 	ShowWindow(m_hDlg, SW_SHOW);
 	PostMessage(m_hWnd, WM_SIZE, 0, -1);
@@ -58,7 +59,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (dlgPage == 0)
 		{
 			keymapData.GetState();
-			SetWindowText(hWnd, keymapData.ValueString());
+			SetWindowText(hWnd, keymapData.ValueString(1));
 			return TRUE;
 		}
 	}
@@ -177,7 +178,6 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT3, CB_SETCURSEL, 0, 0);
 			HWND hInput = GetDlgItem(hWnd, IDC_KEYMAP_INPUT);
 
-			SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT), keymapData.ValueString());
 			if (keymapData.usePostmessage)
 				CheckDlgButton(hWnd, IDC_KEYMAP_POSTMESSAGE, BST_CHECKED);
 			else
@@ -186,7 +186,12 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FW_TEXT), FALSE);
 				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FINDWINDOW), FALSE);
 			}
+
+			canprint = false;
+			SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT), keymapData.ValueString(1));
 			SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), keymapData.findWindow.Val().c_str());
+			canprint = true;
+
 			CheckDlgButton(hWnd, IDC_KEYMAP_ACTIVATING, keymapData.useActivating);
 
 			m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_FIND_LIST);
@@ -290,7 +295,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case IDOK:
 		{
-			if (keymapData.ButtonID == 0)
+			if (keymapData.ButtonID == 0 && m_mode != 3)
 			{
 				RECT rect;
 				GetWindowRect(m_hWnd, &rect);
@@ -301,18 +306,18 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			int key1 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1), CB_GETCURSEL, 0, 0);
 			int key2 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2), CB_GETCURSEL, 0, 0);
 			int key3 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3), CB_GETCURSEL, 0, 0);
-			if (key1) { keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key1)); }
-			if (key1) { keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
-			if (key1) { keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
-			PostMessage(m_hWnd, WM_ADDKEYMAP, m_idx, 1);
-			m_idx = -2;
+			if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key1)); }
+			if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
+			if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
+			PostMessage(m_hWnd, WM_ADDKEYMAP, m_mode, 0);
+			m_mode = 0;
 			break;
 		}
 		case IDCANCEL:
 			PostMessage(m_hWnd, WM_ADDKEYMAP, 0, 0);
-			m_idx = -2;
+			m_mode = 0;
 			break;
-		case ID_OK2:
+		case IDC_OK2:
 			keymapData.findWindow = keymapData.findWindow;
 			if (m_hEdit != NULL)
 			{
@@ -320,10 +325,11 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				m_hEdit = NULL;
 			}
 			SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), keymapData.findWindow.Val().c_str());
+			Modified[Mofified_findWindow] = true;
 			dlgPage = 0;
 			PostMessage(m_hWnd, WM_SIZE, 0, 0);
 			break;
-		case ID_CANCEL2:
+		case IDC_CANCEL2:
 			alreadydone = false;
 			keymapData.findWindow = fw;
 			SendMessage(hWnd, WM_RESET_FINDWINDOW, 0, 0);
@@ -337,14 +343,18 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDC_KEYMAP_BTN:
 			if (HIWORD(wParam) == CBN_SELCHANGE)
+			{
 				keymapData.ButtonID = (vJoyButtonID)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				Modified[Mofified_ButtonID] = true;
+			}
 			break;
 		case IDC_KEYMAP_INPUT:
 			switch (HIWORD(wParam))
 			{
 			case EN_CHANGE: {
 				keymapData.GetState();
-				SetWindowText((HWND)lParam, keymapData.ValueString());
+				SetWindowText((HWND)lParam, keymapData.ValueString(1));
+				Modified[Mofified_vk] = true;
 				break;
 			}
 			default:
@@ -355,7 +365,10 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			BOOL flag = FALSE;
 			if (BST_CHECKED == SendMessage((HWND)lParam, BM_GETCHECK, 0, 0))
+			{
 				flag = TRUE;
+				Modified[Mofified_usePostmessage] = true;
+			}
 			keymapData.usePostmessage = flag ? true : false;
 			EnableWindow(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), flag);
 			EnableWindow(GetDlgItem(m_hDlg, IDC_KEYMAP_FINDWINDOW), flag);
@@ -363,8 +376,8 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		case IDC_KEYMAP_ACTIVATING:
 			keymapData.useActivating = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_useActivating] = true;
 			break;
-		CheckDlgButton(hWnd, IDC_KEYMAP_ACTIVATING, keymapData.useActivating);
 		case IDC_KEYMAP_FINDWINDOW:
 		{
 			fw = keymapData.findWindow;

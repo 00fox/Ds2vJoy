@@ -202,7 +202,7 @@ public:
 	~Keymap();
 
 	WCHAR* KeyString();
-	WCHAR* ValueString();
+	WCHAR* ValueString(int column);
 	BOOL LoadDevice(vJoyDevice* vj);
 	void GetState();
 	void Run();

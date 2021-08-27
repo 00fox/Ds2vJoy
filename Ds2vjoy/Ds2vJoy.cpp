@@ -679,8 +679,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DrawMenuSize->itemWidth = ::GetSystemMetrics(SM_CXMENUCHECK) + nEdgeWidth + nEdgeWidth;
 			DrawMenuSize->itemHeight = 12 + nEdgeWidth + nEdgeWidth;
 
-			WCHAR wszBuffer[256];
-			int nCharCount = ::GetMenuString(hMenu2, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			WCHAR wszBuffer[MAX_PATH];
+			int nCharCount = ::GetMenuString(hMenu2, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				int nAcceleratorDelimiter;
@@ -742,8 +742,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 
 			// Caption
-			WCHAR wszBuffer[256];
-			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			WCHAR wszBuffer[MAX_PATH];
+			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				COLORREF crPrevText = 0;
@@ -950,11 +950,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 */
 		std::vector<char> data;
 		DWORD resourceSize;
-		if (LoadEmbeddedResource(IDC_VIGEMCLIENT_DLL, &data, &resourceSize))
+		if (LoadEmbeddedResource(IDR_VIGEMCLIENT_DLL, &data, &resourceSize))
 			WriteToFile(L"ViGEmClient.dll", data, resourceSize, true, true);
-		if (LoadEmbeddedResource(IDC_VJOYINTERFACE_DLL, &data, &resourceSize))
+		if (LoadEmbeddedResource(IDR_VJOYINTERFACE_DLL, &data, &resourceSize))
 			WriteToFile(L"vJoyInterface.dll", data, resourceSize, true, true);
-		if (LoadEmbeddedResource(IDC_DEVCON_EXE, &data, &resourceSize))
+		if (LoadEmbeddedResource(IDR_DEVCON_EXE, &data, &resourceSize))
 			WriteToFile(L"Devcon.exe", data, resourceSize, true, true);
 		if (isFileExists("vJoyInterface.dll") && isFileExists("ViGEmClient.dll"))
 			load_dll = true;
@@ -1273,30 +1273,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SendMessage(hStatus, SB_SETTEXT, 2, (WPARAM)ViGEmSatusString);
 		}
 		break;
-	case WM_DEVICE_VJOY_START:
-	{
-		// lParam == 0 verbose
-		// lParam == 1 silent
-		if (!load_dll)
-			return FALSE;
-
-		vjoy.Close();
-
-		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
-		{
-			cbParams.vjoyID = tape.vJoyDeviceID;
-			if (tape.FFB)
-			{
-				cbParams.ffbTime = 0;
-				vjoy.SetFFBCallback(cbParams.ffb.callback, &cbParams.ffb);
-			}
-			else
-				vjoy.SetFFBCallback(NULL, NULL);
-			return TRUE;
-		}
-
-		return FALSE;
-	}
 	case WM_DEVICE_DS_START:
 	{
 		// lParam == 0 verbose
@@ -1380,6 +1356,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		return FALSE;
 	}
+	case WM_DEVICE_VJOY_START:
+	{
+		// lParam == 0 verbose
+		// lParam == 1 silent
+		if (!load_dll)
+			return FALSE;
+
+		vjoy.Close();
+
+		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
+		{
+			cbParams.vjoyID = tape.vJoyDeviceID;
+			if (tape.FFB)
+			{
+				cbParams.ffbTime = 0;
+				vjoy.SetFFBCallback(cbParams.ffb.callback, &cbParams.ffb);
+			}
+			else
+				vjoy.SetFFBCallback(NULL, NULL);
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 	case WM_RELOAD:
 	{
 		// lParam == 0 verbose
@@ -1457,7 +1457,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_REDRAW_TABS:
 		TCITEM tc_item;
 		tc_item.mask = TCIF_TEXT;
-		WCHAR buff[100];
+		WCHAR buff[MAX_PATH];
 		TabCtrl_DeleteAllItems(hTab2);
 		for (int i = 0; i < 9; i++)
 		{
@@ -1475,7 +1475,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					_snwprintf_s(buff, sizeof(buff), L"%s", L"Always");
 				tc_item.pszText = buff;
 			}
-//			TabCtrl_SetItem(hTab2, i, &tc_item);
 			TabCtrl_InsertItem(hTab2, i, &tc_item);
 			TabCtrl_SetCurSel(hTab2, wParam);
 			if (TabCtrl_GetCurSel(hTab) == 2)
@@ -1504,26 +1503,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_ADDMAPPING:
-		if ((int)wParam != -1)
+		if ((int)wParam != 1)
 			mDDlg.Hide();
 		mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
 		PostMessage(hWnd, WM_SIZE, 0, 0);
-		if ((int)lParam != -1)
+		if ((int)lParam == 1)
 		{
-			if ((int)wParam < 0)
-			{
-				if ((int)lParam)
-					mDlg2.addMappingDlgBack();
-				else
-					mDlg.addMappingDlgBack();
-			}
-			else
-			{
-				if ((int)lParam)
-					mDlg2.editMappingDlgBack((int)wParam);
-				else
-					mDlg.editMappingDlgBack((int)wParam);
-			}
+			if ((int)wParam == 1)
+				mDlg.addMappingDlgBack();
+			else if ((int)wParam == 2)
+				mDlg.editMappingDlgBack();
+			else if ((int)wParam == 3)
+				mDlg.editMappingDlgBackMulti();
+		}
+		else if ((int)lParam == 2)
+		{
+			if ((int)wParam == 1)
+				mDlg2.addMappingDlgBack();
+			else if ((int)wParam == 2)
+				mDlg2.editMappingDlgBack();
+			else if ((int)wParam == 3)
+				mDlg2.editMappingDlgBackMulti();
 		}
 		mDlg.Show();
 		if (mDlg2.isCloned())
@@ -1531,6 +1531,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			mDlg2.SetTab(mDlg2.GetTab());
 			mDlg2.Show();
 		}
+		break;
+	case WM_ADDRAPIDFIRE:
+		rDDlg.Hide();
+		rDlg.Show();
+		PostMessage(hWnd, WM_SIZE, 0, -1);
+		if ((int)wParam == 1)
+			rDlg.addRapidFireDlgBack();
+		else if ((int)wParam == 2)
+			rDlg.editRapidFireDlgBack();
+		else if ((int)wParam == 3)
+			rDlg.editRapidFireDlgBackMulti();
+		break;
+	case WM_ADDKEYMAP:
+		kDDlg.Hide();
+		kDlg.Show();
+		PostMessage(hWnd, WM_SIZE, 0, -1);
+		if ((int)wParam == 1)
+			kDlg.addKeymapDlgBack();
+		else if((int)wParam == 2)
+			kDlg.editKeymapDlgBack();
+		else if ((int)wParam == 3)
+			kDlg.editKeymapDlgBackMulti();
 		break;
 	case WM_CHANGE_PAD:
 		if (wParam == 0)
@@ -1555,30 +1577,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tape.ViGEmActive = true;
 			}
 		break;
-	case WM_ADDRAPIDFIRE:
-		rDDlg.Hide();
-		rDlg.Show();
-		PostMessage(hWnd, WM_SIZE, 0, -1);
-		if (lParam)
-		{
-			if ((int)wParam < 0)
-				rDlg.addRapidFireDlgBack();
-			else
-				rDlg.editRapidFireDlgBack((int)wParam);
-		}
-		break;
-	case WM_ADDKEYMAP:
-		kDDlg.Hide();
-		kDlg.Show();
-		PostMessage(hWnd, WM_SIZE, 0, -1);
-		if (lParam)
-		{
-			if ((int)wParam < 0)
-				kDlg.addKeymapDlgBack();
-			else
-				kDlg.editKeymapDlgBack((int)wParam);
-		}
-		break;
 	case WM_CHANGE_HIDS:
 		if (wParam == 0)
 		{
@@ -1590,7 +1588,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else if (wParam == 2)
 			hid.WhitelistCheck((int)lParam);
 		else
-			std::thread (OutRun).detach();
+			std::thread(OutRun).detach();
 		break;
 	case WM_CREATE_MENU:
 			tasktray.CreateMenu();
@@ -1812,9 +1810,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (((NMHDR*)lParam)->code)
 			{
 			case TCN_SELCHANGING:
-				mDDlg.m_idx = -2;
-//				kDDlg.m_idx = -2;
-//				rDDlg.m_idx = -2;
+				mDDlg.m_mode = 0;
+				rDDlg.m_mode = 0;
+				kDDlg.m_mode = 0;
 				mDDlg.Hide();
 				rDDlg.Hide();
 				kDDlg.Hide();
@@ -1983,10 +1981,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return FALSE;
 		case SC_RESTORE:
 			PostMessage(hWnd, WM_COMMAND, (WPARAM)ID_CHKBOXW, (LPARAM)GetDlgItem(hWnd, ID_CHKBOXW));
-			if (mDDlg.m_idx > -2)
+			if (mDDlg.m_mode > 0)
 				mDDlg.Show();
 			break;
 		}
+		break;
 	default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

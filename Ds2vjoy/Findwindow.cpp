@@ -127,9 +127,9 @@ std::wstring Findwindow::GetText(HWND hwnd)
 
 std::wstring Findwindow::GetClass(HWND hwnd)
 {
-	WCHAR buf[257];
+	WCHAR buf[MAX_PATH];
 	std::wstring str;
-	if (GetClassName(hwnd, buf, 257) > 0)
+	if (GetClassName(hwnd, buf, MAX_PATH) > 0)
 		str = buf;
 	return std::move(str);
 

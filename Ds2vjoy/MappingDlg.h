@@ -14,7 +14,8 @@ public:
 	void SetTab(int tab);
 	int GetTab();
 	void addMappingDlgBack();
-	void editMappingDlgBack(int idx);
+	void editMappingDlgBack();
+	void editMappingDlgBackMulti();
 	void Show();
 	void Hide();
 	BOOL MoveWindow(int, int, int, int, BOOL);
@@ -28,7 +29,7 @@ private:
 	void redrawMenu(int ntabs, bool menu = false);
 	void redrawListReminder();
 	void load();
-	void save(bool closeeditor = true);
+	void save();
 	void addMappingDlg();
 	void addSeparator();
 	void editMappingDlg();
@@ -56,6 +57,8 @@ private:
 	int m_insrtpos;
 	bool m_isClonedList;
 	bool m_isCloned;
+	int lastidx;
+	std::vector<int> lastidxs;
 };
 
 extern MappingDlg mDlg;

@@ -12,15 +12,16 @@ RapidFireDataDlg::~RapidFireDataDlg()
 
 void RapidFireDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 {
-	m_idx = -2;
+	m_mode = 0;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE_ADD), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hWnd = hWnd;
 	Hide();
 }
 
-void RapidFireDataDlg::Open(HWND parent, int idx)
+void RapidFireDataDlg::Open(HWND parent, int mode)
 {
-	m_idx = idx;
+	m_mode = mode;
+	canprint = false;
 	ShowWindow(parent, SW_HIDE);
 	ShowWindow(m_hDlg, SW_SHOW);
 	PostMessage(m_hWnd, WM_SIZE, 0, -1);
@@ -115,13 +116,16 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN, CB_SETCURSEL, (WPARAM)rapidFireData.ButtonID, 0);
 			SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN2, CB_SETCURSEL, (WPARAM)rapidFireData.ButtonID2, 0);
-			WCHAR buf[256];
+
+			canprint = false;
+			WCHAR buf[MAX_PATH];
 			wsprintf(buf, L"%d", rapidFireData.Firsttime);
 			SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_FIRST), buf);
 			wsprintf(buf, L"%d", rapidFireData.Releasetime);
 			SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_RELEASE), buf);
 			wsprintf(buf, L"%d", rapidFireData.Presstime);
 			SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_DOWN), buf);
+			canprint = true;
 		}
 		break;
 	case WM_INITDIALOG:
@@ -138,7 +142,7 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		switch (LOWORD(wParam))
 		{
 		case IDOK: {
-			if (rapidFireData.ButtonID == 0 && rapidFireData.ButtonID2 == 0)
+			if (rapidFireData.ButtonID == 0 && rapidFireData.ButtonID2 == 0 && m_mode != 3)
 			{
 				RECT rect;
 				GetWindowRect(m_hWnd, &rect);
@@ -146,32 +150,39 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				return TRUE;
 			}
 			rapidFireData.Enable = true;
-			PostMessage(m_hWnd, WM_ADDRAPIDFIRE, m_idx, 1);
-			m_idx = -2;
+			PostMessage(m_hWnd, WM_ADDRAPIDFIRE, m_mode, 0);
+			m_mode = 0;
 			break;
 		}
 		case IDCANCEL:
 		{
 			PostMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, 0);
-			m_idx = -2;
+			m_mode = 0;
 			break;
 		}
 		case IDC_RAPIDFIRE_BTN:
 			if (HIWORD(wParam) == CBN_SELCHANGE)
+			{
 				rapidFireData.ButtonID = (vJoyButtonID)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				Modified[Mofified_ButtonID] = true;
+			}
 			break;
 		case IDC_RAPIDFIRE_BTN2:
 			if (HIWORD(wParam) == CBN_SELCHANGE)
+			{
 				rapidFireData.ButtonID2 = (vJoyButtonID)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				Modified[Mofified_ButtonID2] = true;
+			}
 			break;
 		case IDC_RAPIDFIRE_FIRST:
 			switch (HIWORD(wParam))
 			{
 			case EN_UPDATE:
 			{
-				WCHAR buf[256];
-				if (GetWindowText((HWND)lParam, buf, 256) != 0)
-					rapidFireData.Firsttime = _wtoi(buf);
+				WCHAR buf1[MAX_PATH];
+				GetWindowText((HWND)lParam, buf1, MAX_PATH);
+				rapidFireData.Firsttime = max(0, _wtoi(buf1));
+				if (canprint) Modified[Mofified_Firsttime] = true;
 				break;
 			}
 			default:
@@ -183,9 +194,10 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			{
 			case EN_UPDATE:
 			{
-				WCHAR buf[256];
-				if (GetWindowText((HWND)lParam, buf, 256) != 0)
-					rapidFireData.Releasetime = _wtoi(buf);
+				WCHAR buf2[MAX_PATH];
+				GetWindowText((HWND)lParam, buf2, MAX_PATH);
+				rapidFireData.Releasetime = max(0, _wtoi(buf2));
+				if (canprint) Modified[Mofified_Releasetime] = true;
 				break;
 			}
 			default:
@@ -197,9 +209,10 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			{
 			case EN_UPDATE:
 			{
-				WCHAR buf[256];
-				if (GetWindowText((HWND)lParam, buf, 256) != 0)
-					rapidFireData.Presstime = _wtoi(buf);
+				WCHAR buf3[MAX_PATH];
+				GetWindowText((HWND)lParam, buf3, MAX_PATH);
+				rapidFireData.Presstime = max(0, _wtoi(buf3));
+				if (canprint) Modified[Mofified_Presstime] = true;
 				break;
 			}
 			default:
@@ -207,6 +220,7 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			}
 			break;
 		}
+		break;
 	default:
 		return FALSE;
 	}

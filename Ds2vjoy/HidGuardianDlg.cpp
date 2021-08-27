@@ -365,7 +365,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf1[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_HID1), buf1, MAX_PATH);
+				GetWindowText((HWND)lParam, buf1, MAX_PATH);
 				if (lstrcmpW(tape.dsHID1, buf1) != 0)
 				{
 					tape.setPID(buf1, 1);
@@ -380,7 +380,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf2[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_HID2), buf2, MAX_PATH);
+				GetWindowText((HWND)lParam, buf2, MAX_PATH);
 				if (lstrcmpW(tape.dsHID2, buf2) != 0)
 				{
 					tape.setPID(buf2, 2);
@@ -395,7 +395,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf3[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_HID3), buf3, MAX_PATH);
+				GetWindowText((HWND)lParam, buf3, MAX_PATH);
 				if (lstrcmpW(tape.dsHID3, buf3) != 0)
 				{
 					tape.setPID(buf3, 3);
@@ -410,7 +410,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf4[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_EXE1), buf4, MAX_PATH);
+				GetWindowText((HWND)lParam, buf4, MAX_PATH);
 				if (lstrcmpW(tape.Exe1Name, buf4) != 0)
 				{
 					tape.setExeName(buf4, 1);
@@ -425,7 +425,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf5[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_EXE2), buf5, MAX_PATH);
+				GetWindowText((HWND)lParam, buf5, MAX_PATH);
 				if (lstrcmpW(tape.Exe2Name, buf5) != 0)
 				{
 					tape.setExeName(buf5, 2);
@@ -440,7 +440,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf6[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_EXE3), buf6, MAX_PATH);
+				GetWindowText((HWND)lParam, buf6, MAX_PATH);
 				if (lstrcmpW(tape.Exe3Name, buf6) != 0)
 				{
 					tape.setExeName(buf6, 3);
@@ -455,7 +455,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf7[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_EXE4), buf7, MAX_PATH);
+				GetWindowText((HWND)lParam, buf7, MAX_PATH);
 				if (lstrcmpW(tape.Exe4Name, buf7) != 0)
 				{
 					tape.setExeName(buf7, 4);
@@ -470,7 +470,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf8[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_HID_EXE5), buf8, MAX_PATH);
+				GetWindowText((HWND)lParam, buf8, MAX_PATH);
 				if (lstrcmpW(tape.Exe5Name, buf8) != 0)
 				{
 					tape.setExeName(buf8, 5);

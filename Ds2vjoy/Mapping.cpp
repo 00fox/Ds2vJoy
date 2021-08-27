@@ -48,7 +48,7 @@ const WCHAR* Mapping::dsString()
 	if (Enable == 2)
 	    return L"▒▒▒▒▒▒";
 
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 
@@ -81,7 +81,7 @@ const WCHAR* Mapping::dsLastString()
 	if (Enable == 2)
 		return L"▒▒▒▒▒▒▒▒";
 
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 
@@ -131,7 +131,7 @@ const WCHAR* Mapping::dsNotString()
 	if (Enable == 2)
 		return L"▒▒▒▒▒▒▒▒";
 
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 
@@ -180,7 +180,7 @@ const WCHAR* Mapping::vJoyString()
 		return L"▒▒▒▒▒▒▒▒▒▒▒▒";
 
 	bool firstplus = false;
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 
@@ -233,7 +233,7 @@ const WCHAR* Mapping::TagsString()
 		return L"▒▒▒▒▒▒▒";
 
 	bool firstplus = false;
-	static WCHAR buf[256];
+	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 

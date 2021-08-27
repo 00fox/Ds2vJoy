@@ -9,7 +9,7 @@ public:
 	~RapidFire();
 
 	WCHAR* KeyString();
-	WCHAR* ValueString();
+	WCHAR* ValueString(int column);
 	BOOL LoadDevice(vJoyDevice*);
 	BOOL Run(double now);
 

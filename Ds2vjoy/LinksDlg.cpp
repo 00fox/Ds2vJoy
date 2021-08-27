@@ -127,7 +127,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf1[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP1NAME), buf1, MAX_PATH);
+				GetWindowText((HWND)lParam, buf1, MAX_PATH);
 				if (lstrcmpW(tape.App1Name, buf1) != 0)
 				{
 					tape.setAppName(buf1, 1);
@@ -142,7 +142,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf2[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP2NAME), buf2, MAX_PATH);
+				GetWindowText((HWND)lParam, buf2, MAX_PATH);
 				if (lstrcmpW(tape.App2Name, buf2) != 0)
 				{
 					tape.setAppName(buf2, 2);
@@ -157,7 +157,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf3[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP3NAME), buf3, MAX_PATH);
+				GetWindowText((HWND)lParam, buf3, MAX_PATH);
 				if (lstrcmpW(tape.App3Name, buf3) != 0)
 				{
 					tape.setAppName(buf3, 3);
@@ -172,7 +172,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf4[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP4NAME), buf4, MAX_PATH);
+				GetWindowText((HWND)lParam, buf4, MAX_PATH);
 				if (lstrcmpW(tape.App4Name, buf4) != 0)
 				{
 					tape.setAppName(buf4, 4);
@@ -187,7 +187,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf5[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP5NAME), buf5, MAX_PATH);
+				GetWindowText((HWND)lParam, buf5, MAX_PATH);
 				if (lstrcmpW(tape.App5Name, buf5) != 0)
 				{
 					tape.setAppName(buf5, 5);
@@ -202,7 +202,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf6[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP1LOC), buf6, MAX_PATH);
+				GetWindowText((HWND)lParam, buf6, MAX_PATH);
 				if (lstrcmpW(tape.App1Location, buf6) != 0)
 				{
 					tape.setAppLocation(buf6, 1);
@@ -217,7 +217,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf7[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP2LOC), buf7, MAX_PATH);
+				GetWindowText((HWND)lParam, buf7, MAX_PATH);
 				if (lstrcmpW(tape.App2Location, buf7) != 0)
 				{
 					tape.setAppLocation(buf7, 2);
@@ -232,7 +232,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf8[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP3LOC), buf8, MAX_PATH);
+				GetWindowText((HWND)lParam, buf8, MAX_PATH);
 				if (lstrcmpW(tape.App3Location, buf8) != 0)
 				{
 					tape.setAppLocation(buf8, 3);
@@ -247,7 +247,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf9[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP4LOC), buf9, MAX_PATH);
+				GetWindowText((HWND)lParam, buf9, MAX_PATH);
 				if (lstrcmpW(tape.App4Location, buf9) != 0)
 				{
 					tape.setAppLocation(buf9, 4);
@@ -262,7 +262,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case EN_UPDATE:
 				WCHAR buf10[MAX_PATH];
-				GetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP5LOC), buf10, MAX_PATH);
+				GetWindowText((HWND)lParam, buf10, MAX_PATH);
 				if (lstrcmpW(tape.App5Location, buf10) != 0)
 				{
 					tape.setAppLocation(buf10, 5);

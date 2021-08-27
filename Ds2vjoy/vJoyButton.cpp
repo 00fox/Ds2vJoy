@@ -222,7 +222,7 @@ WCHAR* vJoyButton::String(ButtonID id)
 	}
 	if (Button1 <= id && id <= Button128)
 	{
-		static WCHAR buf[11];
+		static WCHAR buf[10];
 		wsprintf(buf, L"%d", id - Button1 + 1);
 		return buf;
 	}

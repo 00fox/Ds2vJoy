@@ -1125,7 +1125,7 @@ int dsDevice::TouchY(int i)
 
 void dsDevice::String()
 {
-	wchar_t buf[256];
+	wchar_t buf[MAX_PATH];
 	wchar_t* offset = buf;
 
 	if (tape.ActualDS == 2)

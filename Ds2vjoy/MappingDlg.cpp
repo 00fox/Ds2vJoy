@@ -44,7 +44,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-	col.fmt = LVCFMT_LEFT;
+	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
 	col.pszText = I18N.dsButton;
 	col.cx = 83;
 	ListView_InsertColumn(m_hList, 0, &col);
@@ -60,6 +60,9 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	col.pszText = I18N.TagsButton;
 	col.cx = 78;
 	ListView_InsertColumn(m_hList, 4, &col);
+
+	HWND hTip = ListView_GetToolTips(m_hList);
+	SetWindowPos(hTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
@@ -152,7 +155,7 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	::SetWindowLong(header, GWL_STYLE, dwHeaderStyle);
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-	col.fmt = LVCFMT_LEFT;
+	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
 	col.pszText = I18N.dsButton;
 	col.cx = 83;
 	ListView_InsertColumn(m_hList, 0, &col);
@@ -168,6 +171,9 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	col.pszText = I18N.TagsButton;
 	col.cx = 78;
 	ListView_InsertColumn(m_hList, 4, &col);
+
+	HWND hTip = ListView_GetToolTips(m_hList);
+	SetWindowPos(hTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 bool MappingDlg::isCloned()
@@ -413,12 +419,12 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 
-			WCHAR wszBuffer[256];
+			WCHAR wszBuffer[MAX_PATH];
 			int nCharCount = 0;
 			if (menunumber)
-				nCharCount = ::GetMenuString(m_hMenu2, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
+				nCharCount = ::GetMenuString(m_hMenu2, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			else
-				nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, 255, MF_BYCOMMAND);
+				nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				int nAcceleratorDelimiter;
@@ -523,8 +529,8 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			// Caption
-			WCHAR wszBuffer[256];
-			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, 255, MF_BYCOMMAND);
+			WCHAR wszBuffer[MAX_PATH];
+			int   nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
 				COLORREF crPrevText = 0;
@@ -964,9 +970,10 @@ void MappingDlg::load()
 	m_active = true;
 }
 
-void MappingDlg::save(bool closeeditor)
+void MappingDlg::save()
 {
 	m_active = false;
+	mDDlg.Hide();
 
 	Mappings newmap;
 	size_t length = tape.Mappingdata.size();
@@ -1001,10 +1008,7 @@ void MappingDlg::save(bool closeeditor)
 	tape.Save(tape.Setting_Mappingdata);
 
 	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-	if (closeeditor)
-		PostMessage(m_hWnd, WM_ADDMAPPING, 0, -1);
-	else
-		PostMessage(m_hWnd, WM_ADDMAPPING, -1, -1);
+	PostMessage(m_hWnd, WM_ADDMAPPING, mDDlg.m_mode, 0);
 
 	m_active = true;
 }
@@ -1014,10 +1018,15 @@ void MappingDlg::addMappingDlg()
 	m_active = false;
 	mDDlg.Hide();
 
+	if (ListView_GetSelectedCount(m_hList) == 1)
+		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+	else
+		lastidx = ListView_GetItemCount(m_hList);
+
 	Mapping m;
 	mDDlg.mappingData = m;
 	mDDlg.m_isClonedList = m_isClonedList;
-	mDDlg.Open(m_hDlg, -1);
+	mDDlg.Open(m_hDlg, 1);
 
 	m_active = true;
 }
@@ -1026,14 +1035,11 @@ void MappingDlg::addMappingDlgBack()
 {
 	m_active = false;
 
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-	if (idx == -1)
-		idx = ListView_GetItemCount(m_hList);
-
 	Mapping* data = new Mapping(mDDlg.mappingData);
 	data->Tab = m_Tab;
-	insertMapping(idx, data);
-	save(false);
+	insertMapping(lastidx, data);
+	lastidx++;
+	save();
 
 	m_active = true;
 }
@@ -1054,7 +1060,7 @@ void MappingDlg::addSeparator()
 	data->Enable = 2;
 
 	insertMapping(idx, data);
-	save(false);
+	save();
 
 	m_active = true;
 }
@@ -1063,58 +1069,202 @@ void MappingDlg::editMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
-
-	int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-	if (idx == -1)
+	
+	int nselected = ListView_GetSelectedCount(m_hList);
+	if (nselected == 1)
 	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			{ m_active = true; return; }
-	}
+		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 
-	LV_ITEM item = { 0 };
-	item.mask = LVIF_PARAM;
-	item.iItem = idx;
-	item.iSubItem = 0;
-	ListView_GetItem(m_hList, &item);
-	if (item.lParam != NULL)
-	{
-		Mapping* data = (Mapping*)item.lParam;
-		if (data->Enable != 2)
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = lastidx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
 		{
-			mDDlg.mappingData = *data;
-			mDDlg.m_isClonedList = m_isClonedList;
-			mDDlg.Open(m_hDlg, idx);
+			Mapping* data = (Mapping*)item.lParam;
+			if (data->Enable != 2)
+			{
+				mDDlg.mappingData = *data;
+				mDDlg.m_isClonedList = m_isClonedList;
+				mDDlg.Open(m_hDlg, 2);
+			}
 		}
+	}
+	else if (nselected >= 1)
+	{
+		lastidxs.clear();
+		for (int i = 0; i < MappingDataDlg::Mofified_count; i++)
+			mDDlg.Modified[i] = false;
+ 		int idx;
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			ListView_SetItemState(m_hList, idx, LVIF_STATE, LVIS_SELECTED);
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			if (item.lParam != NULL)
+			{
+				Mapping* data = (Mapping*)item.lParam;
+				if (data->Enable != 2)
+					lastidxs.push_back(idx);
+			}
+		}
+
+		for (int i = 0; i < lastidxs.size(); i++)
+			ListView_SetItemState(m_hList, lastidxs[i], LVIS_SELECTED, LVIS_SELECTED);
+
+		Mapping m;
+		mDDlg.mappingData = m;
+		mDDlg.m_isClonedList = m_isClonedList;
+		mDDlg.Open(m_hDlg, 3);
 	}
 
 	m_active = true;
 }
 
-void MappingDlg::editMappingDlgBack(int idx)
+void MappingDlg::editMappingDlgBack()
 {
 	m_active = false;
 
-	if (idx == -1)
-	{
-		idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-		if (idx == -1)
-			{ m_active = true; return; }
-	}
-
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
-	item.iItem = idx;
+	item.iItem = lastidx;
 	item.iSubItem = 0;
 	ListView_GetItem(m_hList, &item);
 	if (item.lParam != NULL)
 	{
 		Mapping* data = (Mapping*)item.lParam;
 		*data = mDDlg.mappingData;
-		ListView_DeleteItem(m_hList, idx);
-		insertMapping(idx, data);
+		ListView_DeleteItem(m_hList, lastidx);
+		insertMapping(lastidx, data);
 		save();
 	}
+
+	m_active = true;
+}
+
+void MappingDlg::editMappingDlgBackMulti()
+{
+	m_active = false;
+
+	Mapping* data1 = new Mapping(mDDlg.mappingData);
+
+	for (int i = 0; i < lastidxs.size(); i++)
+	{
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = lastidxs[i];
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			Mapping m;
+			Mapping* data2 = (Mapping*)item.lParam;
+			m = *data2;
+			data2 = new Mapping(m);
+			for (int i = 0; i < MappingDataDlg::Mofified_count; i++)
+				if (mDDlg.Modified[i])
+					switch (i)
+					{
+					case MappingDataDlg::Mofified_dsID1:data2->dsID[0] = data1->dsID[0]; break;
+					case MappingDataDlg::Mofified_dsID2:data2->dsID[1] = data1->dsID[1]; break;
+					case MappingDataDlg::Mofified_dsID3:data2->dsID[2] = data1->dsID[2]; break;
+					case MappingDataDlg::Mofified_dsID4:data2->dsID[3] = data1->dsID[3]; break;
+					case MappingDataDlg::Mofified_dsID5:data2->dsID[4] = data1->dsID[4]; break;
+					case MappingDataDlg::Mofified_vjID1:data2->vjID[5] = data1->vjID[5]; break;
+					case MappingDataDlg::Mofified_vjID2:data2->vjID[1] = data1->vjID[1]; break;
+					case MappingDataDlg::Mofified_vjID3:data2->vjID[2] = data1->vjID[2]; break;
+					case MappingDataDlg::Mofified_vjID4:data2->vjID[3] = data1->vjID[3]; break;
+					case MappingDataDlg::Mofified_vjID5:data2->vjID[4] = data1->vjID[4]; break;
+					case MappingDataDlg::Mofified_vjID6:data2->vjID[5] = data1->vjID[5]; break;
+					case MappingDataDlg::Mofified_vjID7:data2->vjID[6] = data1->vjID[6]; break;
+					case MappingDataDlg::Mofified_vjID8:data2->vjID[7] = data1->vjID[7]; break;
+					case MappingDataDlg::Mofified_vjID9:data2->vjID[8] = data1->vjID[8]; break;
+					case MappingDataDlg::Mofified_vjID10:data2->vjID[9] = data1->vjID[9]; break;
+					case MappingDataDlg::Mofified_vjID11:data2->vjID[10] = data1->vjID[10]; break;
+					case MappingDataDlg::Mofified_vjID12:data2->vjID[11] = data1->vjID[11]; break;
+					case MappingDataDlg::Mofified_vjID13:data2->vjID[12] = data1->vjID[12]; break;
+					case MappingDataDlg::Mofified_Target1:data2->Target[0] = data1->Target[0]; break;
+					case MappingDataDlg::Mofified_Target2:data2->Target[1] = data1->Target[1]; break;
+					case MappingDataDlg::Mofified_Target3:data2->Target[2] = data1->Target[2]; break;
+					case MappingDataDlg::Mofified_Target4:data2->Target[3] = data1->Target[3]; break;
+					case MappingDataDlg::Mofified_Target5:data2->Target[4] = data1->Target[4]; break;
+					case MappingDataDlg::Mofified_Disable1:data2->Disable[0] = data1->Disable[0]; break;
+					case MappingDataDlg::Mofified_Disable2:data2->Disable[1] = data1->Disable[1]; break;
+					case MappingDataDlg::Mofified_Disable3:data2->Disable[2] = data1->Disable[2]; break;
+					case MappingDataDlg::Mofified_Disable4:data2->Disable[3] = data1->Disable[3]; break;
+					case MappingDataDlg::Mofified_Disable5:data2->Disable[4] = data1->Disable[4]; break;
+					case MappingDataDlg::Mofified_Disable6:data2->Disable[5] = data1->Disable[5]; break;
+					case MappingDataDlg::Mofified_Disable7:data2->Disable[6] = data1->Disable[6]; break;
+					case MappingDataDlg::Mofified_Disable8:data2->Disable[7] = data1->Disable[7]; break;
+					case MappingDataDlg::Mofified_Disable9:data2->Disable[8] = data1->Disable[8]; break;
+					case MappingDataDlg::Mofified_Disable10:data2->Disable[9] = data1->Disable[9]; break;
+					case MappingDataDlg::Mofified_Disable11:data2->Disable[10] = data1->Disable[10]; break;
+					case MappingDataDlg::Mofified_Disable12:data2->Disable[11] = data1->Disable[11]; break;
+					case MappingDataDlg::Mofified_Disable13:data2->Disable[12] = data1->Disable[12]; break;
+					case MappingDataDlg::Mofified_OrXorNot1:data2->OrXorNot[0] = data1->OrXorNot[0]; break;
+					case MappingDataDlg::Mofified_OrXorNot2:data2->OrXorNot[1] = data1->OrXorNot[1]; break;
+					case MappingDataDlg::Mofified_OrXorNot3:data2->OrXorNot[2] = data1->OrXorNot[2]; break;
+					case MappingDataDlg::Mofified_OrXorNot4:data2->OrXorNot[3] = data1->OrXorNot[3]; break;
+					case MappingDataDlg::Mofified_Ifmouse:data2->Ifmouse = data1->Ifmouse; break;
+					case MappingDataDlg::Mofified_Force:data2->Force = data1->Force; break;
+					case MappingDataDlg::Mofified_Led:data2->Led = data1->Led; break;
+					case MappingDataDlg::Mofified_Short:data2->Short = data1->Short; break;
+					case MappingDataDlg::Mofified_Double:data2->Double = data1->Double; break;
+					case MappingDataDlg::Mofified_Long:data2->Long = data1->Long; break;
+					case MappingDataDlg::Mofified_Macro:data2->Macro = data1->Macro; break;
+					case MappingDataDlg::Mofified_Pause:data2->Pause = data1->Pause; break;
+					case MappingDataDlg::Mofified_Toggle:data2->Toggle = data1->Toggle; break;
+					case MappingDataDlg::Mofified_OnRelease1:data2->OnRelease[0] = data1->OnRelease[0]; break;
+					case MappingDataDlg::Mofified_OnRelease2:data2->OnRelease[1] = data1->OnRelease[1]; break;
+					case MappingDataDlg::Mofified_OnRelease3:data2->OnRelease[2] = data1->OnRelease[2]; break;
+					case MappingDataDlg::Mofified_OnRelease4:data2->OnRelease[3] = data1->OnRelease[3]; break;
+					case MappingDataDlg::Mofified_OnRelease5:data2->OnRelease[4] = data1->OnRelease[4]; break;
+					case MappingDataDlg::Mofified_OnRelease6:data2->OnRelease[5] = data1->OnRelease[5]; break;
+					case MappingDataDlg::Mofified_OnRelease7:data2->OnRelease[6] = data1->OnRelease[6]; break;
+					case MappingDataDlg::Mofified_OnRelease8:data2->OnRelease[7] = data1->OnRelease[7]; break;
+					case MappingDataDlg::Mofified_Start1:data2->Start[0] = data1->Start[0]; break;
+					case MappingDataDlg::Mofified_Start2:data2->Start[1] = data1->Start[1]; break;
+					case MappingDataDlg::Mofified_Start3:data2->Start[2] = data1->Start[2]; break;
+					case MappingDataDlg::Mofified_Start4:data2->Start[3] = data1->Start[3]; break;
+					case MappingDataDlg::Mofified_Start5:data2->Start[4] = data1->Start[4]; break;
+					case MappingDataDlg::Mofified_Start6:data2->Start[5] = data1->Start[5]; break;
+					case MappingDataDlg::Mofified_Start7:data2->Start[6] = data1->Start[6]; break;
+					case MappingDataDlg::Mofified_Start8:data2->Start[7] = data1->Start[7]; break;
+					case MappingDataDlg::Mofified_Stop1:data2->Stop[0] = data1->Stop[0]; break;
+					case MappingDataDlg::Mofified_Stop2:data2->Stop[1] = data1->Stop[1]; break;
+					case MappingDataDlg::Mofified_Stop3:data2->Stop[2] = data1->Stop[2]; break;
+					case MappingDataDlg::Mofified_Stop4:data2->Stop[3] = data1->Stop[3]; break;
+					case MappingDataDlg::Mofified_Stop5:data2->Stop[4] = data1->Stop[4]; break;
+					case MappingDataDlg::Mofified_Stop6:data2->Stop[5] = data1->Stop[5]; break;
+					case MappingDataDlg::Mofified_Stop7:data2->Stop[6] = data1->Stop[6]; break;
+					case MappingDataDlg::Mofified_Stop8:data2->Stop[7] = data1->Stop[7]; break;
+					case MappingDataDlg::Mofified_MouseAction1:data2->MouseAction[0] = data1->MouseAction[0]; break;
+					case MappingDataDlg::Mofified_MouseAction2:data2->MouseAction[1] = data1->MouseAction[1]; break;
+					case MappingDataDlg::Mofified_MouseAction3:data2->MouseAction[2] = data1->MouseAction[2]; break;
+					case MappingDataDlg::Mofified_MouseAction4:data2->MouseAction[3] = data1->MouseAction[3]; break;
+					case MappingDataDlg::Mofified_Mouse1:data2->Mouse[0] = data1->Mouse[0]; break;
+					case MappingDataDlg::Mofified_Mouse2:data2->Mouse[1] = data1->Mouse[1]; break;
+					case MappingDataDlg::Mofified_Mouse3:data2->Mouse[2] = data1->Mouse[2]; break;
+					case MappingDataDlg::Mofified_Mouse4:data2->Mouse[3] = data1->Mouse[3]; break;
+					case MappingDataDlg::Mofified_Mouse5:data2->Mouse[4] = data1->Mouse[4]; break;
+					case MappingDataDlg::Mofified_Mouse6:data2->Mouse[5] = data1->Mouse[5]; break;
+					case MappingDataDlg::Mofified_Mouse7:data2->Mouse[6] = data1->Mouse[6]; break;
+					case MappingDataDlg::Mofified_Grid1:data2->Grid[0] = data1->Grid[0]; break;
+					case MappingDataDlg::Mofified_Grid2:data2->Grid[1] = data1->Grid[1]; break;
+					case MappingDataDlg::Mofified_Grid3:data2->Grid[2] = data1->Grid[2]; break;
+					case MappingDataDlg::Mofified_Grid4:data2->Grid[3] = data1->Grid[3]; break;
+					case MappingDataDlg::Mofified_Grid5:data2->Grid[4] = data1->Grid[4]; break;
+					case MappingDataDlg::Mofified_Grid6:data2->Grid[5] = data1->Grid[5]; break;
+					}
+			ListView_DeleteItem(m_hList, lastidxs[i]);
+			insertMapping(lastidxs[i], data2);
+		}
+	}
+	save();
 
 	m_active = true;
 }
@@ -1123,6 +1273,9 @@ void MappingDlg::deleteMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+
+	if (ListView_GetSelectedCount(m_hList) == 0)
+		{ m_active = true; return; }
 
 	RECT rect;
 	GetWindowRect(m_hWnd, &rect);
@@ -1153,13 +1306,8 @@ void MappingDlg::duplicateMappingDlg()
 	int nselected = ListView_GetSelectedCount(m_hList);
 	if (nselected == 1)
 	{
-		int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-		if (idx == -1)
-		{
-			idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-			if (idx == -1)
-				{ m_active = false; return; }
-		}
+		int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
 		item.iItem = idx;
@@ -1178,7 +1326,6 @@ void MappingDlg::duplicateMappingDlg()
 	{
 		int idx;
 		int lastitemindex = ListView_GetItemCount(m_hList);
-		ListView_GetNextItem(m_hList, 1, LVNI_ALL);
 		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
 		{
 			LV_ITEM item = { 0 };
@@ -1280,6 +1427,7 @@ void MappingDlg::BeginDrag(int idx)
 {
 	if (ListView_GetNextItem(m_hList, -1, LVNI_SELECTED) == -1)
 		return;
+	mDDlg.Hide();
 	m_flag_drag = true;
 	SetCapture(m_hDlg);
 }
@@ -1291,10 +1439,7 @@ void MappingDlg::DragMove(int x, int y)
 	ht.pt.y = y;
 	ListView_HitTest(m_hList, &ht);
 	if ((ht.flags & LVHT_ONITEM) != 0)
-	{
 		setInsertMark(ht.iItem);
-		//ListView_Scroll(m_hList, 0 , 2);
-	}
 	else
 		setInsertMark(-1);
 }

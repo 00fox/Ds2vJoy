@@ -8,7 +8,8 @@ public:
 
 	void Init(HINSTANCE hInst, HWND hWnd);
 	void addRapidFireDlgBack();
-	void editRapidFireDlgBack(int idx);
+	void editRapidFireDlgBack();
+	void editRapidFireDlgBackMulti();
 	void Show();
 	void Hide();
 	BOOL MoveWindow(int, int, int, int, BOOL);
@@ -40,6 +41,8 @@ private:
 	bool m_active;
 	bool m_flag_drag;
 	int m_insrtpos;
+	int lastidx;
+	std::vector<int> lastidxs;
 };
 
 extern RapidFireDlg rDlg;
