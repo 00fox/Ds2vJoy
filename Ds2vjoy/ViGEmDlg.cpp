@@ -353,7 +353,8 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendDlgItemMessage(hWnd, IDC_VIGEM_DS_24, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
 		}
 		break;
-	case WM_CHANGE_COMBO_BOX:
+	case WM_INITDIALOG:
+	{
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_1, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_2, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_3, CB_RESETCONTENT, 0, 0);
@@ -378,8 +379,6 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_22, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_23, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_24, CB_RESETCONTENT, 0, 0);
-	case WM_INITDIALOG:
-	{
 		for (int i = 0; i < dsButtonID::button_Count; i++)
 		{
 			WCHAR* str = dsButton::String((dsButtonID)i);
@@ -504,7 +503,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				CheckDlgButton(hWnd, IDC_VIGEM_X360, BST_CHECKED);
 				tape.DesiredVirtualPad = 1;
 				tape.Save(tape.Setting_DesiredVirtualPad);
-				SendMessage(m_hDlg, WM_CHANGE_COMBO_BOX, 0, 0);
+				SendMessage(m_hDlg, WM_INITDIALOG, 0, 0);
 				SendMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				Hide();
 				Show();
@@ -520,7 +519,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				CheckDlgButton(hWnd, IDC_VIGEM_DS4, BST_CHECKED);
 				tape.DesiredVirtualPad = 2;
 				tape.Save(tape.Setting_DesiredVirtualPad);
-				SendMessage(m_hDlg, WM_CHANGE_COMBO_BOX, 0, 0);
+				SendMessage(m_hDlg, WM_INITDIALOG, 0, 0);
 				SendMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				Hide();
 				Show();
