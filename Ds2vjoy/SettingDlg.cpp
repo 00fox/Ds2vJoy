@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "SettingDlg.h"
-#include "Startup.h"
 #include "Ds2vJoy.h"
 
 SettingDlg::SettingDlg()
@@ -154,7 +153,22 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CheckDlgButton(hWnd, IDC_DS5, tape.PreferredDS == 2);
 			SendDlgItemMessage(hWnd, IDC_VJOY_DEV, CB_SETCURSEL, (LPARAM)tape.vJoyDeviceID - 1, 0);
 
-			CheckDlgButton(hWnd, IDC_STARTUP, CheckStartUp());
+			bool startupvalue = false;
+			{
+				HKEY hkey = NULL;
+				BOOL bExist = FALSE;
+				LONG openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
+				if (openStatus == ERROR_SUCCESS)
+				{
+					DWORD dwType;
+					LONG status = RegQueryValueEx(hkey, L"Ds2vJoy", NULL, &dwType, NULL, NULL);
+					if (status == ERROR_SUCCESS)
+						startupvalue = true;
+					RegCloseKey(hkey);
+				}
+			}
+			CheckDlgButton(hWnd, IDC_STARTUP, startupvalue);
+
 			CheckDlgButton(hWnd, IDC_TASKTRAY, tape.Tasktray);
 			CheckDlgButton(hWnd, IDC_CLOSEMINIMIZE, tape.CloseMinimize);
 			CheckDlgButton(hWnd, IDC_DISCONNECT_BT, tape.DisconnectBT);
@@ -230,6 +244,43 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND: {
 		switch (LOWORD(wParam))
 		{
+		case IDC_STARTUP:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
+				{
+					std::wstring progPath = ExePathW() + L"\\Ds2vJoy.exe";
+					HKEY hkey = NULL;
+//					LONG createStatus = RegCreateKey(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\Example"), &hkey);
+					LONG openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
+					if (openStatus == ERROR_SUCCESS)
+					{
+						LONG status = RegSetValueEx(hkey, L"Ds2vJoy", 0, REG_SZ, (BYTE*)progPath.c_str(), (DWORD)((progPath.size() + 1) * sizeof(wchar_t)));
+						if (status == ERROR_SUCCESS) {
+							echo(I18N.Registry_Added);
+						}
+						RegCloseKey(hkey);
+					}
+				}
+				else
+				{
+					HKEY hkey = NULL;
+					LONG openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
+					if (openStatus == ERROR_SUCCESS)
+					{
+						LONG status = RegDeleteValue(hkey, L"Ds2vJoy");
+						if (status == ERROR_SUCCESS) {
+//							RegDeleteKey(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\Example"));
+							echo(I18N.Registry_Removed);
+						}
+						RegCloseKey(hkey);
+					}
+				}
+			}
+			break;
+		}
 		case IDC_DS4:
 			switch (HIWORD(wParam))
 			{
@@ -246,18 +297,6 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_DS5:
 			switch (HIWORD(wParam))
 			{
-			case IDC_STARTUP:
-			{
-				bool startup = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-				if (startup)
-				{
-					if (!CheckStartUp())
-						CreateStartUp();
-				}
-				else if (CheckStartUp())
-					DeleteStartUp();
-				break;
-			}
 			case BN_CLICKED:
 				if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
 					CheckDlgButton(hWnd, IDC_DS4, BST_UNCHECKED);

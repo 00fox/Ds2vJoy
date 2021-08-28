@@ -223,7 +223,6 @@ xcopy /y /r /s "..\SDK\Resources" "$(OutDir)"
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingDlg.h" />
     <ClInclude Include="Settings.h" />
-    <ClInclude Include="Startup.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="targetver.h" />

@@ -75,9 +75,6 @@
     <ClInclude Include="Tasktray.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Startup.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="MappingDataDlg.h">
       <Filter>Headers</Filter>
     </ClInclude>

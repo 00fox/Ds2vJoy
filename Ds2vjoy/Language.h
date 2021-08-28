@@ -22,7 +22,8 @@ struct LANGSTRS
 	WCHAR* MBOX_Delete;
 	WCHAR* MBOX_ErrTitle;
 	WCHAR* MBOX_NoButtonSelected;
-	WCHAR* MBOX_Save;
+	WCHAR* Registry_Added;
+	WCHAR* Registry_Removed;
 	WCHAR* SkipController;
 	WCHAR* Status_Wait;
 	WCHAR* TT_AppNotFound;

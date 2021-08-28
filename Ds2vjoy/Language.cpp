@@ -40,10 +40,11 @@ void LoadLanguage()
 	I18N.FirmwareFail = GetText(IDS_FIRMWAREFAIL, L"Cannot get firmware version");
 	I18N.Log_Wait_ds = GetText(IDS_LOG_WAIT_DS, L"Waiting for a valid DS device.");
 	I18N.Log_Wait_vJoy = GetText(IDS_LOG_WAIT_VJOY, L"Waiting for a valid vJoy device.");
-	I18N.MBOX_Delete = GetText(IDS_MBOX_Delete, L"Are you sure you want to delete the selected item?");
-	I18N.MBOX_ErrTitle = GetText(IDS_MBOX_ErrTitle, L"Error");
+	I18N.MBOX_Delete = GetText(IDS_MBOX_DELETE, L"Are you sure you want to delete the selected item?");
+	I18N.MBOX_ErrTitle = GetText(IDS_MBOX_ERRTITLE, L"Error");
 	I18N.MBOX_NoButtonSelected = GetText(IDS_MBOX_NOBUTTONSELECTED, L"No button selected");
-	I18N.MBOX_Save = GetText(IDS_MBOX_Save, L"Save?");
+	I18N.Registry_Added = GetText(IDS_REGISTRY_ADDED, L"Startup value successfully added in Registry");
+	I18N.Registry_Removed = GetText(IDS_REGISTRY_REMOVED, L"Startup value successfully removed from Registry");
 	I18N.SkipController = GetText(IDS_SKIPCONTROLLER, L"Skip %s Serial %s");
 	I18N.Status_Wait = GetText(IDS_STATUS_WAIT, L"waiting");
 	I18N.TT_AppNotFound = GetText(IDS_TT_APPNOTFOUND, L"%s not found.");
@@ -264,7 +265,8 @@ void FreeLanguage()
 	delete[] I18N.MBOX_Delete;
 	delete[] I18N.MBOX_ErrTitle;
 	delete[] I18N.MBOX_NoButtonSelected;
-	delete[] I18N.MBOX_Save;
+	delete[] I18N.Registry_Added;
+	delete[] I18N.Registry_Removed;
 	delete[] I18N.SkipController;
 	delete[] I18N.Status_Wait;
 	delete[] I18N.TT_AppNotFound;
