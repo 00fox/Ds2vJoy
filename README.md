@@ -84,7 +84,7 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Edit, delete, copy and move actions can process multiple mappings the same time
   - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
-  - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+- when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
@@ -347,7 +347,7 @@ You can set repeated hits with the assigned vJoy button
 Order, add, delete, copy or edit (double click or menu)
 - Edit, delete, copy and move actions can process multiple rapid fires the same time
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
-  - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+- when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
@@ -366,7 +366,7 @@ You can send a keydown when the button is pressed and a keyup when it is release
 Order, add, delete, copy or edit (double click or menu)
 - Edit, delete, copy and move actions can process multiple keymaps the same time
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
-  - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+- when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
