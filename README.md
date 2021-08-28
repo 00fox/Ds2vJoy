@@ -82,7 +82,7 @@ There is a dual view mode, where you can clone a tab
 Order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Edit, delete, copy and move actions can process multiple mappings the same time
-  - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
+  - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
@@ -344,7 +344,7 @@ You can find this help directly in Ds2vJoy by pressing help below grid entries
 You can set repeated hits with the assigned vJoy button
 
 Order, add, delete, copy or edit (double click or menu)
-- Edit, delete, copy and move actions can process multiple mappings the same time
+- Edit, delete, copy and move actions can process multiple rapid fires the same time
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
@@ -363,7 +363,7 @@ After the first time has passed, release and press repeatedly
 You can send a keydown when the button is pressed and a keyup when it is released
 
 Order, add, delete, copy or edit (double click or menu)
-- Edit, delete, copy and move actions can process multiple mappings the same time
+- Edit, delete, copy and move actions can process multiple keymaps the same time
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
   - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
