@@ -178,8 +178,8 @@ Over two next sources you'll find 'or' (/double 'xor') conditions instead of sim
 |   0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
 |  1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
 |   0    |  1/2   |     |   val   |  & (  |   val   | OrXor |   val   |  )  |
-|  1/2   |  ...   |  (  |   val   | OrXor |   val   |   )   |         |  &  |
-|  ...   |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
+|  1/2   |  …     |  (  |   val   | OrXor |   val   |   )   |         |  &  |
+|  …     |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
 
 - The source value used to calculate destination value is then:
 
@@ -206,9 +206,9 @@ Over two last sources you'll find not condition,
 Destinations can be effected with time stamps for tricky actions, macros or combos
 - Enter start (if not as soon as) or/and end (of not when release)
 - If you enter an odd number, 0-9 milliseconds will be added, different each time
-- Middle check box, is to begin the action on release
+- Middle check box, OnRelease, is to begin the action on release
   - double, only the up press, even if some other timestamps are finished
-- Upper one is to decide to not do release action while transitivity mode active (see below) and mode changed
+- Upper one, NoRelease, is to decide to not do release action while transitivity mode active (see below) and mode changed
   - double, one turn of this release action will still be performed then stopped
 
 Under each source and destination, you'll find disabling
@@ -233,11 +233,11 @@ Under central led, you'll find 4 checkboxes
 Table of Transitivity:
 | Transitivity | Pause    | Type          | Result
 |:------------ |:-------- |:------------- |:------------------------------------------
-| Transitivity | ...      | Complete      | You can realease and trigger again in new mode if it was already active before changing mode
+| Transitivity | …        | Complete      | You can realease and trigger again in new mode if it was already active before changing mode
 | Transitivity | One time | Limited       | Action continue while changing mode, but you can't trigger again if release
-| Come back    | ...      | Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
+| Come back    | …        | Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
 | Come back    | One time | One time back | The same but while pushed, you can change mode and get it triggered again only one time, after, you have to release and trigger it again in its own mode
-| ...          | One time | Limited+      | Same as limited, except that if you have an OnRelease action programmed, and its NoRealease button simple or double checked, and you release in new mode, no release/one turn will be done, but back in initial mode, release will be done like if we didn't changed mode, then complete OnRelease action will be done without taking care of NoRelease checkbox state
+| …            | One time | Limited+      | Same as limited, except that if you have an OnRelease action programmed, and its NoRealease button simple or double checked, and you release in new mode, no release/one turn will be done, but back in initial mode, release will be done like if we didn't changed mode, then complete OnRelease action will be done without taking care of NoRelease checkbox state
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 * for all types except Limited+, if you have an OnRelease action programmed, and its NoRealease button simple or double checked, no release/one turn will be done if you release (or autmomatically released) while initial mode came back, as in new mode
 
@@ -302,7 +302,7 @@ RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR
 - Splitted Dpad, then you have unlimited capabilities instead of 1 to 1 Dpad affectation
   - Dpad use a mathematical medium function, then you can attribute other sources than normal ones
   - And instead having the result of for example Left + Up > Up Left
-  - You can have it for Left + Up + UpRight + Right (which is mmm... let the program do it itself...)
+  - You can have it for Left + Up + UpRight + Right (which is mmm…   let the program do it itself…  )
 
 An example of a simple advanced script for mouse:
 ```
