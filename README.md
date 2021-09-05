@@ -237,8 +237,9 @@ Table of Transitivity:
 | Checked      | Active    | Limited       | Action continue while changing mode, but you can't trigger again if release
 | Double       | ...       | Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
 | Double       | Active    | One time back | The same but while pushed, you can change mode and get it triggered again only one time, after, you have to release and trigger it again in its own mode
-| \            | Active    | Limited+      | Same as limited, except that if you have an OnRelease action programmed, and its NoRealease button simple or double checked, and you release in new mode, no release/one turn will be done, but back in initial mode, release will be done like if we didn't changed mode, then complete OnRelease action will be done without taking care of NoRelease checkbox state
+| ...          | Active    | Limited+      | Same as limited, except that if you have an OnRelease action programmed, and its NoRealease button simple or double checked, and you release in new mode, no release/one turn will be done, but back in initial mode, release will be done like if we didn't changed mode, then complete OnRelease action will be done without taking care of NoRelease checkbox state
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
+* for all types except Limited+, if you have an OnRelease action programmed, and its NoRealease button simple or double checked, no release/one turn will be done if you release (or autmomatically released) while initial mode came back, as in new mode
 
 At the left of first 4 destinations, you'll find special mouse actions, sound and modes
 - ACTIVE_MOUSE: use to bring the chosen mouse
