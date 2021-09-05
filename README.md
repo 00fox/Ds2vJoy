@@ -147,7 +147,7 @@ Third         | Long:           | You have to stay pressed from a certain time
 1 & 3         | Medium long:    | Like long but after double long
 All           | Very long       | 
 
-	(1) you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
+     (1) you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
 
 In terms of time:
 Method        | Press times
@@ -218,7 +218,7 @@ Under central led, you'll find 3 checkboxes
 - Pause: pause this mapping while a not condition
   - otherwise:
     - if not is a simple, and not button is pressed, the mapping is interrupted
-	- if not is a double, and not button is pressed, the mapping still continue
+     - if not is a double, and not button is pressed, the mapping still continue
 - Toggle: satisfy mapping conditions one time to start, second one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
@@ -324,14 +324,14 @@ Look at this third picture of vJoy section,
   Mode exit when you release both L1 and R1
   L1 and R1 special actions are not triggered first,
     they will if you have released L1 before pushed it again,
-	for L1 special action, the same for R1
+     for L1 special action, the same for R1
   You can swap between both, as long as you don't release both buttons together
   An example of utilization: L1 and R1 are shifted keys
     for example they add shift, control, and control shift together to other buttons
-	or simply act as L1 + Cross, L1 + L2 + Triangle etc.
+     or simply act as L1 + Cross, L1 + L2 + Triangle etc.
     when pushed together, you usually never release one and pushed it again, without releasing the other
     also, you can add the possibility to add two actions, to L1 and R1,
-	For example, target previous/next enemy
+     For example, target previous/next enemy
   By using mode there is more simple methods
 ```
 
@@ -374,7 +374,7 @@ Tags:
 Tag   | Description
 ----- | ------------------------------------------------------------------------------
 Empty | Nothing is checked
-P 	  | \'Send to' is checked
+P      | \'Send to' is checked
  A    | \'By Postmessage / activation window' is checked
 
 Tags  | In practice
