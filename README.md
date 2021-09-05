@@ -241,7 +241,7 @@ Table of Transitivity:
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 * for all types except Limited+, if you have an OnRelease action programmed, and its NoRealease button simple or double checked, no release/one turn will be done if you release (or autmomatically released) while initial mode came back, as in new mode
 
-At the left of first 4 destinations, you'll find special mouse actions, sound and modes
+At the left of destinations, you'll find special mouse actions, sound and modes
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
