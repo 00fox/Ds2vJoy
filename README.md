@@ -233,7 +233,7 @@ Under central led, you'll find 4 checkboxes
 Table of Transitivity:
 | Transitivity | Come back | Type          | Result
 |:------------:|:---------:|:-------------:|:-----------------------------------------
-| Checked      | ...       | Complete      | You can realease and trigger again 
+| Checked      | ...       | Complete      | You can realease and trigger again in new mode if it was already active before changing mode
 | Checked      | Active    | Limited       | Action continue while changing mode, but you can't trigger again if release
 | Double       | ...       | Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
 | Double       | Active    | One time back | The same but while pushed, you can change mode and get it triggered again only one time, after, you have to release and trigger it again in its own mode
