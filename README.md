@@ -108,16 +108,16 @@ vJoy Button:
 Tags:
 Tag | Description
 --- | ------------------------------------------------------------------------------
-I   | IfMouse condition is in use (see below)
-F   | Force condition is in use (see below)
-S   | Short press
-D   | Double press (can be mixed, see below)
-L   | Long press
-C   | Macro condition is in use (see below)
-P   | Pause condition is in use (see below)
-T   | Toggle condition is in use (see below)
-R   | An OnRelease condition is in use (see below, under time stamps)
-M   | If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
+I | IfMouse condition is in use (see below)
+F | Force condition is in use (see below)
+S | Short press
+D | Double press (can be mixed, see below)
+L | Long press
+C | Macro condition is in use (see below)
+P | Pause condition is in use (see below)
+T | Toggle condition is in use (see below)
+R | An OnRelease condition is in use (see below, under time stamps)
+M | If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
 - a lowercase indicates that the checkbox is double checked for this condition
 
 ## vJoy editing
