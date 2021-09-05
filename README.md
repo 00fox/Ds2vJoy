@@ -115,9 +115,10 @@ Tags:
 |  L  | Long press
 |  C  | Macro condition is in use (see below)
 |  P  | Pause condition is in use (see below)
+|  Y  | Transitivity condition is in use (see below)
 |  T  | Toggle condition is in use (see below)
-|  R  | An OnRelease condition is in use (see below, under time stamps)
-|  M  | If mouse will be in used (by special mouse action ACTIVE_MOUSE, and checkboxes choice, see below)
+| R/Z | An OnRelease (/+NoRelease) condition is in use (see below, under time stamps)
+|  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
 - a lowercase indicates that the checkbox is double checked for this condition
 
 ## vJoy editing
@@ -136,30 +137,30 @@ Tags:
   - or to use mouse in the full screen, divided
 
 Under first source you'll find 3 checkboxes which determine the method
-Checkboxes    | Method          | Description
-:------------ | --------------- |:--------------------------------------------------
-None          | Simple:         | Start when pressed, stop when release
-First         | Short*:         | You have to press and release quickly
-Second        | Double:         | You'll have to double press in a limited time
-Third         | Long:           | You have to stay pressed from a certain time
-1 & 2         | Double short(1):| Second press acting like short
-2 & 2         | Double long:    | Second press acting like long
-1 & 3         | Medium long:    | Like long but after double long
-All           | Very long       | 
+| Checkboxes    | Method          | Description
+| :------------ | --------------- |:--------------------------------------------------
+| None          | Simple          | Start when pressed, stop when release
+| First         | Short*          | You have to press and release quickly
+| Second        | Double          | You'll have to double press in a limited time
+| Third         | Long            | You have to stay pressed from a certain time
+| 1 & 2         | Double short(1) | Second press acting like short
+| 2 & 2         | Double long     | Second press acting like long
+| 1 & 3         | Medium long     | Like long but after double long
+| All           | Very long       | 
 
      (1) you'll have to use timestamp, otherwise you can simply use on release or go to timestamp too
 
 In terms of time:
-Method        | Press times
-------------- | --------------------------------------------------------------------
-Simple        | Immediate
-Short         | found in settings
-Double        | ~first press and second press < long
-Long          | found in settings
-Double        | ~first press and second press < long + second press duration < short
-Double short* | ~first press and second press < long + second press duration > long
-Medium long   | ~press > twice the time as long
-Very long     | found in settings
+| Method        | Press times
+| ------------- | --------------------------------------------------------------------
+| Simple        | Immediate
+| Short         | found in settings
+| Double        | ~first press and second press < long
+| Long          | found in settings
+| Double        | ~first press and second press < long + second press duration < short
+| Double short* | ~first press and second press < long + second press duration > long
+| Medium long   | ~press > twice the time as long
+| Very long     | found in settings
 
 Over first source you can find special requirements
 - If mouse, if a mouse is already in use
@@ -167,27 +168,27 @@ Over first source you can find special requirements
 - And Force, to ignore if a button has been disabled by a precedent mapping
   - double, this will work only if this mapping is already working
 
-Over two next sources you'll find or/xor conditions instead of simple combination
-- If only first 'Or' is used and first source is killed to launch the mapping (for example, pushed more than a short press),
+Over two next sources you'll find 'or' (/double 'xor') conditions instead of simple combination
+- If only first 'or' is used and first source is killed to launch the mapping (for example, pushed more than a short press),
   and still pushed, second source is still available. But both will have to be released to be available to trigger the mapping again
 - The mapping is launched over those conditions:
 
- OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
-:------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
-   0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
-  1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
-   0    |  1/2   |     |   val   |  & (  |   val   | OrXor |   val   |  )  |
-  1/2   |  ...   |  (  |   val   | OrXor |   val   |   )   |         |  &  |
-  ...   |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
+| OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
+|:------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
+|   0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
+|  1/2   |   0    |  (  |   val   | OrXor |   val   |  ) &  |   val   |     |
+|   0    |  1/2   |     |   val   |  & (  |   val   | OrXor |   val   |  )  |
+|  1/2   |  ...   |  (  |   val   | OrXor |   val   |   )   |         |  &  |
+|  ...   |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
 
 - The source value used to calculate destination value is then:
 
- OrXor1 | OrXor2 | Source1 |     |     Released ?   |     | Source2 |     | Source3 |     | Source1 |
-:------:|:------:|:-------:|:---:|:----------------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
-   0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
-  1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
-   0    |  1/2   | val ? 0 |  >  |   (see Macro     |     |         |     |         |  >  |released1|
-  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
+| OrXor1 | OrXor2 | Source1 |     |     Released ?   |     | Source2 |     | Source3 |     | Source1 |
+|:------:|:------:|:-------:|:---:|:----------------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
+|   0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
+|  1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
+|   0    |  1/2   | val ? 0 |  >  |   (see Macro     |     |         |     |         |  >  |released1|
+|  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
 
 Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
@@ -195,34 +196,50 @@ Over two last sources you'll find not condition,
   - see 'Pause' for more informations about not condition
 - Taking into consideration that 'LastResult' is the result of the last or/xor table, the mapping is launched over those conditions:
 
- Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
-:----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
-  0   |  0   |    val     |   &   |   val   |   &   |   val   |
-  1   |  0   |    val     | & Not |   val   |   &   |   val   |
-  0   |  1   |    val     |   &   |   val   | & Not |   val   |
-  1   |  1   |    val     | & Not |   val   | & Not |   val   |
+| Not1 | Not2 | LastResult |       | Source4 |       | Source5 |
+|:----:|:----:|:----------:|:-----:|:-------:|:-----:|:-------:|
+|  0   |  0   |    val     |   &   |   val   |   &   |   val   |
+|  1   |  0   |    val     | & Not |   val   |   &   |   val   |
+|  0   |  1   |    val     |   &   |   val   | & Not |   val   |
+|  1   |  1   |    val     | & Not |   val   | & Not |   val   |
 
 Destinations can be effected with time stamps for tricky actions, macros or combos
 - Enter start (if not as soon as) or/and end (of not when release)
 - If you enter an odd number, 0-9 milliseconds will be added, different each time
 - Middle check box, is to begin the action on release
   - double, only the up press, even if some other timestamps are finished
+- Upper one is to decide to not do release action while transitivity mode active (see below) and mode changed
+  - double, one turn of this release action will still be performed then stopped
 
 Under each source and destination, you'll find disabling
 - this button will be disabled for next mappings if this mapping is running (except with Force)
   - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
 
-Under central led, you'll find 3 checkboxes
+Under central led, you'll find 4 checkboxes
 - Macro: Interrupt macros on release (even if timestamp not finished)
-  - double, Sustain off: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
+  - double, No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
 - Pause: pause this mapping while a not condition
   - otherwise:
     - if not is a simple, and not button is pressed, the mapping is interrupted
      - if not is a double, and not button is pressed, the mapping still continue
+  - double: One time, used in Transitivity (see table of transitivity below)
+- Transitivity: brings different behaviors and transition possibilities while mode changed
+  - double, Come back, another way of transitivity (see table of transitivity below)
 - Toggle: satisfy mapping conditions one time to start, second one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
   - and for mouse if ACTIVE_MOUSE mouse action is used (see below)
+  
+Table of Transitivity:
+| Transitivity | Come back | Type          | Result
+| ------------- | --------------------------------------------------------------------
+|:------------:|:---------:|:-------------:|:-------------------------------------------
+| Checked      |           | Complete      | You can realease and trigger again 
+| Checked      | Active    | Limited       | Action continue while changing mode, but you can't trigger again if release
+| Double       |           | Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
+| Double       | Active    | One time back | The same but while pushed, you can change mode and get it triggered again only one time, after, you have to release and trigger it again in its own mode
+| \            | Active    | Limited+      | Same as limited, except that if you have an OnRelease action programmed, and its NoRealease button simple or double checked, and you release in new mode, no release/one turn will be done, but back in initial mode, release will be done like if we didn't changed mode, then complete OnRelease action will be done without taking care of NoRelease checkbox state
+* in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 
 At the left of first 4 destinations, you'll find special mouse actions, sound and modes
 - ACTIVE_MOUSE: use to bring the chosen mouse
@@ -371,18 +388,18 @@ Order, add, delete, copy or edit (double click or menu)
   - Cant't be edited, and does not interfere with the operation
 
 Tags:
-Tag   | Description
------ | ------------------------------------------------------------------------------
-Empty | Nothing is checked
-P      | \'Send to' is checked
- A    | \'By Postmessage / activation window' is checked
+| Tag   | Description
+| ----- | ------------------------------------------------------------------------------
+| Empty | Nothing is checked
+| P     | \'Send to' is checked
+| A     | \'By Postmessage / activation window' is checked
 
-Tags  | In practice
------ | ------------------------------------------------------------------------------
-Empty | The keys will be sent to your actual focus
-P     | It will use Postmessage to send keys to specified process
-PA    | It will activate window of the specified process before
- A    | Act like if nothing were checked, the keys will be sent to your actual focus
+| Tags  | In practice
+| ----- | ------------------------------------------------------------------------------
+| Empty | The keys will be sent to your actual focus
+| P     | It will use Postmessage to send keys to specified process
+| PA    | It will activate window of the specified process before
+|  A    | Act like if nothing were checked, the keys will be sent to your actual focus
 
 ![Keymap Editing](Doc/9.png)
 
