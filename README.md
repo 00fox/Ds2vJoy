@@ -121,7 +121,7 @@ Tags:
 |  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
 - a lowercase indicates that the checkbox is double checked for this condition
 
-You can sort by clicking on column header of the list, but be careful you'll have to manually reorder if order is important in your mapping. But even in this case, it can still can be useful
+You can sort by clicking on column headers of the list, but be careful you'll have to manually reorder if order is important in your mapping. But even in this case, it can still can be useful
 
 ## vJoy editing
 ![vJoy Editing](Doc/4.png)
