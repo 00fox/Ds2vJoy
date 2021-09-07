@@ -117,7 +117,7 @@ Tags:
 |  P  | Pause condition is in use (see below)
 |  Y  | Transitivity condition is in use (see below)
 |  T  | Toggle condition is in use (see below)
-| R/Z | An OnRelease (/+NoRelease) condition is in use (see below, under time stamps)
+| RZW | An OnRelease (/+NoRelease/+NlRelease) condition is in use (see below, under time stamps)
 |  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
 - a lowercase indicates that the checkbox is double checked for this condition
 
@@ -212,6 +212,8 @@ Destinations can be effected with time stamps for tricky actions, macros or comb
   - double, only the up press, even if some other timestamps are finished
 - Upper one, NoRelease, is to decide to not do release action while transitivity mode active (see below) and mode changed
   - double, one turn of this release action will still be performed then stopped
+- Upper one again, NlRelease (normal release), is to decide not perform NoRelease condition if back to initial mode
+  - double, not perform NoRelease condition while the new mode
 
 Under each source and destination, you'll find disabling
 - this button will be disabled for next mappings if this mapping is running (except with Force)
@@ -225,8 +227,8 @@ Under central led, you'll find 4 checkboxes
     - if not is a simple, and not button is pressed, the mapping is interrupted
      - if not is a double, and not button is pressed, the mapping still continue
   - double: One time, used in Transitivity (see table of transitivity below)
-- Transitivity: brings different behaviors and transition possibilities while mode changed
-  - double, Come back, another way of transitivity (see table of transitivity below)
+- Transitivity: Principal way of transitivity which brings different behaviors and transition possibilities while mode changed
+  - double, Come back, another way of transitivity which brings its owns (see table of transitivity below)
 - Toggle: satisfy mapping conditions one time to start, second one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
@@ -235,13 +237,15 @@ Under central led, you'll find 4 checkboxes
 Table of Transitivity:
 | Transitivity | Pause    | Type          | Result
 |:------------ |:-------- |:------------- |:------------------------------------------
-| Transitivity | …        | Complete      | You can realease and trigger again in new mode if it was already active before changing mode
+| Transitivity |          | Complete      | You can release and trigger again in new mode
+||||if it was already active before changing mode
 | Transitivity | One time | Limited       | Action continue while changing mode, but you can't trigger again if release
-| Come back    | …        | Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
-| Come back    | One time | One time back | The same as Retroactive, but while pushed, you can change mode and get it triggered again only one time, after, you have to release and trigger it again in its own mode
-| …            | One time | Limited+      | Same as limited, except that if you have an OnRelease action programmed, and its NoRealease button simple or double checked, and you release in new mode, no release/one turn will be done, but back in initial mode, release will be done like if we didn't changed mode, then complete OnRelease action will be done without taking care of NoRelease checkbox state
+| Come back    |          | Retroactive   | Instead of continuation, button is released,
+||||but triggered again if still pushed when initial mode is back
+| Come back    | One time | One time back | The same as Retroactive,
+||||but while pushed, you can change mode and get it triggered again only one time
+||||After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
-* for all types except Limited+, if you have an OnRelease action programmed, and its NoRealease button simple or double checked, no release/one turn will be done if you release (or autmomatically released) while initial mode came back, as in new mode
 
 At the left of destinations, you'll find special mouse actions, sound and modes
 - ACTIVE_MOUSE: use to bring the chosen mouse
