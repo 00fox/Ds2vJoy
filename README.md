@@ -79,14 +79,34 @@ There is a dual view mode, where you can clone a tab
 
 ![vJoy](Doc/3b.png)
 
-Order, add, delete, copy or edit (double click or menu) your mappings easily
+Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
+- Two different orders exist for each column, you change them by clicking twice consecutively on the same (see tables below)
 - Edit, delete, copy and move actions can process multiple mappings the same time
   - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
 - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
+
+Sorting order (1st method):
+| column | 1      | 2     | 3     | 4     | 5       | 6    | 7     | 8     | 9
+|:------:|:------ |:----- |:----- |:----- |:------- |:---- |:------|:----- |:------------------------
+|   1    | Enable |       | ds1   | ds2-5 | IfMouse | Tags | vj1-4 |       | Led Mouse
+|   2    | Enable | ds2-5 | ds1   |       | IfMouse | Tags | vj1-4 |       | Led Mouse
+|   3    | Enable | ds4*5 | ds1   | ds2-3 | IfMouse | Tags | vj1-4 |       | Led Mouse (*only if not)
+|   4    | Enable | vj1-4 |       |       | IfMouse | Tags | ds1   | ds2-5 | Led Mouse
+|   5    | Enable | Tags  | ds1   | ds2-5 | IfMouse |      | vj1-4 |       | Led Mouse
+
+Sorting order (2nd method):
+| column | 1     | 2       | 3     | 4   | 5    | 6     | 7     | 8     | 9                            
+|:------:|:----- |:------- |:----- |:--- |:---- |:----- |:----- |:----- |:-----------------------------
+|   1    | ds1   | IfMouse | vj1-4 | Led | Tags | Mouse |       | ds2-5 | Enable
+|   2    | ds2*5 | IfMouse | vj1-4 | Led | Tags | Mouse | ds1   |       | Enable (*4&5 only if not not)
+|   3    | ds4*5 | IfMouse | vj1-4 | Led | Tags | Mouse | ds1   | ds2-3 | Enable (*only if not)
+|   4    |       | IfMouse | vj1-4 | Led | Tags | Mouse | ds1   | ds2-5 | Enable
+|   5    | Tags  | IfMouse | vj1-4 | Led |      | Mouse | ds1   | ds2-5 | Enable
+* in either case, vj1-4 are the first valid ones found among the eight available, no matter where you put them.
 
 ![vJoy](Doc/3c.png)
 
@@ -107,7 +127,7 @@ vJoy Button:
 
 Tags:
 | Tag | Description
-| --- | ------------------------------------------------------------------------------
+|:--- |:------------------------------------------------------------------------------
 |  I  | IfMouse condition is in use (see below)
 |  F  | Force condition is in use (see below)
 |  S  | Short press
@@ -140,7 +160,7 @@ You can sort by clicking on column headers of the list, but be careful you'll ha
 
 Under first source you'll find 3 checkboxes which determine the method
 | Checkboxes    | Method          | Description
-| :------------ | --------------- |:--------------------------------------------------
+|:------------- |:--------------- |:--------------------------------------------------
 | None          | Simple          | Start when pressed, stop when release
 | First         | Short*          | You have to press and release quickly
 | Second        | Double          | You'll have to double press in a limited time
@@ -154,7 +174,7 @@ Under first source you'll find 3 checkboxes which determine the method
 
 In terms of time:
 | Method        | Press times
-| ------------- | --------------------------------------------------------------------
+|:------------- |:--------------------------------------------------------------------
 | Simple        | Immediate
 | Short         | found in settings
 | Double        | ~first press and second press < long
@@ -367,7 +387,7 @@ You can find this help directly in Ds2vJoy by pressing help below grid entries
 
 You can set repeated hits with the assigned vJoy button
 
-Order, add, delete, copy or edit (double click or menu)
+Sort, order, add, delete, copy or edit (double click or menu)
 - Edit, delete, copy and move actions can process multiple rapid fires the same time
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
 - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
@@ -386,7 +406,7 @@ After the first time has passed, release and press repeatedly
 
 You can send a keydown when the button is pressed and a keyup when it is released
 
-Order, add, delete, copy or edit (double click or menu)
+Sort, order, add, delete, copy or edit (double click or menu)
 - Edit, delete, copy and move actions can process multiple keymaps the same time
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid vJoy button
 - when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
@@ -395,13 +415,13 @@ Order, add, delete, copy or edit (double click or menu)
 
 Tags:
 | Tag   | Description
-| ----- | ------------------------------------------------------------------------------
+|:----- |:------------------------------------------------------------------------------
 | Empty | Nothing is checked
 | P     | \'Send to' is checked
 | A     | \'By Postmessage / activation window' is checked
 
 | Tags  | In practice
-| ----- | ------------------------------------------------------------------------------
+|:----- |:------------------------------------------------------------------------------
 | Empty | The keys will be sent to your actual focus
 | P     | It will use Postmessage to send keys to specified process
 | PA    | It will activate window of the specified process before
