@@ -251,13 +251,13 @@ Table of Transitivity:
 | Transitivity | Pause    | Type          | Result
 |:------------ |:-------- |:------------- |:------------------------------------------
 | Transitivity |          | Complete      | You can release and trigger again in new mode
-||||if it was already active before changing mode
+|              |          |               |if it was already active before changing mode
 | Transitivity | One time | Limited       | Action continue while changing mode, but you can't trigger again if release
 | Come back    |          | Retroactive   | Instead of continuation, button is released,
-||||but triggered again if still pushed when initial mode is back
+|              |          |               |but triggered again if still pushed when initial mode is back
 | Come back    | One time | One time back | The same as Retroactive,
-||||but while pushed, you can change mode and get it triggered again only one time
-||||After, you have to release and trigger it again in its own mode
+|              |          |               |but while pushed, you can change mode and get it triggered again only one time
+|              |          |               |After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 
 At the left of destinations, you'll find special mouse actions, sound and modes
@@ -290,12 +290,15 @@ The mouse group of checkboxes at the bottom, let you use mouse in conjuction wit
   - double, deactivate this mouse
 
 There is different modes for each
-- Absolute, you move at a point which correspond to the coordinates of the stick or touchpad
-- Mouse, as a normal mouse with acceleration
-- Move (stick) or slow (touchpad), the same but adapted for game movements, or precise mouse
-- Sniper (stick) or accuracy (touchpad), extreme precision
-- Raid (stick) or grid (touchpad), move inside a zone whom coordinates are entered in numbers group at the right
-  - Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
+| Values for 0-2  | touchpad version    | Description
+|:--------------- |:------------------- |:--------------------------------------------------------------------------------
+|0 None           | same                |
+|1 Absolute       | same                | you move at a point which correspond to the coordinates of the stick or touchpad
+|2 Mouse          | same                | as a normal mouse with acceleration
+|3 Move (stick)   | slow (touchpad)     | the same but adapted for game movements, or precise mouse
+|4 Sniper (stick) | accuracy (touchpad) | extreme precision
+|5 Raid (stick)   | grid (touchpad)     | move inside a zone whom coordinates are entered in numbers group at the right
+* Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
 
 In this numbers group at the right
 - left ones are for first points, central ones for second point,
