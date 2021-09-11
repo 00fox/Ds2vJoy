@@ -95,7 +95,7 @@ Sorting order (1st method):
 |   1    | Enable |       | ds1   | ds2-5 | IfMouse | Tags | vj1-4 |       | Led Mouse
 |   2    | Enable | ds2-5 | ds1   |       | IfMouse | Tags | vj1-4 |       | Led Mouse
 |   3    | Enable | ds4*5 | ds1   | ds2-3 | IfMouse | Tags | vj1-4 |       | Led Mouse (*only if not)
-|   4    | Enable | vj1-4 |       |       | IfMouse | Tags | ds1   | ds2-5 | Led Mouse
+|   4    | Enable |       | vj1-4 |       | IfMouse | Tags | ds1   | ds2-5 | Led Mouse
 |   5    | Enable | Tags  | ds1   | ds2-5 | IfMouse |      | vj1-4 |       | Led Mouse
 
 Sorting order (2nd method):
