@@ -90,13 +90,13 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
   - Cant't be edited, and does not interfere with the operation
 
 Sorting order (1st method):
-| column | 1      | 2     | 3     | 4     | 7     | 8     | 9     | 10      | 11   | 12  | 13
-|:------:|:------ |:----- |:----- |:----- |:------|:----- |:----- |:------- |:---- |:--- |:--------------------
-|   1    | Enable |       | ds1   | ds2-5 | vj1-4 |       |       | IfMouse | Tags | Led | Mouse
-|   2    | Enable | ds2-5 | ds1   |       | vj1-4 |       |       | IfMouse | Tags | Led | Mouse
-|   3    | Enable | ds4*5 | ds1   | ds2-3 | vj1-4 |       |       | IfMouse | Tags | Led | Mouse (*only if not)
-|   4    | Enable |       |       |       | vj1-4 | ds1   | ds2-5 | IfMouse | Tags | Led | Mouse
-|   5    | Enable | Tags  | ds1   | ds2-5 | vj1-4 |       |       | IfMouse |      | Led | Mouse
+| column | 1      | 2     | 3     | 4     | 5     | 6       | 7    | 8   | 9
+|:------:|:------ |:----- |:----- |:----- |:------|:------- |:---- |:--- |:--------------------
+|   1    | Enable |       | ds1   | ds2-5 | vj1-4 | IfMouse | Tags | Led | Mouse
+|   2    | Enable | ds2-5 | ds1   |       | vj1-4 | IfMouse | Tags | Led | Mouse
+|   3    | Enable | ds4*5 | ds1   | ds2-3 | vj1-4 | IfMouse | Tags | Led | Mouse (*only if not)
+|   4    | Enable | vj1-4 | ds1   | ds2-5 |       | IfMouse | Tags | Led | Mouse
+|   5    | Enable | Tags  | ds1   | ds2-5 | vj1-4 | IfMouse |      | Led | Mouse
 
 Sorting order (2nd method):
 | column | 1     | 2       | 3     | 4   | 5    | 6     | 7     | 8     | 9                            
