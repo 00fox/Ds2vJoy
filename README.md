@@ -295,9 +295,9 @@ There is different modes for each
 | 0     | None     | None     |
 | 1     | Absolute | Absolute | you move at a point which correspond to the coordinates of the stick or touchpad
 | 2     | Mouse    | Mouse    | as a normal mouse with acceleration
-| 3     | Move     | slow     | the same but adapted for game movements, or precise mouse
-| 4     | Sniper   | accuracy | extreme precision
-| 5     | Raid     | grid     | move inside a zone whom coordinates are entered in numbers group at the right
+| 3     | Move     | Slow     | the same but adapted for game movements, or precise mouse
+| 4     | Sniper   | Accuracy | extreme precision
+| 5     | Raid     | Grid     | move inside a zone whom coordinates are entered in numbers group at the right
 * Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
 
 In this numbers group at the right
