@@ -290,14 +290,14 @@ The mouse group of checkboxes at the bottom, let you use mouse in conjuction wit
   - double, deactivate this mouse
 
 There is different modes for each
-| Values for 0-2  | touchpad version    | Description
-|:--------------- |:------------------- |:--------------------------------------------------------------------------------
-|0 None           | same                |
-|1 Absolute       | same                | you move at a point which correspond to the coordinates of the stick or touchpad
-|2 Mouse          | same                | as a normal mouse with acceleration
-|3 Move (stick)   | slow (touchpad)     | the same but adapted for game movements, or precise mouse
-|4 Sniper (stick) | accuracy (touchpad) | extreme precision
-|5 Raid (stick)   | grid (touchpad)     | move inside a zone whom coordinates are entered in numbers group at the right
+| Value | stick    | touchpad | Description
+|:-----:|:-------- |:-------- |:--------------------------------------------------------------------------------
+| 0     | None     | None     |
+| 1     | Absolute | Absolute | you move at a point which correspond to the coordinates of the stick or touchpad
+| 2     | Mouse    | Mouse    | as a normal mouse with acceleration
+| 3     | Move     | slow     | the same but adapted for game movements, or precise mouse
+| 4     | Sniper   | accuracy | extreme precision
+| 5     | Raid     | grid     | move inside a zone whom coordinates are entered in numbers group at the right
 * Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
 
 In this numbers group at the right
