@@ -81,7 +81,9 @@ There is a dual view mode, where you can clone a tab
 
 Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
-- Two different orders exist for each column, you change them by clicking twice consecutively on the same (see tables below)
+- Two different orders exist for each column
+  - single click corresponds to single column natural ordering, except there isn't inverted order, you can proceed on several columns in succession
+  - clicking twice consecutively on the same, launch a programmed sort operation (see table below)
 - Edit, delete, copy and move actions can process multiple mappings the same time
   - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
@@ -89,23 +91,14 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
-Sorting order (1st method):
-| column | 1      | 2     | 3     | 4     | 5     | 6       | 7    | 8     | 9    
-|:------:|:------ |:----- |:----- |:----- |:------|:------- |:---- |:----- |:-------------------
-|   1    | Enable |       | ds1   | ds2-5 | vj1-4 | IfMouse | Tags | Mouse | Led 
-|   2    | Enable | ds2-5 | ds1   |       | vj1-4 | IfMouse | Tags | Mouse | Led 
-|   3    | Enable | ds4*5 | ds1   | ds2-3 | vj1-4 | IfMouse | Tags | Mouse | Led  (*only if not)
-|   4    | Enable | vj1-4 | ds1   | ds2-5 |       | IfMouse | Tags | Mouse | Led 
-|   5    | Enable | Tags  | ds1   | ds2-5 | vj1-4 | IfMouse |      | Mouse | Led 
-
-Sorting order (2nd method):
-| column | 1     | 2       | 3     | 4   | 5    | 6     | 7     | 8     | 9                            
-|:------:|:----- |:------- |:----- |:--- |:---- |:----- |:----- |:----- |:-----------------------------
-|   1    | ds1   | IfMouse | vj1-4 | Led | Tags | Mouse |       | ds2-5 | Enable
-|   2    | ds2*5 | IfMouse | vj1-4 | Led | Tags | Mouse | ds1   |       | Enable (*4&5 only if not not)
-|   3    | ds4*5 | IfMouse | vj1-4 | Led | Tags | Mouse | ds1   | ds2-3 | Enable (*only if not)
-|   4    |       | IfMouse | vj1-4 | Led | Tags | Mouse | ds1   | ds2-5 | Enable
-|   5    | Tags  | IfMouse | vj1-4 | Led |      | Mouse | ds1   | ds2-5 | Enable
+Sorting order (Programmed method):
+| column | 1      | 2     | 3     | 4     | 5     | 7     | 8    |
+|:------:|:------ |:----- |:----- |:----- |:----- |:----- |:---- |
+|   1    | Enable | ds1   | dsor  | dsnot | vj    | Led   | Tags |
+|   2    | Enable | dsor  | dsnot | vj    | Led   | ds1   | Tags |
+|   3    | Enable | dsnot | vj    | Led   | ds1   | dsor  | Tags |
+|   4    | Enable | vj    | Led   | ds1   | dsor  | dsnot | Tags |
+|   5    | Enable | Tags  | ds1   | dsor  | dsnot | vj    | Led  |
 * in either case, vj1-4 are the first valid ones found among the eight available, no matter where you put them.
 
 ![vJoy](Doc/3c.png)
