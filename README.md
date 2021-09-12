@@ -94,11 +94,11 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 Sorting order (Programmed method):
 | column | 1      | 2     | 3     | 4     | 5     | 7     | 8    |
 |:------:|:------ |:----- |:----- |:----- |:----- |:----- |:---- |
-|   1    | Enable | ds1   | dsor  | dsnot | vj    | Led   | Tags |
-|   2    | Enable | dsor  | dsnot | vj    | Led   | ds1   | Tags |
-|   3    | Enable | dsnot | vj    | Led   | ds1   | dsor  | Tags |
-|   4    | Enable | vj    | Led   | ds1   | dsor  | dsnot | Tags |
-|   5    | Enable | Tags  | ds1   | dsor  | dsnot | vj    | Led  |
+|   1    | Enable | ds1   | dsor  | dsnot | Led   | vj    | Tags |
+|   2    | Enable | dsor  | dsnot | Led   | vj    | ds1   | Tags |
+|   3    | Enable | dsnot | Led   | vj    | ds1   | dsor  | Tags |
+|   4    | Enable | Led   | vj    | ds1   | dsor  | dsnot | Tags |
+|   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
 * in either case, vj1-4 are the first valid ones found among the eight available, no matter where you put them.
 
 ![vJoy](Doc/3c.png)
