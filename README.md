@@ -84,6 +84,8 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Two different orders exist for each column
   - single click corresponds to single column natural ordering, except there isn't inverted order, you can proceed on several columns in succession
   - clicking twice consecutively on the same, launch a programmed sort operation (see table below)
+  - for security reasons, you have to maintain the right button down and then left click on the column header (avoid unwanted sorts, while order is important in your mapping)
+  - (vJoy only, RapidFire and Keymap use natural + reverse order without the need of right mouse button down)
 - Edit, delete, copy and move actions can process multiple mappings the same time
   - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
