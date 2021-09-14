@@ -11,7 +11,7 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 ## How to use
 1. Install vJoy (https://sourceforge.net/projects/vjoystick/)
    * or not if you plan to use ViGEm
-2. Open 'Configure vJoy' and select Axes, up to 128 Buttons and up to 4 continuous POV and effects
+2. Open 'Configure vJoy' and select Axis, up to 128 Buttons and up to 4 continuous POV and effects
    * It may result in a PC restart.
 3. Launch Ds2vJoy.exe
    * an .ini file will be created, to save parameters, with some examples already filled
@@ -48,7 +48,9 @@ Satus is separated in 4 colums which are:
 - You can specify a serial if you have multiple DS connected
   - or/and several copies of Ds2vJoy running
 - You can fix threshold of sticks, and set times more accurate to your senses
-  - Simultaneous is R1L1 or R2L2 the same time (with this 100ms as default delta)
+  - threshold value for axis accept a number between 0 and 128, default 8
+  - values of the axis are proportional to the threshold, so the grip remains soft rather than starting abruptly, even with high threshold values
+  - Simultaneous is R1L1 or R2L2 the same time (with this 40ms as default delta)
 - Multiple touchpad divide in multiple buttons,
   - But for more simple uses, there is a lot of special buttons (see vJoy)
 - Led is calm wave fluctuating, and can color be stopped on exit
@@ -301,6 +303,7 @@ There is different modes for each
 | 4     | Sniper   | Accuracy | extreme precision
 | 5     | Raid     | Grid     | move inside a zone whom coordinates are entered in numbers group at the right
 * Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
+* Sniper mouse mode, which require liberty of movement but not erratic while near center, use Sniper Axis, near no threshold and not no threshold, to help stabilizating when little force is exerted or even released
 
 In this numbers group at the right
 - left ones are for first points, central ones for second point,
@@ -309,7 +312,7 @@ In this numbers group at the right
  
 A lot of buttons type has been added, for DS and for vJoy
 
-RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE, OPTIONS, SQUARE, TRIANGLE, CIRCLE, CROSS, R3, PS, TOUCH, MUTE, L1, R1, L2, R2, L2TRIGGER, R2TRIGGER, EMPTY, MIDDLE, FULL, LXINV, LYINV, RXINV, RYINV, AXISL_LEFT, AXISL_UP_LEFT, AXISL_UP, AXISL_UP_RIGHT, AXISL_RIGHT, AXISL_DOWN_RIGHT, AXISL_DOWN, AXISL_DOWN_LEFT, AXISR_LEFT, AXISR_UP_LEFT, AXISR_UP, AXISR_UP_RIGHT, AXISR_RIGHT, AXISR_DOWN_RIGHT, AXISR_DOWN, AXISR_DOWN_LEFT, TOUCHUP, TOUCHPAD, TOUCH1, TOUCH2, TOUCH3, TOUCH4, TOUCHL, TOUCHR, L2TRIGGER_33, R2TRIGGER_33, L2TRIGGER_66, R2TRIGGER_66, L2TRIGGER_100, R2TRIGGER_100, L1R1, L2R2, BATTERY
+RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE, OPTIONS, SQUARE, TRIANGLE, CIRCLE, CROSS, R3, PS, TOUCH, MUTE, L1, R1, L2, R2, L2TRIGGER, R2TRIGGER, EMPTY, MIDDLE, FULL, LXINV, LYINV, RXINV, RYINV, AXISL_LEFT, AXISL_UP_LEFT, AXISL_UP, AXISL_UP_RIGHT, AXISL_RIGHT, AXISL_DOWN_RIGHT, AXISL_DOWN, AXISL_DOWN_LEFT, AXISR_LEFT, AXISR_UP_LEFT, AXISR_UP, AXISR_UP_RIGHT, AXISR_RIGHT, AXISR_DOWN_RIGHT, AXISR_DOWN, AXISR_DOWN_LEFT, TOUCHUP, TOUCHPAD, TOUCH1, TOUCH2, TOUCH3, TOUCH4, TOUCHL, TOUCHR, L2TRIGGER_33, R2TRIGGER_33, L2TRIGGER_66, R2TRIGGER_66, L2TRIGGER_100, R2TRIGGER_100, L1R1, L2R2, BATTERY, SNIPER_LX, SNIPER_LY, SNIPER_RX, SNIPER_RY
 - Usual DS buttons classed by MMORPG action bar order
 - Inversed Axis
 - Multiple level Triggers (Normal L2 R2, Normal Triggers, ~33, 66 and 100% according to Proactive Triggers mode
@@ -318,6 +321,7 @@ RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE,
 - Simultaneous presses, L1R1 L2R2 (you have a short - configurable - time to press both buttons same time, and will be released only when both will)
 - Null, 50% value and full value, for your macros and tips (always on)
 - Battery level
+- Sniper Axis, which works the same except the threshold is minimal, then you can have near no threshold some times and keep normal axis with the threshold you defined for usual situations
 
 RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR, SL1TR, XINV, YINV, ZINV, RXINV, RYINV, RZINV, SL0INV, SL1INV, DPAD1_LEFT, DPAD1_UP_LEFT, DPAD1_UP, DPAD1_UP_RIGHT, DPAD1_RIGHT, DPAD1_DOWN_RIGHT, DPAD1_DOWN, DPAD1_DOWN_LEFT, DPAD2_LEFT, DPAD2_UP_LEFT, DPAD2_UP, DPAD2_UP_RIGHT, DPAD2_RIGHT, DPAD2_DOWN_RIGHT, DPAD2_DOWN, DPAD2_DOWN_LEFT, DPAD3_LEFT, DPAD3_UP_LEFT, DPAD3_UP, DPAD3_UP_RIGHT, DPAD3_RIGHT, DPAD3_DOWN_RIGHT, DPAD3_DOWN, DPAD3_DOWN_LEFT, DPAD4_LEFT, DPAD4_UP_LEFT, DPAD4_UP, DPAD4_UP_RIGHT, DPAD4_RIGHT, DPAD4_DOWN_RIGHT, DPAD4_DOWN, DPAD4_DOWN_LEFT
 - Usual vJoy buttons
