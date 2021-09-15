@@ -332,8 +332,8 @@ RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR
   - Dpad use a mathematical medium function, then you can attribute other sources than normal ones
   - And instead having the result of for example Left + Up > Up Left
   - You can have it for Left + Up + UpRight + Right (which is mmm…   let the program do it itself…  )
-- XY Axis Clockwise and CounterClockwise (Q1=NE, Q2 = SE, Q3= SW, Q4=NW), they will do a quarter of turn, in the time defined by start/stop
-- Complete turn for XY, ZRZ, RXRY, SL0SL1, XY, ZRZ, RXRY and SL0SL1 Axis, Clockwise or CounterClockwise, starting by the north, in the time defined by start/stop
+- XY Axis Clockwise and CounterClockwise (Q1=NE, Q2 = SE, Q3= SW, Q4=NW), they will do a quarter of turn, in the time defined by start/stop (combos and technology)
+- Complete turn for XY, ZRZ, RXRY, SL0SL1, XY, ZRZ, RXRY and SL0SL1 Axis, Clockwise or CounterClockwise, starting by the north, in the time defined by start/stop (motorization, loops, perpetual motion)
 
 An example of a simple advanced script for mouse:
 ```
