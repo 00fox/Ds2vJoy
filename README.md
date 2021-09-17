@@ -296,9 +296,9 @@ RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN,
   - if OnRelease is used, the movement will start after release
     - double, the movement start at the start time, undergoes its complete evolution over time, going from start to stop, and stay at its maximum if finished before release + stop time
 
-Upper one, Overcontroll:
+Upper one, Overcontrol:
 Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
-  - but you can use Overcontroll checkbox to fuse values
+  - but you can use Overcontrol checkbox to fuse values
     - double, further axis action which should overpass this one won't be permit
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
