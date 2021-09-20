@@ -302,7 +302,7 @@ Upper one, Overcontrol:
 Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
   - but you can use Overcontrol checkbox to fuse values
     - double, Protect: further axis action which should overpass this one won't be permit
-  - if there are any merged axes in the mapping, the threshold is removed for those axes
+  - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
 ![Axis movements](Doc/16.png)
