@@ -270,7 +270,7 @@ At the left of destinations, you'll find special mouse actions, sound and modes
   - and/or make it responsive to the toggle
 - SAVE_POSITION: save the mouse position, each mapping save his individual 'mouse position'
 - MOVE_BACK: return to saved point
-- MOVE_TO_XY/MOVE_TO_WH/MOVE_TO_NN: go to x,y/w,h/nw,nh (two left/central numbers of the grid)
+- MOVE_TO_XY/MOVE_TO_WH/MOVE_TO_NN: go to x,y/w,h/nw,nh (left/central/right numbers of the grid)
 - SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH/SAVE_AND_MOVE_TO_NN: both
 - LEFT_CLICK, MIDDLE_CLICK, RIGHT_CLICK, X1_CLICK, X2_CLICK, CROLL_UP, SCROLL_DOWN
 - LEFT_DOUBLE_CLICK, MIDDLE_DOUBLE_CLICK, RIGHT_DOUBLE_CLICK, X1_DOUBLE_CLICK, X2_DOUBLE_CLICK, SCROLL_UP_x5, SCROLL_DOWN_x5
