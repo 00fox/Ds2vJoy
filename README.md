@@ -264,7 +264,7 @@ Table of Transitivity:
 |              |          |               |After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 
-At the left of destinations, you'll find special mouse actions, sound and modes
+At the left of destinations, you'll find special mouse actions, sound, modes and time
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
