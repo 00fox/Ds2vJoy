@@ -270,8 +270,8 @@ At the left of destinations, you'll find special mouse actions, sound and modes
   - and/or make it responsive to the toggle
 - SAVE_POSITION: save the mouse position, each mapping save his individual 'mouse position'
 - MOVE_BACK: return to saved point
-- MOVE_TO_XY/MOVE_TO_WH: go to x,y/w,h (two left/central numbers of the grid)
-- SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH: both
+- MOVE_TO_XY/MOVE_TO_WH/MOVE_TO_NN: go to x,y/w,h/nw,nh (two left/central numbers of the grid)
+- SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH/SAVE_AND_MOVE_TO_NN: both
 - LEFT_CLICK, MIDDLE_CLICK, RIGHT_CLICK, X1_CLICK, X2_CLICK, CROLL_UP, SCROLL_DOWN
 - LEFT_DOUBLE_CLICK, MIDDLE_DOUBLE_CLICK, RIGHT_DOUBLE_CLICK, X1_DOUBLE_CLICK, X2_DOUBLE_CLICK, SCROLL_UP_x5, SCROLL_DOWN_x5
 - LEFT_DOWN, MIDDLE_DOWN, RIGHT_DOWN, X1_DOWN, X2_DOWN
@@ -286,7 +286,9 @@ At the left of destinations, you'll find special mouse actions, sound and modes
 - MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
 - TO_MODE: Switch to mode 1-8
 - TO_LAST_MODE: Go back to last mode, memorized when MEMORIZE_MODE used
-- RETURN_TO: return to the specified point of the timeline, resetting the actions if they need to be
+- IF RELEASED GOTO: Go to the specified point of the timeline, if source has been released (use stop value)
+- IF PUSHED GOTO: Go to the specified point of the timeline, if source is still pushed (use stop value)
+- RETURN_TO: return to the specified point of the timeline, resetting the actions if they need to be (use stop value)
 
 Double, you'll find Axis movements
 
