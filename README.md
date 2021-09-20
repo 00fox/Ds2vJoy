@@ -187,7 +187,7 @@ Over first source you can find special requirements
 - And Force, to ignore if a button has been disabled by a precedent mapping
   - double, this will work only if this mapping is already working
 
-Over two next sources you'll find 'or' (/double 'xor') conditions instead of simple combination
+Over two next sources you'll find 'or', double 'xor' conditions instead of simple combination
 - If only first 'or' is used and first source is killed to launch the mapping (for example, pushed more than a short press),
   and still pushed, second source is still available. But both will have to be released to be available to trigger the mapping again
 - The mapping is launched over those conditions:
