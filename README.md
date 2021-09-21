@@ -154,6 +154,7 @@ You can sort by clicking on column headers of the list, but be careful you'll ha
 - Group of numbers is either for special mouse actions,
   - or to use mouse in a zone instead of the full screen, divided or not in a grid
   - or to use mouse in the full screen, divided
+- Two digits in the lower right corner are the mouse position, to make it easier to enter special mouse actions
 
 Under first source you'll find 3 checkboxes which determine the method
 | Checkboxes    | Method          | Description
