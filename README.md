@@ -308,16 +308,17 @@ A simple example with time actions:
     EQUAL:
       - if you stay pushed from begining to the end, it do an entire infinite loop, 123123 etc
       - if you release after 2(1500), it do an loop from middle of 2, to the end of 3
-	   - if you press again and keep pushed,
-	     the loop change to 123, because nothing can tell him you already released before,
-		cause at the point of time between 2 and 3, you have not released yet,
-		this time travel is a real time travel
-	 - if you release before 2(1500), it do an loop from middle of 2, to the end of 3
-	   - if you press again, and keep pushed, nothing happens, it stay middle2 3 middle2 3
-	     because he knows you already released before
-		before this point of time,
-		not last turn,
-		he can't know.
+        - if you press again and keep pushed,
+          the loop change to 123, because nothing can tell him you already released before,
+          cause at the point of time between 2 and 3,
+          you have not released yet,
+          this time travel is a real time travel
+      - if you release before 2(1500), it do an loop from middle of 2, to the end of 3
+        - if you press again, and keep pushed, nothing happens, it stay middle2 3 middle2 3
+          because he knows you already released before
+             before this point of time,
+             not last turn,
+             he can't know.
           there were a precedent turn? no, the turn's still the same
   2>
     4th destination at 3000ms: if released goto 1500
@@ -325,10 +326,10 @@ A simple example with time actions:
     6th destination at 3000ms: if pushed goto 0
     EQUAL:
       Exactly the same, exept that if you push again, both cases change to loop 123,
-	 because the memory has been erased to the program on the fact that you have already released,
-	 no matter when you did
+      because the memory has been erased to the program on the fact that you have already released,
+      no matter when you did
       Two possibilities, either one trip remains true and the other tampered with,
-	 or neither of the two is true anymore ...
+      or neither of the two is true anymore ...
 ```
 
 Double, you'll find Axis movements
