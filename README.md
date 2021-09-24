@@ -103,7 +103,7 @@ Sorting order (Programmed method):
 |   3    | Enable | dsnot | Led   | vj    | ds1   | dsor  | Tags |
 |   4    | Enable | Led   | vj    | ds1   | dsor  | dsnot | Tags |
 |   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
-* in either case, vj1-4 are the first valid ones found among the eight available, no matter where you put them.
+* in either case, vj are the first valid ones found among the eight available, no matter where you put them.
 
 ![vJoy](Doc/3c.png)
 
@@ -130,7 +130,7 @@ Tags:
 |  S  | Short press
 |  D  | Double press (can be mixed, see below)
 |  L  | Long press
-|  C  | Macro condition is in use (see below)
+|  C  | Interrupt condition is in use (see below)
 |  P  | Pause condition is in use (see below)
 |  Y  | Transitivity condition is in use (see below)
 |  T  | Toggle condition is in use (see below)
@@ -207,7 +207,7 @@ Over two next sources you'll find 'or', double 'xor' conditions instead of simpl
 |:------:|:------:|:-------:|:---:|:----------------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
 |   0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
 |  1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
-|   0    |  1/2   | val ? 0 |  >  |   (see Macro     |     |         |     |         |  >  |released1|
+|   0    |  1/2   | val ? 0 |  >  |  (see Interrupt  |     |         |     |         |  >  |released1|
 |  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
 
 Over two last sources you'll find not condition,
@@ -238,7 +238,7 @@ Under each source and destination, you'll find disabling
   - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
 
 Under central led, you'll find 4 checkboxes
-- Macro: Interrupt macros on release (even if timestamp not finished)
+- Interrupt: Interrupt macros on release (even if timestamp not finished)
   - double, No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
 - Pause: pause this mapping while a not condition
   - otherwise:
@@ -264,6 +264,7 @@ Table of Transitivity:
 |              |          |               |but while pushed, you can change mode and get it triggered again only one time
 |              |          |               |After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
+* IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by 
 
 At the left of destinations, you'll find special mouse actions, sound, modes and time
 - ACTIVE_MOUSE: use to bring the chosen mouse
@@ -287,9 +288,48 @@ At the left of destinations, you'll find special mouse actions, sound, modes and
 - MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
 - TO_MODE: Switch to mode 1-8
 - TO_LAST_MODE: Go back to last mode, memorized when MEMORIZE_MODE used
+- FORGOT_RELEASED: Loose the released state if source has been released before, and force it to check it again
 - IF RELEASED GOTO: Go to the specified point of the timeline, if source has been released (use stop value)
 - IF PUSHED GOTO: Go to the specified point of the timeline, if source is still pushed (use stop value)
 - RETURN_TO: return to the specified point of the timeline, resetting the actions if they need to be (use stop value)
+
+A simple example with time actions:
+```
+  1st source: square, for activate
+  Latest source: 'Not' checked, with circle, for stop
+  1st destination: 1, from 0ms to 1000ms
+  2nd destination: 2, from 1000ms to 2000ms
+  3rd destination: 3, from 2000ms to 3000ms
+  
+  Two cases:
+  1>
+    4th destination at 3000ms: if released goto 1500
+    5th destination at 3000ms: if pushed goto 0
+    EQUAL:
+      - if you stay pushed from begining to the end, it do an entire infinite loop, 123123 etc
+      - if you release after 2(1500), it do an loop from middle of 2, to the end of 3
+	   - if you press again and keep pushed,
+	     the loop change to 123, because nothing can tell him you already released before,
+		cause at the point of time between 2 and 3, you have not released yet,
+		this time travel is a real time travel
+	 - if you release before 2(1500), it do an loop from middle of 2, to the end of 3
+	   - if you press again, and keep pushed, nothing happens, it stay middle2 3 middle2 3
+	     because he knows you already released before
+		before this point of time,
+		not last turn,
+		he can't know.
+          there were a precedent turn? no, the turn's still the same
+  2>
+    4th destination at 3000ms: if released goto 1500
+    5th destination at 3000ms: Forgot release
+    6th destination at 3000ms: if pushed goto 0
+    EQUAL:
+      Exactly the same, exept that if you push again, both cases change to loop 123,
+	 because the memory has been erased to the program on the fact that you have already released,
+	 no matter when you did
+      Two possibilities, either one trip remains true and the other tampered with,
+	 or neither of the two is true anymore ...
+```
 
 Double, you'll find Axis movements
 
@@ -302,7 +342,7 @@ RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN,
 Upper one, Overcontrol:
 Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
   - but you can use Overcontrol checkbox to fuse values
-    - double, Protect: further axis action which should overpass this one won't be permit
+    - double, Protect: further axis action which should overpass this one won't be permit (may be used on other vJoy buttons)
   - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
@@ -310,7 +350,7 @@ All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revoluti
 - Complete turn, clockwise or counterclockwise, starting by the north (motorization, loops, perpetual motion)
 - Stay at the middle (combos and technology)
 - Stay at one of the eight typical position of the circonference (W, NW, N, NE, E, SE, S, SW)
-- Quarter of turn, clockwise and counterclockwise (Q1=NE, Q2=SE, Q3=SW, Q4=NW) (combos and technology)
+- Quarter of turn, clockwise and counterclockwise (Q1=NE, Q2=SE, Q3=SW, Q4=NW)
 - Eighth of turn, clockwise and counterclockwise (E1=NNE, E2=ENE, E3=ESE, E4=SSE, E5=SSW, E6=WSW, E7=WNW, E8=NNW)
 - Center to one of the eight position of the circonference
 - One of the eight position of the circonference to center
