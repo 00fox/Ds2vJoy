@@ -325,7 +325,7 @@ A simple example with time actions:
     5th destination at 3000ms: Forgot release
     6th destination at 3000ms: if pushed goto 0
     EQUAL:
-      Exactly the same, exept that if you push again, both cases change to loop 123,
+      Exactly the same, exept that if you push again, in both situations it changes to loop 123,
       because the memory has been erased to the program on the fact that you have already released,
       no matter when you did
       Two possibilities, either one trip remains true and the other tampered with,
