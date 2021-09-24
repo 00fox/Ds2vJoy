@@ -266,7 +266,7 @@ Table of Transitivity:
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by 
 
-At the left of destinations, you'll find special mouse actions, sound, modes and time
+At the left of destinations, you'll find special mouse, sound, modes and time actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
