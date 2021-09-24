@@ -292,9 +292,9 @@ At the left of destinations, you'll find special mouse, sound, modes and time ac
 - IF RELEASED GOTO: Go to the specified point of the timeline, if source has been released (use stop value)
 - IF PUSHED GOTO: Go to the specified point of the timeline, if source is still pushed (use stop value)
 - RETURN_TO: return to the specified point of the timeline, resetting the actions if they need to be (use stop value)
-- INTERRUPT: same as 'Interrupt' condition, but time dependant
-- NO_SUSTAIN: same as 'No sustain' condition, but time dependant
-- PAUSE: same as 'Pause' condition, but time dependant
+- INTERRUPT: same as 'Interrupt' condition, but time dependent
+- NO_SUSTAIN: same as 'No sustain' condition, but time dependent
+- PAUSE: same as 'Pause' condition, but time dependent
 
 A simple example with time actions:
 ```
