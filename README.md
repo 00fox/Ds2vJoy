@@ -151,10 +151,12 @@ You can sort by clicking on column headers of the list, but be careful you'll ha
   - central led is working as long as the mapping is active and doesn't react to conditions
 - Eight ones are destination (together, or in a timeline)
 - Group of checkboxes is for mouse choice (to use with special mouse action ACTIVE_MOUSE)
-- Group of numbers is either for special mouse actions,
+- Group of numbers, Grid, is either for special mouse actions,
   - or to use mouse in a zone instead of the full screen, divided or not in a grid
   - or to use mouse in the full screen, divided
 - Two digits in the lower right corner are the mouse coordinates, to make it easier to enter special mouse actions
+  - click on the left number to start capture, the color changes for 3s, and after 3s it come back to its normal state with the mouse point you were at captured
+  - click on the right number, while you already selected an element of the grid, insert the coordinates into this column (x,y or w,h or nw,nh)
 
 Under first source you'll find 3 checkboxes which determine the method
 | Checkboxes    | Method          | Description
@@ -273,6 +275,7 @@ At the left of destinations, you'll find special mouse, sound, modes and time ac
 - SAVE_POSITION: save the mouse position, each mapping save his individual 'mouse position'
 - MOVE_BACK: return to saved point
 - MOVE_TO_XY/MOVE_TO_WH/MOVE_TO_NN: go to x,y/w,h/nw,nh (left/central/right numbers of the grid)
+  - if you enter a stop time to move mouse actions, the movement is done in the time of (stop - start)ms, adjusted to average turn (+ bluetooth delay if used)
 - SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH/SAVE_AND_MOVE_TO_NN: both
 - LEFT_CLICK, MIDDLE_CLICK, RIGHT_CLICK, X1_CLICK, X2_CLICK, CROLL_UP, SCROLL_DOWN
 - LEFT_DOUBLE_CLICK, MIDDLE_DOUBLE_CLICK, RIGHT_DOUBLE_CLICK, X1_DOUBLE_CLICK, X2_DOUBLE_CLICK, SCROLL_UP_x5, SCROLL_DOWN_x5
