@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int VersionDate = 202109291;
+	const int VersionDate = 202109301;
 
 	WCHAR Settingstxt[20];
 	WCHAR Mappingtxt[20];
@@ -42,6 +42,8 @@ public:
 		Setting_LowBattAlert,
 		Setting_dsSerial,
 		Setting_BlackLedOnExit,
+		Setting_MappingViewMode,
+		Setting_CloneViewMode,
 		Setting_vJoyPaused,			//Tasktray
 		Setting_RapidFirePaused,
 		Setting_KeymapPaused,
@@ -137,6 +139,8 @@ public:
 	unsigned char Mode[9];
 	bool Reminder[32];
 	bool vJoyUsed[32];
+	bool MappingViewMode;
+	bool CloneViewMode;
 
 	unsigned char ActualDS = 0;		//0 Unknown
 	unsigned char PreferredDS;		//1 DS4, 2 DS5
@@ -257,6 +261,7 @@ private:
 		Mapping_Stop6,
 		Mapping_Stop7,
 		Mapping_Stop8,
+		Mapping_Notice,
 		Mapping_Count,
 	};
 
@@ -292,7 +297,7 @@ private:
 	byte dsIDString(std::wstring, unsigned char);
 	byte vjIDString(std::wstring, unsigned char);
 	unsigned short MouseString(std::wstring, unsigned char);
-	unsigned short GridString(std::wstring, unsigned char);
+	short GridString(std::wstring, unsigned char);
 
 	HWND m_hWnd;
 	WCHAR m_file[MAX_PATH + 1] = { 0 };

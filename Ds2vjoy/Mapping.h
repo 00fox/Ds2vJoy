@@ -96,6 +96,9 @@ public:
 	//See a brief of what will be launched like vJoy, modes, mouse action (different from mouse)
 	//'#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
 	//'>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
+	const WCHAR* NoticeString();
+	//See a comment, notice, reminder, game rule, combo descritption, etc.
+	//Takes palce instead of vJoyString(); by tape.MappingViewMode
 	const WCHAR* TagsString();
 	//| Tag | Description
 	//|:--- |:------------------------------------------------------------------------------
@@ -238,6 +241,7 @@ public:
 									//x, y and w, h can also be used to move the pointer to a location during special mouse action
 	unsigned long Start[8];
 	unsigned long Stop[8];
+	WCHAR Notice[MAX_PATH];
 
 private:
 	dsButton* m_ds[5] = { 0 };

@@ -1439,7 +1439,7 @@ inline TCHAR* GetExeNameByPID(DWORD ProcessID)
 		CloseHandle(hProcess);
 	}
 
-	return ProcessName;
+	return (TCHAR*)ProcessName;
 }
 
 ////////////////////////////////////////////////////////////////////// GUID

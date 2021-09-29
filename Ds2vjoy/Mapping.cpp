@@ -31,6 +31,7 @@ Mapping::Mapping()
 	, Stop()
 	, Mouse()
 	, Grid()
+	, Notice(L"")
 {
 	for (int i = 0; i < 5; i++) { Target[i] = false; }
 	for (int i = 0; i < 5; i++) { dsID[i] = dsButtonID::none; }
@@ -238,6 +239,17 @@ const WCHAR* Mapping::vJoyString()
 				head += wsprintf(head, L"Led%d", Led);
 			firstplus = true;
 		}
+
+	return buf;
+}
+
+const WCHAR* Mapping::NoticeString()
+{
+	static WCHAR buf[MAX_PATH];
+	buf[0] = 0;
+	WCHAR* head = buf;
+
+	WCHAR* ret = lstrcpynW(head, Notice, MAX_PATH);
 
 	return buf;
 }

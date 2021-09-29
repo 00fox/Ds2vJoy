@@ -461,10 +461,10 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 					{
 						switch (gridmove[0])
 						{
-						case 1:if (grid[4]) lasttouchx = max(1, min(1920, lasttouchx - (1920 / grid[4]))); break;
-						case 2:if (grid[5]) lasttouchy = max(1, min(ldesty, lasttouchy - (ldesty / grid[5]))); break;
-						case 3:if (grid[4]) lasttouchx = max(1, min(1920, lasttouchx + (1920 / grid[4]))); break;
-						case 4:if (grid[5]) lasttouchy = max(1, min(ldesty, lasttouchy + (ldesty / grid[5]))); break;
+						case 1:if (grid[4]) lasttouchx = (int)max(1, min(1920, lasttouchx - (1920 / grid[4]))); break;
+						case 2:if (grid[5]) lasttouchy = (int)max(1, min(ldesty, lasttouchy - (ldesty / grid[5]))); break;
+						case 3:if (grid[4]) lasttouchx = (int)max(1, min(1920, lasttouchx + (1920 / grid[4]))); break;
+						case 4:if (grid[5]) lasttouchy = (int)max(1, min(ldesty, lasttouchy + (ldesty / grid[5]))); break;
 						}
 					}
 					else

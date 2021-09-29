@@ -17,8 +17,11 @@ public:
 	void editMappingDlgBack();
 	void editMappingDlgBackMulti();
 	void Show();
+	void Show2();
 	void Hide();
+	void Hide2();
 	BOOL MoveWindow(int, int, int, int, BOOL);
+	BOOL MoveWindow2(int, int, int, int, BOOL);
 
 	bool moving;
 
@@ -36,6 +39,8 @@ private:
 	void deleteMappingDlg();
 	void duplicateMappingDlg();
 	void moveMappingDlg(int tab);
+	void addNoticeDlg();
+	void addNoticeDlgBack();
 	int insertMapping(int idx, Mapping* m);
 	void BeginDrag(int idx);
 	void DragMove(int x, int y);
@@ -44,12 +49,13 @@ private:
 
 	HWND m_hWnd;
 	HWND m_hDlg;
+	HWND m_hDlg2;
 	HWND m_hList;
 	HMENU m_hMenu;
 	HMENU m_hMenu2;
 
 	unsigned char m_Tab;
-	int m_TabsID[14];
+	int m_TabsID[15];
 	int m_ReminderId[32];
 	int m_Randcolor[32];
 	bool m_active;
@@ -68,6 +74,7 @@ private:
 	//|   3    | Enable | dsnot | vj    | Led   | ds1   | dsor  | Tags |
 	//|   4    | Enable | vj    | Led   | ds1   | dsor  | dsnot | Tags |
 	//|   5    | Enable | Tags  | ds1   | dsor  | dsnot | vj    | Led  |
+	WCHAR NoticeDlg[MAX_PATH] = { 0 };
 };
 
 extern MappingDlg mDlg;

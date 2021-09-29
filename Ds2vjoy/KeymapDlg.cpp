@@ -45,6 +45,7 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_6, FALSE);
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_7, FALSE);
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_8, FALSE);
+	DeleteMenu(m_hMenu, ID_MENU_ADD_NOTICE, FALSE);
 	redrawMenu(5);
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);

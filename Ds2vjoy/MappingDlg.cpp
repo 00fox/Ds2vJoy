@@ -25,7 +25,7 @@ MappingDlg::MappingDlg()
 	, tabSortingMethod(false)
 	, moving(false)
 {
-	for (int i = 0; i < 14; i++) m_TabsID[i] = 0;
+	for (int i = 0; i < 15; i++) m_TabsID[i] = 0;
 	for (int i = 0; i < 32; i++) m_ReminderId[i] = 0;
 	for (int i = 0; i < 32; i++) m_Randcolor[i] = 0;
 }
@@ -39,6 +39,8 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_Tab = 0;
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING), hWnd, (DLGPROC)Proc, (LPARAM)this);
+	m_hDlg2 = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MIND), hWnd, (DLGPROC)Proc, (LPARAM)this);
+	Hide2();
 
 	m_TabsID[0] = ID_MENU_ADD;
 	m_TabsID[1] = ID_MENU_EDIT;
@@ -54,8 +56,9 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_TabsID[11] = ID_MENU_MOVE_TO_6;
 	m_TabsID[12] = ID_MENU_MOVE_TO_7;
 	m_TabsID[13] = ID_MENU_MOVE_TO_8;
+	m_TabsID[14] = ID_MENU_ADD_NOTICE;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
-	redrawMenu(14);
+	redrawMenu(15);
 
 	m_hList = GetDlgItem(m_hDlg, IDC_MAPPING_LIST);
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
@@ -74,12 +77,15 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	col.pszText = L"";
 	col.cx = 84;
 	ListView_InsertColumn(m_hList, 2, &col);
-	col.pszText = I18N.vJoyButton;
-	col.cx = 111;
+	col.pszText = (tape.MappingViewMode) ? I18N.Notice : I18N.vJoyButton;
+	col.cx = (tape.MappingViewMode) ? 198 : 111;
 	ListView_InsertColumn(m_hList, 3, &col);
-	col.pszText = I18N.TagsButton;
-	col.cx = 87;
-	ListView_InsertColumn(m_hList, 4, &col);
+	if (!tape.MappingViewMode)
+	{
+		col.pszText = I18N.TagsButton;
+		col.cx = 87;
+		ListView_InsertColumn(m_hList, 4, &col);
+	}
 
 	HWND hTip = ListView_GetToolTips(m_hList);
 	SetWindowPos(hTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -147,8 +153,9 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	m_TabsID[11] = ID_MENU_MOVE_TO_6;
 	m_TabsID[12] = ID_MENU_MOVE_TO_7;
 	m_TabsID[13] = ID_MENU_MOVE_TO_8;
+	m_TabsID[14] = ID_MENU_ADD_NOTICE;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
-	redrawMenu(14);
+	redrawMenu(15);
 
 	m_TabsID[0] = ID_MENU_TO_MODE_0;
 	m_TabsID[1] = ID_MENU_TO_MODE_1;
@@ -185,12 +192,15 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	col.pszText = L"";
 	col.cx = 84;
 	ListView_InsertColumn(m_hList, 2, &col);
-	col.pszText = I18N.vJoyButton;
-	col.cx = 120;
+	col.pszText = (tape.CloneViewMode) ? I18N.Notice : I18N.vJoyButton;
+	col.cx = (tape.CloneViewMode) ? 198 : 120;
 	ListView_InsertColumn(m_hList, 3, &col);
-	col.pszText = I18N.TagsButton;
-	col.cx = 78;
-	ListView_InsertColumn(m_hList, 4, &col);
+	if (!tape.CloneViewMode)
+	{
+		col.pszText = I18N.TagsButton;
+		col.cx = 78;
+		ListView_InsertColumn(m_hList, 4, &col);
+	}
 
 	HWND hTip = ListView_GetToolTips(m_hList);
 	SetWindowPos(hTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -802,7 +812,50 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case LVN_COLUMNCLICK:
 			{
 				if (!(GetAsyncKeyState(VK_RBUTTON) & 0x10000000))
+				{
+					if (m_isClonedList)
+					{
+						tape.CloneViewMode = !tape.CloneViewMode;
+						tape.Save(tape.Setting_MappingViewMode);
+						if (tape.CloneViewMode)
+							ListView_DeleteColumn(m_hList, 4);
+						ListView_DeleteColumn(m_hList, 3);
+						LVCOLUMN col;
+						col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+						col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
+						col.pszText = (tape.CloneViewMode) ? I18N.Notice : I18N.vJoyButton;
+						col.cx = (tape.CloneViewMode) ? 198 : 120;
+						ListView_InsertColumn(m_hList, 3, &col);
+						if (!tape.CloneViewMode)
+						{
+							col.pszText = I18N.TagsButton;
+							col.cx = 78;
+							ListView_InsertColumn(m_hList, 4, &col);
+						}
+					}
+					else
+					{
+						tape.MappingViewMode = !tape.MappingViewMode;
+						tape.Save(tape.Setting_MappingViewMode);
+						if (tape.MappingViewMode)
+							ListView_DeleteColumn(m_hList, 4);
+						ListView_DeleteColumn(m_hList, 3);
+						LVCOLUMN col;
+						col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+						col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
+						col.pszText = (tape.MappingViewMode) ? I18N.Notice : I18N.vJoyButton;
+						col.cx = (tape.MappingViewMode) ? 198 : 111;
+						ListView_InsertColumn(m_hList, 3, &col);
+						if (!tape.MappingViewMode)
+						{
+							col.pszText = I18N.TagsButton;
+							col.cx = 87;
+							ListView_InsertColumn(m_hList, 4, &col);
+						}
+					}
+					load();
 					return FALSE;
+				}
 
 				m_active = false;
 				mDDlg.Hide();
@@ -1221,6 +1274,19 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		switch (LOWORD(wParam))
 		{
+		case IDOK:
+		{
+			WCHAR buf[MAX_PATH];
+			GetWindowText(GetDlgItem(m_hDlg2, IDC_MIND_TEXT), buf, MAX_PATH);
+			if (lstrcmpW(NoticeDlg, buf) != 0)
+			{
+				WCHAR* ret = lstrcpynW(NoticeDlg, buf, MAX_PATH);
+				addNoticeDlgBack();
+			}
+			Hide2();
+			break;
+		}
+		case IDC_CANCEL2:Hide2(); break;
 		case ID_MENU_ADD:addMappingDlg(); break;
 		case ID_MENU_EDIT:editMappingDlg(); break;
 		case ID_MENU_DEL:deleteMappingDlg(); break;
@@ -1235,6 +1301,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case ID_MENU_MOVE_TO_6:moveMappingDlg(6); break;
 		case ID_MENU_MOVE_TO_7:moveMappingDlg(7); break;
 		case ID_MENU_MOVE_TO_8:moveMappingDlg(8); break;
+		case ID_MENU_ADD_NOTICE:addNoticeDlg(); break;
 		case IDC_CLEAR:for (int i = 0; i < 32; i++) { tape.Reminder[i] = 0; m_Randcolor[i] = rand() % 4; }tape.Save(tape.Setting_Reminder); Hide(); Show(); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
 		case IDC_POST_ITS_1:tape.Reminder[0] = !tape.Reminder[0]; CheckDlgButton(hWnd, IDC_POST_ITS_1, (WPARAM)tape.Reminder[0]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
 		case IDC_POST_ITS_2:tape.Reminder[1] = !tape.Reminder[1]; CheckDlgButton(hWnd, IDC_POST_ITS_2, (WPARAM)tape.Reminder[1]);tape.Save(tape.Setting_Reminder); RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW); break;
@@ -1312,6 +1379,7 @@ void MappingDlg::save()
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 
 	Mappings newtmp;
 	size_t length = tape.Mappingdata.size();
@@ -1355,6 +1423,7 @@ void MappingDlg::addMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 
 	if (ListView_GetSelectedCount(m_hList) == 1)
 		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
@@ -1372,6 +1441,7 @@ void MappingDlg::addMappingDlg()
 void MappingDlg::addMappingDlgBack()
 {
 	m_active = false;
+	Hide2();
 
 	Mapping* data = new Mapping(mDDlg.mappingData);
 	data->Tab = m_Tab;
@@ -1386,6 +1456,7 @@ void MappingDlg::addSeparator()
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 
 	int idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
 	if (idx == -1)
@@ -1407,6 +1478,7 @@ void MappingDlg::editMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 	
 	int nselected = ListView_GetSelectedCount(m_hList);
 	if (nselected == 1)
@@ -1466,6 +1538,7 @@ void MappingDlg::editMappingDlg()
 void MappingDlg::editMappingDlgBack()
 {
 	m_active = false;
+	Hide2();
 
 	LV_ITEM item = { 0 };
 	item.mask = LVIF_PARAM;
@@ -1487,6 +1560,7 @@ void MappingDlg::editMappingDlgBack()
 void MappingDlg::editMappingDlgBackMulti()
 {
 	m_active = false;
+	Hide2();
 
 	Mapping* data1 = new Mapping(mDDlg.mappingData);
 
@@ -1643,6 +1717,7 @@ void MappingDlg::deleteMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 
 	if (ListView_GetSelectedCount(m_hList) == 0)
 		{ m_active = true; return; }
@@ -1672,6 +1747,7 @@ void MappingDlg::duplicateMappingDlg()
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 
 	int nselected = ListView_GetSelectedCount(m_hList);
 	if (nselected == 1)
@@ -1727,6 +1803,7 @@ void MappingDlg::moveMappingDlg(int tab)
 {
 	m_active = false;
 	mDDlg.Hide();
+	Hide2();
 
 	if (tab == m_Tab)
 		{ m_active = true; return; }
@@ -1748,6 +1825,70 @@ void MappingDlg::moveMappingDlg(int tab)
 		}
 	}
 	save();
+
+	m_active = true;
+}
+
+void MappingDlg::addNoticeDlg()
+{
+	m_active = false;
+	mDDlg.Hide();
+	Hide2();
+
+	int nselected = ListView_GetSelectedCount(m_hList);
+	if (nselected == 1)
+	{
+		lastidx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
+
+		LV_ITEM item = { 0 };
+		item.mask = LVIF_PARAM;
+		item.iItem = lastidx;
+		item.iSubItem = 0;
+		ListView_GetItem(m_hList, &item);
+		if (item.lParam != NULL)
+		{
+			Mapping* data = (Mapping*)item.lParam;
+			if (data->Enable != 2)
+			{
+				mDDlg.mappingData = *data;
+				mDDlg.m_isClonedList = m_isClonedList;
+				Show2();
+				RECT rect;
+				RECT rect2;
+				GetWindowRect(m_hWnd, &rect);
+				GetWindowRect(m_hDlg2, &rect2);
+				MoveWindow2(rect.left + 275, rect.top + 30, rect2.right - rect2.left, rect2.bottom - rect2.top, false);
+				SetWindowText(GetDlgItem(m_hDlg2, IDC_MIND_TEXT), mDDlg.mappingData.Notice);
+			}
+		}
+	}
+
+	m_active = true;
+}
+
+void MappingDlg::addNoticeDlgBack()
+{
+	m_active = false;
+
+	LV_ITEM item = { 0 };
+	item.mask = LVIF_PARAM;
+	item.iItem = lastidx;
+	item.iSubItem = 0;
+	ListView_GetItem(m_hList, &item);
+	if (item.lParam != NULL)
+	{
+		Mapping* data = (Mapping*)item.lParam;
+		*data = mDDlg.mappingData;
+		WCHAR* ret = lstrcpynW(data->Notice, NoticeDlg, MAX_PATH);
+		if (ret)
+		{
+			ListView_DeleteItem(m_hList, lastidx);
+			insertMapping(lastidx, data);
+			save();
+		}
+		else
+			load();
+	}
 
 	m_active = true;
 }
@@ -1780,13 +1921,42 @@ int MappingDlg::insertMapping(int idx, Mapping* m)
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 3;
 	item.lParam = 0;
-	item.pszText = (WCHAR*)m->vJoyString();
-	ListView_SetItem(m_hList, &item);
-	item.mask = LVIF_TEXT;
-	item.iSubItem = 4;
-	item.lParam = 0;
-	item.pszText = (WCHAR*)m->TagsString();
-	ListView_SetItem(m_hList, &item);
+	if (m_isClonedList)
+	{
+		if (tape.CloneViewMode)
+		{
+			item.pszText = (WCHAR*)m->NoticeString();
+			ListView_SetItem(m_hList, &item);
+		}
+		else
+		{
+			item.pszText = (WCHAR*)m->vJoyString();
+			ListView_SetItem(m_hList, &item);
+			item.mask = LVIF_TEXT;
+			item.iSubItem = 4;
+			item.lParam = 0;
+			item.pszText = (WCHAR*)m->TagsString();
+			ListView_SetItem(m_hList, &item);
+		}
+	}
+	else
+	{
+		if (tape.MappingViewMode)
+		{
+			item.pszText = (WCHAR*)m->NoticeString();
+			ListView_SetItem(m_hList, &item);
+		}
+		else
+		{
+			item.pszText = (WCHAR*)m->vJoyString();
+			ListView_SetItem(m_hList, &item);
+			item.mask = LVIF_TEXT;
+			item.iSubItem = 4;
+			item.lParam = 0;
+			item.pszText = (WCHAR*)m->TagsString();
+			ListView_SetItem(m_hList, &item);
+		}
+	}
 	ListView_SetCheckState(m_hList, idx, enable);
 
 	m_active = true;
@@ -1798,6 +1968,7 @@ void MappingDlg::BeginDrag(int idx)
 	if (ListView_GetNextItem(m_hList, -1, LVNI_SELECTED) == -1)
 		return;
 	mDDlg.Hide();
+	Hide2();
 	m_flag_drag = true;
 	SetCapture(m_hDlg);
 }
@@ -1880,12 +2051,28 @@ void MappingDlg::Show()
 	ShowWindow(m_hDlg, SW_SHOW);
 }
 
+void MappingDlg::Show2()
+{
+	ShowWindow(m_hDlg2, SW_SHOW);
+}
+
 void MappingDlg::Hide()
 {
+	ShowWindow(m_hDlg2, SW_HIDE);
 	ShowWindow(m_hDlg, SW_HIDE);
+}
+
+void MappingDlg::Hide2()
+{
+	ShowWindow(m_hDlg2, SW_HIDE);
 }
 
 BOOL MappingDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
 	return ::MoveWindow(m_hDlg, x, y, w, h, r);
+}
+
+BOOL MappingDlg::MoveWindow2(int x, int y, int w, int h, BOOL r)
+{
+	return ::MoveWindow(m_hDlg2, x, y, w, h, r);
 }

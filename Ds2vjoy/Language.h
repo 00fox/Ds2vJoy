@@ -46,6 +46,7 @@ struct LANGSTRS
 	WCHAR* TabLinks;
 	WCHAR* dsButton;
 	WCHAR* vJoyButton;
+	WCHAR* Notice;
 	WCHAR* Setting;
 	WCHAR* RapidFire_State1;
 	WCHAR* RapidFire_State2;
