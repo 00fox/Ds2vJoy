@@ -8,6 +8,8 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 - Control complex mouse operations
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
 
+**Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests**
+
 ## How to use
 1. Install vJoy (https://sourceforge.net/projects/vjoystick/)
    * or not if you plan to use ViGEm
