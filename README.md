@@ -89,6 +89,8 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
   - single click corresponds to single column natural ordering, except there isn't inverted order, you can proceed on several columns in succession
   - clicking twice consecutively on the same, launch a programmed sort operation (see table below)
   - for security reasons, you have to maintain the right button down and then left click on the column header (avoid unwanted sorts, while order is important in your mapping)
+    - Instead, with a simple left click, you change the view (one for mapping different of clone's) and get a 'Notice' column instead of 'vJoy+Tags'
+    - Then with a right click on an item, you can manage to add and view a note, comment, notice, reminder, game rule, combo descritption, etc. diffrent for each (max 260 characters)
   - (vJoy only, RapidFire and Keymap use natural + reverse order without the need of right mouse button down)
 - Edit, delete, copy and move actions can process multiple mappings the same time
   - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
