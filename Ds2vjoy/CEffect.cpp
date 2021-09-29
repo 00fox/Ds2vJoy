@@ -22,19 +22,19 @@ CEffect::CEffect()
 //----------------------------------------------------------------------------------------------
 
 BOOL CEffect::Calc(
-	LONG* LeftLevel
-	, LONG* RightLevel
+	long* LeftLevel
+	, long* RightLevel
 	, double	CurrentTime)
 {
 	if (m_Status == FALSE)
 		return FALSE;
 
 	//	Calculate the playback time, start time, end time, and current time of the effect
-	ULONG	Duration = max(1, m_report.Duration);
+	unsigned long Duration = max(1, m_report.Duration);
 	double	EndTime = DBL_MAX;
 	if (m_PlayCount != -1 && Duration != 0xFFFF)
 	{
-		EndTime = m_StartTime + Duration * m_PlayCount;
+		EndTime = m_StartTime + (double)Duration * m_PlayCount;
 	}
 
 	//	Is the effect playing?
@@ -42,9 +42,9 @@ BOOL CEffect::Calc(
 	{
 
 		//	Calculate the envelope
-		LONG	NormalRate;
-		LONG	AttackLevel;
-		LONG	FadeLevel;
+		long	NormalRate;
+		long	AttackLevel;
+		long	FadeLevel;
 		CalcEnvelope(
 			Duration
 			, static_cast<ULONG>(CurrentTime - m_StartTime) % Duration
@@ -53,9 +53,9 @@ BOOL CEffect::Calc(
 			, &FadeLevel);
 
 		//	Calculate the force
-		LONG	NormalLevel;
-		LONG	WorkLeftLevel;
-		LONG	WorkRightLevel;
+		long	NormalLevel;
+		long	WorkLeftLevel;
+		long	WorkRightLevel;
 		CalcForce(
 			Duration
 			, static_cast<ULONG>(CurrentTime - m_StartTime) % Duration
@@ -86,27 +86,27 @@ BOOL CEffect::Calc(
 //----------------------------------------------------------------------------------------------
 
 VOID CEffect::CalcEnvelope(
-	ULONG	Duration
-	, ULONG	CurrentPos
-	, LONG* NormalRate
-	, LONG* AttackLevel
-	, LONG* FadeLevel)
+	unsigned long Duration
+	, unsigned long	CurrentPos
+	, long* NormalRate
+	, long* AttackLevel
+	, long* FadeLevel)
 {
 	//	Calculate the envelope
 	if (m_bEnbelope)
 	{
 		//	Calculate the rate of attack
-		LONG	AttackRate = 0;
-		ULONG	AttackTime = max(1, m_envelope.AttackTime);
+		long AttackRate = 0;
+		unsigned long AttackTime = max(1, m_envelope.AttackTime);
 		if (CurrentPos < AttackTime)
 		{
 			AttackRate = (AttackTime - CurrentPos) * 100 / AttackTime;
 		}
 
 		//	Calculate the percentage of fades
-		LONG	FadeRate = 0;
-		ULONG	FadeTime = max(1, m_envelope.FadeTime);
-		ULONG	FadePos = Duration - FadeTime;
+		long FadeRate = 0;
+		unsigned long FadeTime = max(1, m_envelope.FadeTime);
+		unsigned long FadePos = Duration - FadeTime;
 		if (FadePos < CurrentPos)
 		{
 			FadeRate = (CurrentPos - FadePos) * 100 / FadeTime;
@@ -132,17 +132,17 @@ VOID CEffect::CalcEnvelope(
 //----------------------------------------------------------------------------------------------
 
 VOID CEffect::CalcForce(
-	ULONG		Duration
-	, ULONG		CurrentPos
-	, LONG		NormalRate
-	, LONG		AttackLevel
-	, LONG		FadeLevel
-	, LONG* NormalLevel)
+	unsigned long Duration
+	, unsigned long	 CurrentPos
+	, long NormalRate
+	, long AttackLevel
+	, long FadeLevel
+	, long* NormalLevel)
 {
-	LONG	Magnitude = 0;
-	LONG	Period;
-	LONG	R;
-	LONG	Rate;
+	long Magnitude = 0;
+	long Period;
+	long R;
+	long Rate;
 
 	FFBEType type = m_Type == FFBEType::ET_NONE ? m_report.EffectType : m_Type;
 

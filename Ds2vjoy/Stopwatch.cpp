@@ -1,7 +1,14 @@
 ﻿#include "stdafx.h"
 #include "Stopwatch.h"
 
-Stopwatch::Stopwatch() :m_logBuf(0), m_logIndex(0), m_logCount(0), m_logLength(0), m_lasttime(0)
+Stopwatch::Stopwatch()
+	:m_logBuf(0)
+	, m_logIndex(0)
+	, m_logCount(0)
+	, m_logLength(0)
+	, m_lasttime(0)
+	, m_f_ms(0)
+	, m_start()
 {
 }
 
@@ -75,5 +82,5 @@ double Stopwatch::GetAvg()
 	int max = m_logCount ? m_logLength : m_logIndex;
 	for (int i = 0; i < max; i++)
 		avg += m_logBuf[i];
-	return max ? avg / max : 0;
+	return max ? avg / (double)max : 0;
 }

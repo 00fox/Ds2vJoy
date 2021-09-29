@@ -18,5 +18,5 @@ private:
 	double m_f_ms;
 	int m_logIndex;
 	int m_logLength;
-	DWORD m_logCount;
+	unsigned long m_logCount;
 };

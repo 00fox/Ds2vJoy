@@ -44,8 +44,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
+		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(191, 200, 196));
@@ -61,8 +60,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
+		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
 		if (CtrlID == IDC_STATIC_EXITING)
 			SetTextColor(hdcStatic, RGB(10, 10, 10));
@@ -76,8 +74,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
+		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -87,8 +84,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
+		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -157,11 +153,11 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				HKEY hkey = NULL;
 				BOOL bExist = FALSE;
-				LONG openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
+				long openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
 				if (openStatus == ERROR_SUCCESS)
 				{
 					DWORD dwType;
-					LONG status = RegQueryValueEx(hkey, L"Ds2vJoy", NULL, &dwType, NULL, NULL);
+					long status = RegQueryValueEx(hkey, L"Ds2vJoy", NULL, &dwType, NULL, NULL);
 					if (status == ERROR_SUCCESS)
 						startupvalue = true;
 					RegCloseKey(hkey);
@@ -170,11 +166,11 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CheckDlgButton(hWnd, IDC_STARTUP, startupvalue);
 
 			CheckDlgButton(hWnd, IDC_TASKTRAY, tape.Tasktray);
-			CheckDlgButton(hWnd, IDC_CLOSEMINIMIZE, tape.CloseMinimize);
+			CheckDlgButton(hWnd, IDC_CLOSE_MINIMIZE, tape.CloseMinimize);
 			CheckDlgButton(hWnd, IDC_DISCONNECT_BT, tape.DisconnectBT);
 			CheckDlgButton(hWnd, IDC_LOWBATT, tape.LowBattAlert);
-			
 			CheckDlgButton(hWnd, IDC_FFB, tape.FFB);
+			CheckDlgButton(hWnd, IDC_MOUSE_CAN_BYPASS, tape.MouseCanBypass);
 			CheckDlgButton(hWnd, IDC_TRIGGERS_NONE, tape.TriggersMode == 0);
 			CheckDlgButton(hWnd, IDC_TRIGGERS_RESIST, tape.TriggersMode == 1);
 			CheckDlgButton(hWnd, IDC_TRIGGERS_SHOOT, tape.TriggersMode == 2);
@@ -209,7 +205,8 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-	case WM_INITDIALOG: {
+	case WM_INITDIALOG:
+	{
 //		SetWindowTheme(GetDlgItem(hWnd, IDC_DS5), NULL, L"Remove");
 		HWND h_cb = GetDlgItem(hWnd, IDC_TOUCHPAD);
 		SendMessage(h_cb, CB_ADDSTRING, 0, (LPARAM)L"");
@@ -241,7 +238,8 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		return TRUE;
 	}
-	case WM_COMMAND: {
+	case WM_COMMAND:
+	{
 		switch (LOWORD(wParam))
 		{
 		case IDC_STARTUP:
@@ -253,11 +251,11 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				{
 					std::wstring progPath = ExePathW() + L"\\Ds2vJoy.exe";
 					HKEY hkey = NULL;
-//					LONG createStatus = RegCreateKey(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\Example"), &hkey);
-					LONG openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
+//					long createStatus = RegCreateKey(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\Example"), &hkey);
+					long openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
 					if (openStatus == ERROR_SUCCESS)
 					{
-						LONG status = RegSetValueEx(hkey, L"Ds2vJoy", 0, REG_SZ, (BYTE*)progPath.c_str(), (DWORD)((progPath.size() + 1) * sizeof(wchar_t)));
+						long status = RegSetValueEx(hkey, L"Ds2vJoy", 0, REG_SZ, (byte*)progPath.c_str(), (unsigned long)((progPath.size() + 1) * sizeof(wchar_t)));
 						if (status == ERROR_SUCCESS) {
 							echo(I18N.Registry_Added);
 						}
@@ -267,10 +265,10 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					HKEY hkey = NULL;
-					LONG openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
+					long openStatus = RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, &hkey);
 					if (openStatus == ERROR_SUCCESS)
 					{
-						LONG status = RegDeleteValue(hkey, L"Ds2vJoy");
+						long status = RegDeleteValue(hkey, L"Ds2vJoy");
 						if (status == ERROR_SUCCESS) {
 //							RegDeleteKey(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\Example"));
 							echo(I18N.Registry_Removed);
@@ -312,7 +310,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			tape.Save(tape.Setting_Tasktray);
 			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
 			break;
-		case IDC_CLOSEMINIMIZE:
+		case IDC_CLOSE_MINIMIZE:
 			tape.CloseMinimize = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			tape.Save(tape.Setting_CloseMinimize);
 			PostMessage(m_hWnd, WM_DEVICE_VJOY_START, 0, 1);
@@ -357,7 +355,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_THRESHOLD:
 			WCHAR bufThreshold[MAX_PATH];
 			GetWindowText((HWND)lParam, bufThreshold, MAX_PATH);
-			tape.Threshold = max(0, min(100, _wtoi(bufThreshold)));
+			tape.Threshold = max(0, min(128, _wtoi(bufThreshold)));
 			tape.Save(tape.Setting_Threshold);
 			break;
 		case IDC_SIMULTANEOUS:
@@ -377,6 +375,10 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetWindowText((HWND)lParam, bufVeryLongPress, MAX_PATH);
 			tape.VeryLongPress = max(1, min(9999, _wtoi(bufVeryLongPress)));
 			tape.Save(tape.Setting_VeryLongPress);
+			break;
+		case IDC_MOUSE_CAN_BYPASS:
+			tape.MouseCanBypass = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			tape.Save(tape.Setting_MouseCanBypass);
 			break;
 		case IDC_FFB:
 			tape.FFB = IsDlgButtonChecked(hWnd, LOWORD(wParam));
@@ -486,7 +488,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		default:
 			return FALSE;
 		}
-
+		break;
 	}
 	default:
 		return FALSE;

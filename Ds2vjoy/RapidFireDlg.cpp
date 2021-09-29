@@ -4,7 +4,24 @@
 #include "Ds2vJoy.h"
 
 RapidFireDlg::RapidFireDlg()
+	:m_hWnd()
+	, m_hDlg()
+	, m_hList()
+	, m_hMenu()
+	, m_TabsID()
+	, m_active(false)
+	, m_flag_drag(false)
+	, m_insrtpos(0)
+	, lastidx(0)
+	, lastidxs()
+	, lasttab(15)
+	, tabSortingMethod(false)
 {
+	m_TabsID[0] = ID_MENU_ADD;
+	m_TabsID[1] = ID_MENU_EDIT;
+	m_TabsID[2] = ID_MENU_DEL;
+	m_TabsID[3] = ID_MENU_COPY;
+	m_TabsID[4] = ID_MENU_SEPARATOR;
 }
 
 RapidFireDlg::~RapidFireDlg()
@@ -17,11 +34,6 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_RAPIDFIRE_LIST);
 
-	m_TabsID[0] = ID_MENU_ADD;
-	m_TabsID[1] = ID_MENU_EDIT;
-	m_TabsID[2] = ID_MENU_DEL;
-	m_TabsID[3] = ID_MENU_COPY;
-	m_TabsID[4] = ID_MENU_SEPARATOR;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_0, FALSE);
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_1, FALSE);
@@ -106,10 +118,10 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
-				int nAcceleratorDelimiter;
-				for (nAcceleratorDelimiter = 0;
-					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t' || wszBuffer[nAcceleratorDelimiter] == L'\b')
+				int nCharacters;
+				for (nCharacters = 0;
+					nCharacters < nCharCount; nCharacters++)
+					if (wszBuffer[nCharacters] == L'\t' || wszBuffer[nCharacters] == L'\b')
 						break;
 
 				RECT rTextMetric = { 0, 0, 0, 0 };
@@ -126,16 +138,16 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					if (font != NULL)
 						hOldFont = (HFONT)::SelectObject(hDC, font);
 
-					::DrawTextW(hDC, wszBuffer, nAcceleratorDelimiter, &rTextMetric, DT_CALCRECT);
+					::DrawTextW(hDC, wszBuffer, nCharacters, &rTextMetric, DT_CALCRECT);
 					long _CaptionWidth = rTextMetric.right - rTextMetric.left;
 
 					long _AcceleratorWidth = 0;
-					if (nAcceleratorDelimiter < nCharCount - 1)
+					if (nCharacters < nCharCount - 1)
 					{
-						::DrawTextW(hDC, &(wszBuffer[nAcceleratorDelimiter + 1]), nCharCount - nAcceleratorDelimiter - 1, &rTextMetric, DT_CALCRECT);
+						::DrawTextW(hDC, &(wszBuffer[nCharacters + 1]), nCharCount - nCharacters - 1, &rTextMetric, DT_CALCRECT);
 						_AcceleratorWidth = rTextMetric.right - rTextMetric.left;
 					}
-					if (hOldFont == NULL)
+					if (hOldFont == NULL && hOldFont != 0)
 						::SelectObject(hDC, hOldFont);
 
 					::ReleaseDC(m_hDlg, hDC);
@@ -174,11 +186,11 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				crCurrText = ::GetSysColor((bSelected) ? COLOR_HIGHLIGHTTEXT : RGB(176, 144, 180));
 				crPrevText = ::SetTextColor(DrawMenuStructure->hDC, crCurrText);
 
-				int nAcceleratorDelimiter;
-				for (nAcceleratorDelimiter = 0;
-					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t' ||
-						wszBuffer[nAcceleratorDelimiter] == L'\b')
+				int nCharacters;
+				for (nCharacters = 0;
+					nCharacters < nCharCount; nCharacters++)
+					if (wszBuffer[nCharacters] == L'\t' ||
+						wszBuffer[nCharacters] == L'\b')
 						break;
 
 				NONCLIENTMETRICSW nm;
@@ -192,18 +204,18 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				int nImageOffsetX = nEdgeWidth + nEdgeWidth + 12;
 				DrawMenuStructure->rcItem.left += nImageOffsetX;
 				DrawMenuStructure->rcItem.top += 0;
-				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nAcceleratorDelimiter, &(DrawMenuStructure->rcItem), 0);
+				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &(DrawMenuStructure->rcItem), 0);
 
-				if (nAcceleratorDelimiter < nCharCount - 1)
+				if (nCharacters < nCharCount - 1)
 				{
 					DrawMenuStructure->rcItem.left += 21;
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t')
-						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
-							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+					if (wszBuffer[nCharacters] == L'\t')
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nCharacters + 1]),
+							nCharCount - nCharacters - 1, &(DrawMenuStructure->rcItem),
 							DT_LEFT | DT_SINGLELINE);
 					else
-						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
-							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nCharacters + 1]),
+							nCharCount - nCharacters - 1, &(DrawMenuStructure->rcItem),
 							DT_RIGHT | DT_SINGLELINE);
 					DrawMenuStructure->rcItem.left -= +21;
 				}
@@ -213,7 +225,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				::SetBkMode(DrawMenuStructure->hDC, nOldBkMode);
 				::SetTextColor(DrawMenuStructure->hDC, crPrevText);
 
-				if (hOldFont == NULL)
+				if (hOldFont == NULL && hOldFont != 0)
 					::SelectObject(DrawMenuStructure->hDC, hOldFont);
 			}
 		}
@@ -244,6 +256,99 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_RAPIDFIRE_LIST:
 			switch (((LPNMLISTVIEW)lParam)->hdr.code)
 			{
+			case LVN_COLUMNCLICK:
+			{
+				m_active = false;
+				rDDlg.Hide();
+
+				LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
+				unsigned char column = pnmv->iSubItem;
+				if (lasttab == column)
+					tabSortingMethod = !tabSortingMethod;
+				else
+					tabSortingMethod = false;
+				lasttab = column;
+
+				RapidFires newmap;
+				RapidFires newmaptmp;
+				size_t length = tape.RapidFiredata.size();
+				for (int i = 0; i < length; i++)
+					newmaptmp.push_back((RapidFire)tape.RapidFiredata[i]);
+
+				length = newmaptmp.size();
+				for (size_t i = 0; i < length; i++)
+				{
+					if (newmaptmp[i].Enable == 2)
+					{
+						newmap.push_back((RapidFire)newmaptmp[i]);
+						newmaptmp.erase(newmaptmp.begin() + i);
+					}
+				}
+
+				while (newmaptmp.size())
+				{
+					int pos = -1;
+
+					long value = 0;
+
+					length = newmaptmp.size();
+					for (size_t i = 0; i < length; i++)
+					{
+						long sortresult = 0;
+
+						std::vector<byte> vjdata;
+						if (newmaptmp[i].ButtonID)
+							vjdata.push_back(newmaptmp[i].ButtonID);
+						if (newmaptmp[i].ButtonID2)
+							vjdata.push_back(newmaptmp[i].ButtonID2);
+						std::sort(vjdata.begin(), vjdata.end());
+						size_t length = 2 - vjdata.size();
+						for (int j = 0; j < length; j++)
+							vjdata.push_back(0);
+
+						switch (column)
+						{
+						case 0:
+						{
+							sortresult |= ((long)vjdata[1] << 0);
+							sortresult |= ((long)vjdata[0] << 8);
+							break;
+						}
+						case 1:
+						{
+							sortresult |= ((long)newmaptmp[i].Firsttime << 0);
+							break;
+						}
+						case 2:
+						{
+							sortresult |= ((long)newmaptmp[i].Releasetime << 0);
+							break;
+						}
+						case 3:
+						{
+							sortresult |= ((long)newmaptmp[i].Presstime << 0);
+							break;
+						}
+						}
+
+						if (pos == -1 || (pos >= 0 && ((tabSortingMethod) ? sortresult > value : sortresult < value)))
+						{
+							pos = (int)i;
+								value = sortresult;
+						}
+					}
+					newmap.push_back((RapidFire)newmaptmp[pos]);
+					newmaptmp.erase(newmaptmp.begin() + pos);
+				}
+
+				tape.RapidFiredata.swap(newmap);
+				tape.Save(tape.Setting_RapidFiredata);
+
+				PostMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, -1);
+
+				m_active = true;
+				break;
+			}
 			case NM_DBLCLK:
 				editRapidFireDlg();
 				break;
@@ -260,23 +365,16 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				if (m_active && !m_flag_drag)
 				{
-					DWORD newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
+					unsigned long newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
 					if (newstate != (((LPNMLISTVIEW)lParam)->uOldState & LVIS_STATEIMAGEMASK))
 					{
 						RapidFire* rf = (RapidFire*)((LPNMLISTVIEW)lParam)->lParam;
 						if (rf != 0)
-						{
-							int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-							if (idx == -1)
+							if (rf->Enable != 2)
 							{
-								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-								if (rf->Enable != 2)
-								{
-									rf->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-									save();
-								}
+								rf->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+								save();
 							}
-						}
 					}
 				}
 				break;
@@ -284,6 +382,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			default:
 				return FALSE;
 			}
+			break;
 		default:
 			return FALSE;
 		}
@@ -348,27 +447,27 @@ void RapidFireDlg::save()
 	rDDlg.Hide();
 
 	RapidFires newmap;
-	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
+	int lastitemindex = ListView_GetItemCount(m_hList);
+	for (int i = 0; i < lastitemindex; i++)
 	{
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
+		item.iItem = i;
 		if (!ListView_GetItem(m_hList, &item))
-			break;
-		if (item.lParam != NULL)
 		{
-			newmap.push_back(*(RapidFire*)item.lParam);
-			delete (RapidFire*)item.lParam;
+			SendMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, -1);
+			RECT rect;
+			GetWindowRect(m_hWnd, &rect);
+			MessageBoxPos(m_hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, rect.left + 275, rect.top + 30);
+			return;
 		}
-		if (!ListView_DeleteItem(m_hList, 0))
-			break;
+		if (item.lParam != NULL)
+			newmap.push_back(*(RapidFire*)item.lParam);
 	}
-	ListView_DeleteAllItems(m_hList);
 
 	tape.RapidFiredata.swap(newmap);
 	tape.Save(tape.Setting_RapidFiredata);
-	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-	load();
-	RedrawWindow(m_hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_UPDATENOW);
+	SendMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, -1);
 
 	m_active = true;
 }

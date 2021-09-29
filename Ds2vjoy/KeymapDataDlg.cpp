@@ -3,7 +3,29 @@
 #include "Ds2vJoy.h"
 
 KeymapDataDlg::KeymapDataDlg()
+	:m_hWnd(0)
+	, m_parent(0)
+	, m_hDlg(0)
+	, m_hList(0)
+	, m_hMenu(0)
+	, m_hEdit(0)
+	, m_defaultInputProc()
+	, m_defaultInputProc2()
+	, m_defaultListProc()
+	, m_editIdx(0)
+	, m_editCol(0)
+	, m_filter_iwv(false)
+	, m_flag_cancel(false)
+	, firsttime(false)
+	, canprint(false)
+	, dlgPage(0)
+	, keymapData()
+	, fw()
+	, alreadydone(false)
+	, Modified()
+	, m_mode(0)
 {
+	for (int i = 0; i < Mofified_count; i++) Modified[i] = 0;
 }
 
 KeymapDataDlg::~KeymapDataDlg()
@@ -69,8 +91,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
+		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(191, 200, 196));
@@ -81,8 +102,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
+		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 		SetTextColor(hdcStatic, RGB(100, 93, 79));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(36, 163, 163));
@@ -92,8 +112,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
+		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -103,8 +122,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
+		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -309,7 +327,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key1)); }
 			if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
 			if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
-			PostMessage(m_hWnd, WM_ADDKEYMAP, m_mode, 0);
+			PostMessage(m_hWnd, WM_ADDKEYMAP, m_mode, 1);
 			m_mode = 0;
 			break;
 		}
@@ -344,7 +362,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_KEYMAP_BTN:
 			if (HIWORD(wParam) == CBN_SELCHANGE)
 			{
-				keymapData.ButtonID = (vJoyButtonID)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				keymapData.ButtonID = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_ButtonID] = true;
 			}
 			break;
@@ -472,7 +490,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						if (count == 0)
 						{
 							WCHAR buf[100];
-							wsprintf(buf, L"HWND:%08x", hwnd);
+							wsprintf(buf, L"HWND:%08x", (int)(size_t)hwnd);
 							SendMessage((HWND)lParam, CB_ADDSTRING, 0, (LPARAM)buf);
 						}
 					}
@@ -571,6 +589,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			default:
 				return FALSE;
 			}
+			break;
 		default:
 			return FALSE;
 		}

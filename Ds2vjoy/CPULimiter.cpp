@@ -77,7 +77,7 @@ BOOL CPULimiter::CalculateAndSleep()
 			return FALSE;
 		
 		//Time to Sleep :)
-		Sleep((DWORD)timetosleepin100ns.QuadPart/10000);
+		Sleep((unsigned long)timetosleepin100ns.QuadPart/10000);
 	}  
 
 	//Copy usage time values for next time calculations.

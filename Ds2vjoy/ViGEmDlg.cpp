@@ -5,6 +5,8 @@
 #include <future>		// std::async, std::future
 
 ViGEmDlg::ViGEmDlg()
+	:m_hWnd()
+	, m_hDlg()
 {
 }
 
@@ -35,6 +37,11 @@ void ViGEmDlg::Init(HINSTANCE hInst, HWND hWnd)
 	Hide();
 }
 
+void ViGEmDlg::Init2()
+{
+	PostMessage(m_hDlg, WM_CHANGE_COMBO_BOX, 0, 0); return;
+}
+
 INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -45,8 +52,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
+		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(191, 200, 196));
@@ -57,58 +63,32 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor = CreateSolidBrush(RGB(128, 128, 128));
-		static HBRUSH hBrushColor1;
-		static HBRUSH hBrushColor2;
 		SetBkMode(hdcStatic, TRANSPARENT);
 
 		switch (vg.GetViGEmState())
 		{
 		case -1:
 		case 0:
-			if (CtrlID == IDC_VIGEM_INSTALL)
-			{
-				hBrushColor1 = CreateSolidBrush(RGB(160, 160, 160));
-				return (LRESULT)hBrushColor1;
-			}
-			if (CtrlID == IDC_VIGEM_STATUS)
-			{
-				hBrushColor2 = CreateSolidBrush(RGB(160, 160, 160));
-				return (LRESULT)hBrushColor2;
-			}
+			if (CtrlID == IDC_VIGEM_INSTALL) hBrushColor = CreateSolidBrush(RGB(160, 160, 160));
+			if (CtrlID == IDC_VIGEM_STATUS) hBrushColor = CreateSolidBrush(RGB(160, 160, 160));
 			break;
 		case 1:
-			if (CtrlID == IDC_VIGEM_INSTALL)
-			{
-				hBrushColor1 = CreateSolidBrush(RGB(240, 240, 0));
-				return (LRESULT)hBrushColor1;
-			}
-			if (CtrlID == IDC_VIGEM_STATUS)
-			{
-				hBrushColor2 = CreateSolidBrush(RGB(240, 240, 0));
-				return (LRESULT)hBrushColor2;
-			}
+			if (CtrlID == IDC_VIGEM_INSTALL) hBrushColor = CreateSolidBrush(RGB(240, 240, 0));
+			if (CtrlID == IDC_VIGEM_STATUS) hBrushColor = CreateSolidBrush(RGB(240, 240, 0));
 			break;
 		case 2:
-			if (CtrlID == IDC_VIGEM_INSTALL)
-			{
-				hBrushColor1 = CreateSolidBrush(RGB(240, 240, 0));
-				return (LRESULT)hBrushColor1;
-			}
-			if (CtrlID == IDC_VIGEM_STATUS)
-			{
-				hBrushColor2 = CreateSolidBrush(RGB(96, 192, 96));
-				return (LRESULT)hBrushColor2;
-			}
+			if (CtrlID == IDC_VIGEM_INSTALL) hBrushColor = CreateSolidBrush(RGB(240, 240, 0));
+			if (CtrlID == IDC_VIGEM_STATUS) hBrushColor = CreateSolidBrush(RGB(96, 192, 96));
 			break;
 		}
+		return (LRESULT)hBrushColor;
 		return TRUE;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
+		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 		SetTextColor(hdcStatic, RGB(100, 93, 79));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(36, 163, 163));
@@ -118,8 +98,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
+		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -129,8 +108,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
+		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -172,19 +150,14 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			brush = CreateSolidBrush(RGB(195, 195, 200));
 			HFONT hFont = CreateFont(13, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
 
-			UINT TextAlign = GetTextAlign(hDC);
-			GetClientRect(GetDlgItem(hWnd, IDC_VIGEM_INSTALL), &rect);
-
-			HWND statebutton = GetDlgItem(hWnd, IDC_VIGEM_INSTALL);
-			hDC = BeginPaint(statebutton, &ps);
+			hDC = BeginPaint(GetDlgItem(hWnd, IDC_VIGEM_INSTALL), &ps);
 			GetClientRect(GetDlgItem(hWnd, IDC_VIGEM_INSTALL), &rect);
 			HFONT oldHFont = (HFONT)SelectObject(hDC, hFont);
 			DrawText(hDC, b1Text, 9, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			SelectObject(hDC, oldHFont);
 			FrameRect(hDC, &rect, brush);
 
-			statebutton = GetDlgItem(hWnd, IDC_VIGEM_STATUS);
-			hDC = BeginPaint(statebutton, &ps);
+			hDC = BeginPaint(GetDlgItem(hWnd, IDC_VIGEM_STATUS), &ps);
 			GetClientRect(GetDlgItem(hWnd, IDC_VIGEM_STATUS), &rect);
 			oldHFont = (HFONT)SelectObject(hDC, hFont);
 			DrawText(hDC, b2Text, 9, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
@@ -353,8 +326,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendDlgItemMessage(hWnd, IDC_VIGEM_DS_24, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
 		}
 		break;
-	case WM_INITDIALOG:
-	{
+	case WM_CHANGE_COMBO_BOX:
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_1, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_2, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_3, CB_RESETCONTENT, 0, 0);
@@ -379,6 +351,8 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_22, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_23, CB_RESETCONTENT, 0, 0);
 		SendDlgItemMessage(hWnd, IDC_VIGEM_DS_24, CB_RESETCONTENT, 0, 0);
+	case WM_INITDIALOG:
+	{
 		for (int i = 0; i < dsButtonID::button_Count; i++)
 		{
 			WCHAR* str = dsButton::String((dsButtonID)i);
@@ -503,7 +477,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				CheckDlgButton(hWnd, IDC_VIGEM_X360, BST_CHECKED);
 				tape.DesiredVirtualPad = 1;
 				tape.Save(tape.Setting_DesiredVirtualPad);
-				SendMessage(m_hDlg, WM_INITDIALOG, 0, 0);
+				SendMessage(m_hDlg, WM_CHANGE_COMBO_BOX, 0, 0);
 				SendMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				Hide();
 				Show();
@@ -519,7 +493,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				CheckDlgButton(hWnd, IDC_VIGEM_DS4, BST_CHECKED);
 				tape.DesiredVirtualPad = 2;
 				tape.Save(tape.Setting_DesiredVirtualPad);
-				SendMessage(m_hDlg, WM_INITDIALOG, 0, 0);
+				SendMessage(m_hDlg, WM_CHANGE_COMBO_BOX, 0, 0);
 				SendMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				Hide();
 				Show();
@@ -1132,13 +1106,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[0]) { tape.vjtarget_X360[0] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[0] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[0]) { tape.vjtarget_X360[0]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[0]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[0]) { tape.vjtarget_DS4[0] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[0] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[0]) { tape.vjtarget_DS4[0]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[0]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1150,13 +1124,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[1]) { tape.vjtarget_X360[1] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[1] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[1]) { tape.vjtarget_X360[1]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[1]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[1]) { tape.vjtarget_DS4[1] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[1] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[1]) { tape.vjtarget_DS4[1]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[1]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1168,13 +1142,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[2]) { tape.vjtarget_X360[2] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[2] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[2]) { tape.vjtarget_X360[2]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[2]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[2]) { tape.vjtarget_DS4[2] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[2] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[2]) { tape.vjtarget_DS4[2]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[2]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1186,13 +1160,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[3]) { tape.vjtarget_X360[3] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[3] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[3]) { tape.vjtarget_X360[3]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[3]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[3]) { tape.vjtarget_DS4[3] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[3] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[3]) { tape.vjtarget_DS4[3]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[3]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1204,13 +1178,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[4]) { tape.vjtarget_X360[4] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[4] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[4]) { tape.vjtarget_X360[4]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[4]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[4]) { tape.vjtarget_DS4[4] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[4] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[4]) { tape.vjtarget_DS4[4]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[4]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1222,13 +1196,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[5]) { tape.vjtarget_X360[5] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[5] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[5]) { tape.vjtarget_X360[5]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[5]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[5]) { tape.vjtarget_DS4[5] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[5] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[5]) { tape.vjtarget_DS4[5]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[5]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1240,13 +1214,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[6]) { tape.vjtarget_X360[6] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[6] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[6]) { tape.vjtarget_X360[6]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[6]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[6]) { tape.vjtarget_DS4[6] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[6] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[6]) { tape.vjtarget_DS4[6]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[6]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1258,13 +1232,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[7]) { tape.vjtarget_X360[7] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[7] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[7]) { tape.vjtarget_X360[7]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[7]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[7]) { tape.vjtarget_DS4[7] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[7] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[7]) { tape.vjtarget_DS4[7]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[7]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1276,13 +1250,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[8]) { tape.vjtarget_X360[8] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[8] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[8]) { tape.vjtarget_X360[8]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[8]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[8]) { tape.vjtarget_DS4[8] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[8] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[8]) { tape.vjtarget_DS4[8]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[8]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1294,13 +1268,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[9]) { tape.vjtarget_X360[9] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[9] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[9]) { tape.vjtarget_X360[9]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[9]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[9]) { tape.vjtarget_DS4[9] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[9] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[9]) { tape.vjtarget_DS4[9]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[9]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1312,13 +1286,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[10]) { tape.vjtarget_X360[10] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[10] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[10]) { tape.vjtarget_X360[10]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[10]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[10]) { tape.vjtarget_DS4[10] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[10] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[10]) { tape.vjtarget_DS4[10]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[10]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1330,13 +1304,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[11]) { tape.vjtarget_X360[11] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[11] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[11]) { tape.vjtarget_X360[11]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[11]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[11]) { tape.vjtarget_DS4[11] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[11] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[11]) { tape.vjtarget_DS4[11]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[11]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1348,13 +1322,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[12]) { tape.vjtarget_X360[12] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[12] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[12]) { tape.vjtarget_X360[12]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[12]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[12]) { tape.vjtarget_DS4[12] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[12] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[12]) { tape.vjtarget_DS4[12]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[12]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1366,13 +1340,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[13]) { tape.vjtarget_X360[13] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[13] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[13]) { tape.vjtarget_X360[13]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[13]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[13]) { tape.vjtarget_DS4[13] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[13] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[13]) { tape.vjtarget_DS4[13]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[13]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1384,13 +1358,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[14]) { tape.vjtarget_X360[14] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[14] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[14]) { tape.vjtarget_X360[14]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[14]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[14]) { tape.vjtarget_DS4[14] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[14] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[14]) { tape.vjtarget_DS4[14]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[14]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1402,13 +1376,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[15]) { tape.vjtarget_X360[15] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[15] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[15]) { tape.vjtarget_X360[15]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[15]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[15]) { tape.vjtarget_DS4[15] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[15] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[15]) { tape.vjtarget_DS4[15]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[15]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1420,13 +1394,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[16]) { tape.vjtarget_X360[16] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[16] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[16]) { tape.vjtarget_X360[16]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[16]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[16]) { tape.vjtarget_DS4[16] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[16] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[16]) { tape.vjtarget_DS4[16]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[16]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1438,13 +1412,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[17]) { tape.vjtarget_X360[17] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[17] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[17]) { tape.vjtarget_X360[17]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[17]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[17]) { tape.vjtarget_DS4[17] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[17] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[17]) { tape.vjtarget_DS4[17]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[17]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1456,13 +1430,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[18]) { tape.vjtarget_X360[18] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[18] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[18]) { tape.vjtarget_X360[18]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[18]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[18]) { tape.vjtarget_DS4[18] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[18] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[18]) { tape.vjtarget_DS4[18]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[18]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1474,13 +1448,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[19]) { tape.vjtarget_X360[19] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[19] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[19]) { tape.vjtarget_X360[19]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[19]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[19]) { tape.vjtarget_DS4[19] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[19] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[19]) { tape.vjtarget_DS4[19]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[19]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1492,13 +1466,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[20]) { tape.vjtarget_X360[20] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[20] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[20]) { tape.vjtarget_X360[20]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[20]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[20]) { tape.vjtarget_DS4[20] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[20] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[20]) { tape.vjtarget_DS4[20]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[20]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1510,13 +1484,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[21]) { tape.vjtarget_X360[21] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[21] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[21]) { tape.vjtarget_X360[21]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[21]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[21]) { tape.vjtarget_DS4[21] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[21] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[21]) { tape.vjtarget_DS4[21]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[21]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1528,13 +1502,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[22]) { tape.vjtarget_X360[22] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[22] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[22]) { tape.vjtarget_X360[22]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[22]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[22]) { tape.vjtarget_DS4[22] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[22] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[22]) { tape.vjtarget_DS4[22]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[22]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
@@ -1546,13 +1520,13 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELCHANGE:
 				if (tape.DesiredVirtualPad == 1)
 				{
-					if (tape.target_X360[23]) { tape.vjtarget_X360[23] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
-					else { tape.dstarget_X360[23] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
+					if (tape.target_X360[23]) { tape.vjtarget_X360[23]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_X360); }
+					else { tape.dstarget_X360[23]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_X360); }
 				}
 				else
 				{
-					if (tape.target_DS4[23]) { tape.vjtarget_DS4[23] = (vJoyButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
-					else { tape.dstarget_DS4[23] = (dsButtonID)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
+					if (tape.target_DS4[23]) { tape.vjtarget_DS4[23]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_vjtarget_DS4); }
+					else { tape.dstarget_DS4[23]= (byte)SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_GETCURSEL, 0, 0); tape.Save(tape.Setting_dstarget_DS4); }
 				}
 				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;

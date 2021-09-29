@@ -3,9 +3,22 @@
 #include "Ds2vJoy.h"
 
 dsButton::dsButton()
-	: m_data(0),
-	m_mask(0),
-	m_type(typeNone)
+	:m_data(0)
+	, m_data2(0)
+	, m_mask(0)
+	, m_mask2(0)
+	, m_type(Type_None)
+	, m_constant(0)
+	, m_box(0)
+	, m_thrz(0)
+	, m_typechoice(0)
+	, dpad(0)
+	, OrangeLedActive(false)
+	, L2R2_LastTimePushed(clock())
+	, L2R2_Delay_On(false)
+	, L2R2_Eligible(true)
+	, L2R2_Pushed(false)
+	, m_axis(-1)
 {
 }
 
@@ -13,111 +26,132 @@ dsButton::~dsButton()
 {
 }
 
-void dsButton::setConstant(BYTE data)
+void dsButton::setConstant(byte data)
 {
-	m_type = typeConstant;
+	m_type = Type_Constant;
 	m_constant = data;
 }
 
-void dsButton::setButton(BYTE* data, UINT32 bitmask)
+void dsButton::setButton(byte* data, unsigned int bitmask)
 {
-	m_type = typeButton;
+	m_type = Type_Button;
 	m_data = data;
 	m_mask = bitmask;
 }
 
-void dsButton::setTrigger(BYTE* data, INT threshold)
+void dsButton::setTrigger(byte* data, int threshold)
 {
-	m_type = typeTrigger;
+	m_type = Type_Trigger;
 	m_data = data;
 	m_thrz = threshold;
 }
 
-void dsButton::setSimultaneous(BYTE* data, UINT32 bitmask, BYTE* data2, UINT32 bitmask2)
+void dsButton::setSimultaneous(byte* data, unsigned int bitmask, byte* data2, unsigned int bitmask2)
 {
-	m_type = typeSimultaneous;
+	m_type = Type_Simultaneous;
 	m_data = data;
 	m_data2 = data2;
 	m_mask = bitmask;
 	m_mask2 = bitmask2;
 }
 
-void dsButton::setTouch(BYTE* data, UINT32 bitmask, int box)
+void dsButton::setTouch(byte* data, unsigned int bitmask, int box)
 {
-	m_type = typeTouch;
+	m_type = Type_Touch;
 	m_data = data;
 	m_box = box;
 	m_mask = bitmask;
 }
 
-void dsButton::setDPad(BYTE* data, ButtonType type)
+void dsButton::setDPad(byte* data, ButtonType type)
 {
 	m_type = type;
 	m_data = data;
 }
 
-void dsButton::setAxis(BYTE* data, BYTE* data2)
+void dsButton::setAxis(byte* data, byte* data2, unsigned char axis)
 {
-	m_type = typeAxis;
+	m_type = Type_Axis;
+	m_data = data;
+	m_data2 = data2;
+	m_axis = axis;
+}
+
+void dsButton::setAxisSniper(byte* data, byte* data2)
+{
+	m_type = Type_AxisSniper;
 	m_data = data;
 	m_data2 = data2;
 }
 
-void dsButton::setAxisInv(BYTE* data, BYTE* data2)
+void dsButton::setAxisInv(byte* data, byte* data2, unsigned char axis)
 {
-	m_type = typeAxisInv;
+	m_type = Type_AxisInv;
+	m_data = data;
+	m_data2 = data2;
+	m_axis = axis;
+}
+
+void dsButton::setAxisTriggerLU(byte* data)
+{
+	m_type = Type_AxisTriggerLU;
+	m_data = data;
+}
+
+void dsButton::setAxisTriggerRD(byte* data)
+{
+	m_type = Type_AxisTriggerRD;
+	m_data = data;
+}
+
+void dsButton::setAxisLU(byte* data)
+{
+	m_type = Type_AxisLU;
+	m_data = data;
+}
+
+void dsButton::setAxisRD(byte* data)
+{
+	m_type = Type_AxisRD;
+	m_data = data;
+}
+
+void dsButton::setAxisDUL(byte* data, byte* data2)
+{
+	m_type = Type_AxisDUL;
 	m_data = data;
 	m_data2 = data2;
 }
 
-void dsButton::setAxisLU(BYTE* data)
+void dsButton::setAxisDUR(byte* data, byte* data2)
 {
-	m_type = typeAxisLU;
-	m_data = data;
-}
-
-void dsButton::setAxisRD(BYTE* data)
-{
-	m_type = typeAxisRD;
-	m_data = data;
-}
-
-void dsButton::setAxisDUL(BYTE* data, BYTE* data2)
-{
-	m_type = typeAxisDUL;
+	m_type = Type_AxisDUR;
 	m_data = data;
 	m_data2 = data2;
 }
 
-void dsButton::setAxisDUR(BYTE* data, BYTE* data2)
+void dsButton::setAxisDDR(byte* data, byte* data2)
 {
-	m_type = typeAxisDUR;
+	m_type = Type_AxisDDR;
 	m_data = data;
 	m_data2 = data2;
 }
 
-void dsButton::setAxisDDR(BYTE* data, BYTE* data2)
+void dsButton::setAxisDDL(byte* data, byte* data2)
 {
-	m_type = typeAxisDDR;
+	m_type = Type_AxisDDL;
 	m_data = data;
 	m_data2 = data2;
 }
 
-void dsButton::setAxisDDL(BYTE* data, BYTE* data2)
+void dsButton::setData(byte* data, unsigned int bitmask)
 {
-	m_type = typeAxisDDL;
-	m_data = data;
-	m_data2 = data2;
-}
-
-void dsButton::setData(BYTE* data, UINT32 bitmask)
-{
-	m_type = typeData;
+	m_type = Type_Data;
 	m_data = data;
 	m_mask = bitmask;
 }
 
-void dsButton::SetTouch(int box, BYTE value)
+void dsButton::SetTouch(int box, byte value)
 {
 	TouchAble[box] = value;
 }
@@ -126,13 +160,13 @@ BOOL dsButton::isPushed()
 {
 	switch (m_type)
 	{
-	case typeConstant:
+	case Type_Constant:
 		return TRUE;
-	case typeButton:
+	case Type_Button:
 		return (*m_data & m_mask);
-	case typeTrigger:
+	case Type_Trigger:
 		return (*m_data > m_thrz);
-	case typeSimultaneous:
+	case Type_Simultaneous:
 		if (!(*m_data & m_mask) && !(*m_data2 & m_mask2))
 		{
 			L2R2_Delay_On = 0;
@@ -176,7 +210,7 @@ BOOL dsButton::isPushed()
 		else if (L2R2_Delay_On)
 			return TRUE;
 		return FALSE;
-	case typeTouch:
+	case Type_Touch:
 		switch (m_box)
 		{
 		case 0:
@@ -200,36 +234,41 @@ BOOL dsButton::isPushed()
 		default:
 			return FALSE;
 		}
-	case typeDPad:
+	case Type_DPad:
 		return (*m_data & 0xF) != 8;
-	case typeDPadUP:
+	case Type_DPadUP:
 		dpad = (*m_data & 0xF);
 		return (dpad == 7 || dpad == 0 || dpad == 1);
-	case typeDPadRIGHT:
+	case Type_DPadRIGHT:
 		dpad = (*m_data & 0xF);
 		return (dpad == 1 || dpad == 2 || dpad == 3);
-	case typeDPadDOWN:
+	case Type_DPadDOWN:
 		dpad = (*m_data & 0xF);
 		return (dpad == 3 || dpad == 4 || dpad == 5);
-	case typeDPadLEFT:
+	case Type_DPadLEFT:
 		dpad = (*m_data & 0xF);
 		return (dpad == 5 || dpad == 6 || dpad == 7);
-	case typeAxis:
-	case typeAxisInv:
-		return (((*m_data - 127) * (*m_data - 127)) + ((*m_data2 - 127) * (*m_data2 - 127))) > 81;
-	case typeAxisLU:
+	case Type_Axis:
+	case Type_AxisInv:
+		return (((*m_data - 127) * (*m_data - 127)) + ((*m_data2 - 127) * (*m_data2 - 127))) > ((threshold[m_axis]) ? tape.Threshold * tape.Threshold : 0);
+	case Type_AxisSniper:
+		return (((*m_data - 127) * (*m_data - 127)) + ((*m_data2 - 127) * (*m_data2 - 127))) > 9;
+	case Type_AxisTriggerRD:
+	case Type_AxisTriggerLU:
+		return ((*m_data - 127) * (*m_data - 127)) > (tape.Threshold * tape.Threshold);
+	case Type_AxisLU:
 		return (*m_data < 5);
-	case typeAxisRD:
+	case Type_AxisRD:
 		return (*m_data > 250);
-	case typeAxisDUL:
+	case Type_AxisDUL:
 		return (*m_data < 20 && *m_data2 < 20);
-	case typeAxisDUR:
+	case Type_AxisDUR:
 		return (*m_data < 20 && *m_data2 > 235);
-	case typeAxisDDR:
+	case Type_AxisDDR:
 		return (*m_data > 235 && *m_data2 > 235);
-	case typeAxisDDL:
+	case Type_AxisDDL:
 		return (*m_data > 235 && *m_data2 < 20);
-	case typeData:
+	case Type_Data:
 		return TRUE;
 	default:
 		return FALSE;
@@ -241,15 +280,15 @@ BYTE dsButton::GetVal()
 {
 	switch (m_type)
 	{
-	case typeConstant:
+	case Type_Constant:
 		return m_constant;
-	case typeButton:
+	case Type_Button:
 		return (abs(*m_data) & m_mask) ? 0xFF : 0;
-	case typeTrigger:
+	case Type_Trigger:
 		return (*m_data * (255 + m_thrz) / 255) - m_thrz;
-	case typeSimultaneous:
+	case Type_Simultaneous:
 		return isPushed() ? 0xFF : 0;
-	case typeTouch:
+	case Type_Touch:
 		switch (m_box)
 		{
 		case 0:
@@ -272,37 +311,51 @@ BYTE dsButton::GetVal()
 			return (!TouchAble[0] && (*m_data & m_mask)) ? 0xFF : 0;
 		}
 		return 0;
-	case typeDPad:
+	case Type_DPad:
 		return *m_data & 0xF;
-	case typeDPadUP:
+	case Type_DPadUP:
 		dpad = (*m_data & 0xF);
 		return (dpad == 7 || dpad == 0 || dpad == 1) ? 0xFF : 0;
-	case typeDPadRIGHT:
+	case Type_DPadRIGHT:
 		dpad = (*m_data & 0xF);
 		return (dpad == 1 || dpad == 2 || dpad == 3) ? 0xFF : 0;
-	case typeDPadDOWN:
+	case Type_DPadDOWN:
 		dpad = (*m_data & 0xF);
 		return (dpad == 3 || dpad == 4 || dpad == 5) ? 0xFF : 0;
-	case typeDPadLEFT:
+	case Type_DPadLEFT:
 		dpad = (*m_data & 0xF);
 		return (dpad == 5 || dpad == 6 || dpad == 7) ? 0xFF : 0;
-	case typeAxis:
-		return *m_data;
-	case typeAxisInv:
-		return 255 - *m_data;
-	case typeAxisLU:
+	case Type_Axis:
+		if (tape.Threshold && threshold[m_axis])
+			return (*m_data > 127 + tape.Threshold) ? (127 + (((*m_data - 127 - tape.Threshold) * 128) / (128 - tape.Threshold))) :
+			((*m_data < 128 - tape.Threshold) ? ((*m_data * 128) / (128 - tape.Threshold)) : 127);
+		else
+			return *m_data;
+	case Type_AxisInv:
+		if (tape.Threshold && threshold[m_axis])
+			return 255 - ((*m_data > 127 + tape.Threshold) ? (127 + (((*m_data - 127 - tape.Threshold) * 128) / (128 - tape.Threshold))) :
+				((*m_data < 128 - tape.Threshold) ? ((*m_data * 128) / (128 - tape.Threshold)) : 127));
+		else
+			return 255 - *m_data;
+	case Type_AxisSniper:
+		return (*m_data - 85) % 255;
+	case Type_AxisTriggerLU:
+		return (*m_data < 127) ? (((127 - *m_data - tape.Threshold) * 256) / (128 - tape.Threshold)) : 0;
+	case Type_AxisTriggerRD:
+		return (*m_data > 127) ? (((*m_data - 128 - tape.Threshold) * 256) / (128 - tape.Threshold)) : 0;
+	case Type_AxisLU:
 		return (*m_data < 5) ? 0xFF : 0;
-	case typeAxisRD:
+	case Type_AxisRD:
 		return (*m_data > 250) ? 0xFF : 0;
-	case typeAxisDUL:
+	case Type_AxisDUL:
 		return (*m_data < 20 && *m_data2 < 20) ? 0xFF : 0;
-	case typeAxisDUR:
+	case Type_AxisDUR:
 		return (*m_data < 20 && *m_data2 > 235) ? 0xFF : 0;
-	case typeAxisDDR:
+	case Type_AxisDDR:
 		return (*m_data > 235 && *m_data2 > 235) ? 0xFF : 0;
-	case typeAxisDDL:
+	case Type_AxisDDL:
 		return (*m_data > 235 && *m_data2 < 20) ? 0xFF : 0;
-	case typeData:
+	case Type_Data:
 		return (BYTE)((*m_data & m_mask) * 25.5);
 	default:
 		return 0;
@@ -313,28 +366,31 @@ BYTE dsButton::GetReleasedVal()
 {
 	switch (m_type)
 	{
-	case typeAxis:
-	case typeAxisInv:
-		return 128;
-	case typeButton:
-	case typeTrigger:
-	case typeSimultaneous:
-	case typeTouch:
-	case typeDPadUP:
-	case typeDPadRIGHT:
-	case typeDPadDOWN:
-	case typeDPadLEFT:
-	case typeAxisLU:
-	case typeAxisRD:
-	case typeAxisDUL:
-	case typeAxisDUR:
-	case typeAxisDDR:
-	case typeAxisDDL:
-	case typeData:
+	case Type_Axis:
+	case Type_AxisSniper:
+	case Type_AxisInv:
+		return 127;
+	case Type_AxisTriggerLU:
+	case Type_AxisTriggerRD:
+	case Type_Button:
+	case Type_Trigger:
+	case Type_Simultaneous:
+	case Type_Touch:
+	case Type_DPadUP:
+	case Type_DPadRIGHT:
+	case Type_DPadDOWN:
+	case Type_DPadLEFT:
+	case Type_AxisLU:
+	case Type_AxisRD:
+	case Type_AxisDUL:
+	case Type_AxisDUR:
+	case Type_AxisDDR:
+	case Type_AxisDDL:
+	case Type_Data:
 		return 0;
-	case typeConstant:
+	case Type_Constant:
 		return m_constant;
-	case typeDPad:
+	case Type_DPad:
 		return (*m_data & 0xF0) | 8;
 	default:
 		return 0;
@@ -345,33 +401,44 @@ int dsButton::GetScrollVal()
 {
 	switch (m_type)
 	{
-	case typeTrigger:
+	case Type_Trigger:
 		return 120 - (114 * ((*m_data * (255 - m_thrz) / 255) + m_thrz)) / 255;
-	case typeAxis:
+	case Type_Axis:
+	case Type_AxisSniper:
 		return (*m_data - 133 > 0) ? (120 - (114 * max(0, (*m_data - 133))) / 122) : 0;
-	case typeAxisInv:
+	case Type_AxisTriggerLU:
+		return 120 - (114 * (((127 - *m_data) * 2 * (255 - tape.Threshold) / 255) + tape.Threshold)) / 255;
+	case Type_AxisTriggerRD:
+		return 120 - (114 * (((*m_data - 127) * 2 * (255 - tape.Threshold) / 255) + tape.Threshold)) / 255;
+	case Type_AxisInv:
 		return (122 - *m_data > 0) ? (120 - (114 * max(0, (122 - *m_data))) / 122) : 0;
-	case typeConstant:
-	case typeButton:
-	case typeTouch:
-	case typeDPadUP:
-	case typeDPadRIGHT:
-	case typeDPadDOWN:
-	case typeDPadLEFT:
-	case typeAxisLU:
-	case typeAxisRD:
-	case typeAxisDUL:
-	case typeAxisDUR:
-	case typeAxisDDR:
-	case typeAxisDDL:
+	case Type_Constant:
+	case Type_Button:
+	case Type_Touch:
+	case Type_DPadUP:
+	case Type_DPadRIGHT:
+	case Type_DPadDOWN:
+	case Type_DPadLEFT:
+	case Type_AxisLU:
+	case Type_AxisRD:
+	case Type_AxisDUL:
+	case Type_AxisDUR:
+	case Type_AxisDDR:
+	case Type_AxisDDL:
 		return -1;
-	case typeSimultaneous:
-	case typeDPad:
-	case typeData:
+	case Type_Simultaneous:
+	case Type_DPad:
+	case Type_Data:
 		return 0;
 	default:
 		return 0;
 	}
+}
+
+void dsButton::SetThreshold(bool thr)
+{
+	if (m_axis > -1)
+		threshold[m_axis] = thr;
 }
 
 WCHAR* dsButton::String(ButtonID id)
@@ -411,6 +478,18 @@ WCHAR* dsButton::String(ButtonID id)
 	case LYINV: return I18N.Button_LY_INV;
 	case RXINV: return I18N.Button_RX_INV;
 	case RYINV: return I18N.Button_RY_INV;
+	case SNIPER_LX: return I18N.Button_SNIPER_LX;
+	case SNIPER_LY: return I18N.Button_SNIPER_LY;
+	case SNIPER_RX: return I18N.Button_SNIPER_RX;
+	case SNIPER_RY: return I18N.Button_SNIPER_RY;
+	case AXISL_TR_LEFT: return I18N.Button_AXISL_TR_LEFT;
+	case AXISL_TR_UP: return I18N.Button_AXISL_TR_UP;
+	case AXISL_TR_RIGHT: return I18N.Button_AXISL_TR_RIGHT;
+	case AXISL_TR_DOWN: return I18N.Button_AXISL_TR_DOWN;
+	case AXISR_TR_LEFT: return I18N.Button_AXISR_TR_LEFT;
+	case AXISR_TR_UP: return I18N.Button_AXISR_TR_UP;
+	case AXISR_TR_RIGHT: return I18N.Button_AXISR_TR_RIGHT;
+	case AXISR_TR_DOWN: return I18N.Button_AXISR_TR_DOWN;
 	case AXISL_LEFT: return I18N.Button_AXISL_LEFT;
 	case AXISL_UP_LEFT: return I18N.Button_AXISL_UP_LEFT;
 	case AXISL_UP: return I18N.Button_AXISL_UP;

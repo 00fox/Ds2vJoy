@@ -43,6 +43,8 @@ private:
 	int m_insrtpos;
 	int lastidx;
 	std::vector<int> lastidxs;
+	unsigned char lasttab;
+	bool tabSortingMethod;
 };
 
 extern RapidFireDlg rDlg;

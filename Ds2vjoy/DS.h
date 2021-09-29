@@ -30,11 +30,11 @@ public:
 	BOOL BatteryFull();
 
 	BOOL SetTargetSerial(const WCHAR*);
-	void SetLED(BYTE R, BYTE G, BYTE B);
-	void SetOrangeLED(BYTE val);
-	void SetWhiteLED(BYTE led);
+	void SetLED(byte R, byte G, byte B);
+	void SetOrangeLED(byte val);
+	void SetWhiteLED(byte led);
 	void SetTriggers(int val);
-	BOOL SetMoter(BYTE left, BYTE right);
+	BOOL SetMoter(byte left, byte right);
 
 	BOOL isBT();
 	void DisconnectBT();
@@ -75,27 +75,27 @@ private:
 	int OffsetTouch = 10;
 	int OffsetTouchs = 32;
 
-	BYTE m_Red = 0;
-	BYTE m_Green = 0;
-	BYTE m_Blue = 0;
-	BYTE m_Right = 0;
-	BYTE m_Left = 0;
-	BYTE m_Orange = 0;
-	BYTE m_White = 0;
+	byte m_Red = 0;
+	byte m_Green = 0;
+	byte m_Blue = 0;
+	byte m_Right = 0;
+	byte m_Left = 0;
+	byte m_Orange = 0;
+	byte m_White = 0;
 	int m_Triggers = 0;
 
-	BYTE* m_OutputBuf = 0;
-	BYTE* m_InputBuf = 0;
+	byte* m_OutputBuf = 0;
+	byte* m_InputBuf = 0;
 	int m_outputOffset;
 
 	HANDLE m_hThread;
 	HANDLE m_hThread2;
-	UINT32 m_threadID = 0;
-	UINT32 m_threadID2 = 0;
+	unsigned int m_threadID = 0;
+	unsigned int m_threadID2 = 0;
 	bool m_threadShutdown = 0;
 
-	BYTE m_receivedData[MAX_Input_Length];
-	BYTE m_receivedLastData[MAX_Input_Length];
+	byte m_receivedData[MAX_Input_Length];
+	byte m_receivedLastData[MAX_Input_Length];
 	int m_receivedLength;
 
 	bool m_bBluetooth;
@@ -110,9 +110,10 @@ private:
 	std::mutex m_mutex;
 	std::condition_variable m_write_cv;
 	OVERLAPPED m_oWrite, m_oRead;
-	BYTE m_write_count, m_write_count2;
+	byte m_write_count;
+	byte m_write_count2;
 
 	dsButton m_buttons[dsButton::button_Count];
 };
 
-extern int battery;
+extern byte battery;

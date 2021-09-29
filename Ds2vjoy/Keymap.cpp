@@ -20,7 +20,7 @@ Keymap::~Keymap()
 
 struct _virtualkey2str
 {
-	BYTE vk;
+	byte vk;
 	WCHAR* string;
 	bool map;
 };
@@ -33,7 +33,7 @@ WCHAR* Keymap::KeyString()
 	if (Enable == 2)
 		return L"▒▒▒▒▒▒▒▒▒▒";
 
-	return vJoyButton::String(ButtonID);
+	return vJoyButton::String((vJoyButtonID)ButtonID);
 }
 
 WCHAR* Keymap::ValueString(int column)
@@ -350,7 +350,7 @@ BOOL Keymap::LoadDevice(vJoyDevice* vjoy)
 	if (!ButtonID)
 		return FALSE;
 
-	m_button = vjoy->GetButton(ButtonID);
+	m_button = vjoy->GetButton((vJoyButtonID)ButtonID);
 
 	if (m_button == 0)
 		return FALSE;
@@ -416,12 +416,12 @@ void Keymap::GetState()
 	for (int i = 0; i < 1024; i++)
 		bufstring[i] = {};
 
-	BYTE state[0x100];
+	byte state[0x100];
 	if (GetKeyboardState(state))
 	{
-		for (int i = 0; i < 182; i++)
+		for (int i = 0; i < 177; i++)
 		{
-			BYTE j = keystr[i].vk;
+			byte j = keystr[i].vk;
 			if (state[j] & 0xFF)
 			{
 				if (GetAsyncKeyState(j) & 0x01)
@@ -434,7 +434,7 @@ void Keymap::GetState()
 	}
 }
 
-KeyboardID Keymap::BytetoKeyboardID(BYTE id)
+KeyboardID Keymap::BytetoKeyboardID(byte id)
 {
 	switch (id)
 	{

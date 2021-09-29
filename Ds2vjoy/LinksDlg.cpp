@@ -3,6 +3,8 @@
 #include "Ds2vJoy.h"
 
 LinksDlg::LinksDlg()
+	:m_hWnd()
+	, m_hDlg()
 {
 }
 
@@ -43,8 +45,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
+		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(191, 200, 196));
@@ -55,8 +56,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
+		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 		SetTextColor(hdcStatic, RGB(100, 93, 79));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(36, 163, 163));
@@ -66,8 +66,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
+		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -77,8 +76,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
+		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));

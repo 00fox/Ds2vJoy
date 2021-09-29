@@ -84,10 +84,10 @@
     <ClInclude Include="Findwindow.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="HidGuardian.h">
+    <ClInclude Include="Guardian.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="HidGuardianDlg.h">
+    <ClInclude Include="GuardianDlg.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="LinksDlg.h">
@@ -191,10 +191,10 @@
     <ClCompile Include="Findwindow.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="HidGuardian.cpp">
+    <ClCompile Include="Guardian.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="HidGuardianDlg.cpp">
+    <ClCompile Include="GuardianDlg.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="LinksDlg.cpp">

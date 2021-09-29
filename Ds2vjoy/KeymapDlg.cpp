@@ -5,7 +5,24 @@
 #include "Ds2vJoy.h"
 
 KeymapDlg::KeymapDlg()
+	:m_hWnd(0)
+	, m_hDlg(0)
+	, m_hList(0)
+	, m_hMenu(0)
+	, m_TabsID()
+	, m_active(false)
+	, m_flag_drag(false)
+	, m_insrtpos(0)
+	, lastidx(0)
+	, lastidxs({ 0 })
+	, lasttab(0)
+	, tabSortingMethod(false)
 {
+	m_TabsID[0] = ID_MENU_ADD;
+	m_TabsID[1] = ID_MENU_EDIT;
+	m_TabsID[2] = ID_MENU_DEL;
+	m_TabsID[3] = ID_MENU_COPY;
+	m_TabsID[4] = ID_MENU_SEPARATOR;
 }
 
 KeymapDlg::~KeymapDlg()
@@ -18,11 +35,6 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP), hWnd, (DLGPROC)Proc, (LPARAM)this);
 	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_LIST);
 
-	m_TabsID[0] = ID_MENU_ADD;
-	m_TabsID[1] = ID_MENU_EDIT;
-	m_TabsID[2] = ID_MENU_DEL;
-	m_TabsID[3] = ID_MENU_COPY;
-	m_TabsID[4] = ID_MENU_SEPARATOR;
 	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_0, FALSE);
 	DeleteMenu(m_hMenu, ID_MENU_MOVE_TO_1, FALSE);
@@ -107,10 +119,10 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			int nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
-				int nAcceleratorDelimiter;
-				for (nAcceleratorDelimiter = 0;
-					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t' || wszBuffer[nAcceleratorDelimiter] == L'\b')
+				int nCharacters;
+				for (nCharacters = 0;
+					nCharacters < nCharCount; nCharacters++)
+					if (wszBuffer[nCharacters] == L'\t' || wszBuffer[nCharacters] == L'\b')
 						break;
 
 				RECT rTextMetric = { 0, 0, 0, 0 };
@@ -127,16 +139,16 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					if (font != NULL)
 						hOldFont = (HFONT)::SelectObject(hDC, font);
 
-					::DrawTextW(hDC, wszBuffer, nAcceleratorDelimiter, &rTextMetric, DT_CALCRECT);
+					::DrawTextW(hDC, wszBuffer, nCharacters, &rTextMetric, DT_CALCRECT);
 					long _CaptionWidth = rTextMetric.right - rTextMetric.left;
 
 					long _AcceleratorWidth = 0;
-					if (nAcceleratorDelimiter < nCharCount - 1)
+					if (nCharacters < nCharCount - 1)
 					{
-						::DrawTextW(hDC, &(wszBuffer[nAcceleratorDelimiter + 1]), nCharCount - nAcceleratorDelimiter - 1, &rTextMetric, DT_CALCRECT);
+						::DrawTextW(hDC, &(wszBuffer[nCharacters + 1]), nCharCount - nCharacters - 1, &rTextMetric, DT_CALCRECT);
 						_AcceleratorWidth = rTextMetric.right - rTextMetric.left;
 					}
-					if (hOldFont == NULL)
+					if (hOldFont == NULL && hOldFont != 0)
 						::SelectObject(hDC, hOldFont);
 
 					::ReleaseDC(m_hDlg, hDC);
@@ -175,11 +187,11 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				crCurrText = ::GetSysColor((bSelected) ? COLOR_HIGHLIGHTTEXT : RGB(176, 144, 180));
 				crPrevText = ::SetTextColor(DrawMenuStructure->hDC, crCurrText);
 
-				int nAcceleratorDelimiter;
-				for (nAcceleratorDelimiter = 0;
-					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t' ||
-						wszBuffer[nAcceleratorDelimiter] == L'\b')
+				int nCharacters;
+				for (nCharacters = 0;
+					nCharacters < nCharCount; nCharacters++)
+					if (wszBuffer[nCharacters] == L'\t' ||
+						wszBuffer[nCharacters] == L'\b')
 						break;
 
 				NONCLIENTMETRICSW nm;
@@ -193,18 +205,18 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				int nImageOffsetX = nEdgeWidth + nEdgeWidth + 12;
 				DrawMenuStructure->rcItem.left += nImageOffsetX;
 				DrawMenuStructure->rcItem.top += 0;
-				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nAcceleratorDelimiter, &(DrawMenuStructure->rcItem), 0);
+				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &(DrawMenuStructure->rcItem), 0);
 
-				if (nAcceleratorDelimiter < nCharCount - 1)
+				if (nCharacters < nCharCount - 1)
 				{
 					DrawMenuStructure->rcItem.left += 21;
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t')
-						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
-							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+					if (wszBuffer[nCharacters] == L'\t')
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nCharacters + 1]),
+							nCharCount - nCharacters - 1, &(DrawMenuStructure->rcItem),
 							DT_LEFT | DT_SINGLELINE);
 					else
-						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
-							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nCharacters + 1]),
+							nCharCount - nCharacters - 1, &(DrawMenuStructure->rcItem),
 							DT_RIGHT | DT_SINGLELINE);
 					DrawMenuStructure->rcItem.left -= +21;
 				}
@@ -214,7 +226,7 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				::SetBkMode(DrawMenuStructure->hDC, nOldBkMode);
 				::SetTextColor(DrawMenuStructure->hDC, crPrevText);
 
-				if (hOldFont == NULL)
+				if (hOldFont == NULL && hOldFont != 0)
 					::SelectObject(DrawMenuStructure->hDC, hOldFont);
 			}
 		}
@@ -245,6 +257,115 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_KEYMAP_LIST:
 			switch (((LPNMLISTVIEW)lParam)->hdr.code)
 			{
+			case LVN_COLUMNCLICK:
+			{
+				m_active = false;
+				kDDlg.Hide();
+
+				LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
+				unsigned char column = pnmv->iSubItem;
+				if (lasttab == column)
+					tabSortingMethod = !tabSortingMethod;
+				else
+					tabSortingMethod = false;
+				lasttab = column;
+
+				Keymaps newmap;
+				Keymaps newmaptmp;
+				size_t length = tape.Keymapdata.size();
+				for (int i = 0; i < length; i++)
+					newmaptmp.push_back((Keymap)tape.Keymapdata[i]);
+
+				length = newmaptmp.size();
+				for (size_t i = 0; i < length; i++)
+				{
+					if (newmaptmp[i].Enable == 2)
+					{
+						newmap.push_back((Keymap)newmaptmp[i]);
+						newmaptmp.erase(newmaptmp.begin() + i);
+					}
+				}
+
+				while (newmaptmp.size())
+				{
+					int pos = -1;
+
+					unsigned long long value = 0;
+					std::wstring valuestr = L"";
+
+					length = newmaptmp.size();
+					for (size_t i = 0; i < length; i++)
+					{
+						unsigned long long sortresult = 0;
+						std::wstring sortstr = L"";
+
+						switch (column)
+						{
+						case 0:
+						{
+							sortresult |= ((unsigned long long)newmaptmp[i].ButtonID << 0);
+							break;
+						}
+						case 1:
+						{
+							if (newmaptmp[i].vk.size() > 7)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[7] << 0);
+							if (newmaptmp[i].vk.size() > 6)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[6] << 8);
+							if (newmaptmp[i].vk.size() > 5)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[5] << 16);
+							if (newmaptmp[i].vk.size() > 4)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[4] << 24);
+							if (newmaptmp[i].vk.size() > 3)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[3] << 32);
+							if (newmaptmp[i].vk.size() > 2)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[2] << 40);
+							if (newmaptmp[i].vk.size() > 1)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[1] << 48);
+							if (newmaptmp[i].vk.size() > 0)
+								sortresult |= ((unsigned long long)newmaptmp[i].vk[0] << 56);
+							break;
+						}
+						case 2:
+						{
+							sortstr = newmaptmp[i].findWindow.Val();
+							//sortresult |= ((unsigned long long)(WCHAR)newmaptmp[i].findWindow.Val().c_str() << 0);
+							break;
+						}
+						case 3:
+						{
+							sortresult |= ((unsigned long long)newmaptmp[i].useActivating << 0);
+							sortresult |= ((unsigned long long)newmaptmp[i].usePostmessage << 1);
+							break;
+						}
+						}
+
+						if (column == 2)
+						{
+							if (pos == -1 || (pos >= 0 && ((tabSortingMethod) ? sortstr.compare(valuestr) > 0 : sortstr.compare(valuestr) < 0)))
+							{
+								pos = (int)i;
+								valuestr = sortstr;
+							}
+						}
+						else if (pos == -1 || (pos >= 0 && ((tabSortingMethod) ? sortresult > value : sortresult < value)))
+						{
+							pos = (int)i;
+							value = sortresult;
+						}
+					}
+					newmap.push_back((Keymap)newmaptmp[pos]);
+					newmaptmp.erase(newmaptmp.begin() + pos);
+				}
+
+				tape.Keymapdata.swap(newmap);
+				tape.Save(tape.Setting_Keymapdata);
+
+				PostMessage(m_hWnd, WM_ADDKEYMAP, 0, -1);
+
+				m_active = true;
+				break;
+			}
 			case NM_DBLCLK:
 				editKeymapDlg();
 				break;
@@ -266,18 +387,11 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					{
 						Keymap* km = (Keymap*)((LPNMLISTVIEW)lParam)->lParam;
 						if (km != 0)
-						{
-							int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-							if (idx == -1)
+							if (km->Enable != 2)
 							{
-								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-								if (km->Enable != 2)
-								{
-									km->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-									save();
-								}
+								km->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+								save();
 							}
-						}
 					}
 				}
 				break;
@@ -285,6 +399,7 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			default:
 				return FALSE;
 			}
+			break;
 		default:
 			return FALSE;
 		}
@@ -349,27 +464,27 @@ void KeymapDlg::save()
 	kDDlg.Hide();
 
 	Keymaps newmap;
-	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
+	int lastitemindex = ListView_GetItemCount(m_hList);
+	for (int i = 0; i < lastitemindex; i++)
 	{
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
+		item.iItem = i;
 		if (!ListView_GetItem(m_hList, &item))
-			break;
-		if (item.lParam != NULL)
 		{
-			newmap.push_back(*(Keymap*)item.lParam);
-			delete (Keymap*)item.lParam;
+			SendMessage(m_hWnd, WM_ADDKEYMAP, 0, -1);
+			RECT rect;
+			GetWindowRect(m_hWnd, &rect);
+			MessageBoxPos(m_hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, rect.left + 275, rect.top + 30);
+			return;
 		}
-		if (!ListView_DeleteItem(m_hList, 0))
-			break;
+		if (item.lParam != NULL)
+			newmap.push_back(*(Keymap*)item.lParam);
 	}
-	ListView_DeleteAllItems(m_hList);
 
 	tape.Keymapdata.swap(newmap);
 	tape.Save(tape.Setting_Keymapdata);
-	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-	load();
-	RedrawWindow(m_hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_UPDATENOW);
+	SendMessage(m_hWnd, WM_ADDKEYMAP, 0, -1);
 
 	m_active = true;
 }

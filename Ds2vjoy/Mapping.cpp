@@ -4,35 +4,46 @@
 
 Mapping::Mapping()
 	:Enable(0)
-	, dsID()
-	, vjID()
-	, Target()
-	, Disable()
-	, OrXorNot()
+	, Tab(0)
 	, Ifmouse(0)
 	, Force(0)
-	, Led(0)
 	, Short(false)
 	, Double(false)
 	, Long(false)
+	, Led(0)
 	, Macro(0)
-	, Pause(false)
+	, Pause(0)
+	, Transitivity(0)
 	, Toggle(0)
+	, Target()
+	, dsID()
+	, OrXorNot()
+	, dsDisable()
+	, MouseAction()
+	, vjID()
+	, Overcontrol()
+	, Switch()
 	, OnRelease()
+	, NoRelease()
+	, NlRelease()
+	, vjDisable()
 	, Start()
 	, Stop()
-	, MouseAction()
 	, Mouse()
 	, Grid()
-	, Tab(0)
 {
-	for (int i = 0; i < 5; i++) { dsID[i] = dsButtonID::none; }
-	for (int i = 0; i < 13; i++) { vjID[i] = vJoyButtonID::none; }
 	for (int i = 0; i < 5; i++) { Target[i] = false; }
-	for (int i = 0; i < 13; i++) { Disable[i] = 0; }
+	for (int i = 0; i < 5; i++) { dsID[i] = dsButtonID::none; }
 	for (int i = 0; i < 4; i++) { OrXorNot[i] = 0; }
-	for (int i = 0; i < 4; i++) { MouseAction[i] = 0; }
+	for (int i = 0; i < 5; i++) { dsDisable[i] = 0; }
+	for (int i = 0; i < 8; i++) { MouseAction[i] = 0; }
+	for (int i = 0; i < 8; i++) { vjID[i] = vJoyButtonID::none; }
+	for (int i = 0; i < 8; i++) { Overcontrol[i] = 0; }
+	for (int i = 0; i < 8; i++) { Switch[i] = 0; }
 	for (int i = 0; i < 8; i++) { OnRelease[i] = 0; }
+	for (int i = 0; i < 8; i++) { NoRelease[i] = 0; }
+	for (int i = 0; i < 8; i++) { NlRelease[i] = 0; }
+	for (int i = 0; i < 8; i++) { vjDisable[i] = 0; }
 	for (int i = 0; i < 8; i++) { Start[i] = 0; }
 	for (int i = 0; i < 8; i++) { Stop[i] = 0; }
 	for (int i = 0; i < 7; i++) { Mouse[i] = 0; }
@@ -55,18 +66,18 @@ const WCHAR* Mapping::dsString()
 	std::wstring str;
 	if (Target[0])
 	{
-		if (vjID[0] != 0)
-			str = vJoyButton::String((vJoyButtonID)vjID[0]);
+		if (dsID[0] != vJoyButton::none)
+			str = vJoyButton::String((vJoyButtonID)dsID[0]);
 	}
 	else
 	{
-		if (dsID[0] != 0)
+		if (dsID[0] != dsButton::none)
 			str = dsButton::String((dsButtonID)dsID[0]);
 	}
 
 	head += wsprintf(head, L"%s", str.c_str());
 
-	if (Disable[0])
+	if (dsDisable[0])
 	{
 		if (str.length() > 7)
 			*(--head) = 0;
@@ -91,14 +102,14 @@ const WCHAR* Mapping::dsLastString()
 		str = L"";
 		if (Target[i])
 		{
-			if (vjID[i] != 0)
-				str = vJoyButton::String((vJoyButtonID)vjID[i]);
+			if (dsID[i] != vJoyButton::none)
+				str = vJoyButton::String((vJoyButtonID)dsID[i]);
 			else
 				continue;
 		}
 		else
 		{
-			if (dsID[i] != 0)
+			if (dsID[i] != dsButton::none)
 				str = dsButton::String((dsButtonID)dsID[i]);
 			else
 				continue;
@@ -115,7 +126,7 @@ const WCHAR* Mapping::dsLastString()
 
 		head += wsprintf(head, L"%s", str.c_str());
 
-		if (Disable[i])
+		if (dsDisable[i])
 		{
 			if (str.length() > 7)
 				*(--head) = 0;
@@ -141,14 +152,14 @@ const WCHAR* Mapping::dsNotString()
 		str = L"";
 		if (Target[i])
 		{
-			if (vjID[i] != 0)
-				str = vJoyButton::String((vJoyButtonID)vjID[i]);
+			if (dsID[i] != vJoyButton::none)
+				str = vJoyButton::String((vJoyButtonID)dsID[i]);
 			else
 				continue;
 		}
 		else
 		{
-			if (dsID[i] != 0)
+			if (dsID[i] != dsButton::none)
 				str = dsButton::String((dsButtonID)dsID[i]);
 			else
 				continue;
@@ -163,7 +174,7 @@ const WCHAR* Mapping::dsNotString()
 
 		head += wsprintf(head, L"%s", str.c_str());
 
-		if (Disable[i])
+		if (dsDisable[i])
 		{
 			if (str.length() > 7)
 				*(--head) = 0;
@@ -177,33 +188,37 @@ const WCHAR* Mapping::dsNotString()
 const WCHAR* Mapping::vJoyString()
 {
 	if (Enable == 2)
-		return L"▒▒▒▒▒▒▒▒▒▒▒▒";
+		return L"▒▒▒▒▒▒▒▒▒▒▒";
 
 	bool firstplus = false;
 	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
 
-	for (int i = 5; i < 13; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		if (firstplus)
 		{
-			if (i < 9 && MouseAction[i - 5])
-				head += wsprintf(head, L" %s", String((MouseActionID)MouseAction[i - 5]));
-			else if(vjID[i] != 0)
+			if (MouseAction[i] == 1)
+				head += wsprintf(head, L" %s", MouseString((MouseActionID)vjID[i]));
+			else if (MouseAction[i] == 2)
+				head += wsprintf(head, L" %s", vJoyButton::StringAxis((vJoyAxisMoveID)vjID[i]));
+			else if(vjID[i] != vJoyButton::none)
 				head += wsprintf(head, L" %s", vJoyButton::String((vJoyButtonID)vjID[i]));
 		}
 		else
 		{
-			if (i < 9 && MouseAction[i - 5])
-				{ head += wsprintf(head, L"%s", String((MouseActionID)MouseAction[i - 5])); firstplus = true; }
-			else if (vjID[i] != 0)
+			if (MouseAction[i] == 1)
+				{ head += wsprintf(head, L"%s", MouseString((MouseActionID)vjID[i])); firstplus = true; }
+			else if (MouseAction[i] == 2)
+				{ head += wsprintf(head, L"%s", vJoyButton::StringAxis((vJoyAxisMoveID)vjID[i])); firstplus = true; }
+			else if (vjID[i] != vJoyButton::none)
 				{ head += wsprintf(head, L"%s", vJoyButton::String((vJoyButtonID)vjID[i])); firstplus = true; }
 		}
 
-		if (Disable[i] == 1)
+		if (vjDisable[i] == 1)
 			head += wsprintf(head, L"#");
-		else if (Disable[i])
+		else if (vjDisable[i])
 			head += wsprintf(head, L">");
 	}
 
@@ -230,7 +245,7 @@ const WCHAR* Mapping::vJoyString()
 const WCHAR* Mapping::TagsString()
 {
 	if (Enable == 2)
-		return L"▒▒▒▒▒▒▒";
+		return L"▒▒▒▒▒▒▒▒";
 
 	bool firstplus = false;
 	static WCHAR buf[MAX_PATH];
@@ -273,8 +288,17 @@ const WCHAR* Mapping::TagsString()
 	else
 		head += wsprintf(head, L"  ");
 
-	if (Pause)
+	if (Pause == 1)
 		head += wsprintf(head, L"P");
+	else if (Pause)
+		head += wsprintf(head, L"p");
+	else
+		head += wsprintf(head, L"  ");
+
+	if (Transitivity == 1)
+		head += wsprintf(head, L"Y");
+	else if (Transitivity)
+		head += wsprintf(head, L"y");
 	else
 		head += wsprintf(head, L"  ");
 
@@ -285,13 +309,43 @@ const WCHAR* Mapping::TagsString()
 	else
 		head += wsprintf(head, L"  ");
 
-	if (OnRelease[0] || OnRelease[1] || OnRelease[2] || OnRelease[3] || OnRelease[4] || OnRelease[5] || OnRelease[6] || OnRelease[7])
-		head += wsprintf(head, L"R");
+	if (NoRelease[0] || NoRelease[1] || NoRelease[2] || NoRelease[3] || NoRelease[4] || NoRelease[5] || NoRelease[6] || NoRelease[7])
+	{
+		if (OnRelease[0] == 1 || OnRelease[1] == 1 || OnRelease[2] == 1 || OnRelease[3] == 1 || OnRelease[4] == 1 || OnRelease[5] == 1 || OnRelease[6] == 1 || OnRelease[7] == 1)
+		{
+			if (NlRelease[0] || NlRelease[1] || NlRelease[2] || NlRelease[3] || NlRelease[4] || NlRelease[5] || NlRelease[6] || NlRelease[7])
+				head += wsprintf(head, L"W");
+			else
+				head += wsprintf(head, L"Z");
+		}
+		else if (OnRelease[0] || OnRelease[1] || OnRelease[2] || OnRelease[3] || OnRelease[4] || OnRelease[5] || OnRelease[6] || OnRelease[7])
+		{
+			if (NlRelease[0] || NlRelease[1] || NlRelease[2] || NlRelease[3] || NlRelease[4] || NlRelease[5] || NlRelease[6] || NlRelease[7])
+				head += wsprintf(head, L"w");
+			else
+				head += wsprintf(head, L"z");
+		}
+		else
+			head += wsprintf(head, L"  ");
+	}
 	else
-		head += wsprintf(head, L"  ");
+	{
+		if (OnRelease[0] == 1 || OnRelease[1] == 1 || OnRelease[2] == 1 || OnRelease[3] == 1 || OnRelease[4] == 1 || OnRelease[5] == 1 || OnRelease[6] == 1 || OnRelease[7] == 1)
+			head += wsprintf(head, L"R");
+		else if (OnRelease[0] || OnRelease[1] || OnRelease[2] || OnRelease[3] || OnRelease[4] || OnRelease[5] || OnRelease[6] || OnRelease[7])
+			head += wsprintf(head, L"r");
+		else
+			head += wsprintf(head, L"  ");
+	}
 
-	if (Mouse[0] || Mouse[1] || Mouse[2])
-		head += wsprintf(head, L"M");
+	if (Mouse[0] || Mouse[1] || Mouse[2] || Mouse[6])
+	{
+		if (!Mouse[3] && !Mouse[4] && !Mouse[5])
+			head += wsprintf(head, L"M");
+		else
+			head += wsprintf(head, L"m");
+
+	}
 	else
 		head += wsprintf(head, L"  ");
 
@@ -309,9 +363,9 @@ void Mapping::PreLoad()
 	vJoyButtonsString[0] = 0;
 	for (int i = 0; i < vJoyButtonID::button_Count; i++)
 		m_toggle[i] = false;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 		mouse_toggle[i] = false;
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < Led_Action_Count; i++)
 		Ledactive[i] = false ;
 }
 
@@ -320,88 +374,146 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 	if (Enable != 1)
 		return FALSE;
 
-	lastmode = 1;
-	mode = 1;
-	m_ds[0] = dsID[0] ? ds->GetButton(dsID[0]) : 0;
-	m_ds[1] = dsID[1] ? ds->GetButton(dsID[1]) : 0;
-	m_ds[2] = dsID[2] ? ds->GetButton(dsID[2]) : 0;
-	m_ds[3] = dsID[3] ? ds->GetButton(dsID[3]) : 0;
-	m_ds[4] = dsID[4] ? ds->GetButton(dsID[4]) : 0;
-	m_vj[0] = vjID[0] ? vjoy->GetButton(vjID[0]) : 0;
-	m_vj[1] = vjID[1] ? vjoy->GetButton(vjID[1]) : 0;
-	m_vj[2] = vjID[2] ? vjoy->GetButton(vjID[2]) : 0;
-	m_vj[3] = vjID[3] ? vjoy->GetButton(vjID[3]) : 0;
-	m_vj[4] = vjID[4] ? vjoy->GetButton(vjID[4]) : 0;
-	m_vj[5] = vjID[5] ? vjoy->GetButton(vjID[5]) : 0;
-	m_vj[6] = vjID[6] ? vjoy->GetButton(vjID[6]) : 0;
-	m_vj[7] = vjID[7] ? vjoy->GetButton(vjID[7]) : 0;
-	m_vj[8] = vjID[8] ? vjoy->GetButton(vjID[8]) : 0;
-	m_vj[9] = vjID[9] ? vjoy->GetButton(vjID[9]) : 0;
-	m_vj[10] = vjID[10] ? vjoy->GetButton(vjID[10]) : 0;
-	m_vj[11] = vjID[11] ? vjoy->GetButton(vjID[11]) : 0;
-	m_vj[12] = vjID[12] ? vjoy->GetButton(vjID[12]) : 0;
+	m_vj_X = vjoy->GetButton(vJoyButtonID::X);
+	m_vj_Y = vjoy->GetButton(vJoyButtonID::Y);
+	m_vj_Z = vjoy->GetButton(vJoyButtonID::Z);
+	m_vj_RX = vjoy->GetButton(vJoyButtonID::RX);
+	m_vj_RY = vjoy->GetButton(vJoyButtonID::RY);
+	m_vj_RZ = vjoy->GetButton(vJoyButtonID::RZ);
+	m_vj_SL0 = vjoy->GetButton(vJoyButtonID::SL0);
+	m_vj_SL1 = vjoy->GetButton(vJoyButtonID::SL1);
 
-	for (int i = 5; i < 13; i++)
+	mode = 1;
+	lastmode = 1;
+	locked = 0;
+	modechanged = 0;
+	for (int i = 0; i < 8; i++)
+		modedest[i] = 0;
+	tomode = -1;
+	m_ds[0] = (dsID[0] && !Target[0]) ? ds->GetButton((dsButtonID)dsID[0]) : 0;
+	m_ds[1] = (dsID[1] && !Target[1]) ? ds->GetButton((dsButtonID)dsID[1]) : 0;
+	m_ds[2] = (dsID[2] && !Target[2]) ? ds->GetButton((dsButtonID)dsID[2]) : 0;
+	m_ds[3] = (dsID[3] && !Target[3]) ? ds->GetButton((dsButtonID)dsID[3]) : 0;
+	m_ds[4] = (dsID[4] && !Target[4]) ? ds->GetButton((dsButtonID)dsID[4]) : 0;
+	m_vj[0] = (dsID[0] && Target[0]) ? vjoy->GetButton((vJoyButtonID)dsID[0]) : 0;
+	m_vj[1] = (dsID[1] && Target[1]) ? vjoy->GetButton((vJoyButtonID)dsID[1]) : 0;
+	m_vj[2] = (dsID[2] && Target[2]) ? vjoy->GetButton((vJoyButtonID)dsID[2]) : 0;
+	m_vj[3] = (dsID[3] && Target[3]) ? vjoy->GetButton((vJoyButtonID)dsID[3]) : 0;
+	m_vj[4] = (dsID[4] && Target[4]) ? vjoy->GetButton((vJoyButtonID)dsID[4]) : 0;
+	m_vj[5] = (vjID[0] && !MouseAction[0]) ? vjoy->GetButton((vJoyButtonID)vjID[0]) : ((vjID[0] && MouseAction[0] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[0]) : 0);
+	m_vj[6] = (vjID[1] && !MouseAction[1]) ? vjoy->GetButton((vJoyButtonID)vjID[1]) : ((vjID[1] && MouseAction[1] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[1]) : 0);
+	m_vj[7] = (vjID[2] && !MouseAction[2]) ? vjoy->GetButton((vJoyButtonID)vjID[2]) : ((vjID[2] && MouseAction[2] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[2]) : 0);
+	m_vj[8] = (vjID[3] && !MouseAction[3]) ? vjoy->GetButton((vJoyButtonID)vjID[3]) : ((vjID[3] && MouseAction[3] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[3]) : 0);
+	m_vj[9] = (vjID[4] && !MouseAction[4]) ? vjoy->GetButton((vJoyButtonID)vjID[4]) : ((vjID[4] && MouseAction[4] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[4]) : 0);
+	m_vj[10] = (vjID[5] && !MouseAction[5]) ? vjoy->GetButton((vJoyButtonID)vjID[5]) : ((vjID[5] && MouseAction[5] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[5]) : 0);
+	m_vj[11] = (vjID[6] && !MouseAction[6]) ? vjoy->GetButton((vJoyButtonID)vjID[6]) : ((vjID[6] && MouseAction[6] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[6]) : 0);
+	m_vj[12] = (vjID[7] && !MouseAction[7]) ? vjoy->GetButton((vJoyButtonID)vjID[7]) : ((vjID[7] && MouseAction[7] == 2) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[7]) : 0);
+
+
+	for (int i = 0; i < 8; i++)
 	{
-		if (!(std::find(vjUsed.begin(), vjUsed.end(), vjID[i]) != vjUsed.end()))
-			if (vjID[i])
-			{
-				vjUsed.push_back(vjID[i]);
+		if (m_vj[i + 5] && Overcontrol[i] == 1)
+		{
+			if (MouseAction[i] == 0)
 				switch (vjID[i])
 				{
-				case vJoyButton::ButtonID::Button1:tape.vJoyUsed[0] = true; break;
-				case vJoyButton::ButtonID::Button2:tape.vJoyUsed[1] = true; break;
-				case vJoyButton::ButtonID::Button3:tape.vJoyUsed[2] = true; break;
-				case vJoyButton::ButtonID::Button4:tape.vJoyUsed[3] = true; break;
-				case vJoyButton::ButtonID::Button5:tape.vJoyUsed[4] = true; break;
-				case vJoyButton::ButtonID::Button6:tape.vJoyUsed[5] = true; break;
-				case vJoyButton::ButtonID::Button7:tape.vJoyUsed[6] = true; break;
-				case vJoyButton::ButtonID::Button8:tape.vJoyUsed[7] = true; break;
-				case vJoyButton::ButtonID::Button9:tape.vJoyUsed[8] = true; break;
-				case vJoyButton::ButtonID::Button10:tape.vJoyUsed[9] = true; break;
-				case vJoyButton::ButtonID::Button11:tape.vJoyUsed[10] = true; break;
-				case vJoyButton::ButtonID::Button12:tape.vJoyUsed[11] = true; break;
-				case vJoyButton::ButtonID::Button13:tape.vJoyUsed[12] = true; break;
-				case vJoyButton::ButtonID::Button14:tape.vJoyUsed[13] = true; break;
-				case vJoyButton::ButtonID::Button15:tape.vJoyUsed[14] = true; break;
-				case vJoyButton::ButtonID::Button16:tape.vJoyUsed[15] = true; break;
-				case vJoyButton::ButtonID::Button17:tape.vJoyUsed[16] = true; break;
-				case vJoyButton::ButtonID::Button18:tape.vJoyUsed[17] = true; break;
-				case vJoyButton::ButtonID::Button19:tape.vJoyUsed[18] = true; break;
-				case vJoyButton::ButtonID::Button20:tape.vJoyUsed[19] = true; break;
-				case vJoyButton::ButtonID::Button21:tape.vJoyUsed[20] = true; break;
-				case vJoyButton::ButtonID::Button22:tape.vJoyUsed[21] = true; break;
-				case vJoyButton::ButtonID::Button23:tape.vJoyUsed[22] = true; break;
-				case vJoyButton::ButtonID::Button24:tape.vJoyUsed[23] = true; break;
-				case vJoyButton::ButtonID::Button25:tape.vJoyUsed[24] = true; break;
-				case vJoyButton::ButtonID::Button26:tape.vJoyUsed[25] = true; break;
-				case vJoyButton::ButtonID::Button27:tape.vJoyUsed[26] = true; break;
-				case vJoyButton::ButtonID::Button28:tape.vJoyUsed[27] = true; break;
-				case vJoyButton::ButtonID::Button29:tape.vJoyUsed[28] = true; break;
-				case vJoyButton::ButtonID::Button30:tape.vJoyUsed[29] = true; break;
-				case vJoyButton::ButtonID::Button31:tape.vJoyUsed[30] = true; break;
-				case vJoyButton::ButtonID::Button32:tape.vJoyUsed[31] = true; break;
+				case vJoyButtonID::X:
+				case vJoyButtonID::XTR:
+				case vJoyButtonID::XINV:
+					ds->GetButton(dsButtonID::LX)->SetThreshold(false);
+					break;
+				case vJoyButtonID::Y:
+				case vJoyButtonID::YTR:
+				case vJoyButtonID::YINV:
+					ds->GetButton(dsButtonID::LY)->SetThreshold(false);
+					break;
+				case vJoyButtonID::Z:
+				case vJoyButtonID::ZTR:
+				case vJoyButtonID::ZINV:
+					ds->GetButton(dsButtonID::RX)->SetThreshold(false);
+					break;
+				case vJoyButtonID::RZ:
+				case vJoyButtonID::RZTR:
+				case vJoyButtonID::RZINV:
+					ds->GetButton(dsButtonID::RY)->SetThreshold(false);
+					break;
 				}
-			}
+			else if (MouseAction[i] == 2)
+				if (vjID[i] == vJoyAxisMoveID::XY_CW || vjID[i] == vJoyAxisMoveID::XY_CN || (vjID[i] >= vJoyAxisMoveID::XY_CENTER && vjID[i] <= vJoyAxisMoveID::XY_L_DL_CN))
+				{
+					ds->GetButton(dsButtonID::LX)->SetThreshold(false);
+					ds->GetButton(dsButtonID::LY)->SetThreshold(false);
+				}
+				else if (vjID[i] == vJoyAxisMoveID::ZRZ_CW || vjID[i] == vJoyAxisMoveID::ZRZ_CN || (vjID[i] >= vJoyAxisMoveID::ZRZ_CENTER && vjID[i] <= vJoyAxisMoveID::ZRZ_L_DL_CN))
+				{
+					ds->GetButton(dsButtonID::RX)->SetThreshold(false);
+					ds->GetButton(dsButtonID::RY)->SetThreshold(false);
+				}
+		}
+
+		if (!MouseAction[i])
+		{
+			if (!(std::find(vjUsed.begin(), vjUsed.end(), vjID[i]) != vjUsed.end()))
+				if (vjID[i])
+				{
+					vjUsed.push_back(vjID[i]);
+					switch (vjID[i])
+					{
+					case vJoyButton::ButtonID::Button1:tape.vJoyUsed[0] = true; break;
+					case vJoyButton::ButtonID::Button2:tape.vJoyUsed[1] = true; break;
+					case vJoyButton::ButtonID::Button3:tape.vJoyUsed[2] = true; break;
+					case vJoyButton::ButtonID::Button4:tape.vJoyUsed[3] = true; break;
+					case vJoyButton::ButtonID::Button5:tape.vJoyUsed[4] = true; break;
+					case vJoyButton::ButtonID::Button6:tape.vJoyUsed[5] = true; break;
+					case vJoyButton::ButtonID::Button7:tape.vJoyUsed[6] = true; break;
+					case vJoyButton::ButtonID::Button8:tape.vJoyUsed[7] = true; break;
+					case vJoyButton::ButtonID::Button9:tape.vJoyUsed[8] = true; break;
+					case vJoyButton::ButtonID::Button10:tape.vJoyUsed[9] = true; break;
+					case vJoyButton::ButtonID::Button11:tape.vJoyUsed[10] = true; break;
+					case vJoyButton::ButtonID::Button12:tape.vJoyUsed[11] = true; break;
+					case vJoyButton::ButtonID::Button13:tape.vJoyUsed[12] = true; break;
+					case vJoyButton::ButtonID::Button14:tape.vJoyUsed[13] = true; break;
+					case vJoyButton::ButtonID::Button15:tape.vJoyUsed[14] = true; break;
+					case vJoyButton::ButtonID::Button16:tape.vJoyUsed[15] = true; break;
+					case vJoyButton::ButtonID::Button17:tape.vJoyUsed[16] = true; break;
+					case vJoyButton::ButtonID::Button18:tape.vJoyUsed[17] = true; break;
+					case vJoyButton::ButtonID::Button19:tape.vJoyUsed[18] = true; break;
+					case vJoyButton::ButtonID::Button20:tape.vJoyUsed[19] = true; break;
+					case vJoyButton::ButtonID::Button21:tape.vJoyUsed[20] = true; break;
+					case vJoyButton::ButtonID::Button22:tape.vJoyUsed[21] = true; break;
+					case vJoyButton::ButtonID::Button23:tape.vJoyUsed[22] = true; break;
+					case vJoyButton::ButtonID::Button24:tape.vJoyUsed[23] = true; break;
+					case vJoyButton::ButtonID::Button25:tape.vJoyUsed[24] = true; break;
+					case vJoyButton::ButtonID::Button26:tape.vJoyUsed[25] = true; break;
+					case vJoyButton::ButtonID::Button27:tape.vJoyUsed[26] = true; break;
+					case vJoyButton::ButtonID::Button28:tape.vJoyUsed[27] = true; break;
+					case vJoyButton::ButtonID::Button29:tape.vJoyUsed[28] = true; break;
+					case vJoyButton::ButtonID::Button30:tape.vJoyUsed[29] = true; break;
+					case vJoyButton::ButtonID::Button31:tape.vJoyUsed[30] = true; break;
+					case vJoyButton::ButtonID::Button32:tape.vJoyUsed[31] = true; break;
+					}
+				}
+		}
 	}
 
 	if (Toggle == 2)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			if (i < 4 && MouseAction[i])
+			if (MouseAction[i] == 1)
 			{
-				if (MouseAction[i] == ACTIVE_MOUSE)
+				if ((MouseActionID)vjID[i] == ACTIVE_MOUSE)
 					mouse_toggle[i] = true;
 				else
 					continue;
 			}
-			if (m_vj[i + 5])
-			{
-				m_toggle[vjID[i + 5]] = true;
-				m_vj[i + 5]->SetVal(0xFF);
-				m_vj[i + 5]->SetPushed();
-			}
+			else if (!MouseAction[i] && !Switch[i])
+				if (m_vj[i + 5])
+				{
+					m_toggle[vjID[i]] = true;
+					m_vj[i + 5]->SetValByte(0xFF);
+					m_vj[i + 5]->SetPushed();
+				}
 		}
 	}
 
@@ -409,14 +521,34 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 	exists1 = (Target[1]) ? ((m_vj[1]) ? true : false) : ((m_ds[1]) ? true : false);
 	exists2 = (Target[2]) ? ((m_vj[2]) ? true : false) : ((m_ds[2]) ? true : false);
 
-	release0 = (BYTE)((exists0) ? ((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0)) : 0);
+	release0 = (byte)((exists0) ? ((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0)) : 0);
 	OnReleaseValue = (Macro == 2) ? release0 : 0xFF;
 
 	GridCanbeUsed =
-		MouseAction[0] != MOVE_TO_XY && MouseAction[0] != SAVE_AND_MOVE_TO_XY && MouseAction[0] != MOVE_TO_WH && MouseAction[0] != SAVE_AND_MOVE_TO_WH &&
-		MouseAction[1] != MOVE_TO_XY && MouseAction[1] != SAVE_AND_MOVE_TO_XY && MouseAction[1] != MOVE_TO_WH && MouseAction[1] != SAVE_AND_MOVE_TO_WH &&
-		MouseAction[2] != MOVE_TO_XY && MouseAction[2] != SAVE_AND_MOVE_TO_XY && MouseAction[2] != MOVE_TO_WH && MouseAction[2] != SAVE_AND_MOVE_TO_WH &&
-		MouseAction[3] != MOVE_TO_XY && MouseAction[3] != SAVE_AND_MOVE_TO_XY && MouseAction[3] != MOVE_TO_WH && MouseAction[3] != SAVE_AND_MOVE_TO_WH;
+		vjID[0] != MOVE_TO_XY && vjID[0] != SAVE_AND_MOVE_TO_XY &&
+		vjID[0] != MOVE_TO_WH && vjID[0] != SAVE_AND_MOVE_TO_WH &&
+		vjID[0] != MOVE_TO_NN && vjID[0] != SAVE_AND_MOVE_TO_NN &&
+			vjID[1] != MOVE_TO_XY && vjID[1] != SAVE_AND_MOVE_TO_XY &&
+			vjID[1] != MOVE_TO_WH && vjID[1] != SAVE_AND_MOVE_TO_WH &&
+			vjID[1] != MOVE_TO_NN && vjID[1] != SAVE_AND_MOVE_TO_NN &&
+		vjID[2] != MOVE_TO_XY && vjID[2] != SAVE_AND_MOVE_TO_XY &&
+		vjID[2] != MOVE_TO_WH && vjID[2] != SAVE_AND_MOVE_TO_WH &&
+		vjID[2] != MOVE_TO_NN && vjID[2] != SAVE_AND_MOVE_TO_NN &&
+			vjID[3] != MOVE_TO_XY && vjID[3] != SAVE_AND_MOVE_TO_XY &&
+			vjID[3] != MOVE_TO_WH && vjID[3] != SAVE_AND_MOVE_TO_WH &&
+			vjID[3] != MOVE_TO_NN && vjID[3] != SAVE_AND_MOVE_TO_NN &&
+		vjID[4] != MOVE_TO_XY && vjID[4] != SAVE_AND_MOVE_TO_XY &&
+		vjID[4] != MOVE_TO_WH && vjID[4] != SAVE_AND_MOVE_TO_WH &&
+		vjID[4] != MOVE_TO_NN && vjID[4] != SAVE_AND_MOVE_TO_NN &&
+			vjID[5] != MOVE_TO_XY && vjID[5] != SAVE_AND_MOVE_TO_XY &&
+			vjID[5] != MOVE_TO_WH && vjID[5] != SAVE_AND_MOVE_TO_WH &&
+			vjID[5] != MOVE_TO_NN && vjID[5] != SAVE_AND_MOVE_TO_NN &&
+		vjID[6] != MOVE_TO_XY && vjID[6] != SAVE_AND_MOVE_TO_XY &&
+		vjID[6] != MOVE_TO_WH && vjID[6] != SAVE_AND_MOVE_TO_WH &&
+		vjID[6] != MOVE_TO_NN && vjID[6] != SAVE_AND_MOVE_TO_NN &&
+			vjID[7] != MOVE_TO_XY && vjID[7] != SAVE_AND_MOVE_TO_XY &&
+			vjID[7] != MOVE_TO_WH && vjID[7] != SAVE_AND_MOVE_TO_WH &&
+			vjID[7] != MOVE_TO_NN && vjID[7] != SAVE_AND_MOVE_TO_NN;
 
 	release = std::chrono::system_clock::now();
 
@@ -435,11 +567,16 @@ void Mapping::RunFirst(vJoyDevice* vjoy)
 	defaultmouse = 0;
 	mouseactivated = false;
 	for (int i = 0; i < vJoyButtonID::button_Count; i++)
+	{
 		if (m_toggle[i])
 		{
-			vjoy->GetButton((vJoyButtonID)i)->SetVal(0xFF);
+			vjoy->GetButton((vJoyButtonID)i)->SetValByte(0xFF);
 			vjoy->GetButton((vJoyButtonID)i)->SetPushed();
 		}
+		vjoy->GetButton((vJoyButtonID)i)->setOverwrite();
+	}
+	for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+		vjoy->GetAxis((vJoyAxisMoveID)i)->setOverwrite();
 }
 
 void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
@@ -447,20 +584,28 @@ void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 	vJoyButtonsString[0] = 0;
 	WCHAR* head = vJoyButtonsString;
 
+	m_vj_X->ResetCounter();
+	m_vj_Y->ResetCounter();
+	m_vj_Z->ResetCounter();
+	m_vj_RX->ResetCounter();
+	m_vj_RY->ResetCounter();
+	m_vj_RZ->ResetCounter();
+	m_vj_SL0->ResetCounter();
+	m_vj_SL1->ResetCounter();
+
 	for (int i = 0; i < vjUsed.size(); i++)
 	{
-		m_vjUsed = (vJoyButtonID)vjUsed[i];
-		if (!vjoy->GetButton(m_vjUsed)->isPushed())
-			vjoy->GetButton(m_vjUsed)->Release();
+		if (!vjoy->GetButton((vJoyButtonID)vjUsed[i])->isPushed())
+			vjoy->GetButton((vJoyButtonID)vjUsed[i])->Release();
 		else
-			head += wsprintf(head, L"%s ", vJoyButton::String(m_vjUsed));
+			head += wsprintf(head, L"%s ", vJoyButton::String((vJoyButtonID)vjUsed[i]));
 	}
 
 	if (tape.ActualDS == 2)
 	{
 		byte m_Whitetmp = 0x00;
 
-		if (!Ledactive[0] && !Ledactive[1] && !Ledactive[2] && !Ledactive[3] && !Ledactive[4] && Ledactive[5])
+		if (!Ledactive[Led_Action_Led1] && !Ledactive[Led_Action_Led2] && !Ledactive[Led_Action_Led3] && !Ledactive[Led_Action_Led4] && !Ledactive[Led_Action_Led5] && Ledactive[Led_Action_Battery])
 		{
 			if (battery < 25)
 				m_Whitetmp = 0x01;
@@ -473,15 +618,15 @@ void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 		}
 		else
 		{
-			if (Ledactive[0])
+			if (Ledactive[Led_Action_Led1])
 				m_Whitetmp = 0x01;
-			if (Ledactive[1])
+			if (Ledactive[Led_Action_Led2])
 				m_Whitetmp = m_Whitetmp | 0x02;
-			if (Ledactive[2])
+			if (Ledactive[Led_Action_Led3])
 				m_Whitetmp = m_Whitetmp | 0x04;
-			if (Ledactive[3])
+			if (Ledactive[Led_Action_Led4])
 				m_Whitetmp = m_Whitetmp | 0x08;
-			if (Ledactive[4])
+			if (Ledactive[Led_Action_Led5])
 				m_Whitetmp = m_Whitetmp | 0x10;
 		}
 
@@ -489,10 +634,14 @@ void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 	}
 }
 
-void Mapping::Run()
+void Mapping::Run(double average)
 {
 	if (tape.vJoyPaused)
 		return;
+
+	pushed0 = (exists0) ? ((Target[0]) ? ((m_vj[0]->isPushed()) ? true : false) : ((m_ds[0]->isPushed()) ? true : false)) : false;
+	pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
+	pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
 
 	bool legits[5];
 	if (Force == 1 || (Force == 2 && isRunning))
@@ -506,13 +655,51 @@ void Mapping::Run()
 		for (int i = 0; i < 5; i++)
 		{
 			legits[i] =
-				(Target[i] && (m_vj[i] == 0 || (m_vj[i]->isPushed() && !(std::find(vjDisabled.begin(), vjDisabled.end(), vjID[i]) != vjDisabled.end())))) ||
+				(Target[i] && (m_vj[i] == 0 || (m_vj[i]->isPushed() && !(std::find(vjDisabled.begin(), vjDisabled.end(), dsID[i]) != vjDisabled.end())))) ||
 				(!Target[i] && (m_ds[i] == 0 || (m_ds[i]->isPushed() && !(std::find(dsDisabled.begin(), dsDisabled.end(), dsID[i]) != dsDisabled.end()))));
 		}
 
-	if (tape.Mode[Tab] != 0 && tape.Mode[Tab] != mode)
-		legit = false;
-	else if (!OrXorNot[0] && !OrXorNot[1])
+	if (modechanged)
+	{
+		if (modechangedto != mode)
+		{
+			if (Transitivity == 2 && Pause == 2)
+			{
+				if (!(modechangedto != tape.Mode[Tab] && modechangedto != mode && mode != tape.Mode[Tab]))
+					modechanged = min(3, modechanged++);
+			}
+			else
+				modechanged = 2;
+			modechangedto = mode;
+		}
+	}
+//	else if (isRunning && tape.Mode[Tab] && tape.Mode[Tab] != mode && tomode != mode)
+	else if (tape.Mode[Tab] && tape.Mode[Tab] != mode && tomode != mode)
+	{
+		if (isRunning)
+		{
+			modechanged = 1;
+			modechangedto = mode;
+		}
+		else
+		{
+//			modechanged = 3;
+			locked = 3;
+		}
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		if (NoRelease[i])
+		{
+			(modedest[i]) = (modedest[i] && released && tomode != mode) ? 2 :
+				((modechanged && !(NlRelease[i] == 1 && tape.Mode[Tab] == mode) && !(NlRelease[i] == 2 && tape.Mode[Tab] != mode)) ? ((NoRelease[i] == 2) ? 1 : 2) : 0);
+		}
+		if (OnRelease[i] && locked == 1 && tape.Mode[Tab] == mode && !Transitivity && Pause == 2)
+			modedest[i] = 0;
+	}
+
+	if (!OrXorNot[0] && !OrXorNot[1])
 	{
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
@@ -526,7 +713,8 @@ void Mapping::Run()
 	{
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
-			((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : ((OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1]))) &&
+			((OrXorNot[0] == 2) ? (legits[0] ^ (exists1 && legits[1])) :
+				((OrXorNot[0]) ? (legits[0] || (exists1 && legits[1])) : (legits[0] && (exists1 && legits[1])))) &&
 			legits[2] &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
@@ -536,7 +724,8 @@ void Mapping::Run()
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			legits[0] &&
-			((OrXorNot[1] == 2) ? (legits[1] ^ legits[2]) : ((OrXorNot[1]) ? (legits[1] || legits[2]) : (legits[1] && legits[2]))) &&
+			((OrXorNot[1] == 2) ? (legits[1] ^ (exists2 && legits[2])) :
+				((OrXorNot[1]) ? (legits[1] || (exists2 && legits[2])) : (legits[1] && (exists2 && legits[2])))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
@@ -544,15 +733,39 @@ void Mapping::Run()
 	{
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
-			((OrXorNot[0] == 2) ? (legits[0] ^ legits[1]) : ((OrXorNot[0]) ? (legits[0] || legits[1]) : (legits[0] && legits[1]))) &&
-			((OrXorNot[1] == 2) ? (legits[0] ^ legits[2]) : ((OrXorNot[1]) ? (legits[0] || legits[2]) : (legits[0] && legits[2]))) &&
+			((OrXorNot[0] == 2) ? (legits[0] ^ (exists1 && legits[1])) :
+				((OrXorNot[0]) ? (legits[0] || (exists1 && legits[1])) : (legits[0] && (exists1 && legits[1])))) &&
+			((OrXorNot[1] == 2) ? (legits[0] ^ (exists2 && legits[2])) :
+				((OrXorNot[1]) ? (legits[0] || (exists2 && legits[2])) : (legits[0] && (exists2 && legits[2])))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
-
-	pushed0 = (exists0) ? ((Target[0]) ? ((m_vj[0]->isPushed()) ? true : false) : ((m_ds[0]->isPushed()) ? true : false)) : false;
-	pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
-	pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
+	if (locked == 0)
+		if (modechanged == 1)
+			locked = 1;
+	if (modechanged > 2)
+		locked = 3;
+	if (locked == 1 && !legit && released)
+		locked = 2;
+	if (locked == 2 && mode != tomode && legit)
+		locked = 3;
+	bool lasttest = (legit && Transitivity == 1 && Pause != 2 && modechanged);
+//	if (((tape.Mode[Tab] == mode) && (!legit || (!Transitivity && Pause == 2))) || lasttest)
+	if ((tape.Mode[Tab] == mode && !legit) || lasttest)
+	{
+		locked = 0;
+		tomode = -1;
+		if (lasttest)
+			modechanged = 1;
+//		else if (Transitivity || Pause != 2)
+		else
+			modechanged = 0;
+	}
+	if (!lasttest)
+		if (tape.Mode[Tab] && tape.Mode[Tab] != mode && !(isRunning && Transitivity == 1 && Pause == 2) && !(isRunning && !Transitivity && Pause == 2))
+			legit = false;
+	if (locked == 3)
+		legit = false;
 
 	if (!isRunning)
 	{
@@ -746,11 +959,10 @@ void Mapping::Run()
 			{
 				ran[i] = false;
 				Toggledone[i] = false;
+				MouseActiondone[i] = false;
 				randStart[i] = std::chrono::milliseconds(Start[i] + ((Start[i] & 1) ? (rand() % 9) : 0));
 				randStop[i] = std::chrono::milliseconds(Stop[i] + ((Stop[i] & 1) ? (rand() % 9) : 0));
 			}
-			for (int i = 0; i < 4; i++)
-				MouseActiondone[i] = false;
 		}
 		else if (!legit && !released)
 		{
@@ -761,12 +973,31 @@ void Mapping::Run()
 		end2 = std::chrono::system_clock::now();
 
 		if (Led)
-			Ledactive[Led - 1] = true;
+			Ledactive[Led] = true;
 
-		BYTE value0 = (BYTE)((pushed0) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
-		BYTE value1 = (BYTE)((pushed1) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
-		BYTE value2 = (BYTE)((pushed2) ? ((Target[2]) ? m_vj[2]->GetVal() : m_ds[2]->GetVal()) : 0);
+		byte value0 = (byte)((pushed0) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
+		byte value1 = (byte)((pushed1) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
+		byte value2 = (byte)((pushed2) ? ((Target[2]) ? m_vj[2]->GetVal() : m_ds[2]->GetVal()) : 0);
 
+		Interrupttmp = false;
+		NoSustain = false;
+		Pausetmp = false;
+		for (int i = 0; i < 8; i++)
+		{
+			started[i] = (OnRelease[i] == 1) ? ((released) ? (end2 - release2 >= randStart[i]) : false) : (end2 - start2 >= randStart[i]);
+			done[i] = ran[i] ? ((OnRelease[i]) ? ((released) ? ((end2 - release2 >= randStop[i])) : false) : ((Stop[i]) ? (end2 - start2 >= randStop[i]) : released)) : false;
+			if (modedest[i] == 2 && released) done[i] = true;
+			if (MouseAction[i] == 1)
+				if (started[i] && !done[i])
+					switch (vjID[i])
+					{
+					case INTERRUPT: Interrupttmp = true; ran[i] = true; break;
+					case NO_SUSTAIN: NoSustain = true; ran[i] = true; break;
+					case PAUSE: Pausetmp = true; ran[i] = true; break;
+					}
+		}
+
+		OnReleaseValue = (Macro == 2 || NoSustain) ? release0 : 0xFF;
 		if (!OrXorNot[0])
 			m_data = (exists0) ?
 			((pushed0) ? value0 : ((released) ? OnReleaseValue : release0)) :
@@ -780,22 +1011,20 @@ void Mapping::Run()
 			((pushed0) ? value0 : ((released) ? OnReleaseValue : ((exists1) ? ((pushed1) ? value1 : ((exists2) ? ((pushed2) ? value2 : release0) : release0)) : ((exists2) ? ((pushed2) ? value2 : release0) : release0)))) :
 			((released) ? 0xFF : ((exists1) ? ((pushed1) ? value1 : ((exists2) ? ((pushed2) ? value2 : 0) : 0)) : ((exists2) ? ((pushed2) ? value2 : 0) : 0)));
 
+		TimeActiondone = -1;
 		for (int i = 0; i < 8; i++)
 		{
-			if (Macro == 1 && released && OnRelease[i] != 1)
+			if ((Macro == 1 || Interrupttmp) && released && OnRelease[i] != 1)
 			{
 				started[i] = false;
 				done[i] = true;
 			}
-			else
-			{
-				started[i] = (OnRelease[i] == 1) ? ((released) ? (end2 - release2 >= randStart[i]) : false) : (end2 - start2 >= randStart[i]);
-				done[i] = ran[i] ? ((OnRelease[i]) ? ((released) ? ((end2 - release2 >= randStop[i])) : false) : ((Stop[i]) ? (end2 - start2 >= randStop[i]) : released)) : false;
-			}
+			if (modechanged == 3 && OnRelease[i])
+				done[i] = true;
 
 			if ((OrXorNot[2] && legits[3]) || (OrXorNot[3] && legits[4]))
 			{
-				if (Pause)
+				if (Pause == 1 || Pausetmp)
 					started[i] = false;
 				else if ((OrXorNot[2] == 1 && legits[3]) || (OrXorNot[3] == 1 && legits[4]))
 				{
@@ -804,12 +1033,20 @@ void Mapping::Run()
 				}
 			}
 
-			if (i < 4 && MouseAction[i])
+			if (MouseAction[i] == 1)
 			{
-				if (started[i] && !done[i] && (!ran[i] || MouseAction[i] == SCROLL_UP_VARIABLE || MouseAction[i] == SCROLL_DOWN_VARIABLE || MouseAction[i] == VOLUME_UP || MouseAction[i] == VOLUME_DOWN))
+				if (vjID[i] == TO_LAST_MODE || vjID[i] == IF_RELEASED_GOTO || vjID[i] == IF_PUSHED_GOTO)
+					if (ran[i])
+						done[i] = true;
+				if (started[i] && !done[i] && (!ran[i] ||
+					vjID[i] == SCROLL_UP_VARIABLE || vjID[i] == SCROLL_DOWN_VARIABLE ||
+					vjID[i] == VOLUME_UP || vjID[i] == VOLUME_DOWN ||
+					(Stop[i] && (
+					vjID[i] == MOVE_TO_XY || vjID[i] == SAVE_AND_MOVE_TO_XY ||
+					vjID[i] == MOVE_TO_WH || vjID[i] == SAVE_AND_MOVE_TO_WH ||
+					vjID[i] == MOVE_TO_NN || vjID[i] == SAVE_AND_MOVE_TO_NN))))
 				{
-					ran[i] = true;
-					switch (MouseAction[i])
+					switch (vjID[i])
 					{
 					case ACTIVE_MOUSE:
 						if (Toggle)
@@ -821,117 +1058,271 @@ void Mapping::Run()
 							}
 						}
 						break;
+					case Mapping::SAVE_POSITION:
+						GetCursorPos(&movebackpoint);
+						break;
+					case Mapping::MOVE_BACK:
+						SetCursorPos(movebackpoint.x, movebackpoint.y);
+						break;
+					case SAVE_AND_MOVE_TO_XY: if (!ran[i]) GetCursorPos(&movebackpoint);
+					case MOVE_TO_XY:
+						if (Stop[i])
+						{
+							POINT actualpoint;
+							GetCursorPos(&actualpoint);
+							long long x = actualpoint.x;
+							long long y = actualpoint.y;
+							long long steps = (long long)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
+							if ((Macro == 1 || Interrupttmp) && released)
+							{
+								steps = 1;
+								randStop[i] = std::chrono::milliseconds(0);
+								ran[i] = 0;
+							}
+							SetCursorPos(int(x + (((long long)Grid[0] - x) / steps)), int(y + (((long long)Grid[1] - y) / steps)));
+						}
+						else
+							SetCursorPos(Grid[0], Grid[1]);
+						break;
+					case SAVE_AND_MOVE_TO_WH: if (!ran[i]) GetCursorPos(&movebackpoint);
+					case MOVE_TO_WH:
+						if (Stop[i])
+						{
+							POINT actualpoint;
+							GetCursorPos(&actualpoint);
+							long long x = actualpoint.x;
+							long long y = actualpoint.y;
+							long long steps = (long long)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
+							if ((Macro == 1 || Interrupttmp) && released)
+							{
+								steps = 1;
+								randStop[i] = std::chrono::milliseconds(0);
+								ran[i] = 0;
+							}
+							SetCursorPos(int(x + (((long long)Grid[2] - x) / steps)), int(y + (((long long)Grid[3] - y) / steps)));
+						}
+						else
+							SetCursorPos(Grid[2], Grid[3]);
+						break;
+					case SAVE_AND_MOVE_TO_NN: if (!ran[i]) GetCursorPos(&movebackpoint);
+					case MOVE_TO_NN:
+						if (Stop[i] && vjID[i] == SAVE_AND_MOVE_TO_NN)
+						{
+							POINT actualpoint;
+							GetCursorPos(&actualpoint);
+							long long x = actualpoint.x;
+							long long y = actualpoint.y;
+							long long steps = (long long)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
+							if ((Macro == 1 || Interrupttmp) && released)
+							{
+								steps = 1;
+								randStop[i] = std::chrono::milliseconds(0);
+								ran[i] = 0;
+							}
+							SetCursorPos(int(x + (((long long)Grid[4] - x) / steps)), int(y + (((long long)Grid[5] - y) / steps)));
+						}
+						else
+							SetCursorPos(Grid[4], Grid[5]);
+						break;
+					case GRID_LEFT: gridmove.push_back(1); break;
+					case GRID_UP: gridmove.push_back(2); break;
+					case GRID_RIGHT: gridmove.push_back(3); break;
+					case GRID_DOWN: gridmove.push_back(4); break;
 					case SCROLL_UP_VARIABLE:
 					case SCROLL_DOWN_VARIABLE:
 					{
-						int modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : -1) : (m_ds[0] ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : -1) : (m_ds[0] ? m_ds[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
 								if (!(cycle % 5))
 								{
-									double delta = cycle;
+									unsigned long long delta = cycle;
 									delta = delta * delta / 1600;
-									std::thread(MouseActions, MouseAction[i], min(240, delta), 0, 0).detach();
+									std::thread(MouseActions, (MouseActionID)vjID[i], (int)min(240, delta)).detach();
 								}
 							}
 							else
 							{
 								if (!(cycle % 18))
-									std::thread(MouseActions, MouseAction[i], 600 - (modulo * 5), 0, 0).detach();
+									std::thread(MouseActions, (MouseActionID)vjID[i], 600 - (modulo * 5)).detach();
 							}
 						break;
 					}
 					case VOLUME_UP:
 					case VOLUME_DOWN:
 					{
-						int modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : -1) : (m_ds[0] ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = Target[0] ? (m_vj[0] ? m_vj[0]->GetScrollVal() : -1) : (m_ds[0] ? m_ds[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
 								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
-									std::thread(MouseActions, MouseAction[i], 0, 0, 0).detach();
+									std::thread(MouseActions, (MouseActionID)vjID[i], 0).detach();
 							}
 							else
 							{
 								if (!(cycle % modulo))
-									std::thread(MouseActions, MouseAction[i], 0, 0, 0).detach();
+									std::thread(MouseActions, (MouseActionID)vjID[i], 0).detach();
 							}
 						break;
 					}
-					case MOVE_TO_XY:
-					case SAVE_AND_MOVE_TO_XY:
-						std::thread(MouseActions, MouseAction[i], 0, Grid[0], Grid[1]).detach();
-						break;
-					case MOVE_TO_WH:
-					case SAVE_AND_MOVE_TO_WH:
-						std::thread(MouseActions, MouseAction[i], 0, Grid[2], Grid[3]).detach();
-						break;
-					case MEMORIZE_MODE: { lastmode = mode; break;}
-					case TO_MODE1: { mode = 1; break;}
-					case TO_MODE2: { mode = 2; break;}
-					case TO_MODE3: { mode = 3; break;}
-					case TO_MODE4: { mode = 4; break;}
-					case TO_MODE5: { mode = 5; break;}
-					case TO_MODE6: { mode = 6; break;}
-					case TO_MODE7: { mode = 7; break;}
-					case TO_MODE8: { mode = 8; break;}
-					case TO_LAST_MODE: { mode = lastmode; break;}
+					case MEMORIZE_MODE: lastmode = mode; done[i] = true; break;
+					case TO_MODE1: tomode = 1; mode = 1; done[i] = true; break;
+					case TO_MODE2: tomode = 2; mode = 2; done[i] = true; break;
+					case TO_MODE3: tomode = 3; mode = 3; done[i] = true; break;
+					case TO_MODE4: tomode = 4; mode = 4; done[i] = true; break;
+					case TO_MODE5: tomode = 5; mode = 5; done[i] = true; break;
+					case TO_MODE6: tomode = 6; mode = 6; done[i] = true; break;
+					case TO_MODE7: tomode = 7; mode = 7; done[i] = true; break;
+					case TO_MODE8: tomode = 8; mode = 8; done[i] = true; break;
+					case TO_LAST_MODE: tomode = lastmode; mode = lastmode; done[i] = true; break;
+					case FORGOT_RELEASED: released = false; done[i] = true; break;
+					case IF_RELEASED_GOTO: if (TimeActiondone == -1 && released) TimeActiondone = i; done[i] = true; break;
+					case IF_PUSHED_GOTO: if (TimeActiondone == -1 && !released) TimeActiondone = i; done[i] = true; break;
+					case RETURN_TO: if (TimeActiondone == -1) TimeActiondone = i; done[i] = true; break;
 					default:
-						std::thread(MouseActions, MouseAction[i], 0, 0, 0).detach();
+						std::thread(MouseActions, (MouseActionID)vjID[i], 0).detach();
 						break;
 					}
+					ran[i] = true;
 				}
+			}
+			else if (MouseAction[i] == 2)
+			{
+				if (started[i] && !done[i])
+				{
+					if (m_vj[i + 5])
+					{
+						if (m_vj[i + 5]->isOverWrite())
+						{
+							long initialval1 = m_vj[i + 5]->GetVal();
+							long initialval2 = m_vj[i + 5]->GetVal2();
+							if (Start[i] || Stop[i])
+							{
+								byte m_dataRing = (byte)((OnRelease[i] == 2) ? ((((min(randStop[i] - randStart[i], end2 - randStart[i] - start2))) * 255) / (randStop[i] - randStart[i])) :
+									((((end2 - randStart[i] - ((OnRelease[i] == 1) ? release2 : start2))) * 255) / (randStop[i] - randStart[i])));
+								m_vj[i + 5]->SetValByte(m_dataRing);
+							}
+							else
+								m_vj[i + 5]->SetValByte(m_data);
+							m_vj[i + 5]->SetPushed();
+
+							if (Overcontrol[i] == 1)
+							{
+								int counter1 = 0;
+								int counter2 = 0;
+								switch (m_vj[i + 5]->GetCounterType())
+								{
+								case vJoyAxisID::axis_XY:
+									counter1 = m_vj_X->GetCounter();
+									counter2 = m_vj_Y->GetCounter();
+									break;
+								case vJoyAxisID::axis_ZRZ:
+									counter1 = m_vj_Z->GetCounter();
+									counter2 = m_vj_RZ->GetCounter();
+									break;
+								case vJoyAxisID::axis_RXRY:
+									counter1 = m_vj_RX->GetCounter();
+									counter2 = m_vj_RY->GetCounter();
+									break;
+								case vJoyAxisID::axis_SL0SL1:
+									counter1 = m_vj_SL0->GetCounter();
+									counter2 = m_vj_SL1->GetCounter();
+									break;
+								}
+								if (counter1 > 1)
+									m_vj[i + 5]->SetVal((m_vj[i + 5]->GetVal() + (initialval1 * (counter1 - 1))) / counter1);
+								if (counter2 > 1)
+									m_vj[i + 5]->SetVal2((m_vj[i + 5]->GetVal() + (initialval2 * (counter2 - 1))) / counter2);
+							}
+							else if (Overcontrol[i] == 2)
+								m_vj[i + 5]->setOverwrite(false);
+						}
+					}
+				}
+				ran[i] = true;
 			}
 			else
 			{
 				if (started[i] && !done[i])
 				{
-					ran[i] = true;
 					if (m_vj[i + 5])
 					{
-						if (Toggle)
+						if (Switch[i])
+						{
+							if (!ran[i])
+								m_toggle[vjID[i]] = (Switch[i] == 1) ? true : false;
+						}
+						else if (Toggle)
 						{
 							if (!Toggledone[i])
 							{
 								Toggledone[i] = true;
-								m_toggle[vjID[i + 5]] = !m_toggle[vjID[i + 5]];
+								m_toggle[vjID[i]] = !m_toggle[vjID[i]];
 							}
 						}
 						else
 						{
-							m_vj[i + 5]->SetVal(m_data);
-							m_vj[i + 5]->SetPushed();
+							if (m_vj[i + 5]->isOverWrite())
+							{
+								long initialval = m_vj[i + 5]->GetVal();
+								m_vj[i + 5]->SetValByte(m_data);
+								m_vj[i + 5]->SetPushed();
+
+								if (Overcontrol[i] == 1)
+								{
+									int counter = m_vj[i + 5]->GetCounter();
+									if (counter > 1)
+										m_vj[i + 5]->SetVal((m_vj[i + 5]->GetVal() + (initialval * (counter - 1))) / counter);
+								}
+								else if (Overcontrol[i] == 2)
+									m_vj[i + 5]->setOverwrite(false);
+							}
 						}
 					}
+					ran[i] = true;
+				}
+				if (m_toggle[vjID[i]])
+				{
+					m_vj[i + 5]->SetValByte((m_data) ? m_data : ((done[i]) ? 0xFF : 0));
+					m_vj[i + 5]->SetPushed();
 				}
 			}
 		}
 
-		for (int i = 0; i < 4; i++)
-			if (MouseAction[i] && done[i] && !MouseActiondone[i])
+		for (int i = 0; i < 8; i++)
+			if (MouseAction[i] == 1 && done[i] && !MouseActiondone[i])
 			{
 				MouseActiondone[i] = true;
-				std::thread(MouseActionEnd, MouseAction[i]).detach();
+				std::thread(MouseActionEnd, (MouseActionID)vjID[i]).detach();
 			}
 
-		if (done[0] && done[1] && done[2] && done[3] && done[4] && done[5] && done[6] && done[7])
+		if (done[0] && done[1] && done[2] && done[3] && done[4] && done[5] && done[6] && done[7] && TimeActiondone == -1)
 		{
 			method = 0;
 			isRunning = false;
 
 			if (Led)
-				Ledactive[Led - 1] = false;
+				Ledactive[Led] = false;
+
+			if (modechanged && Transitivity != 2 && tomode != mode)
+				locked = 3;
+
+			if (released)
+			{
+				for (int i = 0; i < 8; i++)
+					modedest[i] = 0;
+			}
 		}
 		else
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				if (Disable[i])
+				if (dsDisable[i])
 					if (Target[i])
 					{
 						if (m_vj[i])
-							vjDisabled.push_back(vjID[i]);
+							vjDisabled.push_back(dsID[i]);
 					}
 					else
 					{
@@ -939,33 +1330,18 @@ void Mapping::Run()
 							dsDisabled.push_back(dsID[i]);
 					}
 			}
-			for (int i = 5; i < 13; i++)
+			for (int i = 0; i < 8; i++)
 			{
-				if (Disable[i] == 1 && started[i - 5] && !done[i - 5])
+				if (vjDisable[i] == 2)
 				{
-					if (m_vj[i])
+					if (m_vj[i + 5])
 						vjDisabled.push_back(vjID[i]);
 				}
-				else if (Disable[i] == 2)
+				else if (vjDisable[i] == 1 && started[i] && !done[i])
 				{
-					if (m_vj[i])
+					if (m_vj[i + 5])
 						vjDisabled.push_back(vjID[i]);
 				}
-			}
-		}
-
-	}
-
-	if (Toggle)
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			if (i < 4 && MouseAction[i])
-				continue;
-			if (m_toggle[vjID[i + 5]])
-			{
-				m_vj[i + 5]->SetVal((m_data) ? m_data : ((done[i]) ? 0xFF : 0));
-				m_vj[i + 5]->SetPushed();
 			}
 		}
 	}
@@ -973,7 +1349,11 @@ void Mapping::Run()
 	if (((!Toggle && MouseAction[0] == 1 && started[0] && !done[0]) || (Toggle && mouse_toggle[0])) ||
 		((!Toggle && MouseAction[1] == 1 && started[1] && !done[1]) || (Toggle && mouse_toggle[1])) ||
 		((!Toggle && MouseAction[2] == 1 && started[2] && !done[2]) || (Toggle && mouse_toggle[2])) ||
-		((!Toggle && MouseAction[3] == 1 && started[3] && !done[3]) || (Toggle && mouse_toggle[3])))
+		((!Toggle && MouseAction[3] == 1 && started[3] && !done[3]) || (Toggle && mouse_toggle[3])) ||
+		((!Toggle && MouseAction[4] == 1 && started[0] && !done[4]) || (Toggle && mouse_toggle[4])) ||
+		((!Toggle && MouseAction[5] == 1 && started[1] && !done[5]) || (Toggle && mouse_toggle[5])) ||
+		((!Toggle && MouseAction[6] == 1 && started[2] && !done[6]) || (Toggle && mouse_toggle[6])) ||
+		((!Toggle && MouseAction[7] == 1 && started[3] && !done[7]) || (Toggle && mouse_toggle[7])))
 	{
 		for (int i = 0; i < 3; i++)
 			if (Mouse[i])
@@ -1000,21 +1380,75 @@ void Mapping::Run()
 		defaultmouse = (Mouse[6]) ? ((Mouse[6] == 1) ? true : false) : defaultmouse;
 	}
 
-	cycle = (cycle == 2147483639) ? 0 : cycle + 1;
+	if (TimeActiondone > -1)
+	{
+		locked = 0;
+		if (release2 > start2 + std::chrono::milliseconds(Stop[TimeActiondone]))
+			released = false;
+		for (int i = 0; i < 8; i++)
+		{
+			if (Start[i] >= Stop[TimeActiondone])
+			{
+				ran[i] = false;
+				Toggledone[i] = false;
+				MouseActiondone[i] = false;
+			}
+			else if (Stop[i] >= Stop[TimeActiondone])
+			{
+
+				ran[i] = true;
+				Toggledone[i] = true;
+				MouseActiondone[i] = false;
+			}
+			else
+			{
+				ran[i] = true;
+				Toggledone[i] = true;
+				MouseActiondone[i] = true;
+			}
+		}
+		cycle = (unsigned long long)(floor((Stop[TimeActiondone] / average)) - 1);
+		std::chrono::system_clock::time_point start2tmp = std::chrono::system_clock::now() - std::chrono::milliseconds(Stop[TimeActiondone]);
+		release2 = start2tmp + (release2 - start2);
+		start2 = start2tmp;
+	}
+
+	cycle = (cycle == 18446744073709551615) ? 0 : cycle + 1;
 }
 
-WCHAR* Mapping::String(MouseActionID id)
+WCHAR* Mapping::LedString(LedActionID id)
 {
 	switch (id)
 	{
-	case none: return L"";
+	case Led_Action_none: return L"";
+	case Led_Action_Led1: return I18N.LedAction_Led_1;
+	case Led_Action_Led2: return I18N.LedAction_Led_2;
+	case Led_Action_Led3: return I18N.LedAction_Led_3;
+	case Led_Action_Led4: return I18N.LedAction_Led_4;
+	case Led_Action_Led5: return I18N.LedAction_Led_5;
+	case Led_Action_Battery: return I18N.LedAction_BATTERY;
+	default: return L"???";
+	}
+}
+
+WCHAR* Mapping::MouseString(MouseActionID id)
+{
+	switch (id)
+	{
+	case mouse_none: return L"";
 	case ACTIVE_MOUSE: return I18N.MouseAction_ACTIVE_MOUSE;
 	case SAVE_POSITION: return I18N.MouseAction_SAVE_POSITION;
-	case MOVE_TO_XY: return I18N.MouseAction_MOVE_TO_XY;
-	case SAVE_AND_MOVE_TO_XY: return I18N.MouseAction_SAVE_AND_MOVE_TO_XY;
-	case MOVE_TO_WH: return I18N.MouseAction_MOVE_TO_WH;
-	case SAVE_AND_MOVE_TO_WH: return I18N.MouseAction_SAVE_AND_MOVE_TO_WH;
 	case MOVE_BACK: return I18N.MouseAction_MOVE_BACK;
+	case MOVE_TO_XY: return I18N.MouseAction_MOVE_TO_XY;
+	case MOVE_TO_WH: return I18N.MouseAction_MOVE_TO_WH;
+	case MOVE_TO_NN: return I18N.MouseAction_MOVE_TO_NN;
+	case SAVE_AND_MOVE_TO_XY: return I18N.MouseAction_SAVE_AND_MOVE_TO_XY;
+	case SAVE_AND_MOVE_TO_WH: return I18N.MouseAction_SAVE_AND_MOVE_TO_WH;
+	case SAVE_AND_MOVE_TO_NN: return I18N.MouseAction_SAVE_AND_MOVE_TO_NN;
+	case GRID_LEFT: return I18N.MouseAction_GRID_LEFT;
+	case GRID_UP: return I18N.MouseAction_GRID_UP;
+	case GRID_RIGHT: return I18N.MouseAction_GRID_RIGHT;
+	case GRID_DOWN: return I18N.MouseAction_GRID_DOWN;
 	case LEFT_CLICK: return I18N.MouseAction_LEFT_CLICK;
 	case MIDDLE_CLICK: return I18N.MouseAction_MIDDLE_CLICK;
 	case RIGHT_CLICK: return I18N.MouseAction_RIGHT_CLICK;
@@ -1049,38 +1483,22 @@ WCHAR* Mapping::String(MouseActionID id)
 	case TO_MODE7: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(7)).c_str());
 	case TO_MODE8: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(8)).c_str());
 	case TO_LAST_MODE: return I18N.MouseAction_TO_LAST_MODE;
+	case FORGOT_RELEASED: return I18N.MouseAction_FORGOT_RELEASED;
+	case IF_RELEASED_GOTO: return I18N.MouseAction_IF_RELEASED_GOTO;
+	case IF_PUSHED_GOTO: return I18N.MouseAction_IF_PUSHED_GOTO;
+	case RETURN_TO: return I18N.MouseAction_RETURN_TO;
+	case INTERRUPT: return I18N.MouseAction_MOUSE_INTERRUPT;
+	case NO_SUSTAIN: return I18N.MouseAction_MOUSE_NO_SUSTAIN;
+	case PAUSE: return I18N.MouseAction_MOUSE_PAUSE;
 	default: return L"???";
 	}
 }
 
-void MouseActions(int action, int delta, int x, int y)
+void MouseActions(int action, int delta)
 {
 	switch (action)
 	{
-	case MouseActionID::SAVE_POSITION:
-	{
-		GetCursorPos(&movebackpoint);
-		break;
-	}
-	case MouseActionID::MOVE_BACK:
-	{
-		SetCursorPos(movebackpoint.x, movebackpoint.y);
-		break;
-	}
-	case MouseActionID::MOVE_TO_XY:
-	case MouseActionID::MOVE_TO_WH:
-	{
-		SetCursorPos(x, y);
-		break;
-	}
-	case MouseActionID::SAVE_AND_MOVE_TO_XY:
-	case MouseActionID::SAVE_AND_MOVE_TO_WH:
-{
-		GetCursorPos(&movebackpoint);
-		SetCursorPos(x, y);
-		break;
-	}
-	case MouseActionID::LEFT_CLICK:
+	case Mapping::LEFT_CLICK:
 	{
 		INPUT inputs[2] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1091,7 +1509,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::MIDDLE_CLICK:
+	case Mapping::MIDDLE_CLICK:
 	{
 		INPUT inputs[2] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1102,7 +1520,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::RIGHT_CLICK:
+	case Mapping::RIGHT_CLICK:
 	{
 		INPUT inputs[2] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1113,7 +1531,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X1_CLICK:
+	case Mapping::X1_CLICK:
 	{
 		INPUT inputs[2] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1126,7 +1544,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X2_CLICK:
+	case Mapping::X2_CLICK:
 	{
 		INPUT inputs[2] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1139,7 +1557,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::SCROLL_UP:
+	case Mapping::SCROLL_UP:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1149,7 +1567,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(input));
 		break;
 	}
-	case MouseActionID::SCROLL_DOWN:
+	case Mapping::SCROLL_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1159,7 +1577,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(input));
 		break;
 	}
-	case MouseActionID::LEFT_DOUBLE_CLICK:
+	case Mapping::LEFT_DOUBLE_CLICK:
 	{
 		INPUT inputs[4] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1174,7 +1592,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::MIDDLE_DOUBLE_CLICK:
+	case Mapping::MIDDLE_DOUBLE_CLICK:
 	{
 		INPUT inputs[4] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1189,7 +1607,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::RIGHT_DOUBLE_CLICK:
+	case Mapping::RIGHT_DOUBLE_CLICK:
 	{
 		INPUT inputs[4] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1204,7 +1622,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X1_DOUBLE_CLICK:
+	case Mapping::X1_DOUBLE_CLICK:
 	{
 		INPUT inputs[4] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1223,7 +1641,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X2_DOUBLE_CLICK:
+	case Mapping::X2_DOUBLE_CLICK:
 	{
 		INPUT inputs[4] = {};
 		ZeroMemory(inputs, sizeof(inputs));
@@ -1242,7 +1660,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::SCROLL_UP_x5:
+	case Mapping::SCROLL_UP_x5:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1252,7 +1670,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(input));
 		break;
 	}
-	case MouseActionID::SCROLL_DOWN_x5:
+	case Mapping::SCROLL_DOWN_x5:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1262,7 +1680,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(input));
 		break;
 	}
-	case MouseActionID::LEFT_DOWN:
+	case Mapping::LEFT_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1271,7 +1689,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::MIDDLE_DOWN:
+	case Mapping::MIDDLE_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1280,7 +1698,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::RIGHT_DOWN:
+	case Mapping::RIGHT_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1289,7 +1707,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X1_DOWN:
+	case Mapping::X1_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1299,7 +1717,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X2_DOWN:
+	case Mapping::X2_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1309,7 +1727,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::SCROLL_UP_VARIABLE:
+	case Mapping::SCROLL_UP_VARIABLE:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1319,7 +1737,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(input));
 		break;
 	}
-	case MouseActionID::SCROLL_DOWN_VARIABLE:
+	case Mapping::SCROLL_DOWN_VARIABLE:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1329,7 +1747,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &input, sizeof(input));
 		break;
 	}
-	case MouseActionID::MUTE_SOUND:
+	case Mapping::MUTE_SOUND:
 	{
 		INPUT sendkeys = { 0 };
 		ZeroMemory(&sendkeys, sizeof(sendkeys));
@@ -1343,7 +1761,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &sendkeys, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::VOLUME_UP:
+	case Mapping::VOLUME_UP:
 	{
 		INPUT sendkeys = { 0 };
 		ZeroMemory(&sendkeys, sizeof(sendkeys));
@@ -1357,7 +1775,7 @@ void MouseActions(int action, int delta, int x, int y)
 		SendInput(1, &sendkeys, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::VOLUME_DOWN:
+	case Mapping::VOLUME_DOWN:
 	{
 		INPUT sendkeys = { 0 };
 		ZeroMemory(&sendkeys, sizeof(sendkeys));
@@ -1378,7 +1796,7 @@ void MouseActionEnd(int action)
 {
 	switch (action)
 	{
-	case MouseActionID::LEFT_DOWN:
+	case Mapping::LEFT_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1387,7 +1805,7 @@ void MouseActionEnd(int action)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::MIDDLE_DOWN:
+	case Mapping::MIDDLE_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1396,7 +1814,7 @@ void MouseActionEnd(int action)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::RIGHT_DOWN:
+	case Mapping::RIGHT_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1405,7 +1823,7 @@ void MouseActionEnd(int action)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X1_DOWN:
+	case Mapping::X1_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));
@@ -1415,7 +1833,7 @@ void MouseActionEnd(int action)
 		SendInput(1, &input, sizeof(INPUT));
 		break;
 	}
-	case MouseActionID::X2_DOWN:
+	case Mapping::X2_DOWN:
 	{
 		INPUT input = { 0 };
 		ZeroMemory(&input, sizeof(input));

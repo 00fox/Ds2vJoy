@@ -72,8 +72,8 @@ void ViGEm::InitPad(bool verbose)
 			return;
 		}
 
-//	  vigem_target_set_vid(pad, USHORT vid);
-//	  vigem_target_set_pid(pad, USHORT pid);
+//	  vigem_target_set_vid(pad, unsigned short vid);
+//	  vigem_target_set_pid(pad, unsigned short pid);
 		XUSB_REPORT_INIT(&report_X360);
 
 		err = vigem_target_x360_register_notification(client, pad, &Notify_X360, nullptr);
@@ -151,15 +151,15 @@ void ViGEm::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 	case 1:
 		for (int i = 0; i < 24; i++)
 		{
-			m_ds[i] = tape.dstarget_X360[i] ? ds->GetButton(tape.dstarget_X360[i]) : 0;
-			m_vj[i] = tape.vjtarget_X360[i] ? vjoy->GetButton(tape.vjtarget_X360[i]) : 0;
+			m_ds[i] = tape.dstarget_X360[i] ? ds->GetButton((dsButtonID)tape.dstarget_X360[i]) : 0;
+			m_vj[i] = tape.vjtarget_X360[i] ? vjoy->GetButton((vJoyButtonID)tape.vjtarget_X360[i]) : 0;
 		}
 		break;
 	case 2:
 		for (int i = 0; i < 24; i++)
 	{
-			m_ds[i] = tape.dstarget_DS4[i] ? ds->GetButton(tape.dstarget_DS4[i]) : 0;
-			m_vj[i] = tape.vjtarget_DS4[i] ? vjoy->GetButton(tape.vjtarget_DS4[i]) : 0;
+			m_ds[i] = tape.dstarget_DS4[i] ? ds->GetButton((dsButtonID)tape.dstarget_DS4[i]) : 0;
+			m_vj[i] = tape.vjtarget_DS4[i] ? vjoy->GetButton((vJoyButtonID)tape.vjtarget_DS4[i]) : 0;
 		}
 		break;
 	}
@@ -177,7 +177,7 @@ void ViGEm::Run()
 	{
 	case 1: //Xbox360
 	{
-	    USHORT wButtons = 0x0;
+	    unsigned short wButtons = 0x0;
 
 		if ((tape.target_X360[0]) ? ((m_vj[0]) ? (m_vj[0]->isPushed()) : false) : (m_ds[0]) ? (m_ds[0]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_LEFT_THUMB; head += wsprintf(head, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_THUMB)); }				//9
 		if ((tape.target_X360[1]) ? ((m_vj[1]) ? (m_vj[1]->isPushed()) : false) : (m_ds[1]) ? (m_ds[1]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_LEFT; head += wsprintf(head, L"%s ", X360_String(XUSB_GAMEPAD_DPAD_LEFT)); }					//<
@@ -197,17 +197,17 @@ void ViGEm::Run()
 
 		report_X360.wButtons = wButtons;
 
-		if (tape.target_X360[18]) { if (m_vj[18]) { report_X360.bLeftTrigger = (m_vj[18]->isPushed()) ? m_vj[18]->GetVal2() : 0; } }	//-Z
+		if (tape.target_X360[18]) { if (m_vj[18]) { report_X360.bLeftTrigger = (m_vj[18]->isPushed()) ? m_vj[18]->GetValByte() : 0; } }	//-Z
 		else { if (m_ds[18]) { report_X360.bLeftTrigger = (m_ds[18]->isPushed()) ? m_ds[18]->GetVal() : 0; } }
-		if (tape.target_X360[19]) { if (m_vj[19]) { report_X360.bRightTrigger = (m_vj[19]->isPushed()) ? m_vj[19]->GetVal2() : 0; } }	//+Z
+		if (tape.target_X360[19]) { if (m_vj[19]) { report_X360.bRightTrigger = (m_vj[19]->isPushed()) ? m_vj[19]->GetValByte() : 0; } }	//+Z
 		else { if (m_ds[19]) { report_X360.bRightTrigger = (m_ds[19]->isPushed()) ? m_ds[19]->GetVal() : 0; } }
-		if (tape.target_X360[20]) { if (m_vj[20]) { report_X360.sThumbLX = (m_vj[20]->isPushed()) ? (((m_vj[20]->GetVal2() + 1) * 256) - 32769) : 0; } }	//X
+		if (tape.target_X360[20]) { if (m_vj[20]) { report_X360.sThumbLX = (m_vj[20]->isPushed()) ? (((m_vj[20]->GetValByte() + 1) * 256) - 32769) : 0; } }	//X
 		else { if (m_ds[20]) { report_X360.sThumbLX = (m_ds[20]->isPushed()) ? (((m_ds[20]->GetVal() + 1) * 256) - 32769) : 0; } }
-		if (tape.target_X360[21]) { if (m_vj[21]) { report_X360.sThumbLY = (m_vj[21]->isPushed()) ? (((m_vj[21]->GetVal2() + 1) * 256) - 32769) : 0; } }	//Y
+		if (tape.target_X360[21]) { if (m_vj[21]) { report_X360.sThumbLY = (m_vj[21]->isPushed()) ? (((m_vj[21]->GetValByte() + 1) * 256) - 32769) : 0; } }	//Y
 		else { if (m_ds[21]) { report_X360.sThumbLY = (m_ds[21]->isPushed()) ? (((m_ds[21]->GetVal() + 1) * 256) - 32769) : 0; } }
-		if (tape.target_X360[22]) { if (m_vj[22]) { report_X360.sThumbRX = (m_vj[22]->isPushed()) ? (((m_vj[22]->GetVal2() + 1) * 256) - 32769) : 0; } }	//RX
+		if (tape.target_X360[22]) { if (m_vj[22]) { report_X360.sThumbRX = (m_vj[22]->isPushed()) ? (((m_vj[22]->GetValByte() + 1) * 256) - 32769) : 0; } }	//RX
 		else { if (m_ds[22]) { report_X360.sThumbRX = (m_ds[22]->isPushed()) ? (((m_ds[22]->GetVal() + 1) * 256) - 32769) : 0; } }
-		if (tape.target_X360[23]) { if (m_vj[23]) { report_X360.sThumbRY = (m_vj[23]->isPushed()) ? (((m_vj[23]->GetVal2() + 1) * 256) - 32769) : 0; } }	//RY
+		if (tape.target_X360[23]) { if (m_vj[23]) { report_X360.sThumbRY = (m_vj[23]->isPushed()) ? (((m_vj[23]->GetValByte() + 1) * 256) - 32769) : 0; } }	//RY
 		else { if (m_ds[23]) { report_X360.sThumbRY = (m_ds[23]->isPushed()) ? (((m_ds[23]->GetVal() + 1) * 256) - 32769) : 0; } }
 
 		if (report_X360.bLeftTrigger) { head += wsprintf(head, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_TRIGGER)); }
@@ -222,9 +222,9 @@ void ViGEm::Run()
 	}
 	case 2: //DS4
 	{
-		USHORT wButtons = 0x0;
-		DWORD dButtons = 0x0;
-		BYTE sButtons = 0x0;
+		unsigned short wButtons = 0x0;
+		unsigned long dButtons = 0x0;
+		byte sButtons = 0x0;
 
 		if ((tape.target_DS4[0]) ? ((m_vj[0]) ? (m_vj[0]->isPushed()) : false) : (m_ds[0]) ? (m_ds[0]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_THUMB_LEFT; head += wsprintf(head, L"%s ", DS4_String(DS4_BUTTON_THUMB_LEFT)); }						//11
 		if ((tape.target_DS4[1]) ? ((m_vj[1]) ? (m_vj[1]->isPushed()) : false) : (m_ds[1]) ? (m_ds[1]->isPushed()) : false) { dButtons = dButtons | 0x01; head += wsprintf(head, L"%s ", DS4_String(DS4_BUTTON_WEST)); }											//<
@@ -250,47 +250,30 @@ void ViGEm::Run()
 
 		switch (dButtons)
 		{
-		case 0x01:
-			Dpad = DS4_BUTTON_DPAD_WEST;
-			break;
-		case 0x03:
-			Dpad = DS4_BUTTON_DPAD_NORTHWEST;
-			break;
-		case 0x02:
-			Dpad = DS4_BUTTON_DPAD_NORTH;
-			break;
-		case 0x06:
-			Dpad = DS4_BUTTON_DPAD_NORTHEAST;
-			break;
-		case 0x04:
-			Dpad = DS4_BUTTON_DPAD_EAST;
-			break;
-		case 0x0C:
-			Dpad = DS4_BUTTON_DPAD_SOUTHEAST;
-			break;
-		case 0x08:
-			Dpad = DS4_BUTTON_DPAD_SOUTH;
-			break;
-		case 0x09:
-			Dpad = DS4_BUTTON_DPAD_SOUTHWEST;
-			break;
-		default:
-			Dpad = DS4_BUTTON_DPAD_NONE;
+		case 0x01:Dpad = DS4_BUTTON_DPAD_WEST;break;
+		case 0x03:Dpad = DS4_BUTTON_DPAD_NORTHWEST;break;
+		case 0x02:Dpad = DS4_BUTTON_DPAD_NORTH;break;
+		case 0x06:Dpad = DS4_BUTTON_DPAD_NORTHEAST;break;
+		case 0x04:Dpad = DS4_BUTTON_DPAD_EAST;break;
+		case 0x0C:Dpad = DS4_BUTTON_DPAD_SOUTHEAST;break;
+		case 0x08:Dpad = DS4_BUTTON_DPAD_SOUTH;break;
+		case 0x09:Dpad = DS4_BUTTON_DPAD_SOUTHWEST;break;
+		default:Dpad = DS4_BUTTON_DPAD_NONE;
 		}
 
 		DS4_SET_DPAD(&report_DS4, Dpad);
 
-		if (tape.target_DS4[18]) { if (m_vj[18]) { report_DS4.bTriggerL = (m_vj[18]->isPushed()) ? m_vj[18]->GetVal2() : 0; } }		//RX
+		if (tape.target_DS4[18]) { if (m_vj[18]) { report_DS4.bTriggerL = (m_vj[18]->isPushed()) ? m_vj[18]->GetValByte() : 0; } }	//RX
 		else { if (m_ds[18]) { report_DS4.bTriggerL = (m_ds[18]->isPushed()) ? m_ds[18]->GetVal() : 0; } }
-		if (tape.target_DS4[19]) { if (m_vj[19]) { report_DS4.bTriggerR = (m_vj[19]->isPushed()) ? m_vj[19]->GetVal2() : 0; } }		//RY
+		if (tape.target_DS4[19]) { if (m_vj[19]) { report_DS4.bTriggerR = (m_vj[19]->isPushed()) ? m_vj[19]->GetValByte() : 0; } }	//RY
 		else { if (m_ds[19]) { report_DS4.bTriggerR = (m_ds[19]->isPushed()) ? m_ds[19]->GetVal() : 0; } }
-		if (tape.target_DS4[20]) { if (m_vj[20]) { report_DS4.bThumbLX = (m_vj[20]->isPushed()) ? m_vj[20]->GetVal2() : 127; } }	//X
+		if (tape.target_DS4[20]) { if (m_vj[20]) { report_DS4.bThumbLX = (m_vj[20]->isPushed()) ? m_vj[20]->GetValByte() : 127; } }	//X
 		else { if (m_ds[20]) { report_DS4.bThumbLX = (m_ds[20]->isPushed()) ? m_ds[20]->GetVal() : 127; } }
-		if (tape.target_DS4[21]) { if (m_vj[21]) { report_DS4.bThumbLY = (m_vj[21]->isPushed()) ? m_vj[21]->GetVal2() : 127; } }	//Y
+		if (tape.target_DS4[21]) { if (m_vj[21]) { report_DS4.bThumbLY = (m_vj[21]->isPushed()) ? m_vj[21]->GetValByte() : 127; } }	//Y
 		else { if (m_ds[21]) { report_DS4.bThumbLY = (m_ds[21]->isPushed()) ? m_ds[21]->GetVal() : 127; } }
-		if (tape.target_DS4[22]) { if (m_vj[22]) { report_DS4.bThumbRX = (m_vj[22]->isPushed()) ? m_vj[22]->GetVal2() : 127; } }	//Z
+		if (tape.target_DS4[22]) { if (m_vj[22]) { report_DS4.bThumbRX = (m_vj[22]->isPushed()) ? m_vj[22]->GetValByte() : 127; } }	//Z
 		else { if (m_ds[22]) { report_DS4.bThumbRX = (m_ds[22]->isPushed()) ? m_ds[22]->GetVal() : 127; } }
-		if (tape.target_DS4[23]) { if (m_vj[23]) { report_DS4.bThumbRY = (m_vj[23]->isPushed()) ? m_vj[23]->GetVal2() : 127; } }	//RZ
+		if (tape.target_DS4[23]) { if (m_vj[23]) { report_DS4.bThumbRY = (m_vj[23]->isPushed()) ? m_vj[23]->GetValByte() : 127; } }	//RZ
 		else { if (m_ds[23]) { report_DS4.bThumbRY = (m_ds[23]->isPushed()) ? m_ds[23]->GetVal() : 127; } }
 
 		if (report_DS4.bTriggerL) { head += wsprintf(head, L"%s ", DS4_String(DS4_BUTTON_LEFT_TR)); }
@@ -320,7 +303,7 @@ int ViGEm::GetViGEmState()
 
 int ViGEm::ViGEmState(bool verbose)
 {
-	int ViGEmState = -1;
+	char ViGEmState = -1;
 	
 	std::string devconpath = "Devcon.exe status Nefarius\\ViGEmBus\\Gen1";
 	std::string devconcmd = LaunchCmd(devconpath.c_str());

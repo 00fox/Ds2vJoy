@@ -2,6 +2,7 @@
 #include "Findwindow.h"
 
 Findwindow::Findwindow()
+	:m_enable(false)
 {
 }
 
@@ -115,7 +116,7 @@ std::wstring Findwindow::GetText(HWND hwnd)
 	int length = GetWindowTextLength(hwnd);
 	if (length > 0)
 	{
-		WCHAR* buf = new WCHAR[length + 1];
+		WCHAR* buf = new WCHAR[(size_t)length + 1];
 		int ret = GetWindowText(hwnd, buf, length + 1);
 
 		if (ret == length)

@@ -23,7 +23,7 @@ public:
 	void Hide();
 	BOOL MoveWindow(int, int, int, int, BOOL);
 
-	int dlgPage = 0;
+	int dlgPage;
 	Keymap keymapData;
 	Findwindow fw;
 	bool alreadydone;

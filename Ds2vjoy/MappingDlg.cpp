@@ -2,12 +2,32 @@
 #include "MappingDlg.h"
 #include "MappingDataDlg.h"
 #include "Ds2vJoy.h"
-#include "uxtheme.h"
-#pragma comment(lib, "UxTheme.lib")
+#include <bitset>
 
 MappingDlg::MappingDlg()
-	:m_flag_drag(false)
+	:m_hWnd(0)
+	, m_hDlg(0)
+	, m_hList(0)
+	, m_hMenu(0)
+	, m_hMenu2(0)
+	, m_Tab(0)
+	, m_TabsID()
+	, m_ReminderId()
+	, m_Randcolor()
+	, m_active(false)
+	, m_flag_drag(false)
+	, m_insrtpos(0)
+	, m_isClonedList(false)
+	, m_isCloned(false)
+	, lastidx(0)
+	, lastidxs({ 0 })
+	, lasttab(0)
+	, tabSortingMethod(false)
+	, moving(false)
 {
+	for (int i = 0; i < 14; i++) m_TabsID[i] = 0;
+	for (int i = 0; i < 32; i++) m_ReminderId[i] = 0;
+	for (int i = 0; i < 32; i++) m_Randcolor[i] = 0;
 }
 
 MappingDlg::~MappingDlg()
@@ -55,10 +75,10 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	col.cx = 84;
 	ListView_InsertColumn(m_hList, 2, &col);
 	col.pszText = I18N.vJoyButton;
-	col.cx = 120;
+	col.cx = 111;
 	ListView_InsertColumn(m_hList, 3, &col);
 	col.pszText = I18N.TagsButton;
-	col.cx = 78;
+	col.cx = 87;
 	ListView_InsertColumn(m_hList, 4, &col);
 
 	HWND hTip = ListView_GetToolTips(m_hList);
@@ -72,7 +92,7 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	m_isClonedList = true;
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_CLONE), hWnd, (DLGPROC)Proc, (LPARAM)this);
-	LONG lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
+	long lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
 //		lStyle |= WS_THICKFRAME;
 	lStyle = lStyle & ~WS_CAPTION;
 	SetWindowLong(m_hDlg, GWL_STYLE, lStyle);
@@ -202,6 +222,8 @@ void MappingDlg::SetTab(int tab)
 	if (m_isCloned)
 		redrawListReminder();
 	ShowWindow(GetDlgItem(m_hDlg, IDC_STATIC_CLONE), SW_SHOW);
+	Hide();
+	Show();
 }
 
 int MappingDlg::GetTab()
@@ -336,6 +358,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_SHOWWINDOW:
 	{
+		lasttab = 15;
 		SendMessage(m_hList, LVM_SETBKCOLOR, 0, (LPARAM)RGB(210, 210, 215));
 		SendMessage(m_hList, LVM_SETTEXTCOLOR, 0, (LPARAM)RGB(10, 10, 10));
 		SendMessage(m_hList, LVM_SETTEXTBKCOLOR, 0, (LPARAM)RGB(225, 225, 230));
@@ -427,10 +450,10 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				nCharCount = ::GetMenuString(m_hMenu, DrawMenuSize->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
 			{
-				int nAcceleratorDelimiter;
-				for (nAcceleratorDelimiter = 0;
-					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t' || wszBuffer[nAcceleratorDelimiter] == L'\b')
+				int nCharacters;
+				for (nCharacters = 0;
+					nCharacters < nCharCount; nCharacters++)
+					if (wszBuffer[nCharacters] == L'\t' || wszBuffer[nCharacters] == L'\b')
 						break;
 
 				RECT rTextMetric = { 0, 0, 0, 0 };
@@ -447,16 +470,16 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					if (font != NULL)
 						hOldFont = (HFONT)::SelectObject(hDC, font);
 
-					::DrawTextW(hDC, wszBuffer, nAcceleratorDelimiter, &rTextMetric, DT_CALCRECT);
+					::DrawTextW(hDC, wszBuffer, nCharacters, &rTextMetric, DT_CALCRECT);
 					long _CaptionWidth = rTextMetric.right - rTextMetric.left;
 
 					long _AcceleratorWidth = 0;
-					if (nAcceleratorDelimiter < nCharCount - 1)
+					if (nCharacters < nCharCount - 1)
 					{
-						::DrawTextW(hDC, &(wszBuffer[nAcceleratorDelimiter + 1]), nCharCount - nAcceleratorDelimiter - 1, &rTextMetric, DT_CALCRECT);
+						::DrawTextW(hDC, &(wszBuffer[nCharacters + 1]), nCharCount - nCharacters - 1, &rTextMetric, DT_CALCRECT);
 						_AcceleratorWidth = rTextMetric.right - rTextMetric.left;
 					}
-					if (hOldFont == NULL)
+					if (hOldFont == NULL && hOldFont != 0)
 						::SelectObject(hDC, hOldFont);
 
 					::ReleaseDC(m_hDlg, hDC);
@@ -538,11 +561,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				crCurrText = ::GetSysColor((itemnumber == m_Tab && m_isClonedList) ? COLOR_INFOBK : (bSelected ? COLOR_HIGHLIGHTTEXT : ((m_isClonedList) ? RGB(166, 134, 170) : RGB(176, 144, 180))));
 				crPrevText = ::SetTextColor(DrawMenuStructure->hDC, crCurrText);
 
-				int nAcceleratorDelimiter;
-				for (nAcceleratorDelimiter = 0;
-					nAcceleratorDelimiter < nCharCount; nAcceleratorDelimiter++)
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t' ||
-						wszBuffer[nAcceleratorDelimiter] == L'\b')
+				int nCharacters;
+				for (nCharacters = 0;
+					nCharacters < nCharCount; nCharacters++)
+					if (wszBuffer[nCharacters] == L'\t' ||
+						wszBuffer[nCharacters] == L'\b')
 						break;
 
 				NONCLIENTMETRICSW nm;
@@ -557,18 +580,18 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				int nImageOffsetX = nEdgeWidth + nEdgeWidth + 12;
 				DrawMenuStructure->rcItem.left += nImageOffsetX;
 				DrawMenuStructure->rcItem.top += 0;
-				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nAcceleratorDelimiter, &(DrawMenuStructure->rcItem), 0);
+				::DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &(DrawMenuStructure->rcItem), 0);
 
-				if (nAcceleratorDelimiter < nCharCount - 1)
+				if (nCharacters < nCharCount - 1)
 				{
 					DrawMenuStructure->rcItem.left += 21;
-					if (wszBuffer[nAcceleratorDelimiter] == L'\t')
-						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
-							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+					if (wszBuffer[nCharacters] == L'\t')
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nCharacters + 1]),
+							nCharCount - nCharacters - 1, &(DrawMenuStructure->rcItem),
 							DT_LEFT | DT_SINGLELINE);
 					else
-						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nAcceleratorDelimiter + 1]),
-							nCharCount - nAcceleratorDelimiter - 1, &(DrawMenuStructure->rcItem),
+						::DrawTextW(DrawMenuStructure->hDC, &(wszBuffer[nCharacters + 1]),
+							nCharCount - nCharacters - 1, &(DrawMenuStructure->rcItem),
 							DT_RIGHT | DT_SINGLELINE);
 					DrawMenuStructure->rcItem.left -=  + 21;
 				}
@@ -588,8 +611,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
+		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(191, 200, 196));
@@ -601,8 +623,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
+		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 		SetTextColor(hdcStatic, RGB(100, 93, 79));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(36, 163, 163));
@@ -619,8 +640,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else if (::GetDlgCtrlID((HWND)lParam) == IDC_STATIC_CLONE)
 		{
 			static HBRUSH hBrushColor;
-			if (!hBrushColor)
-				hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
+			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 			SetTextColor(hdcStatic, RGB(100, 93, 79));
 			SetBkMode(hdcStatic, TRANSPARENT);
 			return (LRESULT)hBrushColor;
@@ -636,8 +656,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
+		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
 		SetTextColor(hdcStatic, RGB(62, 20, 102));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -647,8 +666,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HDC hdcStatic = (HDC)wParam;
 		static HBRUSH hBrushColor;
-		if (!hBrushColor)
-			hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
+		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
 		SetTextColor(hdcStatic, RGB(10, 10, 10));
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, RGB(255, 255, 0));
@@ -666,6 +684,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			HBRUSH brush = CreateSolidBrush(RGB(240, 240, 240));
 			FillRect(hDC, &rect, brush);
+			DeleteObject(brush);
 			EndPaint(hWnd, &ps);
 
 			for (int i = 0; i < 32; i++)
@@ -708,6 +727,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							LineTo(hDC, rect.left + 3, rect.bottom - 1);
 						}
 					}
+					DeleteObject(brush);
 					EndPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
 				}
 			}
@@ -777,19 +797,344 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_MAPPING_LIST:
-/*			if (((LPNMHEADER)lParam)->iItem)
-			{
-				switch (((LPNMHDR)lParam)->code)
-				{
-				case HDN_OVERFLOWCLICK:
-				case -166:
-					m_isCloned = false;
-					Hide();
-					break;
-				}
-			}*/
 			switch (((LPNMLISTVIEW)lParam)->hdr.code)
 			{
+			case LVN_COLUMNCLICK:
+			{
+				if (!(GetAsyncKeyState(VK_RBUTTON) & 0x10000000))
+					return FALSE;
+
+				m_active = false;
+				mDDlg.Hide();
+
+				LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
+				unsigned char column = pnmv->iSubItem;
+				if (lasttab == column)
+					tabSortingMethod = !tabSortingMethod;
+				else
+					tabSortingMethod = false;
+				lasttab = column;
+
+				Mappings newmaptmp;
+				Mappings newmapbis;
+				size_t length = tape.Mappingdata.size();
+				for (size_t i = 0; i < length; i++)
+					if (tape.Mappingdata[i].Tab == m_Tab)
+						newmapbis.push_back((Mapping)tape.Mappingdata[i]);
+					else
+						newmaptmp.push_back((Mapping)tape.Mappingdata[i]);
+
+				length = newmapbis.size();
+				for (size_t i = 0; i < length; i++)
+				{
+					if (newmapbis[i].Enable == 2)
+					{
+						newmaptmp.push_back((Mapping)newmapbis[i]);
+						newmapbis.erase(newmapbis.begin() + i);
+					}
+				}
+
+				while (newmapbis.size())
+				{
+					int pos = -1;
+
+					unsigned long long valuefirst = 0;
+					unsigned long long valuesecond = 0;
+					std::bitset<128> first = 0xFFFFFFFFFFFFFFFF;
+					std::bitset<128> second = 0xFFFFFFFFFFFFFFFF;
+					first <<= 64;
+
+					length = newmapbis.size();
+					for (size_t i = 0; i < length; i++)
+					{
+						std::bitset<128> sortresult = 0;
+
+						std::vector<unsigned short> dsdata;
+						for (int j = 1; j < 5; j++)
+						{
+							if (newmapbis[i].dsID[j])
+							{
+								if (j < 3 || (j > 2 && !newmapbis[i].OrXorNot[j - 1]))
+								{
+									short dsvalue = newmapbis[i].dsID[j];
+									dsvalue |= (newmapbis[i].Target[j] << 8);
+									dsvalue |= (newmapbis[i].OrXorNot[j - 1] << 9);
+									dsdata.push_back(dsvalue);
+								}
+							}
+						}
+						std::sort(dsdata.begin(), dsdata.end());
+						size_t length = 4 - dsdata.size();
+						for (int j = 0; j < length; j++)
+							dsdata.push_back(0);
+
+						std::vector<unsigned short> dsdatanot;
+						for (int j = 3; j < 5; j++)
+						{
+							if (newmapbis[i].dsID[j])
+							{
+								if (newmapbis[i].OrXorNot[j - 1])
+								{
+									short dsvalue = newmapbis[i].dsID[j];
+									dsvalue |= (newmapbis[i].Target[j] << 8);
+									dsvalue |= ((newmapbis[i].OrXorNot[j - 1] - 1) << 9);
+									dsdatanot.push_back(dsvalue);
+								}
+							}
+						}
+						length = 2 - dsdatanot.size();
+						for (int j = 0; j < length; j++)
+							dsdatanot.push_back(0);
+						std::sort(dsdatanot.begin(), dsdatanot.end());
+
+						std::vector<unsigned short> vjdata;
+						for (int j = 0; j < 8; j++)
+						{
+							if (newmapbis[i].vjID[j])
+							{
+								short vjvalue = newmapbis[i].vjID[j];
+								vjvalue |= (newmapbis[i].MouseAction[j] << 8);
+								vjdata.push_back(vjvalue);
+							}
+						}
+						length = 4 - min(4, vjdata.size());
+						for (int j = 0; j < length; j++)
+							vjdata.push_back(0);
+
+						switch (column)
+						{
+						case 0:
+						{
+							if (tabSortingMethod)
+							{
+								//    ds8      dsor11      dsor11      dsor11      dsor11      dsnot10    dsnot10    led vj9       vj9       vj9       vj9
+								//0 0 00000000 00000000000 00000000000 00000000000 00000000000 0000000000 0000000000 000 000000000 000000000 000000000 000000000 00 00 00 00 0 0 0 00 00
+								//126      118         107          96          85          74         64         54  51        42        33        24        15 13 11  9  7 6 5 4  2
+								sortresult |= ((std::bitset<128>)newmapbis[i].Ifmouse << 0);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Force << 2);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Short << 4);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Double << 5);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Long << 6);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Macro << 7);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Pause << 9);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 11);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 13);
+								sortresult |= ((std::bitset<128>)vjdata[3] << 15);
+								sortresult |= ((std::bitset<128>)vjdata[2] << 24);
+								sortresult |= ((std::bitset<128>)vjdata[1] << 33);
+								sortresult |= ((std::bitset<128>)vjdata[0] << 52);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Led << 51);
+								sortresult |= ((std::bitset<128>)dsdatanot[1] << 54);
+								sortresult |= ((std::bitset<128>)dsdatanot[0] << 64);
+								sortresult |= ((std::bitset<128>)dsdata[3] << 74);
+								sortresult |= ((std::bitset<128>)dsdata[2] << 85);
+								sortresult |= ((std::bitset<128>)dsdata[1] << 96);
+								sortresult |= ((std::bitset<128>)dsdata[0] << 107);
+								sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 118);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 126);
+								sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 127);
+							}
+							else
+							{
+								sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 0);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 8);
+							}
+							break;
+						}
+						case 1:
+						{
+							if (tabSortingMethod)
+							{
+								//  dsor11      dsor11      dsor11      dsor11      dsnot10    dsnot10    led vj9       vj9       vj9       vj9         ds8
+								//0 00000000000 00000000000 00000000000 00000000000 0000000000 0000000000 000 000000000 000000000 000000000 000000000 0 00000000 00 00 00 00 0 0 0 00 00
+								//          116         105          94          83         73         63  60        51        42        33        2423       15 13 11  9  7 6 5 4  2
+								sortresult |= ((std::bitset<128>)newmapbis[i].Ifmouse << 0);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Force << 2);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Short << 4);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Double << 5);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Long << 6);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Macro << 7);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Pause << 9);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 11);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 13);
+								sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 15);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 23);
+								sortresult |= ((std::bitset<128>)vjdata[3] << 24);
+								sortresult |= ((std::bitset<128>)vjdata[2] << 33);
+								sortresult |= ((std::bitset<128>)vjdata[1] << 42);
+								sortresult |= ((std::bitset<128>)vjdata[0] << 51);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Led << 60);
+								sortresult |= ((std::bitset<128>)dsdatanot[1] << 63);
+								sortresult |= ((std::bitset<128>)dsdatanot[0] << 73);
+								sortresult |= ((std::bitset<128>)dsdata[3] << 83);
+								sortresult |= ((std::bitset<128>)dsdata[2] << 94);
+								sortresult |= ((std::bitset<128>)dsdata[1] << 105);
+								sortresult |= ((std::bitset<128>)dsdata[0] << 116);
+								sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 127);
+							}
+							else
+							{
+								sortresult |= ((std::bitset<128>)dsdata[3] << 0);
+								sortresult |= ((std::bitset<128>)dsdata[2] << 11);
+								sortresult |= ((std::bitset<128>)dsdata[1] << 22);
+								sortresult |= ((std::bitset<128>)dsdata[0] << 33);
+							}
+							break;
+						}
+						case 2:
+						{
+							if (tabSortingMethod)
+							{
+								//  dsnot10    dsnot10    led vj9       vj9       vj9       vj9         ds8      dsor11      dsor11      dsor11      dsor11      
+								//0 0000000000 0000000000 000 000000000 000000000 000000000 000000000 0 00000000 00000000000 00000000000 00000000000 00000000000 00 00 00 00 0 0 0 00 00
+								//         117        107 104        95        86        77        6867       59          48          37          26          15 13 11  9  7 6 5 4  2
+								sortresult |= ((std::bitset<128>)newmapbis[i].Ifmouse << 0);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Force << 2);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Short << 4);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Double << 5);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Long << 6);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Macro << 7);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Pause << 9);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 11);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 13);
+								sortresult |= ((std::bitset<128>)dsdata[3] << 15);
+								sortresult |= ((std::bitset<128>)dsdata[2] << 26);
+								sortresult |= ((std::bitset<128>)dsdata[1] << 37);
+								sortresult |= ((std::bitset<128>)dsdata[0] << 48);
+								sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 59);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 67);
+								sortresult |= ((std::bitset<128>)vjdata[3] << 68);
+								sortresult |= ((std::bitset<128>)vjdata[2] << 77);
+								sortresult |= ((std::bitset<128>)vjdata[1] << 86);
+								sortresult |= ((std::bitset<128>)vjdata[0] << 95);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Led << 104);
+								sortresult |= ((std::bitset<128>)dsdatanot[1] << 107);
+								sortresult |= ((std::bitset<128>)dsdatanot[0] << 117);
+								sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 127);
+							}
+							else
+							{
+								sortresult |= ((std::bitset<128>)dsdatanot[1] << 0);
+								sortresult |= ((std::bitset<128>)dsdatanot[0] << 10);
+							}
+							break;
+						}
+						case 3:
+						{
+							if (tabSortingMethod)
+							{
+								//  led vj9       vj9       vj9       vj9         ds8      dsor11      dsor11      dsor11      dsor11      dsnot10    dsnot10   
+								//0 000 000000000 000000000 000000000 000000000 0 00000000 00000000000 00000000000 00000000000 00000000000 0000000000 0000000000 00 00 00 00 0 0 0 00 00
+								//  124       115       106        97        8887       79          68          57          46          35         25         15 13 11  9  7 6 5 4  2
+								sortresult |= ((std::bitset<128>)newmapbis[i].Ifmouse << 0);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Force << 2);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Short << 4);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Double << 5);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Long << 6);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Macro << 7);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Pause << 9);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 11);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 13);
+								sortresult |= ((std::bitset<128>)dsdatanot[1] << 15);
+								sortresult |= ((std::bitset<128>)dsdatanot[0] << 25);
+								sortresult |= ((std::bitset<128>)dsdata[3] << 35);
+								sortresult |= ((std::bitset<128>)dsdata[2] << 46);
+								sortresult |= ((std::bitset<128>)dsdata[1] << 57);
+								sortresult |= ((std::bitset<128>)dsdata[0] << 68);
+								sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 79);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 87);
+								sortresult |= ((std::bitset<128>)vjdata[3] << 88);
+								sortresult |= ((std::bitset<128>)vjdata[2] << 97);
+								sortresult |= ((std::bitset<128>)vjdata[1] << 106);
+								sortresult |= ((std::bitset<128>)vjdata[0] << 115);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Led << 124);
+								sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 127);
+							}
+							else
+							{
+								sortresult |= ((std::bitset<128>)vjdata[3] << 0);
+								sortresult |= ((std::bitset<128>)vjdata[2] << 9);
+								sortresult |= ((std::bitset<128>)vjdata[1] << 18);
+								sortresult |= ((std::bitset<128>)vjdata[0] << 27);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Led << 36);
+							}
+							break;
+						}
+						case 4:
+						{
+							if (tabSortingMethod)
+							{
+								//                            ds8      dsor11      dsor11      dsor11      dsor11      dsnot10    dsnot10    led vj9       vj9       vj9       vj9
+								//0 00 00 00 00 0 0 0 00 00 0 00000000 00000000000 00000000000 00000000000 00000000000 0000000000 0000000000 000 000000000 000000000 000000000 000000000
+								//  25 23221 19181716 14 1211      103          92          81          70          59         49         39  36        27        18         9
+								sortresult |= ((std::bitset<128>)vjdata[3] << 0);
+								sortresult |= ((std::bitset<128>)vjdata[2] << 9);
+								sortresult |= ((std::bitset<128>)vjdata[1] << 18);
+								sortresult |= ((std::bitset<128>)vjdata[0] << 27);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Led << 36);
+								sortresult |= ((std::bitset<128>)dsdatanot[1] << 39);
+								sortresult |= ((std::bitset<128>)dsdatanot[0] << 49);
+								sortresult |= ((std::bitset<128>)dsdata[3] << 59);
+								sortresult |= ((std::bitset<128>)dsdata[2] << 70);
+								sortresult |= ((std::bitset<128>)dsdata[1] << 81);
+								sortresult |= ((std::bitset<128>)dsdata[0] << 92);
+								sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 103);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 111);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Ifmouse << 112);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Force << 114);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Short << 116);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Double << 117);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Long << 118);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Macro << 119);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Pause << 121);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 123);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 125);
+								sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 127);
+							}
+							else
+							{
+								sortresult |= ((std::bitset<128>)newmapbis[i].Ifmouse << 0);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Force << 2);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Short << 4);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Double << 5);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Long << 6);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Macro << 7);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Pause << 9);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 11);
+								sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 13);
+							}
+							break;
+						}
+						}
+
+						unsigned long long sortresultfirst = ((sortresult & first) >> 64).to_ullong();
+						unsigned long long sortresultsecond = (sortresult & second).to_ullong();
+						if (pos == -1 || (pos >= 0 && ((sortresultfirst < valuefirst) || ((sortresultfirst == valuefirst) && (sortresultsecond < valuesecond)))))
+						{
+							pos = (int)i;
+							valuefirst = sortresultfirst;
+							valuesecond = sortresultsecond;
+						}
+					}
+					newmaptmp.push_back((Mapping)newmapbis[pos]);
+					newmapbis.erase(newmapbis.begin() + pos);
+				}
+
+				Mappings newmap;
+				length = newmaptmp.size();
+				for (int j = 0; j < 9; j++)
+					for (int i = 0; i < length; i++)
+						if (newmaptmp[i].Tab == j)
+							newmap.push_back((Mapping)newmaptmp[i]);
+
+				tape.Mappingdata.swap(newmap);
+				tape.Save(tape.Setting_Mappingdata);
+
+				PostMessage(m_hWnd, WM_ADDMAPPING, 0, -1);
+
+				m_active = true;
+				break;
+			}
 			case NM_DBLCLK:
 				editMappingDlg();
 				break;
@@ -811,18 +1156,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					{
 						Mapping* m = (Mapping*)((LPNMLISTVIEW)lParam)->lParam;
 						if (m != 0)
-						{
-							int idx = ListView_GetNextItem(m_hList, -1, LVNI_FOCUSED);
-							if (idx == -1)
+							if(m->Enable != 2)
 							{
-								idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED);
-								if(m->Enable != 2)
-								{
-									m->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
-									save();
-								}
+								m->Enable = newstate == INDEXTOSTATEIMAGEMASK(2);
+								save();
 							}
-						}
 					}
 				}
 				break;
@@ -862,7 +1200,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case IDC_STATIC_CLONE:
 				switch (HIWORD(wParam))
 				{
-				case BN_CLICKED:
+				case STN_CLICKED:
 					POINT pt;
 					GetCursorPos(&pt);
 					TrackPopupMenu((HMENU)GetSubMenu(m_hMenu2, 0), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hDlg, NULL);
@@ -975,40 +1313,40 @@ void MappingDlg::save()
 	m_active = false;
 	mDDlg.Hide();
 
-	Mappings newmap;
+	Mappings newtmp;
 	size_t length = tape.Mappingdata.size();
 	for (int i = 0; i < length; i++)
 		if (tape.Mappingdata[i].Tab != m_Tab)
-			newmap.push_back((Mapping)tape.Mappingdata[i]);
+			newtmp.push_back((Mapping)tape.Mappingdata[i]);
 
-	while (ListView_GetNextItem(m_hList, -1, LVNI_ALL) != -1)
+	int lastitemindex = ListView_GetItemCount(m_hList);
+	for (int i = 0; i < lastitemindex; i++)
 	{
 		LV_ITEM item = { 0 };
 		item.mask = LVIF_PARAM;
+		item.iItem = i;
 		if (!ListView_GetItem(m_hList, &item))
-			break;
-		if (item.lParam != NULL)
 		{
-			newmap.push_back(*(Mapping*)item.lParam);
-			delete (Mapping*)item.lParam;
+			PostMessage(m_hWnd, WM_ADDMAPPING, mDDlg.m_mode, -1);
+			RECT rect;
+			GetWindowRect(m_hWnd, &rect);
+			MessageBoxPos(m_hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, rect.left + 275, rect.top + 30);
+			return;
 		}
-		if (!ListView_DeleteItem(m_hList, 0))
-			break;
+		if (item.lParam != NULL)
+			newtmp.push_back(*(Mapping*)item.lParam);
 	}
-	ListView_DeleteAllItems(m_hList);
 
-	Mappings newmap2;
-	length = newmap.size();
+	Mappings newmap;
+	length = newtmp.size();
 	for (int j = 0; j < 9; j++)
 		for (int i = 0; i < length; i++)
-			if (newmap[i].Tab == j)
-				newmap2.push_back((Mapping)newmap[i]);
+			if (newtmp[i].Tab == j)
+				newmap.push_back((Mapping)newtmp[i]);
 
-	tape.Mappingdata.swap(newmap2);
+	tape.Mappingdata.swap(newmap);
 	tape.Save(tape.Setting_Mappingdata);
-
-	PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-	PostMessage(m_hWnd, WM_ADDMAPPING, mDDlg.m_mode, 0);
+	PostMessage(m_hWnd, WM_ADDMAPPING, mDDlg.m_mode, -1);
 
 	m_active = true;
 }
@@ -1169,12 +1507,44 @@ void MappingDlg::editMappingDlgBackMulti()
 				if (mDDlg.Modified[i])
 					switch (i)
 					{
+					case MappingDataDlg::Mofified_Ifmouse:data2->Ifmouse = data1->Ifmouse; break;
+					case MappingDataDlg::Mofified_Force:data2->Force = data1->Force; break;
+					case MappingDataDlg::Mofified_Short:data2->Short = data1->Short; break;
+					case MappingDataDlg::Mofified_Double:data2->Double = data1->Double; break;
+					case MappingDataDlg::Mofified_Long:data2->Long = data1->Long; break;
+					case MappingDataDlg::Mofified_Led:data2->Led = data1->Led; break;
+					case MappingDataDlg::Mofified_Macro:data2->Macro = data1->Macro; break;
+					case MappingDataDlg::Mofified_Pause:data2->Pause = data1->Pause; break;
+					case MappingDataDlg::Mofified_Transitivity:data2->Transitivity = data1->Transitivity; break;
+					case MappingDataDlg::Mofified_Target1:data2->Target[0] = data1->Target[0]; break;
+					case MappingDataDlg::Mofified_Target2:data2->Target[1] = data1->Target[1]; break;
+					case MappingDataDlg::Mofified_Target3:data2->Target[2] = data1->Target[2]; break;
+					case MappingDataDlg::Mofified_Target4:data2->Target[3] = data1->Target[3]; break;
+					case MappingDataDlg::Mofified_Target5:data2->Target[4] = data1->Target[4]; break;
+					case MappingDataDlg::Mofified_Toggle:data2->Toggle = data1->Toggle; break;
 					case MappingDataDlg::Mofified_dsID1:data2->dsID[0] = data1->dsID[0]; break;
 					case MappingDataDlg::Mofified_dsID2:data2->dsID[1] = data1->dsID[1]; break;
 					case MappingDataDlg::Mofified_dsID3:data2->dsID[2] = data1->dsID[2]; break;
 					case MappingDataDlg::Mofified_dsID4:data2->dsID[3] = data1->dsID[3]; break;
 					case MappingDataDlg::Mofified_dsID5:data2->dsID[4] = data1->dsID[4]; break;
-					case MappingDataDlg::Mofified_vjID1:data2->vjID[5] = data1->vjID[5]; break;
+					case MappingDataDlg::Mofified_OrXorNot1:data2->OrXorNot[0] = data1->OrXorNot[0]; break;
+					case MappingDataDlg::Mofified_OrXorNot2:data2->OrXorNot[1] = data1->OrXorNot[1]; break;
+					case MappingDataDlg::Mofified_OrXorNot3:data2->OrXorNot[2] = data1->OrXorNot[2]; break;
+					case MappingDataDlg::Mofified_OrXorNot4:data2->OrXorNot[3] = data1->OrXorNot[3]; break;
+					case MappingDataDlg::Mofified_dsDisable1:data2->dsDisable[0] = data1->dsDisable[0]; break;
+					case MappingDataDlg::Mofified_dsDisable2:data2->dsDisable[1] = data1->dsDisable[1]; break;
+					case MappingDataDlg::Mofified_dsDisable3:data2->dsDisable[2] = data1->dsDisable[2]; break;
+					case MappingDataDlg::Mofified_dsDisable4:data2->dsDisable[3] = data1->dsDisable[3]; break;
+					case MappingDataDlg::Mofified_dsDisable5:data2->dsDisable[4] = data1->dsDisable[4]; break;
+					case MappingDataDlg::Mofified_MouseAction1:data2->MouseAction[0] = data1->MouseAction[0]; break;
+					case MappingDataDlg::Mofified_MouseAction2:data2->MouseAction[1] = data1->MouseAction[1]; break;
+					case MappingDataDlg::Mofified_MouseAction3:data2->MouseAction[2] = data1->MouseAction[2]; break;
+					case MappingDataDlg::Mofified_MouseAction4:data2->MouseAction[3] = data1->MouseAction[3]; break;
+					case MappingDataDlg::Mofified_MouseAction5:data2->MouseAction[4] = data1->MouseAction[4]; break;
+					case MappingDataDlg::Mofified_MouseAction6:data2->MouseAction[5] = data1->MouseAction[5]; break;
+					case MappingDataDlg::Mofified_MouseAction7:data2->MouseAction[6] = data1->MouseAction[6]; break;
+					case MappingDataDlg::Mofified_MouseAction8:data2->MouseAction[7] = data1->MouseAction[7]; break;
+					case MappingDataDlg::Mofified_vjID1:data2->vjID[0] = data1->vjID[0]; break;
 					case MappingDataDlg::Mofified_vjID2:data2->vjID[1] = data1->vjID[1]; break;
 					case MappingDataDlg::Mofified_vjID3:data2->vjID[2] = data1->vjID[2]; break;
 					case MappingDataDlg::Mofified_vjID4:data2->vjID[3] = data1->vjID[3]; break;
@@ -1182,42 +1552,22 @@ void MappingDlg::editMappingDlgBackMulti()
 					case MappingDataDlg::Mofified_vjID6:data2->vjID[5] = data1->vjID[5]; break;
 					case MappingDataDlg::Mofified_vjID7:data2->vjID[6] = data1->vjID[6]; break;
 					case MappingDataDlg::Mofified_vjID8:data2->vjID[7] = data1->vjID[7]; break;
-					case MappingDataDlg::Mofified_vjID9:data2->vjID[8] = data1->vjID[8]; break;
-					case MappingDataDlg::Mofified_vjID10:data2->vjID[9] = data1->vjID[9]; break;
-					case MappingDataDlg::Mofified_vjID11:data2->vjID[10] = data1->vjID[10]; break;
-					case MappingDataDlg::Mofified_vjID12:data2->vjID[11] = data1->vjID[11]; break;
-					case MappingDataDlg::Mofified_vjID13:data2->vjID[12] = data1->vjID[12]; break;
-					case MappingDataDlg::Mofified_Target1:data2->Target[0] = data1->Target[0]; break;
-					case MappingDataDlg::Mofified_Target2:data2->Target[1] = data1->Target[1]; break;
-					case MappingDataDlg::Mofified_Target3:data2->Target[2] = data1->Target[2]; break;
-					case MappingDataDlg::Mofified_Target4:data2->Target[3] = data1->Target[3]; break;
-					case MappingDataDlg::Mofified_Target5:data2->Target[4] = data1->Target[4]; break;
-					case MappingDataDlg::Mofified_Disable1:data2->Disable[0] = data1->Disable[0]; break;
-					case MappingDataDlg::Mofified_Disable2:data2->Disable[1] = data1->Disable[1]; break;
-					case MappingDataDlg::Mofified_Disable3:data2->Disable[2] = data1->Disable[2]; break;
-					case MappingDataDlg::Mofified_Disable4:data2->Disable[3] = data1->Disable[3]; break;
-					case MappingDataDlg::Mofified_Disable5:data2->Disable[4] = data1->Disable[4]; break;
-					case MappingDataDlg::Mofified_Disable6:data2->Disable[5] = data1->Disable[5]; break;
-					case MappingDataDlg::Mofified_Disable7:data2->Disable[6] = data1->Disable[6]; break;
-					case MappingDataDlg::Mofified_Disable8:data2->Disable[7] = data1->Disable[7]; break;
-					case MappingDataDlg::Mofified_Disable9:data2->Disable[8] = data1->Disable[8]; break;
-					case MappingDataDlg::Mofified_Disable10:data2->Disable[9] = data1->Disable[9]; break;
-					case MappingDataDlg::Mofified_Disable11:data2->Disable[10] = data1->Disable[10]; break;
-					case MappingDataDlg::Mofified_Disable12:data2->Disable[11] = data1->Disable[11]; break;
-					case MappingDataDlg::Mofified_Disable13:data2->Disable[12] = data1->Disable[12]; break;
-					case MappingDataDlg::Mofified_OrXorNot1:data2->OrXorNot[0] = data1->OrXorNot[0]; break;
-					case MappingDataDlg::Mofified_OrXorNot2:data2->OrXorNot[1] = data1->OrXorNot[1]; break;
-					case MappingDataDlg::Mofified_OrXorNot3:data2->OrXorNot[2] = data1->OrXorNot[2]; break;
-					case MappingDataDlg::Mofified_OrXorNot4:data2->OrXorNot[3] = data1->OrXorNot[3]; break;
-					case MappingDataDlg::Mofified_Ifmouse:data2->Ifmouse = data1->Ifmouse; break;
-					case MappingDataDlg::Mofified_Force:data2->Force = data1->Force; break;
-					case MappingDataDlg::Mofified_Led:data2->Led = data1->Led; break;
-					case MappingDataDlg::Mofified_Short:data2->Short = data1->Short; break;
-					case MappingDataDlg::Mofified_Double:data2->Double = data1->Double; break;
-					case MappingDataDlg::Mofified_Long:data2->Long = data1->Long; break;
-					case MappingDataDlg::Mofified_Macro:data2->Macro = data1->Macro; break;
-					case MappingDataDlg::Mofified_Pause:data2->Pause = data1->Pause; break;
-					case MappingDataDlg::Mofified_Toggle:data2->Toggle = data1->Toggle; break;
+					case MappingDataDlg::Mofified_Overcontrol1:data2->Overcontrol[0] = data1->Overcontrol[0]; break;
+					case MappingDataDlg::Mofified_Overcontrol2:data2->Overcontrol[1] = data1->Overcontrol[1]; break;
+					case MappingDataDlg::Mofified_Overcontrol3:data2->Overcontrol[2] = data1->Overcontrol[2]; break;
+					case MappingDataDlg::Mofified_Overcontrol4:data2->Overcontrol[3] = data1->Overcontrol[3]; break;
+					case MappingDataDlg::Mofified_Overcontrol5:data2->Overcontrol[4] = data1->Overcontrol[4]; break;
+					case MappingDataDlg::Mofified_Overcontrol6:data2->Overcontrol[5] = data1->Overcontrol[5]; break;
+					case MappingDataDlg::Mofified_Overcontrol7:data2->Overcontrol[6] = data1->Overcontrol[6]; break;
+					case MappingDataDlg::Mofified_Overcontrol8:data2->Overcontrol[7] = data1->Overcontrol[7]; break;
+					case MappingDataDlg::Mofified_Switch1:data2->Switch[0] = data1->Switch[0]; break;
+					case MappingDataDlg::Mofified_Switch2:data2->Switch[1] = data1->Switch[1]; break;
+					case MappingDataDlg::Mofified_Switch3:data2->Switch[2] = data1->Switch[2]; break;
+					case MappingDataDlg::Mofified_Switch4:data2->Switch[3] = data1->Switch[3]; break;
+					case MappingDataDlg::Mofified_Switch5:data2->Switch[4] = data1->Switch[4]; break;
+					case MappingDataDlg::Mofified_Switch6:data2->Switch[5] = data1->Switch[5]; break;
+					case MappingDataDlg::Mofified_Switch7:data2->Switch[6] = data1->Switch[6]; break;
+					case MappingDataDlg::Mofified_Switch8:data2->Switch[7] = data1->Switch[7]; break;
 					case MappingDataDlg::Mofified_OnRelease1:data2->OnRelease[0] = data1->OnRelease[0]; break;
 					case MappingDataDlg::Mofified_OnRelease2:data2->OnRelease[1] = data1->OnRelease[1]; break;
 					case MappingDataDlg::Mofified_OnRelease3:data2->OnRelease[2] = data1->OnRelease[2]; break;
@@ -1226,6 +1576,43 @@ void MappingDlg::editMappingDlgBackMulti()
 					case MappingDataDlg::Mofified_OnRelease6:data2->OnRelease[5] = data1->OnRelease[5]; break;
 					case MappingDataDlg::Mofified_OnRelease7:data2->OnRelease[6] = data1->OnRelease[6]; break;
 					case MappingDataDlg::Mofified_OnRelease8:data2->OnRelease[7] = data1->OnRelease[7]; break;
+					case MappingDataDlg::Mofified_NoRelease1:data2->NoRelease[0] = data1->NoRelease[0]; break;
+					case MappingDataDlg::Mofified_NoRelease2:data2->NoRelease[1] = data1->NoRelease[1]; break;
+					case MappingDataDlg::Mofified_NoRelease3:data2->NoRelease[2] = data1->NoRelease[2]; break;
+					case MappingDataDlg::Mofified_NoRelease4:data2->NoRelease[3] = data1->NoRelease[3]; break;
+					case MappingDataDlg::Mofified_NoRelease5:data2->NoRelease[4] = data1->NoRelease[4]; break;
+					case MappingDataDlg::Mofified_NoRelease6:data2->NoRelease[5] = data1->NoRelease[5]; break;
+					case MappingDataDlg::Mofified_NoRelease7:data2->NoRelease[6] = data1->NoRelease[6]; break;
+					case MappingDataDlg::Mofified_NoRelease8:data2->NoRelease[7] = data1->NoRelease[7]; break;
+					case MappingDataDlg::Mofified_NlRelease1:data2->NlRelease[0] = data1->NlRelease[0]; break;
+					case MappingDataDlg::Mofified_NlRelease2:data2->NlRelease[1] = data1->NlRelease[1]; break;
+					case MappingDataDlg::Mofified_NlRelease3:data2->NlRelease[2] = data1->NlRelease[2]; break;
+					case MappingDataDlg::Mofified_NlRelease4:data2->NlRelease[3] = data1->NlRelease[3]; break;
+					case MappingDataDlg::Mofified_NlRelease5:data2->NlRelease[4] = data1->NlRelease[4]; break;
+					case MappingDataDlg::Mofified_NlRelease6:data2->NlRelease[5] = data1->NlRelease[5]; break;
+					case MappingDataDlg::Mofified_NlRelease7:data2->NlRelease[6] = data1->NlRelease[6]; break;
+					case MappingDataDlg::Mofified_NlRelease8:data2->NlRelease[7] = data1->NlRelease[7]; break;
+					case MappingDataDlg::Mofified_vjDisable1:data2->vjDisable[0] = data1->vjDisable[0]; break;
+					case MappingDataDlg::Mofified_vjDisable2:data2->vjDisable[1] = data1->vjDisable[1]; break;
+					case MappingDataDlg::Mofified_vjDisable3:data2->vjDisable[2] = data1->vjDisable[2]; break;
+					case MappingDataDlg::Mofified_vjDisable4:data2->vjDisable[3] = data1->vjDisable[3]; break;
+					case MappingDataDlg::Mofified_vjDisable5:data2->vjDisable[4] = data1->vjDisable[4]; break;
+					case MappingDataDlg::Mofified_vjDisable6:data2->vjDisable[5] = data1->vjDisable[5]; break;
+					case MappingDataDlg::Mofified_vjDisable7:data2->vjDisable[6] = data1->vjDisable[6]; break;
+					case MappingDataDlg::Mofified_vjDisable8:data2->vjDisable[7] = data1->vjDisable[7]; break;
+					case MappingDataDlg::Mofified_Mouse1:data2->Mouse[0] = data1->Mouse[0]; break;
+					case MappingDataDlg::Mofified_Mouse2:data2->Mouse[1] = data1->Mouse[1]; break;
+					case MappingDataDlg::Mofified_Mouse3:data2->Mouse[2] = data1->Mouse[2]; break;
+					case MappingDataDlg::Mofified_Mouse4:data2->Mouse[3] = data1->Mouse[3]; break;
+					case MappingDataDlg::Mofified_Mouse5:data2->Mouse[4] = data1->Mouse[4]; break;
+					case MappingDataDlg::Mofified_Mouse6:data2->Mouse[5] = data1->Mouse[5]; break;
+					case MappingDataDlg::Mofified_Mouse7:data2->Mouse[6] = data1->Mouse[6]; break;
+					case MappingDataDlg::Mofified_Grid1:data2->Grid[0] = data1->Grid[0]; break;
+					case MappingDataDlg::Mofified_Grid2:data2->Grid[1] = data1->Grid[1]; break;
+					case MappingDataDlg::Mofified_Grid3:data2->Grid[2] = data1->Grid[2]; break;
+					case MappingDataDlg::Mofified_Grid4:data2->Grid[3] = data1->Grid[3]; break;
+					case MappingDataDlg::Mofified_Grid5:data2->Grid[4] = data1->Grid[4]; break;
+					case MappingDataDlg::Mofified_Grid6:data2->Grid[5] = data1->Grid[5]; break;
 					case MappingDataDlg::Mofified_Start1:data2->Start[0] = data1->Start[0]; break;
 					case MappingDataDlg::Mofified_Start2:data2->Start[1] = data1->Start[1]; break;
 					case MappingDataDlg::Mofified_Start3:data2->Start[2] = data1->Start[2]; break;
@@ -1242,23 +1629,6 @@ void MappingDlg::editMappingDlgBackMulti()
 					case MappingDataDlg::Mofified_Stop6:data2->Stop[5] = data1->Stop[5]; break;
 					case MappingDataDlg::Mofified_Stop7:data2->Stop[6] = data1->Stop[6]; break;
 					case MappingDataDlg::Mofified_Stop8:data2->Stop[7] = data1->Stop[7]; break;
-					case MappingDataDlg::Mofified_MouseAction1:data2->MouseAction[0] = data1->MouseAction[0]; break;
-					case MappingDataDlg::Mofified_MouseAction2:data2->MouseAction[1] = data1->MouseAction[1]; break;
-					case MappingDataDlg::Mofified_MouseAction3:data2->MouseAction[2] = data1->MouseAction[2]; break;
-					case MappingDataDlg::Mofified_MouseAction4:data2->MouseAction[3] = data1->MouseAction[3]; break;
-					case MappingDataDlg::Mofified_Mouse1:data2->Mouse[0] = data1->Mouse[0]; break;
-					case MappingDataDlg::Mofified_Mouse2:data2->Mouse[1] = data1->Mouse[1]; break;
-					case MappingDataDlg::Mofified_Mouse3:data2->Mouse[2] = data1->Mouse[2]; break;
-					case MappingDataDlg::Mofified_Mouse4:data2->Mouse[3] = data1->Mouse[3]; break;
-					case MappingDataDlg::Mofified_Mouse5:data2->Mouse[4] = data1->Mouse[4]; break;
-					case MappingDataDlg::Mofified_Mouse6:data2->Mouse[5] = data1->Mouse[5]; break;
-					case MappingDataDlg::Mofified_Mouse7:data2->Mouse[6] = data1->Mouse[6]; break;
-					case MappingDataDlg::Mofified_Grid1:data2->Grid[0] = data1->Grid[0]; break;
-					case MappingDataDlg::Mofified_Grid2:data2->Grid[1] = data1->Grid[1]; break;
-					case MappingDataDlg::Mofified_Grid3:data2->Grid[2] = data1->Grid[2]; break;
-					case MappingDataDlg::Mofified_Grid4:data2->Grid[3] = data1->Grid[3]; break;
-					case MappingDataDlg::Mofified_Grid5:data2->Grid[4] = data1->Grid[4]; break;
-					case MappingDataDlg::Mofified_Grid6:data2->Grid[5] = data1->Grid[5]; break;
 					}
 			ListView_DeleteItem(m_hList, lastidxs[i]);
 			insertMapping(lastidxs[i], data2);

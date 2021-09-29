@@ -209,8 +209,8 @@ xcopy /y /r /s "..\SDK\Resources" "$(OutDir)"
     <ClInclude Include="Ds2vJoy.h" />
     <ClInclude Include="FFB.h" />
     <ClInclude Include="Findwindow.h" />
-    <ClInclude Include="HidGuardian.h" />
-    <ClInclude Include="HidGuardianDlg.h" />
+    <ClInclude Include="Guardian.h" />
+    <ClInclude Include="GuardianDlg.h" />
     <ClInclude Include="Keymap.h" />
     <ClInclude Include="KeymapDataDlg.h" />
     <ClInclude Include="KeymapDlg.h" />
@@ -247,8 +247,8 @@ xcopy /y /r /s "..\SDK\Resources" "$(OutDir)"
     <ClCompile Include="Ds2vJoy.cpp" />
     <ClCompile Include="FFB.cpp" />
     <ClCompile Include="Findwindow.cpp" />
-    <ClCompile Include="HidGuardian.cpp" />
-    <ClCompile Include="HidGuardianDlg.cpp" />
+    <ClCompile Include="Guardian.cpp" />
+    <ClCompile Include="GuardianDlg.cpp" />
     <ClCompile Include="Keymap.cpp" />
     <ClCompile Include="KeymapDataDlg.cpp" />
     <ClCompile Include="KeymapDlg.cpp" />

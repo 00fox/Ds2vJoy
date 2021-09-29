@@ -8,9 +8,11 @@ RapidFire::RapidFire()
 	, Firsttime(75)
 	, Releasetime(75)
 	, Presstime(150)
-	, m_time(0)
 	, m_button(0)
 	, m_button2(0)
+	, m_time(0)
+	, randPresstime(0)
+	, randReleasetime(0)
 {
 }
 
@@ -29,12 +31,12 @@ WCHAR* RapidFire::KeyString()
 
 	if (ButtonID != 0)
 	{
-		head += wsprintf(head, L"%s", vJoyButton::String(ButtonID));
+		head += wsprintf(head, L"%s", vJoyButton::String((vJoyButtonID)ButtonID));
 		if (ButtonID2 != 0)
-			head += wsprintf(head, L"+%s", vJoyButton::String(ButtonID2));
+			head += wsprintf(head, L"+%s", vJoyButton::String((vJoyButtonID)ButtonID2));
 	}
 	else if (ButtonID2 != 0)
-		head += wsprintf(head, L"%s", vJoyButton::String(ButtonID2));
+		head += wsprintf(head, L"%s", vJoyButton::String((vJoyButtonID)ButtonID2));
 
 	return buf;
 }
@@ -67,7 +69,7 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 
 	if (ButtonID)
 	{
-		m_button = vjoy->GetButton(ButtonID);
+		m_button = vjoy->GetButton((vJoyButtonID)ButtonID);
 		if (m_button == 0)
 			return FALSE;
 	}
@@ -75,15 +77,15 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 		m_button = 0;
 	if (ButtonID2)
 	{
-		m_button2 = vjoy->GetButton(ButtonID2);
+		m_button2 = vjoy->GetButton((vJoyButtonID)ButtonID2);
 		if (m_button2 == 0)
 			return FALSE;
 	}
 	else
 		m_button2 = 0;
 
-	randReleasetime = Releasetime + ((Releasetime & 1) ? (rand() % 19) : 0);
-	randPresstime = Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
+	randReleasetime = (long long)Releasetime + ((Releasetime & 1) ? (rand() % 19) : 0);
+	randPresstime = (long long)Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
 
 	return TRUE;
 }
@@ -98,18 +100,18 @@ BOOL RapidFire::Run(double now)
 	{
 		if (m_time == 0)
 		{
-			m_time = now;
-			randReleasetime = Releasetime + ((Releasetime & 1) ? (rand() % 19) : 0);
+			m_time = (long long)now;
+			randReleasetime = (long long)Releasetime + ((Releasetime & 1) ? (rand() % 19) : 0);
 		}
 		else
 		{
-			long time = (long)(now - m_time - Firsttime);
+			long long time = (long long)(now - m_time - Firsttime);
 			if (time > 0)
 			{
 				time = time % (randReleasetime + randPresstime);
 				if (time <= randReleasetime)
 				{
-					randPresstime = Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
+					randPresstime = (long long)Presstime + ((Presstime & 1) ? (rand() % 19) : 0);
 					if (ButtonID == 0)
 						m_button2->Release();
 					else

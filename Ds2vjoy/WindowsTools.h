@@ -8,8 +8,8 @@ INDEX:
 ////////////////////////////////////////////////////////////////////// Convert
 s	s2s		ws2s	rs2s	rws2s
 c	s2c		ws2c	rs2c	rws2c
-ws	s2ws	ws2w	rs2ws	rws2wss
-wc	s2wc	ws2w	rs2wc	rws2wcc
+ws	s2ws	ws2w	rs2ws	rws2ws
+wc	s2wc	ws2w	rs2wc	rws2wc
 
 int urlEncode(const char* toencode, const int strSize, char* encoded, const int resultSize)
 std::string urlDecode(std::string& src)
@@ -121,8 +121,8 @@ inline BOOL s2c(char* s, char** o)
 	if (len <= 1)
 		return FALSE;
 
-	char* tmp = new char[MAX_PATH];
-	strcpy_s(tmp, MAX_PATH, s);
+	char* tmp = new char[1024];
+	strcpy_s(tmp, 1024, s);
 	*o = tmp;
 
 	return TRUE;
@@ -164,7 +164,7 @@ inline BOOL s2wc(char* s, wchar_t** wo)
 	const size_t cSize = strlen(s) + 1;
 	wchar_t* tmp = new wchar_t[cSize];
 	size_t* pReturnValue = 0;
-	mbstowcs_s(pReturnValue, tmp, MAX_PATH, s, cSize);
+	mbstowcs_s(pReturnValue, tmp, (size_t)(cSize / sizeof(tmp[0])), s, cSize);
 
 	*wo = tmp;
 
@@ -183,7 +183,7 @@ inline BOOL ws2s(wchar_t* ws, std::string* s)
 	if (0 == ws || 0 == ws[0])
 		return FALSE;
 
-	std::wstring tmp = std::wstring(ws);
+	std::wstring tmp = (std::wstring)ws;
 	std::string out(tmp.begin(), tmp.end());
 	*s = out;
 
@@ -203,9 +203,9 @@ inline BOOL ws2c(wchar_t* ws, char** s)
 		return FALSE;
 
 	const size_t cSize = wcslen(ws) + 1;
-	char* out = new char[MAX_PATH];
+	char* out = new char[1024];
 	size_t* pReturnValue = 0;
-	wcstombs_s(pReturnValue, out, MAX_PATH, ws, cSize);
+	wcstombs_s(pReturnValue, out, 1024, ws, cSize);
 
 	*s = out;
 
@@ -242,8 +242,8 @@ inline BOOL ws2wc(wchar_t* ws, wchar_t** wo)
 	if (0 == ws || 0 == ws[0])
 		return FALSE;
 
-	wchar_t* tmp = new wchar_t[MAX_PATH];
-	wcscpy_s(tmp, MAX_PATH, ws);
+	wchar_t* tmp = new wchar_t[1024];
+	wcscpy_s(tmp, 1024, ws);
 	*wo = tmp;
 
 	return TRUE;
@@ -498,7 +498,7 @@ inline int urlEncode(const char* toencode, const int strSize, char* encoded, con
 		{
 			if (j + 3 < resultSize)
 			{
-				sprintf_s(encoded + j, resultSize - j, "%%%02X", (unsigned char)ch);
+				sprintf_s(encoded + j, (size_t)resultSize - j, "%%%02X", (unsigned char)ch);
 				j += 3;
 			}
 			else
@@ -518,13 +518,13 @@ std::string urlDecode(std::string& src)
 {
 	std::string ret;
 	char ch;
-	int i, ii;
-	for (i = 0; i < src.length(); i++)
+	int j;
+	for (size_t i = 0; i < src.length(); i++)
 	{
 		if (int(src[i]) == 37)
 		{
-			sscanf_s(src.substr(i + 1, 2).c_str(), "%x", &ii);
-			ch = static_cast<char>(ii);
+			sscanf_s(src.substr(i + 1, 2).c_str(), "%x", &j);
+			ch = static_cast<char>(j);
 			ret += ch;
 			i = i + 2;
 		}
@@ -543,9 +543,9 @@ inline BOOL FindInStdString(std::string stringin, std::string findwhat, int begi
 {
 	if (begin || length)
 	{
-		int strlength = (int)stringin.length();
-		int begintmp = 0;
-		int endtmp = strlength;
+		size_t strlength = stringin.length();
+		size_t begintmp = 0;
+		size_t endtmp = strlength;
 
 		if (length < 0)
 		{
@@ -605,9 +605,9 @@ inline std::string SubString(std::string stringin, int begin = 0, int length = 0
 {
 	if (begin || length)
 	{
-		int strlength = (int)stringin.length();
-		int begintmp = 0;
-		int endtmp = strlength;
+		size_t strlength = stringin.length();
+		size_t begintmp = 0;
+		size_t endtmp = strlength;
 
 		if (length < 0)
 		{
@@ -812,12 +812,18 @@ inline BOOL WriteToFile(wchar_t* filename, VOID* lockedResssource, DWORD BytesTo
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
 		HANDLE hFileMap = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, BytesToWrite, NULL);	//PAGE_EXECUTE_READWRITE
-		LPVOID lpAddress = MapViewOfFile(hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-		CopyMemory(lpAddress, lockedResssource, BytesToWrite);
-		UnmapViewOfFile(lpAddress);
-		CloseHandle(hFileMap);
-		CloseHandle(hFile);
-		FreeResource(lockedResssource);
+		if (hFileMap)
+		{
+			LPVOID lpAddress = MapViewOfFile(hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+			if (lpAddress)
+			{
+				CopyMemory(lpAddress, lockedResssource, BytesToWrite);
+				UnmapViewOfFile(lpAddress);
+			}
+			CloseHandle(hFileMap);
+			CloseHandle(hFile);
+			FreeResource(lockedResssource);
+		}
 		return TRUE;
 	}
 
@@ -1022,7 +1028,7 @@ inline BOOL WriteEmbededResource(std::wstring filename, WORD resourceID, bool ov
 
 	if (LoadEmbeddedResource(resourceID, &data, &resourceSize))
 	{
-		DWORD ressourceWrinten; WriteToFile(filename, data, resourceSize, overwrite, hidden);
+		DWORD ressourceWrinten = 0; WriteToFile(filename, data, resourceSize, overwrite, hidden);
 		if (ressourceWrinten)
 			return TRUE;
 	}
@@ -1101,7 +1107,7 @@ inline void ForceRemoveModule(LPCTSTR ModuleName, bool deletedll = false)
 	 * included by request of the OP to
 	 * match his original */
 	while (::FreeLibrary(hMod));
-	if (deletedll)
+	if (deletedll && ModuleName)
 		::DeleteFile(ModuleName);
 }
 
@@ -1112,9 +1118,12 @@ inline std::string WinPath()
 {
 	TCHAR buffer[MAX_PATH] = { 0 };
 
-	GetWindowsDirectory(buffer, MAX_PATH);
+	int ret = GetWindowsDirectory(buffer, MAX_PATH);
 
-	return rws2s(buffer);
+	if (ret)
+		return rws2s(buffer);
+	else
+		return "";
 }
 
 //-----------------------------------------------------------------------------
@@ -1122,9 +1131,12 @@ inline std::wstring WinPathW()
 {
 	TCHAR buffer[MAX_PATH] = { 0 };
 
-	GetWindowsDirectory(buffer, MAX_PATH);
+	int ret = GetWindowsDirectory(buffer, MAX_PATH);
 
-	return buffer;
+	if (ret)
+		return buffer;
+	else
+		return L"";
 }
 
 //-----------------------------------------------------------------------------
@@ -1413,7 +1425,7 @@ inline DWORD GetPIDByName(std::wstring ProcessName)
 //-----------------------------------------------------------------------------
 inline TCHAR* GetExeNameByPID(DWORD ProcessID)
 {
-	TCHAR* ProcessName = TEXT("<unknown>");
+	TCHAR ProcessName[MAX_PATH] = TEXT("<unknown>");
 	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, ProcessID);
 
 	if (hProcess)
@@ -1422,9 +1434,8 @@ inline TCHAR* GetExeNameByPID(DWORD ProcessID)
 		DWORD cbNeeded;
 
 		if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded))
-		{
-			GetModuleBaseName(hProcess, hMod, ProcessName, sizeof(ProcessName) / sizeof(TCHAR));
-		}
+			GetModuleBaseName(hProcess, hMod, ProcessName, (DWORD)(sizeof(ProcessName) / sizeof(TCHAR)));
+
 		CloseHandle(hProcess);
 	}
 
@@ -1879,7 +1890,7 @@ inline BOOL StopDependentServices(SC_HANDLE scm_handle, SC_HANDLE service_handle
 	SERVICE_STATUS_PROCESS ssp = { };
 
 	DWORD dwWaitTime = ssp.dwWaitHint / 10;
-	ULONGLONG dwStartTime = GetTickCount64();
+	unsigned long long dwStartTime = GetTickCount64();
 	DWORD dwTimeout = 3000; // 3-second time-out
 
 	//Pass a zero-length buffer to get the required buffer size.
@@ -1904,7 +1915,7 @@ inline BOOL StopDependentServices(SC_HANDLE scm_handle, SC_HANDLE service_handle
 		{
 			//Enumerate the dependencies.
 			if (!EnumDependentServices(service_handle, SERVICE_ACTIVE, lpDependencies, dwBytesNeeded, &dwBytesNeeded, &dwCount))
-				return FALSE;
+				__leave;
 
 			for (i = 0; i < dwCount; i++)
 			{
@@ -1915,32 +1926,25 @@ inline BOOL StopDependentServices(SC_HANDLE scm_handle, SC_HANDLE service_handle
 					SERVICE_STOP | SERVICE_QUERY_STATUS);
 
 				if (!hDepService)
-					return FALSE;
+					__leave;
 
 				__try {
 					//Send a stop code.
-					if (!ControlService(hDepService,
-						SERVICE_CONTROL_STOP,
-						(LPSERVICE_STATUS)&ssp))
-						return FALSE;
+					if (!ControlService(hDepService, SERVICE_CONTROL_STOP, (LPSERVICE_STATUS)&ssp))
+						__leave;
 
 					//Wait for the service to stop.
 					while (ssp.dwCurrentState != SERVICE_STOPPED)
 					{
 						Sleep(dwWaitTime);
-						if (!QueryServiceStatusEx(
-							hDepService,
-							SC_STATUS_PROCESS_INFO,
-							(LPBYTE)&ssp,
-							sizeof(SERVICE_STATUS_PROCESS),
-							&dwBytesNeeded))
-							return FALSE;
+						if (!QueryServiceStatusEx(hDepService, SC_STATUS_PROCESS_INFO, (LPBYTE)&ssp, sizeof(SERVICE_STATUS_PROCESS), &dwBytesNeeded))
+							__leave;
 
 						if (ssp.dwCurrentState == SERVICE_STOPPED)
 							break;
 
-						if (GetTickCount() - dwStartTime > dwTimeout)
-							return FALSE;
+						if (GetTickCount64() - dwStartTime > dwTimeout)
+							__leave;
 					}
 				}
 				__finally

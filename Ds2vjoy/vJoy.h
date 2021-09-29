@@ -19,6 +19,7 @@ public:
 	void UpdateState();
 	BOOL Update();
 	vJoyButton* GetButton(vJoyButtonID);
+	vJoyButton* GetAxis(vJoyAxisMoveID);
 
 	void SetFFBCallback(FfbGenCB, PVOID);
 
@@ -26,17 +27,19 @@ private:
 	double distSum(Point p, Point arr[], int n);
 	Point geometricMedian(Point arr[], int n);
 
-	void loadTriggers(vJoyButtonID id, int hid_axis, LONG* data);
-	void loadAxis(vJoyButtonID id, int hid_axis, LONG* val);
-	void loadAxisInv(vJoyButtonID id, int hid_axis, LONG* val);
+	void loadTriggers(vJoyButtonID id, int hid_axis, long* data, unsigned char axis);
+	void loadAxis(vJoyButtonID id, int hid_axis, long* data, unsigned char axis);
+	void loadAxisInv(vJoyButtonID id, int hid_axis, long* data, unsigned char axis);
+	void loadRing(vJoyAxisMoveID id, int hid_axis, long* data, int hid_axis2, long* data2, unsigned char axis);
 
 	int m_devID;
 	vJoyButton m_buttons[vJoyButtonID::button_Count];
-	JOYSTICK_POSITION_V2 m_iReport, m_iReportDefault;
+	vJoyButton m_axis[vJoyAxisMoveID::axismove_Count];
+	JOYSTICK_POSITION_V2 m_iReportDefault;
+	JOYSTICK_POSITION_V2 m_iReport;
 
 	bool DpadExists;
-	BYTE Dpad[32];
+	byte Dpad[32];
 
 	bool firsttime = true;
 };
-

@@ -2,25 +2,32 @@
 #include "vJoy.h"
 
 vJoyDevice::vJoyDevice()
+	:m_devID(0)
+	, firsttime(true)
+	, DpadExists(false)
+	, Dpad()
 {
 	for (int i = 0; i < 32; i++)
+		Dpad[i] = 0;
+
+	for (int i = 0; i < 32; i++)
 	{
-		UINT32 bitmask = 1 << i;
+		unsigned int bitmask = 1 << i;
 		GetButton((vJoyButtonID)(vJoyButtonID::Button1 + i))->setButton(&m_iReport.lButtons, bitmask);
 	}
 	for (int i = 0; i < 32; i++)
 	{
-		UINT32 bitmask = 1 << i;
+		unsigned int bitmask = 1 << i;
 		GetButton((vJoyButtonID)(vJoyButtonID::Button1 + i + 32))->setButton(&m_iReport.lButtonsEx1, bitmask);
 	}
 	for (int i = 0; i < 32; i++)
 	{
-		UINT32 bitmask = 1 << i;
+		unsigned int bitmask = 1 << i;
 		GetButton((vJoyButtonID)(vJoyButtonID::Button1 + i + 64))->setButton(&m_iReport.lButtonsEx2, bitmask);
 	}
 	for (int i = 0; i < 32; i++)
 	{
-		UINT32 bitmask = 1 << i;
+		unsigned int bitmask = 1 << i;
 		GetButton((vJoyButtonID)(vJoyButtonID::Button1 + i + 96))->setButton(&m_iReport.lButtonsEx3, bitmask);
 	}
 
@@ -111,30 +118,42 @@ BOOL vJoyDevice::Open(int DevID, bool verbose)
 	//Initialization
 	memset(&m_iReport, 0, sizeof(m_iReport));
 	m_iReport.bDevice = m_devID = DevID;
-	loadTriggers(vJoyButton::XTR, HID_USAGE_X, &m_iReport.wAxisX);
-	loadTriggers(vJoyButton::YTR, HID_USAGE_Y, &m_iReport.wAxisY);
-	loadTriggers(vJoyButton::ZTR, HID_USAGE_Z, &m_iReport.wAxisZ);
-	loadTriggers(vJoyButton::RXTR, HID_USAGE_X, &m_iReport.wAxisXRot);
-	loadTriggers(vJoyButton::RYTR, HID_USAGE_Y, &m_iReport.wAxisYRot);
-	loadTriggers(vJoyButton::RZTR, HID_USAGE_Z, &m_iReport.wAxisZRot);
-	loadTriggers(vJoyButton::SL0TR, HID_USAGE_SL0, &m_iReport.wSlider);
-	loadTriggers(vJoyButton::SL1TR, HID_USAGE_SL1, &m_iReport.wDial);
-	loadAxis(vJoyButton::X, HID_USAGE_X, &m_iReport.wAxisX);
-	loadAxis(vJoyButton::Y, HID_USAGE_Y, &m_iReport.wAxisY);
-	loadAxis(vJoyButton::Z, HID_USAGE_Z, &m_iReport.wAxisZ);
-	loadAxis(vJoyButton::RX, HID_USAGE_X, &m_iReport.wAxisXRot);
-	loadAxis(vJoyButton::RY, HID_USAGE_Y, &m_iReport.wAxisYRot);
-	loadAxis(vJoyButton::RZ, HID_USAGE_Z, &m_iReport.wAxisZRot);
-	loadAxis(vJoyButton::SL0, HID_USAGE_SL0, &m_iReport.wSlider);
-	loadAxis(vJoyButton::SL1, HID_USAGE_SL1, &m_iReport.wDial);
-	loadAxisInv(vJoyButton::XINV, HID_USAGE_X, &m_iReport.wAxisX);
-	loadAxisInv(vJoyButton::YINV, HID_USAGE_Y, &m_iReport.wAxisY);
-	loadAxisInv(vJoyButton::ZINV, HID_USAGE_Z, &m_iReport.wAxisZ);
-	loadAxisInv(vJoyButton::RXINV, HID_USAGE_X, &m_iReport.wAxisXRot);
-	loadAxisInv(vJoyButton::RYINV, HID_USAGE_Y, &m_iReport.wAxisYRot);
-	loadAxisInv(vJoyButton::RZINV, HID_USAGE_Z, &m_iReport.wAxisZRot);
-	loadAxisInv(vJoyButton::SL0INV, HID_USAGE_SL0, &m_iReport.wSlider);
-	loadAxisInv(vJoyButton::SL1INV, HID_USAGE_SL1, &m_iReport.wDial);
+	loadAxis(vJoyButton::X, HID_USAGE_X, &m_iReport.wAxisX, vJoyAxisID::axis_X);
+	loadAxis(vJoyButton::Y, HID_USAGE_Y, &m_iReport.wAxisY, vJoyAxisID::axis_Y);
+	loadAxis(vJoyButton::Z, HID_USAGE_Z, &m_iReport.wAxisZ, vJoyAxisID::axis_Z);
+	loadAxis(vJoyButton::RX, HID_USAGE_RX, &m_iReport.wAxisXRot, vJoyAxisID::axis_RX);
+	loadAxis(vJoyButton::RY, HID_USAGE_RY, &m_iReport.wAxisYRot, vJoyAxisID::axis_RY);
+	loadAxis(vJoyButton::RZ, HID_USAGE_RZ, &m_iReport.wAxisZRot, vJoyAxisID::axis_RZ);
+	loadAxis(vJoyButton::SL0, HID_USAGE_SL0, &m_iReport.wSlider, vJoyAxisID::axis_SL0);
+	loadAxis(vJoyButton::SL1, HID_USAGE_SL1, &m_iReport.wDial, vJoyAxisID::axis_SL1);
+	loadTriggers(vJoyButton::XTR, HID_USAGE_X, &m_iReport.wAxisX, vJoyAxisID::axis_X);
+	loadTriggers(vJoyButton::YTR, HID_USAGE_Y, &m_iReport.wAxisY, vJoyAxisID::axis_Y);
+	loadTriggers(vJoyButton::ZTR, HID_USAGE_Z, &m_iReport.wAxisZ, vJoyAxisID::axis_Z);
+	loadTriggers(vJoyButton::RXTR, HID_USAGE_X, &m_iReport.wAxisXRot, vJoyAxisID::axis_RX);
+	loadTriggers(vJoyButton::RYTR, HID_USAGE_Y, &m_iReport.wAxisYRot, vJoyAxisID::axis_RY);
+	loadTriggers(vJoyButton::RZTR, HID_USAGE_Z, &m_iReport.wAxisZRot, vJoyAxisID::axis_RZ);
+	loadTriggers(vJoyButton::SL0TR, HID_USAGE_SL0, &m_iReport.wSlider, vJoyAxisID::axis_SL0);
+	loadTriggers(vJoyButton::SL1TR, HID_USAGE_SL1, &m_iReport.wDial, vJoyAxisID::axis_SL1);
+	loadAxisInv(vJoyButton::XINV, HID_USAGE_X, &m_iReport.wAxisX, vJoyAxisID::axis_X);
+	loadAxisInv(vJoyButton::YINV, HID_USAGE_Y, &m_iReport.wAxisY, vJoyAxisID::axis_Y);
+	loadAxisInv(vJoyButton::ZINV, HID_USAGE_Z, &m_iReport.wAxisZ, vJoyAxisID::axis_Z);
+	loadAxisInv(vJoyButton::RXINV, HID_USAGE_RX, &m_iReport.wAxisXRot, vJoyAxisID::axis_RX);
+	loadAxisInv(vJoyButton::RYINV, HID_USAGE_RY, &m_iReport.wAxisYRot, vJoyAxisID::axis_RY);
+	loadAxisInv(vJoyButton::RZINV, HID_USAGE_RZ, &m_iReport.wAxisZRot, vJoyAxisID::axis_RZ);
+	loadAxisInv(vJoyButton::SL0INV, HID_USAGE_SL0, &m_iReport.wSlider, vJoyAxisID::axis_SL0);
+	loadAxisInv(vJoyButton::SL1INV, HID_USAGE_SL1, &m_iReport.wDial, vJoyAxisID::axis_SL1);
+	loadRing(vJoyAxisMoveID::XY_CW, HID_USAGE_X, &m_iReport.wAxisX, HID_USAGE_Y, &m_iReport.wAxisY, vJoyAxisID::axis_XY);
+	loadRing(vJoyAxisMoveID::XY_CN, HID_USAGE_X, &m_iReport.wAxisX, HID_USAGE_Y, &m_iReport.wAxisY, vJoyAxisID::axis_XY);
+	loadRing(vJoyAxisMoveID::ZRZ_CW, HID_USAGE_Z, &m_iReport.wAxisZ, HID_USAGE_RZ, &m_iReport.wAxisZRot, vJoyAxisID::axis_ZRZ);
+	loadRing(vJoyAxisMoveID::ZRZ_CN, HID_USAGE_Z, &m_iReport.wAxisZ, HID_USAGE_RZ, &m_iReport.wAxisZRot, vJoyAxisID::axis_ZRZ);
+	loadRing(vJoyAxisMoveID::RXRY_CW, HID_USAGE_RX, &m_iReport.wAxisXRot, HID_USAGE_RY, &m_iReport.wAxisYRot, vJoyAxisID::axis_RXRY);
+	loadRing(vJoyAxisMoveID::RXRY_CN, HID_USAGE_RX, &m_iReport.wAxisXRot, HID_USAGE_RY, &m_iReport.wAxisYRot, vJoyAxisID::axis_RXRY);
+	loadRing(vJoyAxisMoveID::SL0SL1_CW, HID_USAGE_SL0, &m_iReport.wSlider, HID_USAGE_SL1, &m_iReport.wDial, vJoyAxisID::axis_SL0SL1);
+	loadRing(vJoyAxisMoveID::SL0SL1_CN, HID_USAGE_SL0, &m_iReport.wSlider, HID_USAGE_SL1, &m_iReport.wDial, vJoyAxisID::axis_SL0SL1);
+	for (int i = vJoyAxisMoveID::XY_LEFT; i <= vJoyAxisMoveID::XY_L_DL_CN; i++)
+		loadRing((vJoyAxisMoveID)i, HID_USAGE_X, &m_iReport.wAxisX, HID_USAGE_Y, &m_iReport.wAxisY, vJoyAxisID::axis_XY);
+	for (int i = vJoyAxisMoveID::ZRZ_LEFT; i <= vJoyAxisMoveID::ZRZ_L_DL_CN; i++)
+		loadRing((vJoyAxisMoveID)i, HID_USAGE_Z, &m_iReport.wAxisZ, HID_USAGE_RZ, &m_iReport.wAxisZRot, vJoyAxisID::axis_ZRZ);
 	m_iReport.bHats = -1;
 	m_iReport.bHatsEx1 = -1;
 	m_iReport.bHatsEx2 = -1;
@@ -185,30 +204,39 @@ BOOL vJoyDevice::Open(int DevID, bool verbose)
 	return Update();
 }
 
-void vJoyDevice::loadTriggers(vJoyButtonID id, int hid_axis, LONG* data)
+void vJoyDevice::loadTriggers(vJoyButtonID id, int hid_axis, long* data, unsigned char axis)
 {
 	if (GetVJDAxisExist(m_devID, hid_axis) != FALSE)
 	{
-		m_buttons[id].setTrigger(data);
+		m_buttons[id].setTrigger(data, axis);
 		m_buttons[id].Release();
 	}
 }
 
-void vJoyDevice::loadAxis(vJoyButtonID id, int hid_axis, LONG* data)
+void vJoyDevice::loadAxis(vJoyButtonID id, int hid_axis, long* data, unsigned char axis)
 {
 	if (GetVJDAxisExist(m_devID, hid_axis) != FALSE)
 	{
-		m_buttons[id].setAxis(data);
+		m_buttons[id].setAxis(data, axis);
 		m_buttons[id].Release();
 	}
 }
 
-void vJoyDevice::loadAxisInv(vJoyButtonID id, int hid_axis, LONG* data)
+void vJoyDevice::loadAxisInv(vJoyButtonID id, int hid_axis, long* data, unsigned char axis)
 {
 	if (GetVJDAxisExist(m_devID, hid_axis) != FALSE)
 	{
-		m_buttons[id].setAxisInv(data);
+		m_buttons[id].setAxisInv(data, axis);
 		m_buttons[id].Release();
+	}
+}
+
+void vJoyDevice::loadRing(vJoyAxisMoveID id, int hid_axis, long* data, int hid_axis2, long* data2, unsigned char axis)
+{
+	if ((GetVJDAxisExist(m_devID, hid_axis) != FALSE) && (GetVJDAxisExist(m_devID, hid_axis2) != FALSE))
+	{
+		m_axis[id].setRing(data, data2, id, axis);
+		m_axis[id].Release();
 	}
 }
 
@@ -377,16 +405,16 @@ void vJoyDevice::UpdateState()
 			switch (i)
 			{
 			case 0:
-				m_iReport.bHats = (result == -1) ? -1 : (LONG)((int)result * 4500);
+				m_iReport.bHats = (result == -1) ? -1 : (long)((int)result * 4500);
 				break;
 			case 8:
-				m_iReport.bHatsEx1 = (result == -1) ? -1 : (LONG)((int)result * 4500);
+				m_iReport.bHatsEx1 = (result == -1) ? -1 : (long)((int)result * 4500);
 				break;
 			case 16:
-				m_iReport.bHatsEx2 = (result == -1) ? -1 : (LONG)((int)result * 4500);
+				m_iReport.bHatsEx2 = (result == -1) ? -1 : (long)((int)result * 4500);
 				break;
 			case 24:
-				m_iReport.bHatsEx3 = (result == -1) ? -1 : (LONG)((int)result * 4500);
+				m_iReport.bHatsEx3 = (result == -1) ? -1 : (long)((int)result * 4500);
 				break;
 			}
 		}
@@ -413,6 +441,13 @@ vJoyButton* vJoyDevice::GetButton(vJoyButtonID id)
 	if (id >= vJoyButtonID::none && id < vJoyButtonID::button_Count)
 		return &m_buttons[id];
 	return &m_buttons[0];
+}
+
+vJoyButton* vJoyDevice::GetAxis(vJoyAxisMoveID id)
+{
+	if (id >= vJoyAxisMoveID::axismove_none && id < vJoyAxisMoveID::axismove_Count)
+		return &m_axis[id];
+	return &m_axis[0];
 }
 
 void vJoyDevice::Close()

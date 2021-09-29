@@ -13,8 +13,8 @@
 #include "KeymapDataDlg.h"
 #include "ViGEm.h"
 #include "ViGEmDlg.h"
-#include "HidGuardian.h"
-#include "HidGuardianDlg.h"
+#include "Guardian.h"
+#include "GuardianDlg.h"
 #include "LinksDlg.h"
 #include "Tasktray.h"
 #include "CPULimiter.h"
@@ -27,7 +27,6 @@ WCHAR szWindowClass[MAX_LOADSTRING];
 
 bool callbackpause;
 static const std::wstring ProgramFilesDirName = L"Ds2vJoy";
-static const std::wstring VersionDate = L"31/07/2021";
 
 Settings tape;
 Guardian hid;
@@ -48,18 +47,19 @@ MappingDataDlg mDDlg;
 KeymapDataDlg kDDlg;
 RapidFireDataDlg rDDlg;
 
-int battery;
+byte battery;
 
-int mode = 1;
-static int W;
-static int H;
-static int w;
-static int h;
+unsigned char mode = 1;
+static short W;
+static short H;
+static short w;
+static short h;
 static double r;
-int mousemode[3];
-int mouseabolute;
-int grid[6];
+unsigned char mousemode[3];
+unsigned char mouseabolute;
+short grid[6];
 bool defaultmouse;
+std::vector<char> gridmove;
 static double mousefactor;
 static double movefactor;
 static double sniperfactor;
@@ -172,20 +172,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 typedef struct _dsParams
 {
 	FFB ffb;
-	double ffbTime;
+	double ffbTime = 0;
 	Stopwatch sw;
-	vJoyDevice *vj;
-	int vjoyID;
-	dsDevice *ds;
+	vJoyDevice* vj = { 0 };
+	unsigned char vJoyID = 0;
+	dsDevice* ds = { 0 };
 	Mappings mappings;
 	Keymaps keymaps;
 //	std::vector<RapidFire> rapidfires;
 	RapidFires rapidfires;
-	bool NextStepFlag;
-	dsButton *splittouch;
-	int splitButton;
-	int splitCol;
-	int splitRow;
+	bool NextStepFlag = false;
+	dsButton *splittouch = { 0 };
+	byte splitButton = 0;
+	unsigned char splitCol = 0;
+	unsigned char splitRow = 0;
 } dsParams;
 
 void dsInput(dsDevice* ds, bool updateflag, void* param)
@@ -196,9 +196,9 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 	double now;
 	dsParams *p = (dsParams*)param;
 	p->sw.Lap(&now);
-	if (p->ffbTime + 3 < now)		//3ms
+	if (p->ffbTime + 3 < now)		//4ms
 	{
-		BYTE left, right;
+		byte left, right;
 		if (p->ffb.Calc(&left, &right))
 		{
 			ds->SetMoter(left, right);
@@ -220,16 +220,16 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 		size_t n = p->mappings.size();
 		for (int i = 0; i < n; i++)
 			if (p->mappings[i].Enable == 1)
-				p->mappings[i].Run();
+				p->mappings[i].Run(p->sw.GetAvg());
 
 		p->mappings[0].RunLast(p->ds, vjoy);
-		lstrcpynW(vJoySatusString, p->mappings[0].vJoyButtons(), sizeof(vJoySatusString) / sizeof(vJoySatusString[0]));
+		WCHAR* ret = lstrcpynW(vJoySatusString, p->mappings[0].vJoyButtons(), sizeof(vJoySatusString) / sizeof(vJoySatusString[0]));
 		vjoy->UpdateState();
 	}
 	else
-		lstrcpynW(vJoySatusString, L"", sizeof(vJoySatusString) / sizeof(vJoySatusString[0]));
+		WCHAR* ret = lstrcpynW(vJoySatusString, L"", sizeof(vJoySatusString) / sizeof(vJoySatusString[0]));
 
-	BYTE touchbox[7] = { 0, 0, 0, 0, 0, 0, 0 };
+	byte touchbox[7] = { 0, 0, 0, 0, 0, 0, 0 };
 	int posymax = 350;
 
 	switch (tape.ActualDS)
@@ -302,7 +302,7 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				if (p->splitCol > 0)
 					pos += touchx[idx] / (1920 / p->splitCol);
 				if (p->splitButton - 1 + pos < 128)
-					vjoy->GetButton((vJoyButtonID)(vJoyButton::Button1 + p->splitButton - 1 + pos))->SetVal(1);
+					vjoy->GetButton((vJoyButtonID)(vJoyButton::Button1 + p->splitButton - 1 + pos))->SetValByte(1);
 			}
 		}
 	}
@@ -314,8 +314,8 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 		double z = ds->GetButton(dsButton::RX)->GetVal();
 		double t = ds->GetButton(dsButton::RY)->GetVal();
 		static bool lastTouchActive;
-		static int lasttouchx;
-		static int lasttouchy;
+		static int lasttouchx = 1;
+		static int lasttouchy = 1;
 		static bool lastmouseactivated2 = false;
 		static bool lastmouseactivated34 = false;
 		static bool mouseactivated2 = mousemode[0] == 2 || mousemode[1] == 2 || mousemode[2] == 2;
@@ -358,85 +358,138 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 						desty = touchy[0] * 1080 / 943;
 					else
 						desty = touchy[0];
-					destx = max(0, min(W, destx));
-					desty = max(0, min(H, desty));
+					if (!tape.MouseCanBypass)
+					{
+						restx = max(0, min(W, destx));
+						resty = max(0, min(H, desty));
+					}
 					SetCursorPos(destx, desty);
+					lasttouchx = touchx[0];
+					lasttouchy = touchy[0];
+					lastTouchActive = TouchActive[0];
 				}
 				break;
 			case 2: //mouse
 				if (TouchActive[0] && lastTouchActive)
 				{
-					restx = restx + (touchx[0] - lasttouchx) * touchfactor;
+					restx = restx + ((double)touchx[0] - lasttouchx) * touchfactor;
 					if (tape.ActualDS == 1)
-						resty = resty + (touchy[0] * 1080 / 943 - lasttouchy) * touchfactor;
+						resty = resty + ((double)touchy[0] * 1080 / 943 - lasttouchy) * touchfactor;
 					else
-						resty = resty + (touchy[0] - lasttouchy) * touchfactor;
+						resty = resty + ((double)touchy[0] - lasttouchy) * touchfactor;
 					double movex = (restx > 0) ? floor(restx) : ceil(restx);
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
+					lasttouchx = touchx[0];
+					lasttouchy = touchy[0];
+					lastTouchActive = TouchActive[0];
 				}
 				break;
 			case 3: //slow
 				if (TouchActive[0] && lastTouchActive)
 				{
-					restx = restx + (touchx[0] - lasttouchx) * slowfactor;
+					restx = restx + ((double)touchx[0] - lasttouchx) * slowfactor;
 					if (tape.ActualDS == 1)
-						resty = resty + (touchy[0] * 1080 / 943 - lasttouchy) * slowfactor;
+						resty = resty + ((double)touchy[0] * 1080 / 943 - lasttouchy) * slowfactor;
 					else
-						resty = resty + (touchy[0] - lasttouchy) * slowfactor;
+						resty = resty + ((double)touchy[0] - lasttouchy) * slowfactor;
 					double movex = (restx > 0) ? floor(restx) : ceil(restx);
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
+					lasttouchx = touchx[0];
+					lasttouchy = touchy[0];
+					lastTouchActive = TouchActive[0];
 				}
 				break;
 			case 4: //accuracy
 				if (TouchActive[0] && lastTouchActive)
 				{
-					restx = restx + (touchx[0] - lasttouchx) * accuracyfactor;
+					restx = restx + ((double)touchx[0] - lasttouchx) * accuracyfactor;
 					if (tape.ActualDS == 1)
-						resty = resty + (touchy[0] * 1080 / 943 - lasttouchy) * accuracyfactor;
+						resty = resty + ((double)touchy[0] * 1080 / 943 - lasttouchy) * accuracyfactor;
 					else
-						resty = resty + (touchy[0] - lasttouchy) * accuracyfactor;
+						resty = resty + ((double)touchy[0] - lasttouchy) * accuracyfactor;
 					double movex = (restx > 0) ? floor(restx) : ceil(restx);
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
+					lasttouchx = touchx[0];
+					lasttouchy = touchy[0];
+					lastTouchActive = TouchActive[0];
 				}
 				break;
 			case 5: //grid
-				if (TouchActive[0] && touchx[0] && touchy[0])
+				if ((TouchActive[0] && touchx[0] && touchy[0]) || gridmove.size())
 				{
+					double ldesty = (tape.ActualDS == 1) ? 943 : 1080;
+					if (gridmove.size())
+					{
+						switch (gridmove[0])
+						{
+						case 1:if (grid[4]) lasttouchx = max(1, min(1920, lasttouchx - (1920 / grid[4]))); break;
+						case 2:if (grid[5]) lasttouchy = max(1, min(ldesty, lasttouchy - (ldesty / grid[5]))); break;
+						case 3:if (grid[4]) lasttouchx = max(1, min(1920, lasttouchx + (1920 / grid[4]))); break;
+						case 4:if (grid[5]) lasttouchy = max(1, min(ldesty, lasttouchy + (ldesty / grid[5]))); break;
+						}
+					}
+					else
+					{
+						lasttouchx = max(((grid[4]) ? 1 : 0), touchx[0]);
+						lasttouchy = max(((grid[5]) ? 1 : 0), touchy[0]);
+						lastTouchActive = TouchActive[0];
+					}
 					int destw = (grid[2]) ? grid[2] : W - grid[0];
 					int desth = (grid[3]) ? grid[3] : H - grid[1];
 					double destx = 0;
 					double desty = 0;
 					if (grid[4])
-						destx = grid[0] + (destw / grid[4]) * (ceil(double(touchx[0]) / (1920 / grid[4])) - 0.5);
+						destx = grid[0] + (double(destw) / grid[4]) * (ceil(double(lasttouchx) / (double(1920) / grid[4])) - 0.5);
 					else
-						destx = grid[0] + destw * (double(touchx[0]) / 1920);
+						destx = grid[0] + destw * (double(lasttouchx) / 1920);
 					if (grid[5])
-					{
-						double ldesty = (tape.ActualDS == 1) ? 943 : 1080;
-						desty = grid[1] + (desth / grid[5]) * (ceil(double(touchy[0]) / (ldesty / grid[5])) - 0.5);
-					}
+						desty = grid[1] + (double(desth) / grid[5]) * (ceil(double(lasttouchy) / (ldesty / grid[5])) - 0.5);
 					else
+						desty = grid[1] + desth * (double(lasttouchy) / ldesty);
+					if (!tape.MouseCanBypass)
 					{
-						double ldesty = (tape.ActualDS == 1) ? 943 : 1080;
-						desty = grid[1] + desth * (double(touchy[0]) / ldesty);
+						destx = max(0, min(W, destx));
+						desty = max(0, min(H, desty));
 					}
-					destx = max(0, min(W, destx));
-					desty = max(0, min(H, desty));
 					SetCursorPos((int)destx, (int)desty);
 				}
 				break;
@@ -452,17 +505,20 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 			switch (mousemode[0])
 			{
 			case 1: //absolute
-				if (ds->GetButton(dsButton::LX)->isPushed() && mouseabolute == 0)
+				if ((ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed()) && mouseabolute == 0)
 				{
-					double restx = min(2 * w, max(0, r * (2 * x / 255 - 1) + w));
-					double resty = min(2 * h, max(0, r * (2 * y / 255 - 1) + h));
-					restx = max(0, min(W, restx));
-					resty = max(0, min(H, resty));
+					double restx = min((double)2 * w, max(0, r * ((double)2 * x / 255 - 1) + w));
+					double resty = min((double)2 * h, max(0, r * ((double)2 * y / 255 - 1) + h));
+					if (!tape.MouseCanBypass)
+					{
+						restx = max(0, min(W, restx));
+						resty = max(0, min(H, resty));
+					}
 					SetCursorPos((int)restx, (int)resty);
 				}
 				break;
 			case 2: //mouse
-				if (ds->GetButton(dsButton::LX)->isPushed())
+				if (ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed())
 				{
 					restx = restx + xtmp * xtmp * xtmp * mousefactor;
 					resty = resty + ytmp * ytmp * ytmp * mousefactor;
@@ -470,13 +526,21 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
 				}
 				break;
 			case 3: //move
-				if (ds->GetButton(dsButton::LX)->isPushed())
+				if (ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed())
 				{
 					restx = restx + xtmp * xtmp * xtmp * movefactor;
 					resty = resty + ytmp * ytmp * ytmp * movefactor;
@@ -484,33 +548,65 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
 				}
 				break;
 			case 4: //sniper
-			{
-				restx = restx + xtmp * sniperfactor;
-				resty = resty + ytmp * sniperfactor;
-				double movex = (restx > 0) ? floor(restx) : ceil(restx);
-				double movey = (resty > 0) ? floor(resty) : ceil(resty);
-				restx -= movex;
-				resty -= movey;
-				movex = max(0, min(W, CursorPos.x + movex));
-				movey = max(0, min(H, CursorPos.y + movey));
-				SetCursorPos((int)movex, (int)movey);
+				if (ds->GetButton(dsButton::SNIPER_LX)->isPushed() || ds->GetButton(dsButton::SNIPER_LY)->isPushed())
+				{
+					restx = restx + xtmp * sniperfactor;
+					resty = resty + ytmp * sniperfactor;
+					double movex = (restx > 0) ? floor(restx) : ceil(restx);
+					double movey = (resty > 0) ? floor(resty) : ceil(resty);
+					restx -= movex;
+					resty -= movey;
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
+					SetCursorPos((int)movex, (int)movey);
+				}
 				break;
-			}
 			case 5: //raid
-				if (ds->GetButton(dsButton::LX)->isPushed())
+				if ((ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed()) || gridmove.size())
 				{
 					double destw = (grid[2]) ? grid[2] : W - grid[0];
 					double desth = (grid[3]) ? grid[3] : H - grid[1];
-					restx = restx + abs(xtmp) * xtmp * raidfactor;
-					resty = resty + abs(ytmp) * ytmp * raidfactor;
-					restx = max(grid[0] + ((grid[4]) ? 1 : 0), min(grid[0] + destw, restx));
-					resty = max(grid[1] + ((grid[5]) ? 1 : 0), min(grid[1] + desth, resty));
+					double restxtmp = restx + abs(xtmp) * xtmp * raidfactor;
+					double restytmp = resty + abs(ytmp) * ytmp * raidfactor;
+					if (gridmove.size())
+					{
+						switch (gridmove[0])
+						{
+						case 1:if (grid[4]) { restx = restx - (destw / grid[4]); resty = restytmp; } break;
+						case 2:if (grid[5]) { resty = resty - (desth / grid[5]); restx = restxtmp; } break;
+						case 3:if (grid[4]) { restx = restx + (destw / grid[4]); resty = restytmp; } break;
+						case 4:if (grid[5]) { resty = resty + (desth / grid[5]); restx = restxtmp; } break;
+						}
+					}
+					else
+					{
+						restx = restxtmp;
+						resty = restytmp;
+					}
+					restx = max((double)grid[0] + ((grid[4]) ? 1 : 0), min(grid[0] + destw, restx));
+					resty = max((double)grid[1] + ((grid[5]) ? 1 : 0), min(grid[1] + desth, resty));
 					double destx = 0;
 					double desty = 0;
 					if (grid[4])
@@ -521,8 +617,11 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 						desty = grid[1] + (desth / grid[5]) * (ceil((double(resty) - grid[1]) / (desth / grid[5])) - 0.5);
 					else
 						desty = resty;
-					destx = max(0, min(W, destx));
-					desty = max(0, min(H, desty));
+					if (!tape.MouseCanBypass)
+					{
+						destx = max(0, min(W, destx));
+						desty = max(0, min(H, desty));
+					}
 					SetCursorPos((int)destx, (int)desty);
 				}
 				break;
@@ -538,17 +637,20 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 			switch (mousemode[2])
 			{
 			case 1: //absolute
-				if (ds->GetButton(dsButton::RX)->isPushed() && mouseabolute == 2)
+				if ((ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed()) && mouseabolute == 2)
 				{
-					double restx = min(2 * w, max(0, r * (2 * z / 255 - 1) + w));
-					double resty = min(2 * h, max(0, r * (2 * t / 255 - 1) + h));
-					restx = max(0, min(W, restx));
-					resty = max(0, min(H, resty));
+					double restx = min((double)2 * w, max(0, r * ((double)2 * z / 255 - 1) + w));
+					double resty = min((double)2 * h, max(0, r * ((double)2 * t / 255 - 1) + h));
+					if (!tape.MouseCanBypass)
+					{
+						restx = max(0, min(W, restx));
+						resty = max(0, min(H, resty));
+					}
 					SetCursorPos((int)restx, (int)resty);
 				}
 				break;
 			case 2: //mouse
-				if (ds->GetButton(dsButton::RX)->isPushed())
+				if (ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed())
 				{
 					restx = restx + ztmp * ztmp * ztmp * mousefactor;
 					resty = resty + ttmp * ttmp * ttmp * mousefactor;
@@ -556,13 +658,21 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
 				}
 				break;
 			case 3: //move
-				if (ds->GetButton(dsButton::RX)->isPushed())
+				if (ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed())
 				{
 					restx = restx + ztmp * ztmp * ztmp * movefactor;
 					resty = resty + ttmp * ttmp * ttmp * movefactor;
@@ -570,33 +680,65 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 					double movey = (resty > 0) ? floor(resty) : ceil(resty);
 					restx -= movex;
 					resty -= movey;
-					movex = max(0, min(W, CursorPos.x + movex));
-					movey = max(0, min(H, CursorPos.y + movey));
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
 					SetCursorPos((int)movex, (int)movey);
 				}
 				break;
 			case 4: //sniper
-			{
-				restx = restx + ztmp * sniperfactor;
-				resty = resty + ttmp * sniperfactor;
-				double movex = (restx > 0) ? floor(restx) : ceil(restx);
-				double movey = (resty > 0) ? floor(resty) : ceil(resty);
-				restx -= movex;
-				resty -= movey;
-				movex = max(0, min(W, CursorPos.x + movex));
-				movey = max(0, min(H, CursorPos.y + movey));
-				SetCursorPos((int)movex, (int)movey);
+				if (ds->GetButton(dsButton::SNIPER_RX)->isPushed() || ds->GetButton(dsButton::SNIPER_RY)->isPushed())
+				{
+					restx = restx + ztmp * sniperfactor;
+					resty = resty + ttmp * sniperfactor;
+					double movex = (restx > 0) ? floor(restx) : ceil(restx);
+					double movey = (resty > 0) ? floor(resty) : ceil(resty);
+					restx -= movex;
+					resty -= movey;
+					if (tape.MouseCanBypass)
+					{
+						movex = CursorPos.x + movex;
+						movey = CursorPos.y + movey;
+					}
+					else
+					{
+						movex = max(0, min(W, CursorPos.x + movex));
+						movey = max(0, min(H, CursorPos.y + movey));
+					}
+					SetCursorPos((int)movex, (int)movey);
+				}
 				break;
-			}
 			case 5: //raid
-				if (ds->GetButton(dsButton::RX)->isPushed())
+				if ((ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed()) || gridmove.size())
 				{
 					double destw = (grid[2]) ? grid[2] : W - grid[0];
 					double desth = (grid[3]) ? grid[3] : H - grid[1];
-					restx = restx + abs(ztmp) * ztmp * raidfactor;
-					resty = resty + abs(ttmp) * ttmp * raidfactor;
-					restx = max(grid[0] + ((grid[4]) ? 1 : 0), min(grid[0] + destw, restx));
-					resty = max(grid[1] + ((grid[5]) ? 1 : 0), min(grid[1] + desth, resty));
+					double restxtmp = restx + abs(ztmp) * ztmp * raidfactor;
+					double restytmp = resty + abs(ttmp) * ttmp * raidfactor; 
+					if (gridmove.size())
+					{
+						switch (gridmove[0])
+						{
+						case 1:if (grid[4]) { restx = restx - (destw / grid[4]); resty = restytmp; } break;
+						case 2:if (grid[5]) { resty = resty - (desth / grid[5]); restx = restxtmp; } break;
+						case 3:if (grid[4]) { restx = restx + (destw / grid[4]); resty = restytmp; } break;
+						case 4:if (grid[5]) { resty = resty + (desth / grid[5]); restx = restxtmp; } break;
+						}
+					}
+					else
+					{
+						restx = restxtmp;
+						resty = restytmp;
+					}
+					restx = max((double)grid[0] + ((grid[4]) ? 1 : 0), min(grid[0] + destw, restx));
+					resty = max((double)grid[1] + ((grid[5]) ? 1 : 0), min(grid[1] + desth, resty));
 					double destx = 0;
 					double desty = 0;
 					if (grid[4])
@@ -607,16 +749,18 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 						desty = grid[1] + (desth / grid[5]) * (ceil((double(resty) - grid[1]) / (desth / grid[5])) - 0.5);
 					else
 						desty = resty;
-					destx = max(0, min(W, destx));
-					desty = max(0, min(H, desty));
+					if (!tape.MouseCanBypass)
+					{
+						destx = max(0, min(W, destx));
+						desty = max(0, min(H, desty));
+					}
 					SetCursorPos((int)destx, (int)desty);
 				}
 				break;
 			}
 		}
-		lasttouchx = touchx[0];
-		lasttouchy = touchy[0];
-		lastTouchActive = TouchActive[0];
+		if (gridmove.size())
+			gridmove.erase(gridmove.begin());
 	}
 
 	{
@@ -636,7 +780,7 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 	if (tape.ViGEmActive)
 	{
 		vg.Run();
-		lstrcpynW(ViGEmSatusString, vg.ViGEmButtons(), sizeof(ViGEmSatusString) / sizeof(ViGEmSatusString[0]));
+		WCHAR* ret = lstrcpynW(ViGEmSatusString, vg.ViGEmButtons(), sizeof(ViGEmSatusString) / sizeof(ViGEmSatusString[0]));
 	}
 
 	{
@@ -652,21 +796,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static dsDevice ds;
 	static vJoyDevice vjoy;
 	static dsParams cbParams;
-	static int iBattery=-1;
+	static short iBattery=-1;
 	static HWND hTab;
 	static HWND hChk;
 	static HWND hStatus;
 	static HWND hTab2;
 	static HMENU hMenu;
 	static HMENU hMenu2;
-	static int tabrightclick;
+	static unsigned char tabrightclick;
 	static bool load_dll;
 	static bool topmost;
 	static bool extended;
 	static bool cloned;
-	static int m_flag_drag;
-	static int x;
-	static int y;
+	static unsigned long m_flag_drag;
+	static short x;
+	static short y;
 
     switch (message)
     {
@@ -712,7 +856,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						::DrawTextW(hDC, &(wszBuffer[nAcceleratorDelimiter + 1]), nCharCount - nAcceleratorDelimiter - 1, &rTextMetric, DT_CALCRECT);
 						_AcceleratorWidth = rTextMetric.right - rTextMetric.left;
 					}
-					if (hOldFont == NULL)
+					if (hOldFont == NULL && hOldFont != 0)
 						::SelectObject(hDC, hOldFont);
 
 					::ReleaseDC(hWnd, hDC);
@@ -790,7 +934,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				::SetBkMode(DrawMenuStructure->hDC, nOldBkMode);
 				::SetTextColor(DrawMenuStructure->hDC, crPrevText);
 
-				if (hOldFont == NULL)
+				if (hOldFont == NULL && hOldFont != 0)
 					::SelectObject(DrawMenuStructure->hDC, hOldFont);
 			}
 		}
@@ -942,12 +1086,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 	{
 		load_dll = false;
-/*
-		VOID* lockedResssource;
-		DWORD resourceSize;
-		if (LoadEmbeddedResource(IDC_VJOYINTERFACE_DLL, &lockedResssource, &resourceSize))
-			WriteToFile(L"vJoyInterface.dll", lockedResssource, resourceSize, true, true);
-*/
+		/*
+				VOID* lockedResssource;
+				DWORD resourceSize;
+				if (LoadEmbeddedResource(IDC_VJOYINTERFACE_DLL, &lockedResssource, &resourceSize))
+					WriteToFile(L"vJoyInterface.dll", lockedResssource, resourceSize, true, true);
+		*/
 		std::vector<char> data;
 		DWORD resourceSize;
 		if (LoadEmbeddedResource(IDR_VIGEMCLIENT_DLL, &data, &resourceSize))
@@ -966,8 +1110,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		LoadLanguage();
 		InitCommonControls();
+		tape.Init(hInst, hWnd);
 		tape.OpenIni(L"Ds2vJoy.ini");
-		tape.Load();
+		tape.Load(Settings::Setting_Category_All);
 		GetCursorPos(&mousepoint);
 		GetCursorPos(&gridpoint);
 
@@ -1110,8 +1255,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hStatus, WM_SETFONT, WPARAM(hFont), TRUE);
 		}
 
-		echo(L"Modified version of 090: Ds4vJoy and Ds5vJoy", VersionDate.c_str());
-		echo(L"https://github.com/ytyra/Ds2vJoy (%s)", VersionDate.c_str());
+		echo(L"Modified version of 090: Ds4vJoy and Ds5vJoy");
+		echo(L"https://github.com/ytyra/Ds2vJoy 31/07/2021");
+		std::wstring datestring = std::to_wstring(tape.VersionDate);
+		echo(L"Version %sv%s", datestring.std::wstring::substr(0, 8).c_str(), datestring.std::wstring::substr(8, (datestring.length() - 8)).c_str());
+		echo(L"");
 		tasktray.Show();
 
 		if (!vjoy.Init(hWnd, true))
@@ -1135,7 +1283,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 3, 1000, NULL);	//Battery
 		SetTimer(hWnd, 4, 5000, NULL);	//HidGuardian Whitelist Check
 		SetTimer(hWnd, 5, 10, NULL);	//When moving windows
-		SetTimer(hWnd, 6, 100, NULL);	//Print Profile, mode, and vJoy Buttons when editing
+		SetTimer(hWnd, 6, 100, NULL);	//Print Profile, mode, mouse and vJoy Buttons when editing
 
 		break;
 	}
@@ -1159,12 +1307,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 */
 			static COLORREF ledcolor;
-			static BYTE R = 0;
-			static BYTE G = 0;
-			static BYTE B = 0;
-			static BYTE Rval = 0;
-			static BYTE Gval = 0;
-			static BYTE Bval = 0;
+			static byte R = 0;
+			static byte G = 0;
+			static byte B = 0;
+			static byte Rval = 0;
+			static byte Gval = 0;
+			static byte Bval = 0;
 
 			const double π = 3.141592653589793238462643;
 			const double δ = 0.72;
@@ -1185,7 +1333,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				phasedelta = (α - 485) / 24;
 			}
 
-			if (phase < 0) { frequency = 126 + phasedelta + (rand() % 30); phase = frequency / 2; colorphase = chromatic * (100 - (rand() % 26)) / 100; }
+			if (phase < 0) { frequency = 126 + phasedelta + (rand() % 30); phase = frequency / 2; colorphase = chromatic * ((double)100 - (rand() % 26)) / 100; }
 			double LightwaVe = abs(sin(2 * π * phase / frequency));
 			Rval = int(R - (R * LightwaVe * colorphase));
 			Gval = int(G - (G * LightwaVe * colorphase));
@@ -1242,14 +1390,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					tasktray.Tip(buf);
 					echo(L"Battery: %s %s", buf, full ? L"Full" : charge ? L"Connected" : L"Disconnected");
 				}
-				SendMessage(hStatus, SB_SETTEXT, 0, (WPARAM)buf);
-				swprintf_s(buf, TEXT("%0.2fms"), cbParams.sw.GetAvg());
-				SendMessage(hStatus, SB_SETTEXT, 1, (WPARAM)buf);
+				if (!IsIconic(hWnd))
+				{
+					SendMessageTimeout(hStatus, SB_SETTEXT, 0, (LPARAM)buf, SMTO_BLOCK, 1000, NULL);
+					swprintf_s(buf, TEXT("%0.5f ms"), cbParams.sw.GetAvg());
+					SendMessageTimeout(hStatus, SB_SETTEXT, 1, (LPARAM)buf, SMTO_BLOCK, 1000, NULL);
+				}
 			}
 			else
 			{
-				SendMessage(hStatus, SB_SETTEXT, 0, (WPARAM)I18N.Status_Wait);
-				SendMessage(hStatus, SB_SETTEXT, 1, (WPARAM)L"");
+				if (!IsIconic(hWnd))
+				{
+					SendMessageTimeout(hStatus, SB_SETTEXT, 0, (LPARAM)I18N.Status_Wait, SMTO_BLOCK, 1000, NULL);
+					SendMessageTimeout(hStatus, SB_SETTEXT, 1, (LPARAM)L"", SMTO_BLOCK, 1000, NULL);
+				}
 			}
 		}
 		else if (wParam == 4)
@@ -1266,11 +1420,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam == 6)
 		{
-			SendMessage(hStatus, SB_SETTEXT, 3, (WPARAM)(L"M:" + std::to_wstring(mode) + L" Pr:" + std::to_wstring(tape.Profile)).c_str());
-			if (TabCtrl_GetCurSel(hTab) == 2)
-				SendMessage(hStatus, SB_SETTEXT, 2, (WPARAM)vJoySatusString);
-			else if (TabCtrl_GetCurSel(hTab) == 5)
-				SendMessage(hStatus, SB_SETTEXT, 2, (WPARAM)ViGEmSatusString);
+			if (!IsIconic(hWnd))
+			{
+				SendMessageTimeout(hStatus, SB_SETTEXT, 3, (LPARAM)(L"M:" + std::to_wstring(mode) + L" Pr:" + std::to_wstring(tape.Profile)).c_str(), SMTO_BLOCK, 1000, NULL);
+				if (TabCtrl_GetCurSel(hTab) == 2)
+					SendMessageTimeout(hStatus, SB_SETTEXT, 2, (LPARAM)vJoySatusString, SMTO_BLOCK, 1000, NULL);
+				else if (TabCtrl_GetCurSel(hTab) == 5)
+					SendMessageTimeout(hStatus, SB_SETTEXT, 2, (LPARAM)ViGEmSatusString, SMTO_BLOCK, 1000, NULL);
+			}
 		}
 		break;
 	case WM_DEVICE_DS_START:
@@ -1281,6 +1438,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return FALSE;
 
 		callbackpause = true;
+		ds.GetButton(dsButtonID::LX)->SetThreshold();
+		ds.GetButton(dsButtonID::LY)->SetThreshold();
+		ds.GetButton(dsButtonID::RX)->SetThreshold();
+		ds.GetButton(dsButtonID::RY)->SetThreshold();
 		ds.Close();
 		cbParams.sw.Reset(100);
 
@@ -1312,12 +1473,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else
 			cbParams.splittouch = 0;
 
-		cbParams.rapidfires.clear();
-		size_t length = tape.RapidFiredata.size();
-		for (int i = 0; i < length; i++)
 		{
-			if (tape.RapidFiredata[i].LoadDevice(&vjoy))
-				cbParams.rapidfires.push_back(tape.RapidFiredata[i]);
+			cbParams.rapidfires.clear();
+			size_t length = tape.RapidFiredata.size();
+			for (int i = 0; i < length; i++)
+			{
+				if (tape.RapidFiredata[i].LoadDevice(&vjoy))
+					cbParams.rapidfires.push_back(tape.RapidFiredata[i]);
+			}
 		}
 
 		{
@@ -1338,6 +1501,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			vg.InitClient(true);
 			tape.ViGEmActive = true;
 		}
+		vDlg.Init2();
 
 		cbParams.NextStepFlag = false;
 
@@ -1367,7 +1531,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
 		{
-			cbParams.vjoyID = tape.vJoyDeviceID;
+			cbParams.vJoyID = tape.vJoyDeviceID;
 			if (tape.FFB)
 			{
 				cbParams.ffbTime = 0;
@@ -1380,6 +1544,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		return FALSE;
 	}
+	case WM_RESET:
+	{
+		Mappings Mappingdatatmp;
+		RapidFires RapidFiredatatmp;
+		Keymaps Keymapdatatmp;
+		tape.Mappingdata = Mappingdatatmp;
+		tape.RapidFiredata = RapidFiredatatmp;
+		tape.Keymapdata = Keymapdatatmp;
+
+		MappingDataDlg mDDlgtmp;
+		RapidFireDataDlg rDDlgtmp;
+		KeymapDataDlg kDDlgtmp;
+		mDDlg = mDDlgtmp;
+		rDDlg = rDDlgtmp;
+		kDDlg = kDDlgtmp;
+		break;
+	}
 	case WM_RELOAD:
 	{
 		// lParam == 0 verbose
@@ -1387,11 +1568,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (!load_dll)
 			return FALSE;
 
+		WCHAR* ret1 = lstrcpynW(vJoySatusString, L"", sizeof(vJoySatusString) / sizeof(vJoySatusString[0]));
+		WCHAR* ret2 = lstrcpynW(ViGEmSatusString, L"", sizeof(ViGEmSatusString) / sizeof(ViGEmSatusString[0]));
+		SendMessage(hWnd, WM_TIMER, 6, 0);
+
 		callbackpause = true;
-		echo(I18N.Change_Settings);
-		vg.CloseClient();
-		ds.Close();
-		vjoy.Close();
+
 		{
 			TabCtrl_SetCurSel(hTab, 0);
 			TabCtrl_SetCurSel(hTab2, 0);
@@ -1410,32 +1592,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			iDlg.Hide();
 			_log.Show();
 		}
+		echo(I18N.Change_Settings);
+
 		{
 			if ((wParam == 1) || (wParam == 2) || (wParam == 3))
 			{
-				tape.Profile = (int)wParam;
+				tape.Save(tape.Setting_All);
+				tape.Profile = (unsigned char)wParam;
 				tape.Save(tape.Setting_Profile);
 				echo(I18N.TT_ProfileChanged, tape.Profile);
 			}
 			else
 				hid.RestartDevices(true);
 		}
-		{
-			Mappings Mappingdatatmp;
-			RapidFires RapidFiredatatmp;
-			Keymaps Keymapdatatmp;
-			tape.Mappingdata = Mappingdatatmp;
-			tape.RapidFiredata = RapidFiredatatmp;
-			tape.Keymapdata = Keymapdatatmp;
 
-			MappingDataDlg mDDlgtmp;
-			RapidFireDataDlg rDDlgtmp;
-			KeymapDataDlg kDDlgtmp;
-			mDDlg = mDDlgtmp;
-			rDDlg = rDDlgtmp;
-			kDDlg = kDDlgtmp;
-		}
-		tape.Load();
+		ds.Close();
+		vjoy.Close();
+		vg.CloseClient();
+		SendMessage(hWnd, WM_RESET, 0, 0);
+
+		tape.Load(Settings::Setting_Category_All);
 		SendMessage(hWnd, WM_REDRAW_TABS, 0, 0);
 		ShowWindow(hTab2, SW_HIDE);
 		mDlg.Hide();
@@ -1489,11 +1665,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_SETORANGELED:
 		if (ds.Active() && tape.ActualDS == 2)
-			ds.SetOrangeLED((BYTE)wParam);
+			ds.SetOrangeLED((byte)wParam);
 		break;
 	case WM_SETWHITELED:
 		if (ds.Active() && tape.ActualDS == 2)
-			ds.SetWhiteLED((BYTE)wParam);
+			ds.SetWhiteLED((byte)wParam);
 		break;
 	case WM_SETTRIGGERS:
 		if (ds.Active() && tape.ActualDS == 2)
@@ -1503,11 +1679,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_ADDMAPPING:
-		if ((int)wParam != 1)
-			mDDlg.Hide();
-		mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
-		PostMessage(hWnd, WM_SIZE, 0, 0);
-		if ((int)lParam == 1)
+	{
+		if ((int)lParam <= 0)
+		{
+			if ((int)lParam == -1)
+			{
+				ds.GetButton(dsButtonID::LX)->SetThreshold();
+				ds.GetButton(dsButtonID::LY)->SetThreshold();
+				ds.GetButton(dsButtonID::RX)->SetThreshold();
+				ds.GetButton(dsButtonID::RY)->SetThreshold();
+				cbParams.mappings.clear();
+				cbParams.mappings[0].PreLoad();
+				size_t max = tape.Mappingdata.size();
+				for (int i = 0; i < 32; i++)
+					tape.vJoyUsed[i] = false;
+				for (int i = 0; i < max; i++)
+				{
+					Mapping* data = &tape.Mappingdata[i];
+					if (data->LoadDevice(&ds, &vjoy))
+						cbParams.mappings.push_back(*data);
+				}
+			}
+			if ((int)wParam != 1)
+				mDDlg.Hide();
+			mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
+			PostMessage(hWnd, WM_SIZE, 0, 0);
+			if (TabCtrl_GetCurSel(hTab) == 2)
+				mDlg.Show();
+			if (mDlg2.isCloned())
+			{
+				mDlg2.SetTab(mDlg2.GetTab());
+				mDlg2.Show();
+			}
+		}
+		else if ((int)lParam == 1)
 		{
 			if ((int)wParam == 1)
 				mDlg.addMappingDlgBack();
@@ -1525,34 +1730,64 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			else if ((int)wParam == 3)
 				mDlg2.editMappingDlgBackMulti();
 		}
-		mDlg.Show();
-		if (mDlg2.isCloned())
+		break;
+	}
+	case WM_ADDRAPIDFIRE:
+		if ((int)lParam <= 0)
 		{
-			mDlg2.SetTab(mDlg2.GetTab());
-			mDlg2.Show();
+			rDDlg.Hide();
+			rDlg.Hide();
+			if ((int)lParam == -1)
+			{
+				cbParams.rapidfires.clear();
+				size_t length = tape.RapidFiredata.size();
+				for (int i = 0; i < length; i++)
+				{
+					if (tape.RapidFiredata[i].LoadDevice(&vjoy))
+						cbParams.rapidfires.push_back(tape.RapidFiredata[i]);
+				}
+			}
+			rDlg.Show();
+			PostMessage(hWnd, WM_SIZE, 0, -1);
+		}
+		else if ((int)lParam == 1)
+		{
+			if ((int)wParam == 1)
+				rDlg.addRapidFireDlgBack();
+			else if ((int)wParam == 2)
+				rDlg.editRapidFireDlgBack();
+			else if ((int)wParam == 3)
+				rDlg.editRapidFireDlgBackMulti();
 		}
 		break;
-	case WM_ADDRAPIDFIRE:
-		rDDlg.Hide();
-		rDlg.Show();
-		PostMessage(hWnd, WM_SIZE, 0, -1);
-		if ((int)wParam == 1)
-			rDlg.addRapidFireDlgBack();
-		else if ((int)wParam == 2)
-			rDlg.editRapidFireDlgBack();
-		else if ((int)wParam == 3)
-			rDlg.editRapidFireDlgBackMulti();
-		break;
 	case WM_ADDKEYMAP:
-		kDDlg.Hide();
-		kDlg.Show();
-		PostMessage(hWnd, WM_SIZE, 0, -1);
-		if ((int)wParam == 1)
-			kDlg.addKeymapDlgBack();
-		else if((int)wParam == 2)
-			kDlg.editKeymapDlgBack();
-		else if ((int)wParam == 3)
-			kDlg.editKeymapDlgBackMulti();
+		if ((int)lParam <= 0)
+		{
+			kDDlg.Hide();
+			kDlg.Hide();
+			if ((int)lParam == -1)
+			{
+				cbParams.keymaps.clear();
+				size_t max = tape.Keymapdata.size();
+				for (int i = 0; i < max; i++)
+				{
+					Keymap* data = &tape.Keymapdata[i];
+					if (data->LoadDevice(&vjoy))
+						cbParams.keymaps.push_back(*data);
+				}
+			}
+			kDlg.Show();
+			PostMessage(hWnd, WM_SIZE, 0, -1);
+		}
+		else if ((int)lParam == 1)
+		{
+			if ((int)wParam == 1)
+				kDlg.addKeymapDlgBack();
+			else if ((int)wParam == 2)
+				kDlg.editKeymapDlgBack();
+			else if ((int)wParam == 3)
+				kDlg.editKeymapDlgBackMulti();
+		}
 		break;
 	case WM_CHANGE_PAD:
 		if (wParam == 0)
@@ -1602,10 +1837,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 //		int HScreen = HIWORD(lParam);
 		RECT desktop;
 		GetClientRect(GetDesktopWindow(), &desktop);
-		W = desktop.right;
-		H = desktop.bottom;
-		w = W / 2;
-		h = H / 2;
+		W = (short)desktop.right;
+		H = (short)desktop.bottom;
+		w = (short)(W / 2);
+		h = (short)(H / 2);
 		r = sqrt(w * w + h * h);
 		double standard_r = sqrt(960 * 960 + 540 * 540);
 		mousefactor = 0.0000089 * (r / standard_r);
@@ -1624,12 +1859,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_NCLBUTTONDOWN:
 	{
-		int xtmp = (int)(short)LOWORD(lParam);
-		int ytmp = (int)(short)HIWORD(lParam);
+		int xtmp = (short)LOWORD(lParam);
+		int ytmp = (short)HIWORD(lParam);
 		RECT win;
 		GetWindowRect(hWnd, &win);
-		x = xtmp - win.left;
-		y = ytmp - win.top;
+		x = (short)(xtmp - win.left);
+		y = (short)(ytmp - win.top);
 		if (x > 345 && x < 392 && y >= 0 && y <= 30)
 			break;
 		else if (x > 437 && x < 485 && y >= 0 && y <= 30)
@@ -1680,7 +1915,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{ PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0); break; }
 		RECT rect;
 		ClientArea(&rect, true);
-		if ((int)(short)HIWORD(lParam) < rect.top + 2)
+		if ((short)HIWORD(lParam) < rect.top + 2)
 		{
 			if (!extended)
 			{

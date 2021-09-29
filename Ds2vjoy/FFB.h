@@ -7,7 +7,7 @@ public:
 	FFB();
 	~FFB();
 
-	BOOL Calc(BYTE* left, BYTE* right);
+	BOOL Calc(byte* left, byte* right);
 
 	static void CALLBACK callback(PVOID, PVOID);
 
@@ -22,10 +22,11 @@ private:
 	bool m_bActuator;
 	bool m_bStoped;
 	bool m_bPaused;
-	BYTE m_Gain;
+	byte m_Gain;
 	LARGE_INTEGER m_gt_start;
 	double m_gt_ms;
 	double m_dwPausedTime;
 	std::mutex m_mutex;
-	BYTE m_lastLeft, m_lastRight;
+	byte m_lastLeft;
+	byte m_lastRight;
 };

@@ -33,11 +33,11 @@ public:
 	FFB_EFF_RAMP m_rampForce = { 0 };
 
 	//	status
-	DWORD			m_Status;
+	DWORD m_Status;
 	//	View
-	DWORD			m_PlayCount;
+	unsigned long m_PlayCount;
 	//	Rebirth moment
-	double			m_StartTime;
+	double m_StartTime;
 
 private:
 	//	Calculate the envelope

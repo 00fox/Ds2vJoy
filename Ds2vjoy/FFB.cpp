@@ -6,6 +6,10 @@ FFB::FFB()
 	, m_bPaused(false)
 	, m_bStoped(true)
 	, m_Gain(0xFF)
+	, m_dwPausedTime(0)
+	, m_mutex()
+	, m_lastLeft(0)
+	, m_lastRight(0)
 {
 	LARGE_INTEGER f;
 	QueryPerformanceFrequency(&f);
@@ -17,7 +21,7 @@ FFB::~FFB()
 {
 }
 
-BOOL FFB::Calc(BYTE* _left, BYTE* _right)
+BOOL FFB::Calc(byte* _left, byte* _right)
 {
 	LONG left = 0, right = 0;
 
@@ -165,7 +169,7 @@ void FFB::_callback(FFB_DATA* data)
 
 void FFB::_ctrl(FFB_DATA* data)
 {
-	FFB_CTRL	control;
+	FFB_CTRL control;
 	if (ERROR_SUCCESS != Ffb_h_DevCtrl(data, &control))
 		return;
 

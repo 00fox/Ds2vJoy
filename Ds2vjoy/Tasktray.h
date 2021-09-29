@@ -3,9 +3,9 @@
 class Tasktray
 {
 	struct MenuPosition {
-		UINT flags;
-		INT x;
-		INT y;
+		unsigned int flags;
+		int x;
+		int y;
 	};
 
 public:
@@ -29,7 +29,7 @@ private:
 	HMENU m_menu;
 
 	NOTIFYICONDATA m_nid = { 0 };
-	UINT MenuOffset = 3;
+	unsigned int MenuOffset = 3;
 };
 
 extern Tasktray tasktray;

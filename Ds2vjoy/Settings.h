@@ -6,21 +6,71 @@
 class Settings
 {
 public:
+	const int VersionDate = 202109021;
+
+	WCHAR Settingstxt[20];
+	WCHAR Mappingtxt[20];
+	WCHAR ViGEmtxt[20];
+	WCHAR Keymaptxt[20];
+	WCHAR RapidFiretxt[20];
+	WCHAR Guardiantxt[20];
+
+	enum SettingCategory {
+		Setting_Category_Create = -2,
+		Setting_Category_Update = -1,
+		Setting_Category_All,
+		Setting_Category_Profile,
+		Setting_Category_Tray,
+		Setting_Category_Settings,
+		Setting_Category_Mapping,
+		Setting_Category_RapidFire,
+		Setting_Category_Keymap,
+		Setting_Category_ViGEm,
+		Setting_Category_Guardian,
+		Setting_Category_Links
+	};
+
 	enum SettingName {
+		Setting_Update = -1,
 		Setting_All,				//All
+		Setting_Version,
 		Setting_Profile,			//Profile
-		Setting_PreferredDS,		//Settings
+		Setting_PreferredDS,
 		Setting_Tasktray,
 		Setting_CloseMinimize,
 		Setting_DisconnectBT,
 		Setting_LowBattAlert,
 		Setting_dsSerial,
 		Setting_BlackLedOnExit,
-		Setting_vJoyDeviceID,
+		Setting_vJoyPaused,			//Tasktray
+		Setting_RapidFirePaused,
+		Setting_KeymapPaused,
+		Setting_ViGEmPaused,
+		Setting_GuardianPaused,
+		Setting_dsHID1,				//Guardian
+		Setting_dsHID2,
+		Setting_dsHID3,
+		Setting_Exe1Name,
+		Setting_Exe2Name,
+		Setting_Exe3Name,
+		Setting_Exe4Name,
+		Setting_Exe5Name,
+		Setting_App1Name,			//Links
+		Setting_App2Name,
+		Setting_App3Name,
+		Setting_App4Name,
+		Setting_App5Name,
+		Setting_App1Location,
+		Setting_App2Location,
+		Setting_App3Location,
+		Setting_App4Location,
+		Setting_App5Location,
+		Setting_vJoyDeviceID,		//Settings
 		Setting_Threshold,
 		Setting_Simultaneous,
 		Setting_LongPress,
 		Setting_VeryLongPress,
+		Setting_MouseCanBypass,
 		Setting_FFB,
 		Setting_TriggersMode,
 		Setting_TouchPadButton,
@@ -29,11 +79,6 @@ public:
 		Setting_LED_Color,
 		Setting_TabToMode,
 		Setting_Reminder,
-		Setting_vJoyPaused,			//Tasktray
-		Setting_RapidFirePaused,
-		Setting_KeymapPaused,
-		Setting_ViGEmPaused,
-		Setting_GuardianPaused,
 		Setting_Mappingdata,		//vJoy
 		Setting_RapidFiredata,		//RapidFire
 		Setting_Keymapdata,			//Keymap
@@ -45,15 +90,7 @@ public:
 		Setting_target_DS4,
 		Setting_dstarget_DS4,
 		Setting_vjtarget_DS4,
-		Setting_dsHID1,				//Guardian
-		Setting_dsHID2,
-		Setting_dsHID3,
-		Setting_Exe1Name,
-		Setting_Exe2Name,
-		Setting_Exe3Name,
-		Setting_Exe4Name,
-		Setting_Exe5Name,
-		Setting_GuardianActive,
+		Setting_GuardianActive,		//Guardian
 		Setting_RemoveBlacklist,
 		Setting_PurgeWhitelist,
 		Setting_dsHID1Enable,
@@ -64,30 +101,21 @@ public:
 		Setting_Exe3NameEnable,
 		Setting_Exe4NameEnable,
 		Setting_Exe5NameEnable,
-		Setting_App1Name,			//Links
-		Setting_App2Name,
-		Setting_App3Name,
-		Setting_App4Name,
-		Setting_App5Name,
-		Setting_App1Location,
-		Setting_App2Location,
-		Setting_App3Location,
-		Setting_App4Location,
-		Setting_App5Location,
 		Setting_GiveMapping			//First time
 	};
 
 	Settings();
 	~Settings();
 
+	void Init(HINSTANCE hInst, HWND hWnd);
 	BOOL OpenIni(WCHAR* inifile);
-	void Load();
-	void Save(int category = 0);
+	void Load(int category = Setting_Category_All);
+	void Save(int item = Setting_All);
 
 	const WCHAR* getSerial();
 	const std::string getHID(int ds);
 	void setvJoyDeviceID(int id);
-	void SetTouchPadButton(DWORD);
+	void SetTouchPadButton(byte);
 	void SetTouchRow(int);
 	void SetTouchCol(int i);
 	void setSerial(const WCHAR*);
@@ -104,36 +132,38 @@ public:
 	Keymaps Keymapdata;
 	RapidFires RapidFiredata;
 
-	int Profile;
-	int Mode[9];
+	int VersionDatetmp;
+	unsigned char Profile;
+	unsigned char Mode[9];
 	bool Reminder[32];
 	bool vJoyUsed[32];
 
-	int ActualDS = 0;				//0 Unknown
-	int PreferredDS;				//1 DS4, 2 DS5
+	unsigned char ActualDS = 0;		//0 Unknown
+	unsigned char PreferredDS;		//1 DS4, 2 DS5
 
-	int vJoyDeviceID;
+	unsigned char vJoyDeviceID;
 	bool Tasktray;
 	bool CloseMinimize;
 	bool DisconnectBT;
 	bool LowBattAlert;
+	bool MouseCanBypass;
 
 	bool FFB;
-	int TriggersMode;				//0 None, 1 Resist, 2 Shoot, 3 Proactive
+	unsigned char TriggersMode;		//0 None, 1 Resist, 2 Shoot, 3 Proactive
 
 	bool SplitTouch;
-	int TouchPadButton;
-	int TouchCol;
-	int TouchRow;
+	byte TouchPadButton;
+	unsigned char TouchCol;
+	unsigned char TouchRow;
 
 	WCHAR dsSerial[13] = { 0 };
 	DWORD LED_Color;
 	bool BlackLedOnExit;
 
-	int Threshold;					//7%
-	int Simultaneous;				//40 ms
-	int LongPress;					//255 ms
-	int VeryLongPress;				//3287 ms
+	byte Threshold;					//8 (0-128)
+	unsigned short Simultaneous;	//40 ms
+	unsigned short LongPress;		//255 ms
+	unsigned short VeryLongPress;	//3287 ms
 
 	bool vJoyPaused;
 	bool ViGEmPaused;
@@ -142,13 +172,13 @@ public:
 	bool GuardianPaused;
 
 	bool ViGEmActive;
-	int DesiredVirtualPad;			//1 Xbox360, 2 DS4
+	unsigned char DesiredVirtualPad;	//1 Xbox360, 2 DS4
 	bool target_X360[24];
-	dsButtonID dstarget_X360[24];
-	vJoyButtonID vjtarget_X360[24];
+	byte dstarget_X360[24];
+	byte vjtarget_X360[24];
 	bool target_DS4[24];
-	dsButtonID dstarget_DS4[24];
-	vJoyButtonID vjtarget_DS4[24];
+	byte dstarget_DS4[24];
+	byte vjtarget_DS4[24];
 	LONG FFBvJoyLeft;
 	LONG FFBvJoyRight;
 
@@ -186,97 +216,47 @@ public:
 private:
 	enum MappingName {
 		Mapping_Enable,
-		Mapping_ds_1,
-		Mapping_ds_2,
-		Mapping_ds_3,
-		Mapping_ds_4,
-		Mapping_ds_5,
-		Mapping_Target_1,
-		Mapping_Target_2,
-		Mapping_Target_3,
-		Mapping_Target_4,
-		Mapping_Target_5,
-		Mapping_vJoy_source_1,
-		Mapping_vJoy_source_2,
-		Mapping_vJoy_source_3,
-		Mapping_vJoy_source_4,
-		Mapping_vJoy_source_5,
-		Mapping_ds_1_Disable,
-		Mapping_ds_2_Disable,
-		Mapping_ds_3_Disable,
-		Mapping_ds_4_Disable,
-		Mapping_ds_5_Disable,
-		Mapping_OrXorNot_1,
-		Mapping_OrXorNot_2,
-		Mapping_OrXorNot_3,
-		Mapping_OrXorNot_4,
-		Mapping_If_mouse,
+		Mapping_Tab,
+		Mapping_Ifmouse,
 		Mapping_Force,
-		Mapping_led,
 		Mapping_Short,
 		Mapping_Double,
 		Mapping_Long,
+		Mapping_Led,
 		Mapping_Macro,
 		Mapping_Pause,
+		Mapping_Transitivity,
 		Mapping_Toggle,
-		Mapping_vJoy_1,
-		Mapping_vJoy_2,
-		Mapping_vJoy_3,
-		Mapping_vJoy_4,
-		Mapping_vJoy_5,
-		Mapping_vJoy_6,
-		Mapping_vJoy_7,
-		Mapping_vJoy_8,
-		Mapping_On_release_1,
-		Mapping_On_release_2,
-		Mapping_On_release_3,
-		Mapping_On_release_4,
-		Mapping_On_release_5,
-		Mapping_On_release_6,
-		Mapping_On_release_7,
-		Mapping_On_release_8,
-		Mapping_vJoy_1_Disable,
-		Mapping_vJoy_2_Disable,
-		Mapping_vJoy_3_Disable,
-		Mapping_vJoy_4_Disable,
-		Mapping_vJoy_5_Disable,
-		Mapping_vJoy_6_Disable,
-		Mapping_vJoy_7_Disable,
-		Mapping_vJoy_8_Disable,
-		Mapping_Start_1,
-		Mapping_Start_2,
-		Mapping_Start_3,
-		Mapping_Start_4,
-		Mapping_Start_5,
-		Mapping_Start_6,
-		Mapping_Start_7,
-		Mapping_Start_8,
-		Mapping_Stop_1,
-		Mapping_Stop_2,
-		Mapping_Stop_3,
-		Mapping_Stop_4,
-		Mapping_Stop_5,
-		Mapping_Stop_6,
-		Mapping_Stop_7,
-		Mapping_Stop_8,
-		Mapping_Mouse_action_1,
-		Mapping_Mouse_action_2,
-		Mapping_Mouse_action_3,
-		Mapping_Mouse_action_4,
-		Mapping_Mouse_1,
-		Mapping_Mouse_2,
-		Mapping_Mouse_3,
-		Mapping_Mouse_4,
-		Mapping_Mouse_5,
-		Mapping_Mouse_6,
-		Mapping_Mouse_Grid,
-		Mapping_Grid_x,
-		Mapping_Grid_y,
-		Mapping_Grid_w,
-		Mapping_Grid_h,
-		Mapping_Grid_nw,
-		Mapping_Grid_nh,
-		Mapping_Tab,
+		Mapping_Target,				//1-5(2,2,2,2,2,0,0,0)
+		Mapping_dsID,
+		Mapping_OrXorNot,			//1-4(2,2,2,2,0,0,0,0)
+		Mapping_dsDisable,			//1-5(2,2,2,2,2,0,0,0)
+		Mapping_MouseAction,		//1-8(2,2,2,2,2,2,2,2)
+		Mapping_vjID,
+		Mapping_Overcontrol,		//1-8(2,2,2,2,2,2,2,2)
+		Mapping_Switch,				//1-8(2,2,2,2,2,2,2,2)
+		Mapping_OnRelease,			//1-8(2,2,2,2,2,2,2,2)
+		Mapping_NoRelease,			//1-8(2,2,2,2,2,2,2,2)
+		Mapping_NlRelease,			//1-8(2,2,2,2,2,2,2,2)
+		Mapping_vjDisable,			//1-8(2,2,2,2,2,2,2,2)
+		Mapping_Mouse,				//1-7(3,3,3,1,1,1,2)
+		Mapping_Grid,				//1-6(16,16,16,16,8,8)
+		Mapping_Start1,
+		Mapping_Start2,
+		Mapping_Start3,
+		Mapping_Start4,
+		Mapping_Start5,
+		Mapping_Start6,
+		Mapping_Start7,
+		Mapping_Start8,
+		Mapping_Stop1,
+		Mapping_Stop2,
+		Mapping_Stop3,
+		Mapping_Stop4,
+		Mapping_Stop5,
+		Mapping_Stop6,
+		Mapping_Stop7,
+		Mapping_Stop8,
 		Mapping_Count,
 	};
 
@@ -303,6 +283,18 @@ private:
 	void SetSplitTouch();
 	void SetTriggersMode(int i);
 
+	WCHAR* CheckboxToString(byte, byte, byte, byte, byte, byte, byte, byte);
+	WCHAR* dsIDToString(byte, byte, byte, byte, byte);
+	WCHAR* vjIDToString(byte, byte, byte, byte, byte, byte, byte, byte);
+	WCHAR* MouseToString(byte, byte, byte, byte, byte, byte, byte);
+	WCHAR* GridToString(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short);
+	unsigned short CheckboxString(std::wstring, unsigned char);
+	byte dsIDString(std::wstring, unsigned char);
+	byte vjIDString(std::wstring, unsigned char);
+	unsigned short MouseString(std::wstring, unsigned char);
+	unsigned short GridString(std::wstring, unsigned char);
+
+	HWND m_hWnd;
 	WCHAR m_file[MAX_PATH + 1] = { 0 };
 };
 

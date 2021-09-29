@@ -3,7 +3,12 @@
 #include "Ds2vJoy.h"
 
 LogDlg::LogDlg()
-	:m_count(0), m_hDlg(0)
+	:m_hWnd(0)
+	, m_hDlg(0)
+	, queue({ 0 })
+	, m_mutex()
+	, m_loadvJoy(false)
+	, m_count(0)
 {
 }
 
@@ -22,16 +27,19 @@ void echo(const char* format, ...)
 
 	len = _vscprintf_p(format, args) + 1;
 	buffer = (char*)malloc(len * sizeof(char));
-	_vsprintf_p(buffer, len, format, args);
+	if (buffer)
+		_vsprintf_p(buffer, len, format, args);
 
 	va_end(args);
 
-	const size_t count = strlen(buffer) + 1;
-	wchar_t* wcstr = new wchar_t[count];
-	size_t* pReturnValue = { 0 };
-	mbstowcs_s(pReturnValue, wcstr, 1024, buffer, count);
-
-	_log.echo(wcstr);
+	if (buffer)
+	{
+		const size_t count = strlen(buffer) + 1;
+		wchar_t* wcstr = new wchar_t[count];
+		size_t* pReturnValue = { 0 };
+		mbstowcs_s(pReturnValue, wcstr, (size_t)(count / sizeof(buffer[0])), buffer, count);
+		_log.echo(wcstr);
+	}
 }
 
 void echo(const wchar_t* format, ...)
@@ -41,13 +49,14 @@ void echo(const wchar_t* format, ...)
 	wchar_t* buffer;
 	va_start(args, format);
 
-		len = _vscwprintf_p(format, args) + 1;
-		buffer = (wchar_t*)malloc(len * sizeof(wchar_t));
+	len = _vscwprintf_p(format, args) + 1;
+	buffer = (wchar_t*)malloc(len * sizeof(wchar_t));
+	if (buffer)
+	{
 		_vswprintf_p(buffer, len, format, args);
-
-	va_end(args);
-
-	_log.echo(buffer);
+		va_end(args);
+		_log.echo(buffer);
+	}
 }
 
 void LogDlg::echo(wchar_t* buffer)

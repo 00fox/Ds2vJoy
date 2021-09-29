@@ -5,26 +5,29 @@ class dsButton
 public:
 	enum ButtonType
 	{
-		typeNone,
-		typeConstant,
-		typeButton,
-		typeTrigger,
-		typeSimultaneous,
-		typeTouch,
-		typeDPad,
-		typeDPadUP,
-		typeDPadRIGHT,
-		typeDPadDOWN,
-		typeDPadLEFT,
-		typeAxis,
-		typeAxisInv,
-		typeAxisLU,
-		typeAxisRD,
-		typeAxisDUL,
-		typeAxisDUR,
-		typeAxisDDR,
-		typeAxisDDL,
-		typeData,
+		Type_None,
+		Type_Constant,
+		Type_Button,
+		Type_Trigger,
+		Type_Simultaneous,
+		Type_Touch,
+		Type_DPad,
+		Type_DPadUP,
+		Type_DPadRIGHT,
+		Type_DPadDOWN,
+		Type_DPadLEFT,
+		Type_Axis,
+		Type_AxisInv,
+		Type_AxisSniper,
+		Type_AxisTriggerLU,
+		Type_AxisTriggerRD,
+		Type_AxisLU,
+		Type_AxisRD,
+		Type_AxisDUL,
+		Type_AxisDUR,
+		Type_AxisDDR,
+		Type_AxisDDL,
+		Type_Data,
 	};
 
 	enum ButtonID {
@@ -61,6 +64,18 @@ public:
 		LYINV,
 		RXINV,
 		RYINV,
+		SNIPER_LX,
+		SNIPER_LY,
+		SNIPER_RX,
+		SNIPER_RY,
+		AXISL_TR_LEFT,
+		AXISL_TR_UP,
+		AXISL_TR_RIGHT,
+		AXISL_TR_DOWN,
+		AXISR_TR_LEFT,
+		AXISR_TR_UP,
+		AXISR_TR_RIGHT,
+		AXISR_TR_DOWN,
 		AXISL_LEFT,
 		AXISL_UP_LEFT,
 		AXISL_UP,
@@ -97,51 +112,73 @@ public:
 		button_Count
 	};
 
+	enum AxisID
+	{
+		axis_X,
+		axis_Y,
+		axis_Z,
+		axis_RX,
+		axis_RY,
+		axis_RZ,
+		axis_SL0,
+		axis_SL1,
+		axis_Count
+	};
+
 	dsButton();
 	~dsButton();
 
-	void setConstant(BYTE data);
-	void setButton(BYTE* data, UINT32 bitmask);
-	void setTrigger(BYTE* data, INT threshold);
-	void setSimultaneous(BYTE* data, UINT32 bitmask, BYTE* data2, UINT32 bitmask2);
-	void setTouch(BYTE* data, UINT32 bitmask, int box);
-	void setDPad(BYTE* data, ButtonType type);
-	void setAxis(BYTE* data, BYTE* data2);
-	void setAxisInv(BYTE* data, BYTE* data2);
-	void setAxisLU(BYTE* data);
-	void setAxisRD(BYTE* data);
-	void setAxisDUL(BYTE* data, BYTE* data2);
-	void setAxisDUR(BYTE* data, BYTE* data2);
-	void setAxisDDR(BYTE* data, BYTE* data2);
-	void setAxisDDL(BYTE* data, BYTE* data2);
-	void setData(BYTE* data, UINT32 bitmask);
+	void setConstant(byte data);
+	void setButton(byte* data, unsigned int bitmask);
+	void setTrigger(byte* data, int threshold);
+	void setSimultaneous(byte* data, unsigned int bitmask, byte* data2, unsigned int bitmask2);
+	void setTouch(byte* data, unsigned int bitmask, int box);
+	void setDPad(byte* data, ButtonType type);
+	void setAxis(byte* data, byte* data2, unsigned char axis);
+	void setAxisSniper(byte* data, byte* data2);
+	void setAxisInv(byte* data, byte* data2, unsigned char axis);
+	void setAxisTriggerLU(byte* data);
+	void setAxisTriggerRD(byte* data);
+	void setAxisLU(byte* data);
+	void setAxisRD(byte* data);
+	void setAxisDUL(byte* data, byte* data2);
+	void setAxisDUR(byte* data, byte* data2);
+	void setAxisDDR(byte* data, byte* data2);
+	void setAxisDDL(byte* data, byte* data2);
+	void setData(byte* data, unsigned int bitmask);
 
-	void SetTouch(int box, BYTE value);
+	void SetTouch(int box, byte value);
 	BOOL isPushed();
-	BYTE GetVal();
-	BYTE GetReleasedVal();
+	byte GetVal();
+	byte GetReleasedVal();
 	int GetScrollVal();
+
+	void SetThreshold(bool thr = true);
 
 	static WCHAR *String(ButtonID);
 
 private:
 	ButtonType m_type;
-	BYTE* m_data;
-	BYTE* m_data2;
-	BYTE m_constant;
+	byte* m_data;
+	byte* m_data2;
+	byte m_constant;
 	int m_box;											//touch,1,2,3,4,L,R,all,up
-	UINT32 m_mask;
-	UINT32 m_mask2;
-	INT m_thrz;
-	BYTE m_typechoice;
-	BYTE dpad;
+	unsigned int m_mask;
+	unsigned int m_mask2;
+	int m_thrz;
+	char m_axis;
+	byte m_typechoice;
+	byte dpad;
 
-	bool OrangeLedActive = false;
+	bool OrangeLedActive;
 	clock_t L2R2_LastTimePushed;
-	bool L2R2_Delay_On = false;
-	bool L2R2_Eligible = true;
-	bool L2R2_Pushed = false;
+	bool L2R2_Delay_On;
+	bool L2R2_Eligible;
+	bool L2R2_Pushed;
 };
 
+static bool threshold[4] = { true };
+static byte TouchAble[7] = { 0, 0, 0, 0, 0, 0, 0 };		//touch,1,2,3,4,L,R
+
 typedef dsButton::ButtonID dsButtonID;
-static BYTE TouchAble[7] = { 0, 0, 0, 0, 0, 0, 0 };		//touch,1,2,3,4,L,R
+typedef dsButton::AxisID dsAxisID;

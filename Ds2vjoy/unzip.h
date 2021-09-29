@@ -139,7 +139,7 @@ unsigned int FormatZipMessage(ZRESULT code, TCHAR *buf,unsigned int len);
 // SetCurrentDirectory("c:\\docs\\stuff");
 // HZIP hz = OpenZip("c:\\stuff.zip",0);
 // ZIPENTRY ze; GetZipItem(hz,-1,&ze); int numitems=ze.index;
-// for (int i=0; i<numitems; i++)
+// for (int i = 0; i<numitems; i++)
 // { GetZipItem(hz,i,&ze);
 //   UnzipItem(hz,i,ze.name);
 // }
@@ -180,7 +180,7 @@ unsigned int FormatZipMessage(ZRESULT code, TCHAR *buf,unsigned int len);
 // HANDLE hread,hwrite; CreatePipe(&hread,&hwrite,0,0);
 // CreateZipWriterThread(hwrite);
 // HZIP hz = OpenZipHandle(hread,0);
-// for (int i=0; ; i++)
+// for (int i = 0; ; i++)
 // { ZIPENTRY ze;
 //   ZRESULT zr=GetZipItem(hz,i,&ze); if (zr!=ZR_OK) break; // no more
 //   UnzipItem(hz,i, ze.name);

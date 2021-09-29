@@ -203,15 +203,27 @@ public:
 
 	WCHAR* KeyString();
 	WCHAR* ValueString(int column);
-	BOOL LoadDevice(vJoyDevice* vj);
+	//| Tag   | Description
+	//|:----- |:------------------------------------------------------------------------------
+	//| Empty | Nothing is checked
+	//| P     | \'Send to' is checked
+	//| A     | \'By Postmessage / activation window' is checked
+	//
+	//| Tags  | In practice
+	//|:----- |:------------------------------------------------------------------------------
+	//| Empty | The keys will be sent to your actual focus
+	//| P     | It will use Postmessage to send keys to specified process
+	//| PA    | It will activate window of the specified process before
+	//|  A    | Act like if nothing were checked, the keys will be sent to your actual focus
+	BOOL LoadDevice(vJoyDevice* vjoy);
 	void GetState();
 	void Run();
-	KeyboardID BytetoKeyboardID(BYTE id);
+	KeyboardID BytetoKeyboardID(byte id);
 	BYTE KeyboardIDtoByte(KeyboardID id);
 	WCHAR* String(KeyboardID id);
 
-	int Enable;
-	vJoyButtonID ButtonID;
+	unsigned char Enable;
+	byte ButtonID;
 	std::vector<BYTE> vk;
 	bool usePostmessage;
 	bool useActivating;

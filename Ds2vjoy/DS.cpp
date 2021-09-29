@@ -66,7 +66,8 @@ void dsDevice::PreOpen()
 
 		if (dsHandle != INVALID_HANDLE_VALUE)
 		{
-			CloseHandle(dsHandle);
+			if (dsHandle)
+				CloseHandle(dsHandle);
 			dsHandle = INVALID_HANDLE_VALUE;
 		}
 
@@ -100,10 +101,13 @@ void dsDevice::PreOpen()
 			OPEN_EXISTING,
 			NULL,
 			NULL);
+
 		if (dsHandle == INVALID_HANDLE_VALUE)
 			continue;
 
 		Attributes.Size = sizeof(Attributes);
+		if (dsHandle == 0)
+			continue;
 		if (!HidD_GetAttributes(dsHandle, &Attributes))
 			continue;
 		if (dsVendorID != Attributes.VendorID)
@@ -227,15 +231,16 @@ void dsDevice::AssignOffsets()
 		OffsetBatteryLevel = 52;
 	};
 
-	m_buttons[dsButton::LX].setAxis(m_receivedData + OffsetLX, m_receivedData + OffsetLY);
-	m_buttons[dsButton::LY].setAxis(m_receivedData + OffsetLY, m_receivedData + OffsetLX);
-	m_buttons[dsButton::RX].setAxis(m_receivedData + OffsetRX, m_receivedData + OffsetRY);
-	m_buttons[dsButton::RY].setAxis(m_receivedData + OffsetRY, m_receivedData + OffsetRX);
+	m_buttons[dsButton::none].setConstant(0);
+	m_buttons[dsButton::LX].setAxis(m_receivedData + OffsetLX, m_receivedData + OffsetLY, 0);
+	m_buttons[dsButton::LY].setAxis(m_receivedData + OffsetLY, m_receivedData + OffsetLX, 1);
+	m_buttons[dsButton::RX].setAxis(m_receivedData + OffsetRX, m_receivedData + OffsetRY, 2);
+	m_buttons[dsButton::RY].setAxis(m_receivedData + OffsetRY, m_receivedData + OffsetRX, 3);
 	m_buttons[dsButton::L3].setButton(m_receivedData + OffsetL3, 0b1000000);
-	m_buttons[dsButton::DPAD_LEFT].setDPad(m_receivedData + OffsetDPad, dsButton::typeDPadLEFT);
-	m_buttons[dsButton::DPAD_UP].setDPad(m_receivedData + OffsetDPad, dsButton::typeDPadUP);
-	m_buttons[dsButton::DPAD_RIGHT].setDPad(m_receivedData + OffsetDPad, dsButton::typeDPadRIGHT);
-	m_buttons[dsButton::DPAD_DOWN].setDPad(m_receivedData + OffsetDPad, dsButton::typeDPadDOWN);
+	m_buttons[dsButton::DPAD_LEFT].setDPad(m_receivedData + OffsetDPad, dsButton::Type_DPadLEFT);
+	m_buttons[dsButton::DPAD_UP].setDPad(m_receivedData + OffsetDPad, dsButton::Type_DPadUP);
+	m_buttons[dsButton::DPAD_RIGHT].setDPad(m_receivedData + OffsetDPad, dsButton::Type_DPadRIGHT);
+	m_buttons[dsButton::DPAD_DOWN].setDPad(m_receivedData + OffsetDPad, dsButton::Type_DPadDOWN);
 	m_buttons[dsButton::SHARE].setButton(m_receivedData + OffsetShare, 0b10000);
 	m_buttons[dsButton::OPTIONS].setButton(m_receivedData + OffsetOption, 0b100000);
 	m_buttons[dsButton::SQUARE].setButton(m_receivedData + OffsetSquare, 0b10000);
@@ -256,10 +261,22 @@ void dsDevice::AssignOffsets()
 	m_buttons[dsButton::EMPTY].setConstant(0);
 	m_buttons[dsButton::MIDDLE].setConstant(127);
 	m_buttons[dsButton::FULL].setConstant(255);
-	m_buttons[dsButton::LXINV].setAxisInv(m_receivedData + OffsetLX, m_receivedData + OffsetLY);
-	m_buttons[dsButton::LYINV].setAxisInv(m_receivedData + OffsetLY, m_receivedData + OffsetLX);
-	m_buttons[dsButton::RXINV].setAxisInv(m_receivedData + OffsetRX, m_receivedData + OffsetRY);
-	m_buttons[dsButton::RYINV].setAxisInv(m_receivedData + OffsetRY, m_receivedData + OffsetRX);
+	m_buttons[dsButton::LXINV].setAxisInv(m_receivedData + OffsetLX, m_receivedData + OffsetLY, 0);
+	m_buttons[dsButton::LYINV].setAxisInv(m_receivedData + OffsetLY, m_receivedData + OffsetLX, 1);
+	m_buttons[dsButton::RXINV].setAxisInv(m_receivedData + OffsetRX, m_receivedData + OffsetRY, 2);
+	m_buttons[dsButton::RYINV].setAxisInv(m_receivedData + OffsetRY, m_receivedData + OffsetRX, 3);
+	m_buttons[dsButton::SNIPER_LX].setAxisSniper(m_receivedData + OffsetLX, m_receivedData + OffsetLY);
+	m_buttons[dsButton::SNIPER_LY].setAxisSniper(m_receivedData + OffsetLY, m_receivedData + OffsetLX);
+	m_buttons[dsButton::SNIPER_RX].setAxisSniper(m_receivedData + OffsetRX, m_receivedData + OffsetRY);
+	m_buttons[dsButton::SNIPER_RY].setAxisSniper(m_receivedData + OffsetRY, m_receivedData + OffsetRX);
+	m_buttons[dsButton::AXISL_TR_LEFT].setAxisTriggerLU(m_receivedData + OffsetLX);
+	m_buttons[dsButton::AXISL_TR_UP].setAxisTriggerLU(m_receivedData + OffsetLY);
+	m_buttons[dsButton::AXISL_TR_RIGHT].setAxisTriggerRD(m_receivedData + OffsetLX);
+	m_buttons[dsButton::AXISL_TR_DOWN].setAxisTriggerRD(m_receivedData + OffsetLY);
+	m_buttons[dsButton::AXISR_TR_LEFT].setAxisTriggerLU(m_receivedData + OffsetRX);
+	m_buttons[dsButton::AXISR_TR_UP].setAxisTriggerLU(m_receivedData + OffsetRY);
+	m_buttons[dsButton::AXISR_TR_RIGHT].setAxisTriggerRD(m_receivedData + OffsetRX);
+	m_buttons[dsButton::AXISR_TR_DOWN].setAxisTriggerRD(m_receivedData + OffsetRY);
 	m_buttons[dsButton::AXISL_LEFT].setAxisLU(m_receivedData + OffsetLX);
 	m_buttons[dsButton::AXISL_UP_LEFT].setAxisDUL(m_receivedData + OffsetLY, m_receivedData + OffsetLX);
 	m_buttons[dsButton::AXISL_UP].setAxisLU(m_receivedData + OffsetLY);
@@ -345,10 +362,12 @@ BOOL dsDevice::Open(HWND hWnd, bool verbose)
 		echo(I18N.ConnectController, L"DualShock", dsSerial);
 
 	//Secure send / receive buffer
-	m_InputBuf = (BYTE*)malloc(m_inputLen);
-	m_OutputBuf = (BYTE*)malloc(m_outputLen);
-	memset(m_OutputBuf, 0, m_outputLen);
-	memset(m_InputBuf, 0, m_inputLen);
+	m_InputBuf = (byte*)malloc(m_inputLen);
+	m_OutputBuf = (byte*)malloc(m_outputLen);
+	if (m_OutputBuf)
+		memset(m_OutputBuf, 0, m_outputLen);
+	if (m_InputBuf)
+		memset(m_InputBuf, 0, m_inputLen);
 
 	if (tape.ActualDS == 2)
 	{
@@ -524,14 +543,14 @@ BOOL dsDevice::SetTargetSerial(const WCHAR* szTarget)
 	return TRUE;
 }
 
-void dsDevice::SetLED(BYTE R, BYTE G, BYTE B)
+void dsDevice::SetLED(byte R, byte G, byte B)
 {
 	m_Red = R;
 	m_Green = G;
 	m_Blue = B;
 }
 
-void dsDevice::SetOrangeLED(BYTE val)
+void dsDevice::SetOrangeLED(byte val)
 {
 	static bool terminating = false;
 	if (terminating)
@@ -572,7 +591,7 @@ void dsDevice::SetOrangeLED(BYTE val)
 	}
 }
 
-void dsDevice::SetWhiteLED(BYTE led)
+void dsDevice::SetWhiteLED(byte led)
 {
 	static bool terminating = false;
 	if (terminating)
@@ -597,7 +616,7 @@ void dsDevice::SetTriggers(int val)
 		m_Triggers = val;
 }
 
-BOOL dsDevice::SetMoter(BYTE left, BYTE right)
+BOOL dsDevice::SetMoter(byte left, byte right)
 {
 	m_Left = left;
 	m_Right = right;
@@ -755,7 +774,7 @@ BOOL dsDevice::_write()
 	{
 		if (tape.ActualDS == 2)
 		{
-			UINT32 crc = crc32_16bytes(m_OutputBuf, 74, 0xEADA2D49);
+			unsigned int crc = crc32_16bytes(m_OutputBuf, 74, 0xEADA2D49);
 			m_OutputBuf[74] = (crc);
 			m_OutputBuf[75] = (crc >> 8);
 			m_OutputBuf[76] = (crc >> 16);
@@ -871,8 +890,8 @@ BOOL dsDevice::_read()
 //CRC check of received data
 BOOL dsDevice::_btcrc()
 {
-	UINT32 crc = crc32_16bytes(m_InputBuf, 74, 0x73D37CF3);
-	UINT32 src = *(UINT32*)&m_InputBuf[74];
+	unsigned int crc = crc32_16bytes(m_InputBuf, 74, 0x73D37CF3);
+	unsigned int src = *(unsigned int*)&m_InputBuf[74];
 
 	return crc == src;
 }
@@ -880,7 +899,7 @@ BOOL dsDevice::_btcrc()
 //Analysis of received data
 BOOL dsDevice::_parse()
 {
-	BYTE* buffer = m_InputBuf,
+	byte* buffer = m_InputBuf,
 		* bufferEnd = m_InputBuf + m_receivedLength;
 
 	if (m_bBluetooth)
@@ -975,7 +994,7 @@ BOOL dsDevice::_parse()
 		{
 			n = 1;
 		}
-		BYTE* dst, * src;
+		byte* dst, * src;
 		src = buffer + OffsetTouchs + 1;
 		dst = m_receivedData + OffsetTouch;
 		for (int i = 1; i <= 4; i++)
@@ -1043,7 +1062,7 @@ void dsDevice::DisconnectBT()
 	int ic = 5;
 	for (int i = 0; i < 12; i++)
 	{
-		BYTE hex = (BYTE)dsSerial[i];
+		byte hex = (byte)dsSerial[i];
 		if ('0' <= hex && hex <= '9')
 			hex -= '0';
 		else if ('a' <= hex && hex <= 'f')
