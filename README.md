@@ -517,9 +517,19 @@ Tags:
 
 ![Keymap Editing](Doc/9.png)
 
-- You can enter directly keys in the Enter Keycode part, or use Send Keycode choices (for advanced use)
-- Send to, permit you to specify the process, and will ungrey (disabled)Find button
-- If you check last checkbox, this will activate the window first (if post method is unsupported)
+You can now enter up to 64 characters per keymap
+
+- You can enter directly keys in the 'Enter Keycode' part, or use 'Send Keycode' choices (for advanced use)
+- 'Natural typing' is a simple way, without seeking for perfection, nor performance goal, to write as a human
+- 'Send to', permit you to specify the process, and will ungrey (disabled) Find button
+- 'By post message / activating window' let you choice the method if 'Send to' is active
+  - Post message is an internal way of programs, if they support it, to send and/or receive messages
+  - Activating put the window foreground if necessary, and focus the keystroke on it (doesn't work if minimized)
+- If 'Send to' is active, you can maximize, restore window before
+  - But, but they are also served alone, together with minimize, for example to manage your windows on the screen, and no longer a game, even if you don't enter any text to send
+- KEYEVENTF_EXTENDEDKEY: If specified, the scan code was preceded by a prefix byte that has the value 0xE0 (224).
+- KEYEVENTF_SCANCODE: If specified, wScan identifies the key and wVk is ignored.
+  * https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
 
 ![Keymap Window Post](Doc/10.png)
 
