@@ -525,8 +525,9 @@ You can now enter up to 64 characters per keymap
 - 'By post message / activating window' let you choice the method if 'Send to' is active
   - Post message is an internal way of programs, if they support it, to send and/or receive messages
   - Activating put the window foreground if necessary, and focus the keystroke on it (doesn't work if minimized)
-- If 'Send to' is active, you can maximize, restore window before
-  - But, but they are also served alone, together with minimize, for example to manage your windows on the screen, and no longer a game, even if you don't enter any text to send
+- If 'Send to' is active, you can maximize, restore etc window before
+  - But, but they are also served alone, together with minimize, hide etc, for example to manage your windows on the screen, and no longer a game, even if you don't enter any text to send
+  * https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
 - KEYEVENTF_EXTENDEDKEY: If specified, the scan code was preceded by a prefix byte that has the value 0xE0 (224).
 - KEYEVENTF_SCANCODE: If specified, wScan identifies the key and wVk is ignored.
   * https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
