@@ -504,16 +504,20 @@ Sort, order, add, delete, copy or edit (double click or menu)
 Tags:
 | Tag   | Description
 |:----- |:------------------------------------------------------------------------------
-| Empty | Nothing is checked
-| P     | \'Send to' is checked
-| A     | \'By Postmessage / activation window' is checked
+| N     | 'Natural typing' is checked
+| S     | 'Send to' is checked
+| R/H   | 'Restore'/'Hide' is checked
+| R/H   | 'Maximize'/'Minimize' is checked
+| R/H   | 'Show'/'Normal' is checked
+| K     | 'KEYEVENTF_EXTENDEDKEY' is checked
+| C     | 'KEYEVENTF_SCANCODE' is checked
 
+Method:
 | Tags  | In practice
 |:----- |:------------------------------------------------------------------------------
 | Empty | The keys will be sent to your actual focus
-| P     | It will use Postmessage to send keys to specified process
-| PA    | It will activate window of the specified process before
-|  A    | Act like if nothing were checked, the keys will be sent to your actual focus
+| S     | It will use Postmessage to send keys to specified process
+| S+A   | It will activate window of the specified process before (each key if 'Natual typing' is in use)
 
 ![Keymap Editing](Doc/9.png)
 
