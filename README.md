@@ -506,9 +506,10 @@ Tags:
 |:----- |:------------------------------------------------------------------------------
 | N     | 'Natural typing' is checked
 | S     | 'Send to' is checked
-| R/H   | 'Restore'/'Hide' is checked
-| R/H   | 'Maximize'/'Minimize' is checked
-| R/H   | 'Show'/'Normal' is checked
+| R/h   | 'Restore'/'Hide' is checked
+| M/m   | 'Maximize'/'Minimize' is checked
+| S/n   | 'Show'/'Normal' is checked
+| A     | 'Activate window' is checked
 | K     | 'KEYEVENTF_EXTENDEDKEY' is checked
 | C     | 'KEYEVENTF_SCANCODE' is checked
 
