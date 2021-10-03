@@ -279,7 +279,7 @@ void Settings::Load(int category)
 		}
 		else if (!Create)
 		{
-			const int n = sizeof(WCHAR) * 128 * 1024 * 2;
+			const int n = sizeof(WCHAR) * 256 * 1024;
 			WCHAR* buf = (WCHAR*)malloc(n);
 			if (buf == 0)
 				return;
@@ -506,6 +506,34 @@ void Settings::Load(int category)
 					*value++ = 0;
 					keymap.Enable = _wtoi(key);
 
+					if (VersionDateCheck >= 202110011)
+					{
+						key = value;
+						value = wcschr(key, L',');
+						if (value != 0)
+							*value++ = 0;
+						keymap.WndRestore = _wtoi(key);
+
+						key = value;
+						value = wcschr(key, L',');
+						if (value != 0)
+							*value++ = 0;
+						keymap.WndMaximize = _wtoi(key);
+
+						key = value;
+						value = wcschr(key, L',');
+						if (value != 0)
+							*value++ = 0;
+						keymap.WndShow = _wtoi(key);
+
+						key = value;
+						value = wcschr(key, L',');
+						if (value != 0)
+							*value++ = 0;
+						if (_wtoi(key) != 0)
+							keymap.NaturalTyping = true;
+					}
+
 					key = value;
 					value = wcschr(key, L',');
 					if (value != 0)
@@ -520,23 +548,49 @@ void Settings::Load(int category)
 					if (_wtoi(key) != 0)
 						keymap.useActivating = true;
 
-					for (int i = 0; i < KEYMAP_MAX_KEYS; i++)
+					if (VersionDateCheck >= 202110011)
 					{
 						key = value;
 						value = wcschr(key, L',');
 						if (value != 0)
 							*value++ = 0;
-						if (_wcsnicmp(key, L"**", 2) == 0)
+						if (_wtoi(key) != 0)
+							keymap.ExtendedKey = true;
+
+						key = value;
+						value = wcschr(key, L',');
+						if (value != 0)
+							*value++ = 0;
+						if (_wtoi(key) != 0)
+							keymap.Scancode = true;
+
+						key = value;
+						value = wcschr(key, L',');
+						if (value != 0)
+							*value++ = 0;
+						keymap.vk = KeymapString(key);
+						keymap.findWindow.Val(value);
+					}
+					else
+					{
+						for (int i = 0; i < KEYMAP_MAX_KEYS; i++)
 						{
-							keymap.findWindow.Val(value);
-							break;
+							key = value;
+							value = wcschr(key, L',');
+							if (value != 0)
+								*value++ = 0;
+							if (_wcsnicmp(key, L"**", 2) == 0)
+							{
+								keymap.findWindow.Val(value);
+								break;
+							}
+							int _vk = _wtoi(key);
+							if (_vk <= 0 || _vk >= 0x100)
+								break;
+							keymap.vk.push_back((byte)_vk);
+							if (value == 0)
+								break;
 						}
-						int _vk = _wtoi(key);
-						if (_vk <= 0 || _vk >= 0x100)
-							break;
-						keymap.vk.push_back((byte)_vk);
-						if (value == 0)
-							break;
 					}
 					Keymapdata.push_back(std::move(keymap));
 					key = head;
@@ -1016,7 +1070,7 @@ void Settings::Save(int item)
 			break;
 	case Setting_Mappingdata:
 	{
-		const int n = sizeof(WCHAR) * 64 * 1024 * 2;
+		const int n = sizeof(WCHAR) * 256 * 1024;
 		WCHAR* buf = (WCHAR*)malloc(n);
 		if (buf == 0)
 			break;
@@ -1128,14 +1182,17 @@ void Settings::Save(int item)
 			Keymap* keymap = &Keymapdata[i];
 //			if (keymap->vk.empty())
 //				continue;
-			head += wsprintf(head, L"%d=%d,%d,%d,", keymap->ButtonID, keymap->Enable, keymap->usePostmessage ? 1 : 0, keymap->useActivating ? 1 : 0);
-			for (auto itr = keymap->vk.begin(); itr != keymap->vk.end(); ++itr)
-			{
-				if (*itr == 0)
-					break;
-				head += wsprintf(head, L"%d,", *itr);
-			}
-			head += wsprintf(head, L"**,%s", keymap->findWindow.Val().c_str());
+			head += wsprintf(head, L"%d=%d,", keymap->ButtonID, keymap->Enable);
+			head += wsprintf(head, L"%d,", keymap->WndRestore);
+			head += wsprintf(head, L"%d,", keymap->WndMaximize);
+			head += wsprintf(head, L"%d,", keymap->WndShow);
+			head += wsprintf(head, L"%d,", keymap->NaturalTyping ? 1 : 0);
+			head += wsprintf(head, L"%d,", keymap->usePostmessage ? 1 : 0);
+			head += wsprintf(head, L"%d,", keymap->useActivating ? 1 : 0);
+			head += wsprintf(head, L"%d,", keymap->ExtendedKey ? 1 : 0);
+			head += wsprintf(head, L"%d,", keymap->Scancode ? 1 : 0);
+			head += wsprintf(head, L"%s,", KeymapToString(keymap->vk));
+			head += wsprintf(head, L"%s", keymap->findWindow.Val().c_str());
 			head++;
 		}
 		WritePrivateProfileSection(Keymaptxt, buf, m_file);
@@ -1612,6 +1669,23 @@ WCHAR* Settings::GridToString(unsigned short v1,unsigned short v2, unsigned  sho
 	return buf;
 }
 
+WCHAR* Settings::KeymapToString(std::vector<BYTE> vk)
+{
+	if (!vk.size())
+		return L"";
+
+	static WCHAR buf[1024];
+	buf[0] = 0;
+	WCHAR* head = buf;
+
+	for (auto itr = vk.begin(); itr != vk.end(); ++itr)
+	{
+		head += wsprintf(head, L"%02hX", *itr);
+	}
+
+	return buf;
+}
+
 unsigned short Settings::CheckboxString(std::wstring checkboxesstring, unsigned char idx)
 {
 	if (checkboxesstring == L"")
@@ -1706,7 +1780,7 @@ short Settings::GridString(std::wstring gridstring, unsigned char idx)
 {
 	if (gridstring == L"")
 		return 0;
-	if (gridstring.length() < 20)
+	if (gridstring.length() < 24)
 		return 0;
 
 	unsigned long long pakitstoi1 = std::stoll(gridstring.std::wstring::substr(0, 8), nullptr, 16);
@@ -1723,4 +1797,21 @@ short Settings::GridString(std::wstring gridstring, unsigned char idx)
 	case 0:return (short)((pakitstoi1 & 0xFFFF0000) >> 16);
 	default: return 0;
 	}
+}
+
+std::vector<BYTE> Settings::KeymapString(std::wstring keymapstring)
+{
+	std::vector<BYTE> vk;
+
+	if (keymapstring == L"")
+		return vk;
+	if (keymapstring.length() %2)
+		return vk;
+
+	size_t length = min(KEYMAP_MAX_KEYS, (keymapstring.length() / 2));
+
+	for (size_t i = 0; i < length; i++)
+		vk.push_back(std::stoll(keymapstring.std::wstring::substr(i * 2, 2), nullptr, 16));
+
+	return vk;
 }

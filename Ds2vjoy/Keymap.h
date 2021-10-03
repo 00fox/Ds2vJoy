@@ -1,5 +1,5 @@
 ﻿#pragma once
-#define KEYMAP_MAX_KEYS 12
+#define KEYMAP_MAX_KEYS 64
 #include "vJoy.h"
 #include "Findwindow.h"
 
@@ -225,8 +225,14 @@ public:
 	unsigned char Enable;
 	byte ButtonID;
 	std::vector<BYTE> vk;
+	unsigned char WndRestore;
+	unsigned char WndMaximize;
+	unsigned char WndShow;
+	bool NaturalTyping;
 	bool usePostmessage;
 	bool useActivating;
+	bool ExtendedKey;
+	bool Scancode;
 	Findwindow findWindow;
 
 	WCHAR bufstring[1024];
@@ -270,13 +276,26 @@ private:
 #define VK_Z	0x5A
 
 	void keydown();
+	void keydown_NaturalTyping();
 	void keyup();
 	void keydownPM();
 	void keyupPM();
 
 	HWND postmessageTarget;
 	vJoyButton* m_button;
-	bool m_keydownflag;
+	bool m_keydownflag = false;
+	std::chrono::steady_clock::time_point stop;
+	bool alt_down = false;
+	bool lalt_down = false;
+	bool ralt_down = false;
+	bool ctrl_down = false;
+	bool lctrl_down = false;
+	bool rctrl_down = false;
+	bool shift_down = false;
+	bool lshift_down = false;
+	bool rshift_down = false;
+	bool isShiftedKey = false;
+	char TreeInaWay = 0;
 };
 
 typedef std::vector<Keymap> Keymaps;

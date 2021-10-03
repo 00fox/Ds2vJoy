@@ -48,6 +48,7 @@ struct LANGSTRS
 	WCHAR* vJoyButton;
 	WCHAR* Notice;
 	WCHAR* Setting;
+	WCHAR* Process;
 	WCHAR* RapidFire_State1;
 	WCHAR* RapidFire_State2;
 	WCHAR* RapidFire_State3;

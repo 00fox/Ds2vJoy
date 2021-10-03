@@ -7,9 +7,15 @@ class KeymapDataDlg
 public:
 	enum ModifiedKeymap {
 		Mofified_ButtonID,
+		Mofified_WndRestore,
+		Mofified_WndMaximize,
+		Mofified_WndShow,
 		Mofified_vk,
+		Mofified_NaturalTyping,
 		Mofified_usePostmessage,
 		Mofified_useActivating,
+		Mofified_ExtendedKey,
+		Mofified_Scancode,
 		Mofified_findWindow,
 		Mofified_count
 	};

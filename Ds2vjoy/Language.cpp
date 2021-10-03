@@ -69,6 +69,7 @@ void LoadLanguage()
 	I18N.vJoyButton = GetText(IDS_VJOY_BUTTON, L"vJoy Button");
 	I18N.Notice = GetText(IDS_NOTICE, L"Notice");
 	I18N.Setting = GetText(IDS_SETTING, L"Setting");
+	I18N.Process = GetText(IDS_PROCESS, L"Process");
 	I18N.RapidFire_State1 = GetText(IDS_RAPIDFIRE_STATE1, L"FIRST: %d ms");
 	I18N.RapidFire_State2 = GetText(IDS_RAPIDFIRE_STATE2, L"UP: %d ms");
 	I18N.RapidFire_State3 = GetText(IDS_RAPIDFIRE_STATE3, L"DOWN: %d ms");
@@ -494,6 +495,7 @@ void FreeLanguage()
 	delete[] I18N.vJoyButton;
 	delete[] I18N.Notice;
 	delete[] I18N.Setting;
+	delete[] I18N.Process;
 	delete[] I18N.RapidFire_State1;
 	delete[] I18N.RapidFire_State2;
 	delete[] I18N.RapidFire_State3;

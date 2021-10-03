@@ -191,16 +191,39 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (wParam == TRUE)
 		{
 			SendDlgItemMessage(hWnd, IDC_KEYMAP_BTN, CB_SETCURSEL, (WPARAM)keymapData.ButtonID, 0);
+
+
 			SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT1, CB_SETCURSEL, 0, 0);
 			SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT2, CB_SETCURSEL, 0, 0);
 			SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT3, CB_SETCURSEL, 0, 0);
 			HWND hInput = GetDlgItem(hWnd, IDC_KEYMAP_INPUT);
 
+			CheckDlgButton(hWnd, IDC_KEYMAP_NATURAL, keymapData.NaturalTyping);
+
+			SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_METHOD), L"Method: PostMessage");
 			if (keymapData.usePostmessage)
+			{
 				CheckDlgButton(hWnd, IDC_KEYMAP_POSTMESSAGE, BST_CHECKED);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_RESTORE), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_MAXIMIZE), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_SHOW), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_ACTIVATING), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FW_TEXT), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FINDWINDOW), TRUE);
+				CheckDlgButton(hWnd, IDC_KEYMAP_RESTORE, keymapData.WndRestore);
+				CheckDlgButton(hWnd, IDC_KEYMAP_MAXIMIZE, keymapData.WndMaximize);
+				CheckDlgButton(hWnd, IDC_KEYMAP_SHOW, keymapData.WndShow);
+				CheckDlgButton(hWnd, IDC_KEYMAP_ACTIVATING, keymapData.useActivating);
+				if (keymapData.useActivating)
+					SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_METHOD), L"Method: Activating");
+			}
 			else
 			{
 				CheckDlgButton(hWnd, IDC_KEYMAP_POSTMESSAGE, BST_UNCHECKED);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_RESTORE), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_MAXIMIZE), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_SHOW), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_ACTIVATING), FALSE);
 				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FW_TEXT), FALSE);
 				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FINDWINDOW), FALSE);
 			}
@@ -210,7 +233,8 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), keymapData.findWindow.Val().c_str());
 			canprint = true;
 
-			CheckDlgButton(hWnd, IDC_KEYMAP_ACTIVATING, keymapData.useActivating);
+			CheckDlgButton(hWnd, IDC_KEYMAP_EXTENDEDKEY, keymapData.ExtendedKey);
+			CheckDlgButton(hWnd, IDC_KEYMAP_SCANCODE, keymapData.Scancode);
 
 			m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_FIND_LIST);
 
@@ -335,36 +359,36 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			PostMessage(m_hWnd, WM_ADDKEYMAP, 0, 0);
 			m_mode = 0;
 			break;
-		case IDC_OK2:
-			keymapData.findWindow = keymapData.findWindow;
-			if (m_hEdit != NULL)
-			{
-				DestroyWindow(m_hEdit);
-				m_hEdit = NULL;
-			}
-			SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), keymapData.findWindow.Val().c_str());
-			Modified[Mofified_findWindow] = true;
-			dlgPage = 0;
-			PostMessage(m_hWnd, WM_SIZE, 0, 0);
+		case IDC_CLEAR:
+		{
+			keymapData.vk.clear();
+			keymapData.GetState();
+			Modified[Mofified_vk] = true;
+			SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT), L"");
 			break;
-		case IDC_CANCEL2:
-			alreadydone = false;
-			keymapData.findWindow = fw;
-			SendMessage(hWnd, WM_RESET_FINDWINDOW, 0, 0);
-			GetClientRect(m_hWnd, &rect);
-			rect.left += 3;
-			rect.top += 21;
-			rect.right -= 6;
-			rect.bottom -= 45;
-			dlgPage = 0;
-			moved = -1;
-			break;
+		}
 		case IDC_KEYMAP_BTN:
 			if (HIWORD(wParam) == CBN_SELCHANGE)
 			{
 				keymapData.ButtonID = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_ButtonID] = true;
 			}
+			break;
+		case IDC_KEYMAP_RESTORE:
+			keymapData.WndRestore = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_WndRestore] = true;
+			break;
+		case IDC_KEYMAP_MAXIMIZE:
+			keymapData.WndMaximize = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_WndMaximize] = true;
+			break;
+		case IDC_KEYMAP_SHOW:
+			keymapData.WndShow = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_WndShow] = true;
+			break;
+		case IDC_KEYMAP_NATURAL:
+			keymapData.NaturalTyping = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_NaturalTyping] = true;
 			break;
 		case IDC_KEYMAP_INPUT:
 			switch (HIWORD(wParam))
@@ -381,20 +405,67 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDC_KEYMAP_POSTMESSAGE:
 		{
-			BOOL flag = FALSE;
-			if (BST_CHECKED == SendMessage((HWND)lParam, BM_GETCHECK, 0, 0))
+			keymapData.usePostmessage = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			if (keymapData.usePostmessage)
 			{
-				flag = TRUE;
-				Modified[Mofified_usePostmessage] = true;
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_RESTORE), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_MAXIMIZE), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_SHOW), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_ACTIVATING), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FW_TEXT), TRUE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FINDWINDOW), TRUE);
 			}
-			keymapData.usePostmessage = flag ? true : false;
-			EnableWindow(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), flag);
-			EnableWindow(GetDlgItem(m_hDlg, IDC_KEYMAP_FINDWINDOW), flag);
+			else
+			{
+				if (keymapData.WndRestore)
+				{
+					keymapData.WndRestore = 0;
+					CheckDlgButton(hWnd, IDC_KEYMAP_RESTORE, BST_UNCHECKED);
+					Modified[Mofified_WndRestore] = true;
+				}
+				if (keymapData.WndMaximize)
+				{
+					keymapData.WndMaximize = 0;
+					CheckDlgButton(hWnd, IDC_KEYMAP_MAXIMIZE, BST_UNCHECKED);
+					Modified[Mofified_WndMaximize] = true;
+				}
+				if (keymapData.WndShow)
+				{
+					keymapData.WndShow = 0;
+					CheckDlgButton(hWnd, IDC_KEYMAP_SHOW, BST_UNCHECKED);
+					Modified[Mofified_WndShow] = true;
+				}
+				if (keymapData.useActivating)
+				{
+					keymapData.useActivating = false;
+					CheckDlgButton(hWnd, IDC_KEYMAP_ACTIVATING, BST_UNCHECKED);
+					SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_METHOD), L"Method: PostMessage");
+				}
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_RESTORE), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_MAXIMIZE), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_SHOW), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_ACTIVATING), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FW_TEXT), FALSE);
+				EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_FINDWINDOW), FALSE);
+			}
+			Modified[Mofified_usePostmessage] = true;
 			break;
 		}
 		case IDC_KEYMAP_ACTIVATING:
 			keymapData.useActivating = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			if (keymapData.useActivating)
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_METHOD), L"Method: Activating");
+			else
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_METHOD), L"Method: PostMessage");
 			Modified[Mofified_useActivating] = true;
+			break;
+		case IDC_KEYMAP_EXTENDEDKEY:
+			keymapData.ExtendedKey = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_ExtendedKey] = true;
+			break;
+		case IDC_KEYMAP_SCANCODE:
+			keymapData.Scancode = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+			Modified[Mofified_Scancode] = true;
 			break;
 		case IDC_KEYMAP_FINDWINDOW:
 		{
@@ -500,12 +571,6 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 			break;
-		case IDC_CLEAR:
-		{
-			keymapData.vk.clear();
-			SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT), L"");
-			break;
-		}
 		case IDC_CLEAR2:
 		{
 			int idx = ListView_GetItemCount(m_hList);
@@ -524,10 +589,33 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
+		case IDC_OK2:
+			keymapData.findWindow = keymapData.findWindow;
+			if (m_hEdit != NULL)
+			{
+				DestroyWindow(m_hEdit);
+				m_hEdit = NULL;
+			}
+			SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), keymapData.findWindow.Val().c_str());
+			Modified[Mofified_findWindow] = true;
+			dlgPage = 0;
+			PostMessage(m_hWnd, WM_SIZE, 0, 0);
+			break;
+		case IDC_CANCEL2:
+			alreadydone = false;
+			keymapData.findWindow = fw;
+			SendMessage(hWnd, WM_RESET_FINDWINDOW, 0, 0);
+			GetClientRect(m_hWnd, &rect);
+			rect.left += 3;
+			rect.top += 21;
+			rect.right -= 6;
+			rect.bottom -= 45;
+			dlgPage = 0;
+			moved = -1;
+			break;
 		case IDC_KEYMAP_IS_W_VISIBLE:
 			m_filter_iwv = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 			break;
-
 		}
 		break;
 	}

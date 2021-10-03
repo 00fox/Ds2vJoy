@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int VersionDate = 202109301;
+	const int VersionDate = 202110031;
 
 	WCHAR Settingstxt[20];
 	WCHAR Mappingtxt[20];
@@ -293,11 +293,13 @@ private:
 	WCHAR* vjIDToString(byte, byte, byte, byte, byte, byte, byte, byte);
 	WCHAR* MouseToString(byte, byte, byte, byte, byte, byte, byte);
 	WCHAR* GridToString(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short);
+	WCHAR* KeymapToString(std::vector<BYTE>);
 	unsigned short CheckboxString(std::wstring, unsigned char);
 	byte dsIDString(std::wstring, unsigned char);
 	byte vjIDString(std::wstring, unsigned char);
 	unsigned short MouseString(std::wstring, unsigned char);
 	short GridString(std::wstring, unsigned char);
+	std::vector<BYTE> KeymapString(std::wstring);
 
 	HWND m_hWnd;
 	WCHAR m_file[MAX_PATH + 1] = { 0 };

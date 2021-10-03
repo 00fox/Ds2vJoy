@@ -1,12 +1,21 @@
 ﻿#include "stdafx.h"
 #include "Keymap.h"
+//#include <chrono>
+//#include <thread>
+//#include <iostream>
 
 Keymap::Keymap()
 	:Enable(0)
 	, ButtonID(vJoyButtonID::none)
 	, vk()
+	, WndRestore(0)
+	, WndMaximize(0)
+	, WndShow(0)
+	, NaturalTyping(false)
 	, usePostmessage(false)
 	, useActivating(false)
+	, ExtendedKey(false)
+	, Scancode(false)
 	, findWindow()
 	, m_button(0)
 {
@@ -70,14 +79,44 @@ WCHAR* Keymap::ValueString(int column)
 
 		static WCHAR buf[MAX_PATH];
 		WCHAR* head = buf;
-		if (usePostmessage)
-			head += wsprintf(head, L"P");
+		if (NaturalTyping)
+			head += wsprintf(head, L"N");
 		else
-			head += wsprintf(head, L" ");
+			head += wsprintf(head, L"  ");
+		if (usePostmessage)
+			head += wsprintf(head, L"S");
+		else
+			head += wsprintf(head, L"  ");
+		if (WndRestore == 1)
+			head += wsprintf(head, L"R");
+		else if (WndRestore == 2)
+			head += wsprintf(head, L"h");
+		else
+			head += wsprintf(head, L"  ");
+		if (WndMaximize == 1)
+			head += wsprintf(head, L"M");
+		else if (WndMaximize == 2)
+			head += wsprintf(head, L"m");
+		else
+			head += wsprintf(head, L"  ");
+		if (WndShow == 1)
+			head += wsprintf(head, L"S");
+		else if (WndShow == 2)
+			head += wsprintf(head, L"n");
+		else
+			head += wsprintf(head, L"  ");
 		if (useActivating)
 			head += wsprintf(head, L"A");
 		else
-			head += wsprintf(head, L" ");
+			head += wsprintf(head, L"  ");
+		if (ExtendedKey)
+			head += wsprintf(head, L"K");
+		else
+			head += wsprintf(head, L"  ");
+		if (Scancode)
+			head += wsprintf(head, L"C");
+		else
+			head += wsprintf(head, L"  ");
 		return buf;
 	}
 	default: return L"";
@@ -275,42 +314,299 @@ KS1(VK_RETURN)
 
 void Keymap::keydown()
 {
+	if (NaturalTyping)
+	{
+		if (!m_keydownflag)
+			keydown_NaturalTyping();
+	}
+	else
+	{
+		if (useActivating && postmessageTarget)
+		{
+			SetForegroundWindow(postmessageTarget);
+			SetActiveWindow(postmessageTarget);
+		}
+		postmessageTarget = findWindow.Find();
+		INPUT sendkeys[KEYMAP_MAX_KEYS];
+		int count = 0;
+		size_t max = vk.size();
+		for (; count < max; count++)
+		{
+			sendkeys[count].type = INPUT_KEYBOARD;
+			sendkeys[count].ki.wVk = vk[count];
+			sendkeys[count].ki.wScan = (WORD)MapVirtualKey(vk[count], 0);
+			sendkeys[count].ki.dwFlags = ((ExtendedKey) ? KEYEVENTF_EXTENDEDKEY : 0) | ((Scancode) ? KEYEVENTF_SCANCODE : 0);
+			sendkeys[count].ki.time = 0;
+			sendkeys[count].ki.dwExtraInfo = 0;
+		}
+		if (count)
+		{
+			SendInput(count, sendkeys, sizeof(INPUT));
+		}
+		m_keydownflag = true;
+	}
+}
+
+void Keymap::keydown_NaturalTyping()
+{
+	m_keydownflag = true;
+	bool alt_down = false;
+	bool lalt_down = false;
+	bool ralt_down = false;
+	bool ctrl_down = false;
+	bool lctrl_down = false;
+	bool rctrl_down = false;
+	bool shift_down = false;
+	bool lshift_down = false;
+	bool rshift_down = false;
+	TreeInaWay = 0;
 	postmessageTarget = findWindow.Find();
-	SetActiveWindow(postmessageTarget);
-	INPUT sendkeys[KEYMAP_MAX_KEYS];
+	INPUT sendkey;
+	sendkey.type = INPUT_KEYBOARD;
+	sendkey.ki.time = 0;
+	sendkey.ki.dwExtraInfo = 0;
 	int count = 0;
 	size_t max = vk.size();
 	for (; count < max; count++)
 	{
-		sendkeys[count].type = INPUT_KEYBOARD;
-		sendkeys[count].ki.wVk = vk[count];
-		sendkeys[count].ki.wScan = (WORD)MapVirtualKey(vk[count], 0);
-		sendkeys[count].ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-		sendkeys[count].ki.time = 0;
-		sendkeys[count].ki.dwExtraInfo = 0;
+		if (useActivating && postmessageTarget)
+		{
+			SetForegroundWindow(postmessageTarget);
+			SetActiveWindow(postmessageTarget);
+		}
+		sendkey.ki.wVk = vk[count];
+		sendkey.ki.wScan = (WORD)MapVirtualKey(vk[count], 0);
+		sendkey.ki.dwFlags = ((ExtendedKey) ? KEYEVENTF_EXTENDEDKEY : 0) | ((Scancode) ? KEYEVENTF_SCANCODE : 0);
+		SendInput(1, &sendkey, sizeof(INPUT));
+
+		isShiftedKey = false;
+		if (vk[count] == VK_MENU) { alt_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_LMENU) { lalt_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_RMENU) { ralt_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_CONTROL) { ctrl_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_LCONTROL) { lctrl_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_RCONTROL) { rctrl_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_SHIFT) { shift_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_LSHIFT) { lshift_down = true; isShiftedKey = true; }
+		else if (vk[count] == VK_RSHIFT) { rshift_down = true; isShiftedKey = true; }
+
+		if (vk[count] > VK_HELP && vk[count] < VK_LWIN)
+		{
+			if (TreeInaWay == 3 && count < max - 2)
+			{
+				if (vk[count] != vk[count + 1])
+					TreeInaWay++;
+			}
+			else
+				TreeInaWay++;
+		}
+		else
+			TreeInaWay = 0;
+
+		stop = std::chrono::steady_clock::now() + std::chrono::milliseconds(101 + (rand() % 151));
+		if (TreeInaWay > 2)
+		{
+			stop = stop - std::chrono::milliseconds(20);
+			TreeInaWay = 3;
+		}
+		else if (TreeInaWay == 1)
+			stop = stop - std::chrono::milliseconds(46);
+		else if (TreeInaWay == 0 && count < max - 2)
+		{
+			if (vk[count + 1] > VK_HELP && vk[count + 1] < VK_LWIN)
+				stop = stop + std::chrono::milliseconds(20);
+		}
+		if (vk[count] == VK_SPACE)
+		{
+			if (TreeInaWay)
+				stop = stop + std::chrono::milliseconds(222 + (rand() % 78));
+			else
+				stop = stop + std::chrono::milliseconds(144 + (rand() % 84));
+		}
+		else if (vk[count] == VK_RETURN || vk[count] == VK_BACK)
+			stop = stop + std::chrono::milliseconds(144 + (rand() % 109));
+		else if (vk[count] < VK_0 || vk[count] > VK_NUMPAD9)
+			stop = stop + std::chrono::milliseconds(78 + (rand() % 41));
+		if (count < max - 2)
+		{
+			if (vk[count + 1] == VK_SPACE)
+			{
+				if (TreeInaWay)
+					stop = stop + std::chrono::milliseconds(36 + rand() % 21);
+				else
+					stop = stop + std::chrono::milliseconds(30);
+			}
+			else if (vk[count + 1] == VK_RETURN)
+				stop = stop + std::chrono::milliseconds(222 + (rand() % 119));
+			else if (vk[count + 1] == VK_BACK)
+			{
+				if (vk[count] == VK_BACK)
+					stop = stop + std::chrono::milliseconds(47 + (rand() % 38));
+				else
+					stop = stop + std::chrono::milliseconds(300 + (rand() % 41));
+			}
+			else if (vk[count + 1] < VK_0 || vk[count + 1] > VK_NUMPAD9)
+				stop = stop + std::chrono::milliseconds(89 + (rand() % 35));
+		}
+		std::mutex m_mutex;
+		std::condition_variable m_write_cv;
+		std::unique_lock<std::mutex> lk(m_mutex);
+		while (std::chrono::steady_clock::now() < stop)
+			m_write_cv.wait_until(lk, stop);
+
+		if (!isShiftedKey)
+		{
+			if (useActivating && postmessageTarget)
+			{
+				SetForegroundWindow(postmessageTarget);
+				SetActiveWindow(postmessageTarget);
+			}
+			sendkey.ki.dwFlags = sendkey.ki.dwFlags | KEYEVENTF_KEYUP;
+			SendInput(1, &sendkey, sizeof(INPUT));
+		}
+
+		if (!isShiftedKey || count == max - 1)
+		{
+			sendkey.ki.dwFlags = sendkey.ki.dwFlags | KEYEVENTF_KEYUP;
+			if (rshift_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_RSHIFT;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_RSHIFT, 0);
+				rshift_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (lshift_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_LSHIFT;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_LSHIFT, 0);
+				lshift_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (shift_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_SHIFT;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_SHIFT, 0);
+				shift_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (rctrl_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_RCONTROL;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_RCONTROL, 0);
+				rctrl_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (lctrl_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_LCONTROL;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_LCONTROL, 0);
+				lctrl_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (ctrl_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_CONTROL;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_CONTROL, 0);
+				ctrl_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (ralt_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_RMENU;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_RMENU, 0);
+				ralt_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (lalt_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_LMENU;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_LMENU, 0);
+				lalt_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+			if (alt_down)
+			{
+				if (useActivating && postmessageTarget)
+				{
+					SetForegroundWindow(postmessageTarget);
+					SetActiveWindow(postmessageTarget);
+				}
+				sendkey.ki.wVk = VK_MENU;
+				sendkey.ki.wScan = (WORD)MapVirtualKey(VK_MENU, 0);
+				alt_down = false;
+				SendInput(1, &sendkey, sizeof(INPUT));
+			}
+		}
 	}
-	if (count)
-		SendInput(count, sendkeys, sizeof(INPUT));
-	m_keydownflag = true;
 }
 
 void Keymap::keyup()
 {
-	INPUT sendkeys[KEYMAP_MAX_KEYS];
-	int count = 0;
-	for (int n = (int)vk.size() - 1; n >= 0; n--)
+	if (NaturalTyping)
+		m_keydownflag = false;
+	else
 	{
-		sendkeys[count].type = INPUT_KEYBOARD;
-		sendkeys[count].ki.wVk = vk[n];
-		sendkeys[count].ki.wScan = (WORD)MapVirtualKey(vk[n], 0);
-		sendkeys[count].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
-		sendkeys[count].ki.time = 0;
-		sendkeys[count].ki.dwExtraInfo = 0;
-		count++;
+		if (useActivating && postmessageTarget)
+		{
+			SetForegroundWindow(postmessageTarget);
+			SetActiveWindow(postmessageTarget);
+		}
+		INPUT sendkeys[KEYMAP_MAX_KEYS];
+		int count = 0;
+		for (int n = (int)vk.size() - 1; n >= 0; n--)
+		{
+			sendkeys[count].type = INPUT_KEYBOARD;
+			sendkeys[count].ki.wVk = vk[n];
+			sendkeys[count].ki.wScan = (WORD)MapVirtualKey(vk[n], 0);
+			sendkeys[count].ki.dwFlags = ((ExtendedKey) ? KEYEVENTF_EXTENDEDKEY : 0) | ((Scancode) ? KEYEVENTF_SCANCODE : 0) | KEYEVENTF_KEYUP;
+			sendkeys[count].ki.time = 0;
+			sendkeys[count].ki.dwExtraInfo = 0;
+			count++;
+		}
+		if (count)
+			SendInput(count, sendkeys, sizeof(INPUT));
+		m_keydownflag = false;
 	}
-	if (count)
-		SendInput(count, sendkeys, sizeof(INPUT));
-	m_keydownflag = false;
 }
 
 void Keymap::keydownPM()
@@ -372,15 +668,9 @@ void Keymap::Run()
 		{
 			if (usePostmessage)
 			{
+				postmessageTarget = findWindow.Find();
 				if (useActivating)
-				{
-					postmessageTarget = findWindow.Find();
-					if (postmessageTarget == NULL)
-						return;
-					SetForegroundWindow(postmessageTarget);
-					SetActiveWindow(postmessageTarget);
 					keyup();
-				}
 				else
 					keyupPM();
 			}
@@ -392,21 +682,63 @@ void Keymap::Run()
 	{
 		if (usePostmessage)
 		{
-			if (useActivating)
+			bool TimeNeeded = false;
+			postmessageTarget = findWindow.Find();
+			if (WndRestore && postmessageTarget)
 			{
-				postmessageTarget = findWindow.Find();
-				if (postmessageTarget == NULL)
-					return;
-				SetForegroundWindow(postmessageTarget);
-				SetActiveWindow(postmessageTarget);
-				keydown();
+				if (WndRestore == 1)
+					ShowWindow(postmessageTarget, SW_RESTORE);
+				else
+					ShowWindow(postmessageTarget, SW_HIDE);
+				TimeNeeded = true;
 			}
+			if (WndMaximize && postmessageTarget)
+			{
+				if (WndMaximize == 1)
+					ShowWindow(postmessageTarget, SW_SHOWMAXIMIZED);
+				else
+				{
+					if (useActivating)
+						ShowWindow(postmessageTarget, SW_SHOWMINIMIZED);
+					else
+						ShowWindow(postmessageTarget, SW_SHOWMINNOACTIVE);
+				}
+				TimeNeeded = true;
+			}
+			if (WndShow && postmessageTarget)
+			{
+				if (WndShow == 1)
+				{
+					if (useActivating)
+						ShowWindow(postmessageTarget, SW_SHOW);
+					else
+						ShowWindow(postmessageTarget, SW_SHOWNA);
+				}
+				else
+				{
+					if (useActivating)
+						ShowWindow(postmessageTarget, SW_SHOWNORMAL);
+					else
+						ShowWindow(postmessageTarget, SW_SHOWNOACTIVATE);
+				}
+				TimeNeeded = true;
+			}
+			if (TimeNeeded)
+			{
+				stop = std::chrono::steady_clock::now() + std::chrono::milliseconds(10);
+				std::mutex m_mutex;
+				std::condition_variable m_write_cv;
+				std::unique_lock<std::mutex> lk(m_mutex);
+				while (std::chrono::steady_clock::now() < stop)
+					m_write_cv.wait_until(lk, stop);
+			}
+			if (useActivating)
+				keydown();
 			else
 				keydownPM();
 		}
 		else
 			keydown();
-		return;
 	}
 	return;
 }

@@ -55,17 +55,17 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
-	col.cx = 114;
+	col.cx = 76;
 	col.pszText = I18N.vJoyButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.Setting;
-	col.cx = 201;
+	col.cx = 213;
 	ListView_InsertColumn(m_hList, 1, &col);
-	col.pszText = L"";
-	col.cx = 93;
+	col.pszText = I18N.Process;
+	col.cx = 90;
 	ListView_InsertColumn(m_hList, 2, &col);
 	col.pszText = I18N.TagsButton;
-	col.cx = 41;
+	col.cx = 70;
 	ListView_InsertColumn(m_hList, 3, &col);
 
 	HWND hTip = ListView_GetToolTips(m_hList);
@@ -646,9 +646,15 @@ void KeymapDlg::editKeymapDlgBackMulti()
 					{
 					default:
 					case KeymapDataDlg::Mofified_ButtonID:data2->ButtonID = data1->ButtonID; break;
+					case KeymapDataDlg::Mofified_WndRestore:data2->WndRestore = data1->WndRestore; break;
+					case KeymapDataDlg::Mofified_WndMaximize:data2->WndMaximize = data1->WndMaximize; break;
+					case KeymapDataDlg::Mofified_WndShow:data2->WndShow = data1->WndShow; break;
 					case KeymapDataDlg::Mofified_vk:data2->vk = data1->vk; break;
+					case KeymapDataDlg::Mofified_NaturalTyping:data2->NaturalTyping = data1->NaturalTyping; break;
 					case KeymapDataDlg::Mofified_usePostmessage:data2->usePostmessage = data1->usePostmessage; break;
 					case KeymapDataDlg::Mofified_useActivating:data2->useActivating = data1->useActivating; break;
+					case KeymapDataDlg::Mofified_ExtendedKey:data2->ExtendedKey = data1->ExtendedKey; break;
+					case KeymapDataDlg::Mofified_Scancode:data2->Scancode = data1->Scancode; break;
 					case KeymapDataDlg::Mofified_findWindow:data2->findWindow = data1->findWindow; break;
 					}
 			ListView_DeleteItem(m_hList, lastidxs[i]);
