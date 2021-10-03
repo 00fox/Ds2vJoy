@@ -34,7 +34,7 @@ Satus is separated in 4 colums which are:
 - Battery
 - Delay
 - Buttons pressed (in vJoy and ViGEm tabs)
-- Profile (1-3)
+- Mode (1-8) and Profile (1-3)
 
 ## Settings
 ![Settings](Doc/2.png)
