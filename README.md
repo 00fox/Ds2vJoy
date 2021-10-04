@@ -259,8 +259,8 @@ Under central led, you'll find 4 checkboxes
   - can be used to time based mouse actions too,
   - and for mouse if ACTIVE_MOUSE mouse action is used (see below)
   
-~~                                                                                    ~~
---------------------------------------------------------------------------------------
+______________________________________________________________________________________
+~~______________________________________________________________________________________~~
 
 Table of Transitivity:
 | Transitivity | Pause    | Type          | Result
