@@ -262,13 +262,16 @@ Under central led, you'll find 4 checkboxes
 Table of Transitivity:
 | Transitivity | Pause    | Type          | Result
 |:------------ |:-------- |:------------- |:------------------------------------------
+|              | One time | Conduct       | If the source is already pushed when entering the new mode,
+|              |          |               |the mapping is triggered
 | Transitivity |          | Complete      | You can release and trigger again in new mode
 |              |          |               |if it was already active before changing mode
-| Transitivity | One time | Limited       | Action continue while changing mode, but you can't trigger again if release
+| Transitivity | One time | Limited       | Action continue while changing mode,
+|              |          |               |but you can't trigger again if release
 | Come back    |          | Retroactive   | Instead of continuation, button is released,
 |              |          |               |but triggered again if still pushed when initial mode is back
-| Come back    | One time | One time back | The same as Retroactive,
-|              |          |               |but while pushed, you can change mode and get it triggered again only one time
+| Come back    | One time | One time back | The same as Retroactive, but while pushed,
+|              |          |               |you can change mode and get it triggered again only one time
 |              |          |               |After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by 
