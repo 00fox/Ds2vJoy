@@ -274,7 +274,8 @@ Table of Transitivity:
 |              |          |               |you can change mode and get it triggered again only one time
 |              |          |               |After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
-* IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by 
+  - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
+* IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
 
 At the left of destinations, you'll find special mouse, sound, modes and time actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
