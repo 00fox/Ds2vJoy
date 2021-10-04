@@ -293,7 +293,7 @@ Table of Transitivity:
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
 
-______________________________________________________________________________________ Mouse, sound, modes and time actions
+______________________________________________________________________________________ Mouse, sound, modes and time
 
 At the left of destinations, you'll find special mouse, sound, modes and time actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
