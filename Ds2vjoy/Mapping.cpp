@@ -688,7 +688,7 @@ void Mapping::Run(double average)
 //	else if (isRunning && tape.Mode[Tab] && tape.Mode[Tab] != mode && tomode != mode)
 	else if (tape.Mode[Tab] && tape.Mode[Tab] != mode && tomode != mode)
 	{
-		if (isRunning)
+		if (isRunning || (!isRunning && !Transitivity && Pause == 2))
 		{
 			modechanged = 1;
 			modechangedto = mode;
@@ -773,9 +773,22 @@ void Mapping::Run(double average)
 		else
 			modechanged = 0;
 	}
-	if (!lasttest)
-		if (tape.Mode[Tab] && tape.Mode[Tab] != mode && !(isRunning && Transitivity == 1 && Pause == 2) && !(isRunning && !Transitivity && Pause == 2))
-			legit = false;
+	else if (!lasttest)
+		if (tape.Mode[Tab] && tape.Mode[Tab] != mode)
+		{
+			//if (legit && isRunning && !Transitivity && Pause == 2 && modechanged)
+			if (!Transitivity && Pause == 2)
+			{
+				locked = 0;
+				tomode = -1;
+				modechanged = 0;
+				legit = false;
+				for (int i = 0; i < 8; i++)
+					modedest[i] = 0;
+			}
+			else if (!(isRunning && Transitivity == 1 && Pause == 2))
+				legit = false;
+		}
 	if (locked == 3)
 		legit = false;
 
