@@ -163,6 +163,8 @@ You can sort by clicking on column headers of the list, but be careful you'll ha
   - click on the left number to start capture, the color changes for 3s, and after 3s it come back to its normal state with the mouse point you were at captured
   - click on the right number, while you already selected an element of the grid, insert the coordinates into this column (x,y or w,h or nw,nh)
 
+______________________________________________________________________________________ Input method
+
 Under first source you'll find 3 checkboxes which determine the method
 | Checkboxes    | Method          | Description
 |:------------- |:--------------- |:--------------------------------------------------
@@ -189,11 +191,15 @@ In terms of time:
 | Medium long   | ~press > twice the time as long
 | Very long     | found in settings
 
+______________________________________________________________________________________ If mouse/Force
+
 Over first source you can find special requirements
 - If mouse, if a mouse is already in use
   - double, if none mouse is actually in use
 - And Force, to ignore if a button has been disabled by a precedent mapping
   - double, this will work only if this mapping is already working
+
+______________________________________________________________________________________ Or/Xor
 
 Over two next sources you'll find 'or', double 'xor' conditions instead of simple combination
 - If only first 'or' is used and first source is killed to launch the mapping (for example, pushed more than a short press),
@@ -217,6 +223,8 @@ Over two next sources you'll find 'or', double 'xor' conditions instead of simpl
 |   0    |  1/2   | val ? 0 |  >  |  (see Interrupt  |     |         |     |         |  >  |released1|
 |  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
 
+______________________________________________________________________________________ Not
+
 Over two last sources you'll find not condition,
 - The mapping won't be launched if this button is pressed
   - double, except if this mapping is already running
@@ -230,6 +238,8 @@ Over two last sources you'll find not condition,
 |  0   |  1   |    val     |   &   |   val   | & Not |   val   |
 |  1   |  1   |    val     | & Not |   val   | & Not |   val   |
 
+______________________________________________________________________________________ Time stamps
+
 Destinations can be effected with time stamps for tricky actions, macros or combos
 - Enter start (if not as soon as) or/and end (of not when release)
 - If you enter an odd number, 0-9 milliseconds will be added, different each time
@@ -240,9 +250,13 @@ Destinations can be effected with time stamps for tricky actions, macros or comb
 - Upper one again, NlRelease (normal release), is to decide not perform NoRelease condition if back to initial mode
   - double, not perform NoRelease condition while the new mode
 
+______________________________________________________________________________________ Disabling
+
 Under each source and destination, you'll find disabling
 - this button will be disabled for next mappings if this mapping is running (except with Force)
   - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
+
+______________________________________________________________________________________ Controls
 
 Under central led, you'll find 4 checkboxes
 - Interrupt: Interrupt macros on release (even if timestamp not finished)
@@ -259,8 +273,7 @@ Under central led, you'll find 4 checkboxes
   - can be used to time based mouse actions too,
   - and for mouse if ACTIVE_MOUSE mouse action is used (see below)
   
-______________________________________________________________________________________
-~~______________________________________________________________________________________~~
+______________________________________________________________________________________ Transitivity
 
 Table of Transitivity:
 | Transitivity | Pause    | Type          | Result
@@ -279,6 +292,8 @@ Table of Transitivity:
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
+
+______________________________________________________________________________________ Mouse, sound, modes and time actions
 
 At the left of destinations, you'll find special mouse, sound, modes and time actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
@@ -311,6 +326,8 @@ At the left of destinations, you'll find special mouse, sound, modes and time ac
 - INTERRUPT: same as 'Interrupt' condition, but time dependent
 - NO_SUSTAIN: same as 'No sustain' condition, but time dependent
 - PAUSE: same as 'Pause' condition, but time dependent
+
+______________________________________________________________________________________ Example
 
 A simple example with time actions:
 ```
@@ -351,6 +368,8 @@ A simple example with time actions:
       or neither of the two is true anymore ...
 ```
 
+______________________________________________________________________________________ Axis mouvements
+
 Double, you'll find Axis movements
 
 RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN, XY_CENTER, XY_LEFT, XY_UP_LEFT, XY_UP, XY_UP_RIGHT, XY_RIGHT, XY_DOWN_RIGHT, XY_DOWN, XY_DOWN_LEFT, XY_Q1_CW, XY_Q1_CN, XY_Q2_CW, XY_Q2_CN, XY_Q3_CW, XY_Q3_CN, XY_Q4_CW, XY_Q4_CN, XY_E1_CW, XY_E1_CN, XY_E2_CW, XY_E2_CN, XY_E3_CW, XY_E3_CN, XY_E4_CW, XY_E4_CN, XY_E5_CW, XY_E5_CN, XY_E6_CW, XY_E6_CN, XY_E7_CW, XY_E7_CN, XY_E8_CW, XY_E8_CN, XY_C_L, XY_C_UL, XY_C_U, XY_C_UR, XY_C_R, XY_C_DR, XY_C_D, XY_C_DL, XY_2C_L, XY_2C_UL, XY_2C_U, XY_2C_UR, XY_2C_R, XY_2C_DR, XY_2C_D, XY_2C_DL, XY_D_L, XY_D_UL, XY_D_U, XY_D_UR, XY_D_R, XY_D_DR, XY_D_D, XY_D_DL, XY_T_L_CW, XY_T_L_CN, XY_T_U_CW, XY_T_U_CN, XY_T_R_CW, XY_T_R_CN, XY_T_D_CW, XY_T_D_CN, XY_S_L_CW, XY_S_L_CN, XY_S_U_CW, XY_S_U_CN, XY_S_R_CW, XY_S_R_CN, XY_S_D_CW, XY_S_D_CN, XY_L_L_CW, XY_L_L_CN, XY_L_U_CW, XY_L_U_CN, XY_L_R_CW, XY_L_R_CN, XY_L_D_CW, XY_L_D_CN, ZRZ_CENTER, ZRZ_LEFT, ZRZ_UP_LEFT, ZRZ_UP, ZRZ_UP_RIGHT, ZRZ_RIGHT, ZRZ_DOWN_RIGHT, ZRZ_DOWN, ZRZ_DOWN_LEFT, ZRZ_Q1_CW, ZRZ_Q1_CN, ZRZ_Q2_CW, ZRZ_Q2_CN, ZRZ_Q3_CW, ZRZ_Q3_CN, ZRZ_Q4_CW, ZRZ_Q4_CN, ZRZ_E1_CW, ZRZ_E1_CN, ZRZ_E2_CW, ZRZ_E2_CN, ZRZ_E3_CW, ZRZ_E3_CN, ZRZ_E4_CW, ZRZ_E4_CN, ZRZ_E5_CW, ZRZ_E5_CN, ZRZ_E6_CW, ZRZ_E6_CN, ZRZ_E7_CW, ZRZ_E7_CN, ZRZ_E8_CW, ZRZ_E8_CN, ZRZ_C_L, ZRZ_C_UL, ZRZ_C_U, ZRZ_C_UR, ZRZ_C_R, ZRZ_C_DR, ZRZ_C_D, ZRZ_C_DL, ZRZ_2C_L, ZRZ_2C_UL, ZRZ_2C_U, ZRZ_2C_UR, ZRZ_2C_R, ZRZ_2C_DR, ZRZ_2C_D, ZRZ_2C_DL, ZRZ_D_L, ZRZ_D_UL, ZRZ_D_U, ZRZ_D_UR, ZRZ_D_R, ZRZ_D_DR, ZRZ_D_D, ZRZ_D_DL, ZRZ_T_L_CW, ZRZ_T_L_CN, ZRZ_T_U_CW, ZRZ_T_U_CN, ZRZ_T_R_CW, ZRZ_T_R_CN, ZRZ_T_D_CW, ZRZ_T_D_CN, ZRZ_S_L_CW, ZRZ_S_L_CN, ZRZ_S_U_CW, ZRZ_S_U_CN, ZRZ_S_R_CW, ZRZ_S_R_CN, ZRZ_S_D_CW, ZRZ_S_D_CN, ZRZ_L_L_CW, ZRZ_L_L_CN, ZRZ_L_U_CW, ZRZ_L_U_CN, ZRZ_L_R_CW, ZRZ_L_R_CN, ZRZ_L_D_CW, ZRZ_L_D_CN
@@ -379,6 +398,8 @@ All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revoluti
 - Four sides, eight moves, of the square
 - Four sides, eight moves, of the lozange (diamond)
 
+______________________________________________________________________________________ Mouse
+
 The mouse group of checkboxes at the bottom, let you use mouse in conjuction with ACTIVE_MOUSE special action
 - With left stick (left column)
 - With the touchpad (central column)
@@ -397,11 +418,15 @@ There is different modes for each
 * Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
 * Sniper mouse mode, which require liberty of movement but not erratic while near center, use Sniper Axis, near no threshold and not no threshold, to help stabilizating when little force is exerted or even released
 
+______________________________________________________________________________________ Grid
+
 In this numbers group at the right
 - left ones are for first points, central ones for second point,
   - Or they are for MOVE_TO_XY/MOVE_TO_WH, SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH special mouse actions (two left/central numbers of the grid)
 - two last ones are to divide the zone in a grid, then you are always docked to a point of this grid (or whole screen)
  
+______________________________________________________________________________________ Buttons
+
 A lot of buttons type has been added, for DS and for vJoy
 
 RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE, OPTIONS, SQUARE, TRIANGLE, CIRCLE, CROSS, R3, PS, TOUCH, MUTE, L1, R1, L2, R2, L2TRIGGER, R2TRIGGER, EMPTY, MIDDLE, FULL, LXINV, LYINV, RXINV, RYINV, SNIPER_LX, SNIPER_LY, SNIPER_RX, SNIPER_RY, AXISL_TR_LEFT, AXISL_TR_UP, AXISL_TR_RIGHT, AXISL_TR_DOWN, AXISR_TR_LEFT, AXISR_TR_UP, AXISR_TR_RIGHT, AXISR_TR_DOWN, AXISL_LEFT, AXISL_UP_LEFT, AXISL_UP, AXISL_UP_RIGHT, AXISL_RIGHT, AXISL_DOWN_RIGHT, AXISL_DOWN, AXISL_DOWN_LEFT, AXISR_LEFT, AXISR_UP_LEFT, AXISR_UP, AXISR_UP_RIGHT, AXISR_RIGHT, AXISR_DOWN_RIGHT, AXISR_DOWN, AXISR_DOWN_LEFT, TOUCHUP, TOUCHPAD, TOUCH1, TOUCH2, TOUCH3, TOUCH4, TOUCHL, TOUCHR, L2TRIGGER_33, R2TRIGGER_33, L2TRIGGER_66, R2TRIGGER_66, L2TRIGGER_100, R2TRIGGER_100, L1R1, L2R2, BATTERY
@@ -424,6 +449,8 @@ RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR
   - Dpad use a mathematical medium function, then you can attribute other sources than normal ones
   - And instead having the result of for example Left + Up > Up Left
   - You can have it for Left + Up + UpRight + Right (which is mmm…   let the program do it itself…  )
+
+______________________________________________________________________________________ Examples
 
 An example of a simple advanced script for mouse:
 ```
