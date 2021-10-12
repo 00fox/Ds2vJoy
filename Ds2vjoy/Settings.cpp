@@ -1811,7 +1811,7 @@ std::vector<BYTE> Settings::KeymapString(std::wstring keymapstring)
 	size_t length = min(KEYMAP_MAX_KEYS, (keymapstring.length() / 2));
 
 	for (size_t i = 0; i < length; i++)
-		vk.push_back(std::stoll(keymapstring.std::wstring::substr(i * 2, 2), nullptr, 16));
+		vk.push_back((BYTE)std::stoll(keymapstring.std::wstring::substr(i * 2, 2), nullptr, 16));
 
 	return vk;
 }

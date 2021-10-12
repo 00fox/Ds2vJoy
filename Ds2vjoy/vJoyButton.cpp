@@ -273,11 +273,11 @@ void vJoyButton::SetValByte(byte val)
 		case XY_CW:
 		case ZRZ_CW:
 		case RXRY_CW:
-		case SL0SL1_CW:anglesource = (((255 - val) * 2 * π) / 255) + (π / 2); goto axismove_circle; break;
+		case SL0SL1_CW:anglesource = (((255 - (double)val) * 2 * π) / 255) + (π / 2); goto axismove_circle; break;
 		case XY_CN:
 		case ZRZ_CN:
 		case RXRY_CN:
-		case SL0SL1_CN:anglesource = ((val * 2 * π) / 255) + (π / 2); goto axismove_circle; break;
+		case SL0SL1_CN:anglesource = (((double)val * 2 * π) / 255) + (π / 2); goto axismove_circle; break;
 		case XY_CENTER:
 		case ZRZ_CENTER:*m_data = 0; *m_data2 = 0; break;
 		case XY_LEFT:

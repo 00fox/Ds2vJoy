@@ -775,7 +775,8 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 		p->NextStepFlag = flag;
 	}
 
-	vjoy->Update();
+	if (vjoy->Active())
+		vjoy->Update();
 
 	if (tape.ViGEmActive)
 	{
@@ -1553,12 +1554,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		tape.RapidFiredata = RapidFiredatatmp;
 		tape.Keymapdata = Keymapdatatmp;
 
-		MappingDataDlg mDDlgtmp;
-		RapidFireDataDlg rDDlgtmp;
-		KeymapDataDlg kDDlgtmp;
-		mDDlg = mDDlgtmp;
-		rDDlg = rDDlgtmp;
-		kDDlg = kDDlgtmp;
+//		MappingDataDlg mDDlgtmp;
+//		RapidFireDataDlg rDDlgtmp;
+//		KeymapDataDlg kDDlgtmp;
+//		mDDlg = mDDlgtmp;
+//		rDDlg = rDDlgtmp;
+//		kDDlg = kDDlgtmp;
 		break;
 	}
 	case WM_RELOAD:
@@ -1615,9 +1616,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(hWnd, WM_REDRAW_TABS, 0, 0);
 		ShowWindow(hTab2, SW_HIDE);
 		mDlg.Hide();
-		mDDlg.Init(hInst, hWnd);
-		rDDlg.Init(hInst, hWnd);
-		kDDlg.Init(hInst, hWnd);
+//		mDDlg.Init(hInst, hWnd);
+//		rDDlg.Init(hInst, hWnd);
+//		kDDlg.Init(hInst, hWnd);
+		mDDlg.m_mode = 0;
 		if (!vjoy.Init(hWnd))
 			return -1;
 		if (!vg.Init(hWnd))

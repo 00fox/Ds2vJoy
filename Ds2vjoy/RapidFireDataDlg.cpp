@@ -118,8 +118,8 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_SHOWWINDOW:
 		if (wParam == TRUE)
 		{
-			SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN, CB_SETCURSEL, (WPARAM)rapidFireData.ButtonID, 0);
-			SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN2, CB_SETCURSEL, (WPARAM)rapidFireData.ButtonID2, 0);
+			SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN, CB_SETCURSEL, rapidFireData.ButtonID, 0);
+			SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN2, CB_SETCURSEL, rapidFireData.ButtonID2, 0);
 
 			canprint = false;
 			WCHAR buf[MAX_PATH];

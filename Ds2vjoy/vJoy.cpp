@@ -92,6 +92,7 @@ BOOL vJoyDevice::Open(int DevID, bool verbose)
 {
 	if (m_devID > 0)
 		return FALSE;
+
 	VjdStat status = GetVJDStatus(DevID);
 
 	switch (status)
@@ -428,7 +429,7 @@ BOOL vJoyDevice::Update()
 
 	if (!UpdateVJD(m_devID, &m_iReport))
 	{
-		echo(I18N.vJoy_failed_update);
+		echo(I18N.vJoy_failed_update, m_devID);
 		Close();
 		return FALSE;
 	}
@@ -454,11 +455,16 @@ void vJoyDevice::Close()
 {
 	if (m_devID > 0)
 	{
+		m_devID = 0;
+		static std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+		if (std::chrono::system_clock::now() - start < std::chrono::milliseconds(1000))
+			return;
+		else
+			start = std::chrono::system_clock::now();
 		ClearState();
 		Update();
 		SetFFBCallback(NULL, NULL);
 		RelinquishVJD(m_devID);
-		m_devID = 0;
 	}
 }
 
