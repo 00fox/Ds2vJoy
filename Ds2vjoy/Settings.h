@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int VersionDate = 202110121;
+	const int VersionDate = 202110131;
 
 	WCHAR Settingstxt[20];
 	WCHAR Mappingtxt[20];
@@ -79,6 +79,8 @@ public:
 		Setting_TouchCol,
 		Setting_TouchRow,
 		Setting_LED_Color,
+		Setting_Wave_Speed,
+		Setting_TabMapping,
 		Setting_TabToMode,
 		Setting_Reminder,
 		Setting_Mappingdata,		//vJoy
@@ -140,6 +142,7 @@ public:
 	bool Reminder[32];
 	bool vJoyUsed[32];
 	bool MappingViewMode;
+	unsigned char TabMapping;
 	bool CloneViewMode;
 
 	unsigned char ActualDS = 0;		//0 Unknown
@@ -162,6 +165,7 @@ public:
 
 	WCHAR dsSerial[13] = { 0 };
 	DWORD LED_Color;
+	byte WaveSpeed;
 	bool BlackLedOnExit;
 
 	byte Threshold;					//8 (0-128)
@@ -277,6 +281,7 @@ private:
 
 	BOOL Open(WCHAR* file);
 	void SetProfile(int i);
+	void SetTabMapping(int i);
 	void SetPreferredDS(int i);
 	void SetTabMode(int i, int mode);
 	void SetReminder(int i, int reminder);
@@ -287,6 +292,7 @@ private:
 	void SetDesiredVirtualPad(int i);
 	void SetSplitTouch();
 	void SetTriggersMode(int i);
+	void SetWaveSpeed(int i);
 
 	WCHAR* CheckboxToString(byte, byte, byte, byte, byte, byte, byte, byte);
 	WCHAR* dsIDToString(byte, byte, byte, byte, byte);

@@ -619,11 +619,13 @@ void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 
 		if (!Ledactive[Led_Action_Led1] && !Ledactive[Led_Action_Led2] && !Ledactive[Led_Action_Led3] && !Ledactive[Led_Action_Led4] && !Ledactive[Led_Action_Led5] && Ledactive[Led_Action_Battery])
 		{
-			if (battery < 25)
+			if (battery < 20)
 				m_Whitetmp = 0x01;
-			else if (battery < 50)
+			else if (battery < 40)
 				m_Whitetmp = 0x03;
-			else if (battery < 75)
+			else if (battery < 60)
+				m_Whitetmp = 0x07;
+			else if (battery < 80)
 				m_Whitetmp = 0x0b;
 			else
 				m_Whitetmp = 0x1b;

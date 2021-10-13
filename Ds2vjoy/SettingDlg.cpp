@@ -141,6 +141,16 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		return FALSE;
 	}
+	case WM_HSCROLL:
+		switch (LOWORD(wParam))
+		{
+		case TB_ENDTRACK:
+			tape.WaveSpeed = SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_GETPOS, 0, 0);
+			//SetDlgItemInt(hWnd, ID_SLIDERTXT, SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_GETPOS, 0, 0), FALSE);
+			PostMessage(m_hWnd, WM_TIMER, 2, 0);
+			break;
+		}
+		return TRUE;
 	case WM_SHOWWINDOW:
 	{
 		if (wParam == TRUE)
@@ -235,6 +245,10 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			wsprintf(buf, L"%d", i);
 			SendDlgItemMessage(hWnd, IDC_VJOY_DEV, CB_ADDSTRING, 0, (LPARAM)buf);
 		}
+
+		SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_SETRANGE, FALSE, MAKELONG(0, 166));
+		SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_SETPOS, TRUE, tape.WaveSpeed);
+		//SetDlgItemInt(hWnd, ID_SLIDERTXT, tape.WaveSpeed, FALSE);
 
 		return TRUE;
 	}

@@ -143,6 +143,8 @@ void Settings::Load(int category)
 		SetTouchCol(GetPrivateProfileInt(Settingstxt, TEXT("TouchCol"), 1, m_file));
 		SetTouchRow(GetPrivateProfileInt(Settingstxt, TEXT("TouchRow"), 1, m_file));
 		SetLED(GetPrivateProfileInt(Settingstxt, TEXT("LED_Color"), 0xFF0000, m_file));
+		SetWaveSpeed(GetPrivateProfileInt(Settingstxt, TEXT("WaveSpeed"), 130, m_file));
+		SetTabMapping(GetPrivateProfileInt(Settingstxt, TEXT("TabMapping"), 0, m_file));
 
 		{
 			WCHAR buf[MAX_PATH] = { 0 };
@@ -1054,6 +1056,16 @@ void Settings::Save(int item)
 		WritePrivateProfileString(Settingstxt, TEXT("LED_Color"), buffer, m_file);
 		if (item != Setting_All)
 			break;
+	case Setting_Wave_Speed:
+		wsprintf(buffer, L"%d", WaveSpeed);
+		WritePrivateProfileString(Settingstxt, TEXT("WaveSpeed"), buffer, m_file);
+		if (item != Setting_All)
+			break;
+	case Setting_TabMapping:
+		wsprintf(buffer, L"%d", TabMapping);
+		WritePrivateProfileString(Settingstxt, TEXT("TabMapping"), buffer, m_file);
+		if (item != Setting_All)
+			break;
 	case Setting_TabToMode:
 		wsprintf(buffer, L"%d,%d,%d,%d,%d,%d,%d,%d,%d", Mode[0], Mode[1], Mode[2], Mode[3], Mode[4], Mode[5], Mode[6], Mode[7], Mode[8]);
 		WritePrivateProfileString(Settingstxt, TEXT("TabToMode"), buffer, m_file);
@@ -1402,6 +1414,14 @@ void Settings::SetProfile(int i)
 		Profile = 1;
 }
 
+void Settings::SetTabMapping(int i)
+{
+	if (i >= 0 && i < 9)
+		TabMapping = i;
+	else
+		TabMapping = 0;
+}
+
 void Settings::SetPreferredDS(int i)
 {
 	if (i > 0 && i < 3)
@@ -1518,6 +1538,14 @@ void Settings::SetTriggersMode(int i)
 		TriggersMode = i;
 	else
 		TriggersMode = 0;
+}
+
+void Settings::SetWaveSpeed(int i)
+{
+	if (i >= 0 && i < 167)
+		WaveSpeed = i;
+	else
+		WaveSpeed = 130;
 }
 
 const WCHAR* Settings::getSerial()

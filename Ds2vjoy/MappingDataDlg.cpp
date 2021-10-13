@@ -49,7 +49,6 @@ void MappingDataDlg::Open(HWND parent, int mode)
 	danger = false;
 	capturehasbeendone = false;
 	whohasfocus = 0;
-	SetTimer(m_hDlg, 1, 100, NULL);
 }
 
 /*
@@ -108,7 +107,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //			return FALSE;
 //			return TRUE;
 //		}
-		return FALSE;
+//		return FALSE;
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORMSGBOX:
 	case WM_CTLCOLORSCROLLBAR:
@@ -381,8 +380,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			break;
 		}
-		default:
-			return FALSE;
 		}
 		break;
 	}
@@ -454,6 +451,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				danger = false;
 				capturehasbeendone = true;
+				KillTimer(m_hDlg, 1);
 				Hide();
 				Show();
 			}
@@ -1294,8 +1292,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		case IDC_MAPPING_IF_MOUSE:mappingData.Ifmouse = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Ifmouse] = true; break;
 		case IDC_MAPPING_FORCE:mappingData.Force = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Force] = true; break;
 		case IDC_MAPPING_SHORT:mappingData.Short = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Short] = true; break;
-		case IDC_MAPPING_LONG:mappingData.Long = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Double] = true; break;
-		case IDC_MAPPING_DOUBLE:mappingData.Double = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Long] = true; break;
+		case IDC_MAPPING_DOUBLE:mappingData.Double = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Double] = true; break;
+		case IDC_MAPPING_LONG:mappingData.Long = IsDlgButtonChecked(hWnd, LOWORD(wParam)); Modified[Mofified_Long] = true; break;
 		case IDC_MAPPING_LED:
 			Modified[Mofified_Led] = true;
 			if (HIWORD(wParam) == CBN_SELCHANGE)
@@ -2134,6 +2132,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 			case STN_CLICKED:
 				start = std::chrono::system_clock::now();
+				SetTimer(m_hDlg, 1, 10, NULL);
 				break;
 			}
 			break;

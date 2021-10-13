@@ -1178,7 +1178,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (i == 0)
 					SetMenuItemInfo(hMenu, m_TabsID[i], FALSE, &info);
 			}
-			SendMessage(hWnd, WM_REDRAW_TABS, 0, 0);
+			SendMessage(hWnd, WM_REDRAW_TABS, tape.TabMapping, 0);
 
 			HFONT hFont = CreateFont(13, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
 			SendMessage(hTab2, WM_SETFONT, WPARAM(hFont), TRUE);
@@ -1334,7 +1334,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				phasedelta = (α - 485) / 24;
 			}
 
-			if (phase < 0) { frequency = 126 + phasedelta + (rand() % 30); phase = frequency / 2; colorphase = chromatic * ((double)100 - (rand() % 26)) / 100; }
+			if (phase < 0) { frequency = 16 + tape.WaveSpeed + phasedelta + (rand() % (int)(round((double)tape.WaveSpeed * 0.227451) + 5)); phase = frequency / 2; colorphase = chromatic * ((double)100 - (rand() % 26)) / 100; }
 			double LightwaVe = abs(sin(2 * π * phase / frequency));
 			Rval = int(R - (R * LightwaVe * colorphase));
 			Gval = int(G - (G * LightwaVe * colorphase));
@@ -1613,7 +1613,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(hWnd, WM_RESET, 0, 0);
 
 		tape.Load(Settings::Setting_Category_All);
-		SendMessage(hWnd, WM_REDRAW_TABS, 0, 0);
+		SendMessage(hWnd, WM_REDRAW_TABS, tape.TabMapping, 0);
 		ShowWindow(hTab2, SW_HIDE);
 		mDlg.Hide();
 //		mDDlg.Init(hInst, hWnd);
@@ -1654,11 +1654,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tc_item.pszText = buff;
 			}
 			TabCtrl_InsertItem(hTab2, i, &tc_item);
-			TabCtrl_SetCurSel(hTab2, wParam);
-			if (TabCtrl_GetCurSel(hTab) == 2)
-				mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
-				mDlg.Show();
 		}
+		mDlg.SetTab(wParam);
+		TabCtrl_SetCurSel(hTab2, wParam);
+		if (TabCtrl_GetCurSel(hTab) == 2)
+			mDlg.Show();
 		ShowWindow(hTab2, SW_HIDE);
 		ShowWindow(hTab2, SW_SHOW);
 		break;
@@ -2098,6 +2098,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 2:
 					mDlg.Show();
 					ShowWindow(hTab2, SW_SHOW);
+					TabCtrl_SetCurSel(hTab2, tape.TabMapping);
 					if (mDlg2.isCloned())
 					{
 						mDlg2.SetTab(mDlg2.GetTab());
@@ -2161,7 +2162,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (((NMHDR*)lParam)->code)
 			{
 			case TCN_SELCHANGE:
-				mDlg.SetTab(TabCtrl_GetCurSel(hTab2));
+				tape.TabMapping = TabCtrl_GetCurSel(hTab2);
+				tape.Save(tape.Setting_TabMapping);
+				mDlg.SetTab(tape.TabMapping);
 				mDlg.Show();
 				break;
 			}
