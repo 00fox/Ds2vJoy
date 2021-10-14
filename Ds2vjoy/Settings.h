@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int VersionDate = 202110131;
+	const int VersionDate = 202110141;
 
 	WCHAR Settingstxt[20];
 	WCHAR Mappingtxt[20];

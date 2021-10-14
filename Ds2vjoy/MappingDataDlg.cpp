@@ -452,8 +452,11 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				danger = false;
 				capturehasbeendone = true;
 				KillTimer(m_hDlg, 1);
-				Hide();
-				Show();
+				if (IsWindowVisible(m_hDlg))
+				{
+					Hide();
+					Show();
+				}
 			}
 		}
 		break;
