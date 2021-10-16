@@ -246,8 +246,8 @@ public:
 private:
 	dsButton* m_ds[5] = { 0 };
 	vJoyButton* m_vj[13] = { 0 };
-	unsigned char lastmode;				//Memorized mode stocked for this mapping only, when used a change to n(0-8, 0=Always) mode
-	char tomode = -1;					//Destination mode stocked for this mapping only, when used a change to n(0-8, 0=Always) mode, available only for one turn, -1 after
+	unsigned char lastmode;				//Memorized mode stocked for this mapping only, when change to n(0-8, 0=Always) mode
+	char tomode = -1;					//Destination mode stocked for this mapping only, when change to n(0-8, 0=Always) mode, available only for one turn, -1 after
 	unsigned char locked;				//Different levels to trigger again when mode changed
 	unsigned char modechanged;			//If mode has been changed by another mapping (mode<>tomode)
 	unsigned char modedest[8];			//If mode has been changed by another mapping (mode<>tomode), one for each first eight destinations

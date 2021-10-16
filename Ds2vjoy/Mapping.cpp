@@ -701,6 +701,8 @@ void Mapping::Run(double average)
 			locked = 3;
 		}
 	}
+	else if (tomode)
+		tomode = -1;
 
 	for (int i = 0; i < 8; i++)
 	{
