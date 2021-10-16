@@ -286,10 +286,10 @@ ________________________________________________________________________________
 Under central led, you'll find 4 checkboxes
 - Interrupt: Interrupt macros on release (even if timestamp not finished)
   - double, No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
-- Pause: pause this mapping while a not condition
+- Pause: pause this mapping while a 'not' condition
   - otherwise:
-    - if not is a simple, and not button is pressed, the mapping is interrupted
-     - if not is a double, and not button is pressed, the mapping still continue
+    - if 'not' is a simple, and 'not' button is pressed, the mapping is interrupted
+     - if 'not' is a double, and 'not' button is pressed, the mapping still continue
   - double: One time, used in Transitivity (see table of transitivity below)
 - Transitivity: Principal way of transitivity which brings different behaviors and transition possibilities while mode changed
   - double, Come back, another way of transitivity which brings its owns (see table of transitivity below)
