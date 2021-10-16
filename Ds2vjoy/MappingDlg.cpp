@@ -1859,6 +1859,7 @@ void MappingDlg::addNoticeDlg()
 				GetWindowRect(m_hDlg2, &rect2);
 				MoveWindow2(rect.left + 275, rect.top + 30, rect2.right - rect2.left, rect2.bottom - rect2.top, false);
 				SetWindowText(GetDlgItem(m_hDlg2, IDC_MIND_TEXT), mDDlg.mappingData.Notice);
+				SetFocus(m_hDlg2);
 			}
 		}
 	}

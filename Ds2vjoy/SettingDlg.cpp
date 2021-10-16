@@ -145,7 +145,7 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case TB_ENDTRACK:
-			tape.WaveSpeed = SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_GETPOS, 0, 0);
+			tape.WaveSpeed = (byte)SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_GETPOS, 0, 0);
 			//SetDlgItemInt(hWnd, ID_SLIDERTXT, SendMessage(GetDlgItem(hWnd, IDC_SLIDER), TBM_GETPOS, 0, 0), FALSE);
 			PostMessage(m_hWnd, WM_TIMER, 2, 0);
 			break;

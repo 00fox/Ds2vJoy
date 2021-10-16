@@ -1655,7 +1655,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			TabCtrl_InsertItem(hTab2, i, &tc_item);
 		}
-		mDlg.SetTab(wParam);
+		mDlg.SetTab((int)wParam);
 		TabCtrl_SetCurSel(hTab2, wParam);
 		if (TabCtrl_GetCurSel(hTab) == 2)
 			mDlg.Show();
