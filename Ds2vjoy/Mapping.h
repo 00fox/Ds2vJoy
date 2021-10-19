@@ -278,9 +278,13 @@ private:
 	bool pushed0 = false;				//If first source is pushed
 	bool pushed1 = false;				//If second second is pushed
 	bool pushed2 = false;				//If third source is pushed
+	bool lastpushed0 = false;			//If first source was pushed last turn
+	bool lastpushed1 = false;			//If second second was pushed last turn
+	bool lastpushed2 = false;			//If third source was pushed last turn
 	byte release0 = 0;					//Released value of first source
 	bool killed0 = false;				//If first source is killed (like stay pushed more than tape.LongPress while method is short)
 	bool killed1 = false;				//If second source is killed (then we have to wait for release to have a chance to try again)
+	bool disabled[5] = { false };		//If source is disabled
 	unsigned char secondpass = 0;		//If a source is killed but the second is activated, only with OrXorNot[0] && !OrXorNot[1] (except is second source available)
 	byte OnReleaseValue = 0xFF;			//Used value when in On sustain mode (timestamp is sill in use and we have released all sources)
 	std::chrono::system_clock::time_point start;		//start time (of computing method)

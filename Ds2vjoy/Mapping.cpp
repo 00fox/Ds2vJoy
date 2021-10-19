@@ -657,6 +657,23 @@ void Mapping::Run(double average)
 	pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
 	pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
 
+	for (int i = 0; i < 5; i++)
+	{
+		disabled[i] = false;
+		if (Target[i])
+		{
+			if (m_vj[i])
+				if (std::find(vjDisabled.begin(), vjDisabled.end(), dsID[i]) != vjDisabled.end())
+					disabled[i] = true;
+		}
+		else
+		{
+			if (m_ds[i])
+				if (std::find(dsDisabled.begin(), dsDisabled.end(), dsID[i]) != dsDisabled.end())
+					disabled[i] = true;
+		}
+	}
+
 	bool legits[5];
 	if (Force == 1 || (Force == 2 && isRunning))
 		for (int i = 0; i < 5; i++)
@@ -669,8 +686,8 @@ void Mapping::Run(double average)
 		for (int i = 0; i < 5; i++)
 		{
 			legits[i] =
-				(Target[i] && (m_vj[i] == 0 || (m_vj[i]->isPushed() && !(std::find(vjDisabled.begin(), vjDisabled.end(), dsID[i]) != vjDisabled.end())))) ||
-				(!Target[i] && (m_ds[i] == 0 || (m_ds[i]->isPushed() && !(std::find(dsDisabled.begin(), dsDisabled.end(), dsID[i]) != dsDisabled.end()))));
+				(Target[i] && (m_vj[i] == 0 || (m_vj[i]->isPushed() && !disabled[i]))) ||
+				(!Target[i] && (m_ds[i] == 0 || (m_ds[i]->isPushed() && !disabled[i])));
 		}
 
 	if (modechanged)
@@ -729,8 +746,9 @@ void Mapping::Run(double average)
 	{
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
-			((OrXorNot[0] == 2) ? (legits[0] ^ (exists1 && legits[1])) :
-				((OrXorNot[0]) ? (legits[0] || (exists1 && legits[1])) : (legits[0] && (exists1 && legits[1])))) &&
+			((OrXorNot[0] == 2) ?
+				(legits[0] ^ (exists1 && legits[1])) :
+				(legits[0] || (exists1 && legits[1]))) &&
 			legits[2] &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
@@ -740,8 +758,9 @@ void Mapping::Run(double average)
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			legits[0] &&
-			((OrXorNot[1] == 2) ? (legits[1] ^ (exists2 && legits[2])) :
-				((OrXorNot[1]) ? (legits[1] || (exists2 && legits[2])) : (legits[1] && (exists2 && legits[2])))) &&
+			((OrXorNot[1] == 2) ?
+				(legits[1] ^ (exists2 && legits[2])) :
+				(legits[1] || (exists2 && legits[2]))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
@@ -749,10 +768,12 @@ void Mapping::Run(double average)
 	{
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
-			((OrXorNot[0] == 2) ? (legits[0] ^ (exists1 && legits[1])) :
-				((OrXorNot[0]) ? (legits[0] || (exists1 && legits[1])) : (legits[0] && (exists1 && legits[1])))) &&
-			((OrXorNot[1] == 2) ? (legits[0] ^ (exists2 && legits[2])) :
-				((OrXorNot[1]) ? (legits[0] || (exists2 && legits[2])) : (legits[0] && (exists2 && legits[2])))) &&
+			((OrXorNot[0] == 2) ?
+				(legits[0] ^ (exists1 && legits[1])) :
+				(legits[0] || (exists1 && legits[1]))) &&
+			((OrXorNot[1] == 2) ?
+				(legits[0] ^ (exists2 && legits[2])) :
+				(legits[0] || (exists2 && legits[2]))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
@@ -816,6 +837,9 @@ void Mapping::Run(double average)
 			{
 				start = std::chrono::system_clock::now();
 				killed = false;
+				lastpushed0 = pushed0;
+				lastpushed1 = pushed1;
+				lastpushed2 = pushed2;
 			}
 			else if ((killed) ? ((secondpass) ? false : (OrXorNot[0] && !OrXorNot[1])) : false)
 			{
@@ -945,7 +969,83 @@ void Mapping::Run(double average)
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						if (!killed)
-							activated = true;
+						{
+							bool canbeactivated = true;
+							if (!OrXorNot[0] && !OrXorNot[1])
+							{
+								if ((lastpushed0 && disabled[0]) ||
+									(lastpushed1 && disabled[1]) ||
+									(lastpushed2 && disabled[2]))
+									canbeactivated = false;
+							}
+							else if (OrXorNot[0] && !OrXorNot[1])
+							{
+								if (lastpushed0 && lastpushed1)
+								{
+									if ((disabled[0] && disabled[1]) || (lastpushed2 && disabled[2]))
+										canbeactivated = false;
+								}
+								else
+								{
+									if ((lastpushed0 && disabled[0]) ||
+										(lastpushed1 && disabled[1]) ||
+										(lastpushed2 && disabled[2]))
+										canbeactivated = false;
+								}
+							}
+							else if (!OrXorNot[0] && OrXorNot[1])
+							{
+								if (lastpushed1 && lastpushed2)
+								{
+									if ((disabled[1] && disabled[2]) || (lastpushed0 && disabled[0]))
+										canbeactivated = false;
+								}
+								else
+								{
+									if ((lastpushed0 && disabled[0]) ||
+										(lastpushed1 && disabled[1]) ||
+										(lastpushed2 && disabled[2]))
+										canbeactivated = false;
+								}
+							}
+							else
+							{
+								if (lastpushed0)
+								{
+									if (lastpushed1 && lastpushed2)
+									{
+										if (disabled[0] && disabled[1] && disabled[2])
+											canbeactivated = false;
+									}
+									else if (lastpushed1)
+									{
+										if (disabled[0] && disabled[1])
+											canbeactivated = false;
+									}
+									else if (lastpushed2)
+									{
+										if (disabled[0] && disabled[2])
+											canbeactivated = false;
+									}
+									else if (disabled[0])
+										canbeactivated = false;
+								}
+								else if (lastpushed1 && lastpushed2)
+								{
+									if (disabled[1] && disabled[2])
+										canbeactivated = false;
+								}
+								else
+								{
+									if ((lastpushed0 && disabled[0]) ||
+										(lastpushed1 && disabled[1]) ||
+										(lastpushed2 && disabled[2]))
+										canbeactivated = false;
+								}
+							}
+							if (canbeactivated)
+								activated = true;
+						}
 						available = false;
 					}
 				}
