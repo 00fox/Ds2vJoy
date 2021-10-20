@@ -204,7 +204,8 @@ public:
 	//|  1   |  0   |    val     | & Not |   val   |   &   |   val   |
 	//|  0   |  1   |    val     |   &   |   val   | & Not |   val   |
 	//|  1   |  1   |    val     | & Not |   val   | & Not |   val   |
-	bool dsDisable[5];				//this button will be disabled for next mappings if this mapping is running (except with Force)
+	unsigned char dsDisable[5];		//1 this button will be disabled for next mappings if this mapping is running (except with Force)
+									//2 if Short (or Double), even when release time, before time to activate spent (or second press)
 	unsigned char MouseAction[8];	//0 vJoy button, 1 Mouse, sound or mode action, 2 Axis movement
 	unsigned char Overcontrol[8];	//0 axis of same type overpass precedent values, 1 values are merged, 2 if in use, next mapping won't interfer
 	unsigned char Switch[8];		//Acts in conjunction with the toggle system, but act as a switch: 0 toggle (if Toggle active), 1 on, 2 off
@@ -244,6 +245,7 @@ public:
 	WCHAR Notice[MAX_PATH];
 
 private:
+	BOOL CanBeActivated();				//Used for Short/Double to know if it can be activated/available to run second step, taking account of disable states and Or/Xor conditions
 	dsButton* m_ds[5] = { 0 };
 	vJoyButton* m_vj[13] = { 0 };
 	unsigned char lastmode;				//Memorized mode stocked for this mapping only, when change to n(0-8, 0=Always) mode

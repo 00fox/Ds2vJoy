@@ -82,7 +82,10 @@ const WCHAR* Mapping::dsString()
 	{
 		if (str.length() > 7)
 			*(--head) = 0;
-		head += wsprintf(head, L"#");
+		if (dsDisable[0] == 2)
+			head += wsprintf(head, L"✱");
+		else
+			head += wsprintf(head, L"#");
 	}
 
 	return buf;
@@ -131,7 +134,10 @@ const WCHAR* Mapping::dsLastString()
 		{
 			if (str.length() > 7)
 				*(--head) = 0;
-			head += wsprintf(head, L"#");
+			if (dsDisable[i] == 2)
+				head += wsprintf(head, L"✱");
+			else
+				head += wsprintf(head, L"#");
 		}
 	}
 
@@ -179,7 +185,10 @@ const WCHAR* Mapping::dsNotString()
 		{
 			if (str.length() > 7)
 				*(--head) = 0;
-			head += wsprintf(head, L"#");
+			if (dsDisable[i] == 2)
+				head += wsprintf(head, L"✱");
+			else
+				head += wsprintf(head, L"#");
 		}
 	}
 
@@ -970,83 +979,27 @@ void Mapping::Run(double average)
 					{
 						if (!killed)
 						{
-							bool canbeactivated = true;
-							if (!OrXorNot[0] && !OrXorNot[1])
-							{
-								if ((lastpushed0 && disabled[0]) ||
-									(lastpushed1 && disabled[1]) ||
-									(lastpushed2 && disabled[2]))
-									canbeactivated = false;
-							}
-							else if (OrXorNot[0] && !OrXorNot[1])
-							{
-								if (lastpushed0 && lastpushed1)
-								{
-									if ((disabled[0] && disabled[1]) || (lastpushed2 && disabled[2]))
-										canbeactivated = false;
-								}
-								else
-								{
-									if ((lastpushed0 && disabled[0]) ||
-										(lastpushed1 && disabled[1]) ||
-										(lastpushed2 && disabled[2]))
-										canbeactivated = false;
-								}
-							}
-							else if (!OrXorNot[0] && OrXorNot[1])
-							{
-								if (lastpushed1 && lastpushed2)
-								{
-									if ((disabled[1] && disabled[2]) || (lastpushed0 && disabled[0]))
-										canbeactivated = false;
-								}
-								else
-								{
-									if ((lastpushed0 && disabled[0]) ||
-										(lastpushed1 && disabled[1]) ||
-										(lastpushed2 && disabled[2]))
-										canbeactivated = false;
-								}
-							}
-							else
-							{
-								if (lastpushed0)
-								{
-									if (lastpushed1 && lastpushed2)
-									{
-										if (disabled[0] && disabled[1] && disabled[2])
-											canbeactivated = false;
-									}
-									else if (lastpushed1)
-									{
-										if (disabled[0] && disabled[1])
-											canbeactivated = false;
-									}
-									else if (lastpushed2)
-									{
-										if (disabled[0] && disabled[2])
-											canbeactivated = false;
-									}
-									else if (disabled[0])
-										canbeactivated = false;
-								}
-								else if (lastpushed1 && lastpushed2)
-								{
-									if (disabled[1] && disabled[2])
-										canbeactivated = false;
-								}
-								else
-								{
-									if ((lastpushed0 && disabled[0]) ||
-										(lastpushed1 && disabled[1]) ||
-										(lastpushed2 && disabled[2]))
-										canbeactivated = false;
-								}
-							}
-							if (canbeactivated)
+							if (CanBeActivated())
 								activated = true;
 						}
 						available = false;
+					}
+					else
+					{
+						for (int i = 0; i < 5; i++)
+						{
+							if (dsDisable[i] == 2)
+								if (Target[i])
+								{
+									if (m_vj[i])
+										vjDisabled.push_back(dsID[i]);
+								}
+								else
+								{
+									if (m_ds[i])
+										dsDisabled.push_back(dsID[i]);
+								}
+						}
 					}
 				}
 				break;
@@ -1058,10 +1011,28 @@ void Mapping::Run(double average)
 			case 6: //Double long
 				if ((isFired && !killed) || available)
 				{
-					available = true;
 					end = std::chrono::system_clock::now();
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 						available = false;
+					else
+					{
+						if (CanBeActivated())
+							available = true;
+						for (int i = 0; i < 5; i++)
+						{
+							if (dsDisable[i] == 2)
+								if (Target[i])
+								{
+									if (m_vj[i])
+										vjDisabled.push_back(dsID[i]);
+								}
+								else
+								{
+									if (m_ds[i])
+										dsDisabled.push_back(dsID[i]);
+								}
+						}
+					}
 				}
 				break;
 			}
@@ -1543,6 +1514,84 @@ void Mapping::Run(double average)
 	}
 
 	cycle = (cycle == 18446744073709551615) ? 0 : cycle + 1;
+}
+
+BOOL Mapping::CanBeActivated()
+{
+	if (!OrXorNot[0] && !OrXorNot[1])
+	{
+		if ((lastpushed0 && disabled[0]) ||
+			(lastpushed1 && disabled[1]) ||
+			(lastpushed2 && disabled[2]))
+			return FALSE;
+	}
+	else if (OrXorNot[0] && !OrXorNot[1])
+	{
+		if (lastpushed0 && lastpushed1)
+		{
+			if ((disabled[0] && disabled[1]) || (lastpushed2 && disabled[2]))
+				return FALSE;
+		}
+		else
+		{
+			if ((lastpushed0 && disabled[0]) ||
+				(lastpushed1 && disabled[1]) ||
+				(lastpushed2 && disabled[2]))
+				return FALSE;
+		}
+	}
+	else if (!OrXorNot[0] && OrXorNot[1])
+	{
+		if (lastpushed1 && lastpushed2)
+		{
+			if ((disabled[1] && disabled[2]) || (lastpushed0 && disabled[0]))
+				return FALSE;
+		}
+		else
+		{
+			if ((lastpushed0 && disabled[0]) ||
+				(lastpushed1 && disabled[1]) ||
+				(lastpushed2 && disabled[2]))
+				return FALSE;
+		}
+	}
+	else
+	{
+		if (lastpushed0)
+		{
+			if (lastpushed1 && lastpushed2)
+			{
+				if (disabled[0] && disabled[1] && disabled[2])
+					return FALSE;
+			}
+			else if (lastpushed1)
+			{
+				if (disabled[0] && disabled[1])
+					return FALSE;
+			}
+			else if (lastpushed2)
+			{
+				if (disabled[0] && disabled[2])
+					return FALSE;
+			}
+			else if (disabled[0])
+				return FALSE;
+		}
+		else if (lastpushed1 && lastpushed2)
+		{
+			if (disabled[1] && disabled[2])
+				return FALSE;
+		}
+		else
+		{
+			if ((lastpushed0 && disabled[0]) ||
+				(lastpushed1 && disabled[1]) ||
+				(lastpushed2 && disabled[2]))
+				return FALSE;
+		}
+	}
+
+	return TRUE;
 }
 
 WCHAR* Mapping::LedString(LedActionID id)

@@ -227,7 +227,7 @@ void Settings::Load(int category)
 						case Mapping_Target:	for (int i = 0; i < 5; i++) { btn.Target[i] = CheckboxString(key, i) == 1; } break;
 						case Mapping_dsID:		for (int i = 0; i < 5; i++) { btn.dsID[i] = max(0, min((btn.Target[i]) ? vJoyButtonID::button_Count : dsButtonID::button_Count, dsIDString(key, i))); } break;
 						case Mapping_OrXorNot:	for (int i = 0; i < 4; i++) { btn.OrXorNot[i] = max(0, min(2, CheckboxString(key, i))); } break;
-						case Mapping_dsDisable:	for (int i = 0; i < 5; i++) { btn.dsDisable[i] = CheckboxString(key, i) == 1; } break;
+						case Mapping_dsDisable:	for (int i = 0; i < 5; i++) { btn.dsDisable[i] = max(0, min(2, CheckboxString(key, i))); } break;
 						case Mapping_MouseAction:for (int i = 0; i < 8; i++) { btn.MouseAction[i] = max(0, min(2, CheckboxString(key, i))); } break;
 						case Mapping_vjID:		for (int i = 0; i < 8; i++) { btn.vjID[i] = max(0, min((btn.MouseAction[i]) ? ((btn.MouseAction[i] == 1) ? Mapping::mouse_Count : vJoyAxisMoveID::axismove_Count) : vJoyButtonID::button_Count, vjIDString(key, i))); } break;
 						case Mapping_Overcontrol:for (int i = 0; i < 8; i++) { btn.Overcontrol[i] = max(0, min(2, CheckboxString(key, i))); } break;
