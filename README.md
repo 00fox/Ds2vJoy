@@ -120,6 +120,7 @@ DS Button:
 - '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions) (third column)
   - '--' Indicates this mapping won't be launched if this button is pressed, but continue if already launched (third column)
 - '#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated (all)
+  - '✱' Even if Short (or Double), while release time, before time to activate spent (or second press)
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
@@ -279,6 +280,7 @@ ________________________________________________________________________________
 
 Under each source and destination, you'll find disabling
 - this button will be disabled for next mappings if this mapping is running (except with Force)
+  - double (only source), if Short (or Double), even when release time, before time to activate spent (or second press)
   - double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
 
 ______________________________________________________________________________________ Controls
