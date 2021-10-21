@@ -538,12 +538,12 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 		}
 	}
 
-	exists0 = (Target[0]) ? ((m_vj[0]) ? true : false) : ((m_ds[0]) ? true : false);
-	exists1 = (Target[1]) ? ((m_vj[1]) ? true : false) : ((m_ds[1]) ? true : false);
-	exists2 = (Target[2]) ? ((m_vj[2]) ? true : false) : ((m_ds[2]) ? true : false);
+	for (int i = 0; i < 5; i++)
+	{
+		exists[i] = (Target[i]) ? ((m_vj[i]) ? true : false) : ((m_ds[i]) ? true : false);
+		releasedVal[i] = (byte)((exists[i]) ? ((Target[i]) ? (m_vj[i] ? m_vj[i]->GetReleasedVal() : 0) : (m_ds[i] ? m_ds[i]->GetReleasedVal() : 0)) : 0);
+	}
 
-	release0 = (byte)((exists0) ? ((Target[0]) ? (m_vj[0] ? m_vj[0]->GetReleasedVal() : 0) : (m_ds[0] ? m_ds[0]->GetReleasedVal() : 0)) : 0);
-	OnReleaseValue = (Macro == 2) ? release0 : 0xFF;
 
 	GridCanbeUsed =
 		vjID[0] != MOVE_TO_XY && vjID[0] != SAVE_AND_MOVE_TO_XY &&
@@ -662,9 +662,8 @@ void Mapping::Run(double average)
 	if (tape.vJoyPaused)
 		return;
 
-	pushed0 = (exists0) ? ((Target[0]) ? ((m_vj[0]->isPushed()) ? true : false) : ((m_ds[0]->isPushed()) ? true : false)) : false;
-	pushed1 = (exists1) ? ((Target[1]) ? ((m_vj[1]->isPushed()) ? true : false) : ((m_ds[1]->isPushed()) ? true : false)) : false;
-	pushed2 = (exists2) ? ((Target[2]) ? ((m_vj[2]->isPushed()) ? true : false) : ((m_ds[2]->isPushed()) ? true : false)) : false;
+	for (int i = 0; i < 5; i++)
+		pushed[i] = (exists[i]) ? ((Target[i]) ? ((m_vj[i]->isPushed()) ? true : false) : ((m_ds[i]->isPushed()) ? true : false)) : false;
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -686,18 +685,10 @@ void Mapping::Run(double average)
 	bool legits[5];
 	if (Force == 1 || (Force == 2 && isRunning))
 		for (int i = 0; i < 5; i++)
-		{
-			legits[i] =
-				(Target[i] && (m_vj[i] == 0 || m_vj[i]->isPushed())) ||
-				(!Target[i] && (m_ds[i] == 0 || m_ds[i]->isPushed()));
-		}
+			legits[i] = (exists[i]) ? pushed[i] : true;
 	else
 		for (int i = 0; i < 5; i++)
-		{
-			legits[i] =
-				(Target[i] && (m_vj[i] == 0 || (m_vj[i]->isPushed() && !disabled[i]))) ||
-				(!Target[i] && (m_ds[i] == 0 || (m_ds[i]->isPushed() && !disabled[i])));
-		}
+			legits[i] = (exists[i]) ? (pushed[i] && !disabled[i]) : true;
 
 	if (modechanged)
 	{
@@ -756,8 +747,8 @@ void Mapping::Run(double average)
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			((OrXorNot[0] == 2) ?
-				(legits[0] ^ (exists1 && legits[1])) :
-				(legits[0] || (exists1 && legits[1]))) &&
+				(legits[0] ^ (exists[1] && legits[1])) :
+				(legits[0] || (exists[1] && legits[1]))) &&
 			legits[2] &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
@@ -768,8 +759,8 @@ void Mapping::Run(double average)
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			legits[0] &&
 			((OrXorNot[1] == 2) ?
-				(legits[1] ^ (exists2 && legits[2])) :
-				(legits[1] || (exists2 && legits[2]))) &&
+				(legits[1] ^ (exists[2] && legits[2])) :
+				(legits[1] || (exists[2] && legits[2]))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
@@ -778,11 +769,11 @@ void Mapping::Run(double average)
 		legit =
 			((Ifmouse) ? ((mouseactivated) ? Ifmouse == 1 : Ifmouse == 2) : true) &&
 			((OrXorNot[0] == 2) ?
-				(legits[0] ^ (exists1 && legits[1])) :
-				(legits[0] || (exists1 && legits[1]))) &&
+				(legits[0] ^ (exists[1] && legits[1])) :
+				(legits[0] || (exists[1] && legits[1]))) &&
 			((OrXorNot[1] == 2) ?
-				(legits[0] ^ (exists2 && legits[2])) :
-				(legits[0] || (exists2 && legits[2]))) &&
+				(legits[0] ^ (exists[2] && legits[2])) :
+				(legits[0] || (exists[2] && legits[2]))) &&
 			((OrXorNot[2] == 2) ? (isRunning || !legits[3]) : !(OrXorNot[2] == (int)legits[3])) &&
 			((OrXorNot[3] == 2) ? (isRunning || !legits[4]) : !(OrXorNot[3] == (int)legits[4]));
 	}
@@ -840,25 +831,24 @@ void Mapping::Run(double average)
 			else method = 1;
 		}
 
-		if (legit && ((secondpass) ? ((secondpass == 1) ? (killed0 || pushed0) : (killed1 && pushed1)) : true))
+		if (legit && ((secondpass) ? ((secondpass == 1) ? (killed0 || pushed[0]) : (killed1 && pushed[1])) : true))
 		{
 			if (!isFired && !available)
 			{
 				start = std::chrono::system_clock::now();
 				killed = false;
-				lastpushed0 = pushed0;
-				lastpushed1 = pushed1;
-				lastpushed2 = pushed2;
+				for (int i = 0; i < 5; i++)
+					lastpushed[i] = pushed[i];
 			}
 			else if ((killed) ? ((secondpass) ? false : (OrXorNot[0] && !OrXorNot[1])) : false)
 			{
-				if (pushed0 && !killed0)
+				if (pushed[0] && !killed0)
 				{
 					secondpass = 1;
 					start = std::chrono::system_clock::now();
 					killed = false;
 				}
-				else if (pushed1 && !killed1)
+				else if (pushed[1] && !killed1)
 				{
 					secondpass = 2;
 					start = std::chrono::system_clock::now();
@@ -880,8 +870,8 @@ void Mapping::Run(double average)
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
-						if (pushed0) { killed0 = true; }
-						if (pushed1) { killed1 = true; }
+						if (pushed[0]) { killed0 = true; }
+						if (pushed[1]) { killed1 = true; }
 					}
 				break;
 			case 4: //Long
@@ -905,8 +895,8 @@ void Mapping::Run(double average)
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
-						if (pushed0) { killed0 = true; }
-						if (pushed1) { killed1 = true; }
+						if (pushed[0]) { killed0 = true; }
+						if (pushed[1]) { killed1 = true; }
 					}
 				break;
 			case 5: //Double short
@@ -925,8 +915,8 @@ void Mapping::Run(double average)
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
-						if (pushed0) { killed0 = true; }
-						if (pushed1) { killed1 = true; }
+						if (pushed[0]) { killed0 = true; }
+						if (pushed[1]) { killed1 = true; }
 					}
 				break;
 			case 6: //Double long
@@ -945,8 +935,8 @@ void Mapping::Run(double average)
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
-						if (pushed0) { killed0 = true; }
-						if (pushed1) { killed1 = true; }
+						if (pushed[0]) { killed0 = true; }
+						if (pushed[1]) { killed1 = true; }
 					}
 				break;
 			case 7: //Medium long
@@ -1075,9 +1065,9 @@ void Mapping::Run(double average)
 		if (Led)
 			Ledactive[Led] = true;
 
-		byte value0 = (byte)((pushed0) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
-		byte value1 = (byte)((pushed1) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
-		byte value2 = (byte)((pushed2) ? ((Target[2]) ? m_vj[2]->GetVal() : m_ds[2]->GetVal()) : 0);
+		byte value0 = (byte)((pushed[0]) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
+		byte value1 = (byte)((pushed[1]) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
+		byte value2 = (byte)((pushed[2]) ? ((Target[2]) ? m_vj[2]->GetVal() : m_ds[2]->GetVal()) : 0);
 
 		Interrupttmp = false;
 		NoSustain = false;
@@ -1097,19 +1087,27 @@ void Mapping::Run(double average)
 					}
 		}
 
-		OnReleaseValue = (Macro == 2 || NoSustain) ? release0 : 0xFF;
-		if (!OrXorNot[0])
-			m_data = (exists0) ?
-			((pushed0) ? value0 : ((released) ? OnReleaseValue : release0)) :
-			((released) ? 0xFF : 0);
-		else if (!OrXorNot[1])
-			m_data = (exists0) ?
-			((pushed0) ? value0 : ((released) ? OnReleaseValue : ((exists1) ? ((pushed1) ? value1 : release0) : release0))) :
-			((released) ? 0xFF : ((exists1) ? ((pushed1) ? value1 : 0) : 0));
-		else
-			m_data = (exists0) ?
-			((pushed0) ? value0 : ((released) ? OnReleaseValue : ((exists1) ? ((pushed1) ? value1 : ((exists2) ? ((pushed2) ? value2 : release0) : release0)) : ((exists2) ? ((pushed2) ? value2 : release0) : release0)))) :
-			((released) ? 0xFF : ((exists1) ? ((pushed1) ? value1 : ((exists2) ? ((pushed2) ? value2 : 0) : 0)) : ((exists2) ? ((pushed2) ? value2 : 0) : 0)));
+		m_data = (exists[0]) ?
+			((released && Macro != 2 && !NoSustain) ?
+				0xFF :
+				((pushed[0]) ?
+					value0 :
+					((OrXorNot[0] && exists[1]) ?
+						((pushed[1]) ?
+							value1 :
+							((OrXorNot[1] && exists[2]) ?
+								((pushed[2]) ?
+									value2 :
+									releasedVal[0]) :
+								releasedVal[0])) :
+						releasedVal[0]))) :
+			((released && Macro != 2 && !NoSustain) ?
+				0xFF :
+				((exists[1]) ?
+					releasedVal[1] :
+					((exists[2]) ?
+						releasedVal[2] :
+						0)));
 
 		TimeActiondone = -1;
 		for (int i = 0; i < 8; i++)
@@ -1520,56 +1518,56 @@ BOOL Mapping::CanBeActivated()
 {
 	if (!OrXorNot[0] && !OrXorNot[1])
 	{
-		if ((lastpushed0 && disabled[0]) ||
-			(lastpushed1 && disabled[1]) ||
-			(lastpushed2 && disabled[2]))
+		if ((lastpushed[0] && disabled[0]) ||
+			(lastpushed[1] && disabled[1]) ||
+			(lastpushed[2] && disabled[2]))
 			return FALSE;
 	}
 	else if (OrXorNot[0] && !OrXorNot[1])
 	{
-		if (lastpushed0 && lastpushed1)
+		if (lastpushed[0] && lastpushed[1])
 		{
-			if ((disabled[0] && disabled[1]) || (lastpushed2 && disabled[2]))
+			if ((disabled[0] && disabled[1]) || (lastpushed[2] && disabled[2]))
 				return FALSE;
 		}
 		else
 		{
-			if ((lastpushed0 && disabled[0]) ||
-				(lastpushed1 && disabled[1]) ||
-				(lastpushed2 && disabled[2]))
+			if ((lastpushed[0] && disabled[0]) ||
+				(lastpushed[1] && disabled[1]) ||
+				(lastpushed[2] && disabled[2]))
 				return FALSE;
 		}
 	}
 	else if (!OrXorNot[0] && OrXorNot[1])
 	{
-		if (lastpushed1 && lastpushed2)
+		if (lastpushed[1] && lastpushed[2])
 		{
-			if ((disabled[1] && disabled[2]) || (lastpushed0 && disabled[0]))
+			if ((disabled[1] && disabled[2]) || (lastpushed[0] && disabled[0]))
 				return FALSE;
 		}
 		else
 		{
-			if ((lastpushed0 && disabled[0]) ||
-				(lastpushed1 && disabled[1]) ||
-				(lastpushed2 && disabled[2]))
+			if ((lastpushed[0] && disabled[0]) ||
+				(lastpushed[1] && disabled[1]) ||
+				(lastpushed[2] && disabled[2]))
 				return FALSE;
 		}
 	}
 	else
 	{
-		if (lastpushed0)
+		if (lastpushed[0])
 		{
-			if (lastpushed1 && lastpushed2)
+			if (lastpushed[1] && lastpushed[2])
 			{
 				if (disabled[0] && disabled[1] && disabled[2])
 					return FALSE;
 			}
-			else if (lastpushed1)
+			else if (lastpushed[1])
 			{
 				if (disabled[0] && disabled[1])
 					return FALSE;
 			}
-			else if (lastpushed2)
+			else if (lastpushed[2])
 			{
 				if (disabled[0] && disabled[2])
 					return FALSE;
@@ -1577,19 +1575,22 @@ BOOL Mapping::CanBeActivated()
 			else if (disabled[0])
 				return FALSE;
 		}
-		else if (lastpushed1 && lastpushed2)
+		else if (lastpushed[1] && lastpushed[2])
 		{
 			if (disabled[1] && disabled[2])
 				return FALSE;
 		}
 		else
 		{
-			if ((lastpushed0 && disabled[0]) ||
-				(lastpushed1 && disabled[1]) ||
-				(lastpushed2 && disabled[2]))
+			if ((lastpushed[0] && disabled[0]) ||
+				(lastpushed[1] && disabled[1]) ||
+				(lastpushed[2] && disabled[2]))
 				return FALSE;
 		}
 	}
+	if ((!OrXorNot[2] && lastpushed[3] && disabled[3]) ||
+		(!OrXorNot[3] && lastpushed[4] && disabled[4]))
+		return FALSE;
 
 	return TRUE;
 }

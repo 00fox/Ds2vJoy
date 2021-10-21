@@ -274,21 +274,14 @@ private:
 	char TimeActiondone = -1;			//If a temporal action has to be done this turn in a decisional order, and which one, to perform only one, at the end of the turn
 	bool GridCanbeUsed = false;			//If this mapping necessite one or several x,y,w,h values, or none (used to determine if we use grid values or not)
 	bool Toggledone[8] = { false };		//If the toggle has been effectued for this macro for this run
-	bool exists0 = false;				//If first source is defined
-	bool exists1 = false;				//If second source is defined
-	bool exists2 = false;				//If third source is defined
-	bool pushed0 = false;				//If first source is pushed
-	bool pushed1 = false;				//If second second is pushed
-	bool pushed2 = false;				//If third source is pushed
-	bool lastpushed0 = false;			//If first source was pushed last turn
-	bool lastpushed1 = false;			//If second second was pushed last turn
-	bool lastpushed2 = false;			//If third source was pushed last turn
-	byte release0 = 0;					//Released value of first source
+	bool exists[5] = { false };			//If source is defined
+	bool pushed[5] = { false };			//If source is pushed
+	bool lastpushed[5] = { false };		//If source was pushed last turn
+	byte releasedVal[5] = { 0 };		//Released value of source
 	bool killed0 = false;				//If first source is killed (like stay pushed more than tape.LongPress while method is short)
 	bool killed1 = false;				//If second source is killed (then we have to wait for release to have a chance to try again)
 	bool disabled[5] = { false };		//If source is disabled
 	unsigned char secondpass = 0;		//If a source is killed but the second is activated, only with OrXorNot[0] && !OrXorNot[1] (except is second source available)
-	byte OnReleaseValue = 0xFF;			//Used value when in On sustain mode (timestamp is sill in use and we have released all sources)
 	std::chrono::system_clock::time_point start;		//start time (of computing method)
 	std::chrono::system_clock::time_point end;			//actual time (of computing method)
 	std::chrono::system_clock::time_point release;		//realease time (of computing method), for double, or wait before eligible again
