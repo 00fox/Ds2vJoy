@@ -188,12 +188,13 @@ public:
 	//|  …     |  1/2   |  (  |   val   |       |         | OrXor |   val   |  )  |
 	//
 	//The source value used to calculate destination value is then:
-	//| OrXor1 | OrXor2 | Source1 |     |     Released ?   |     | Source2 |     | Source3 |     | Source1 |
-	//|:------:|:------:|:-------:|:---:|:----------------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
-	//|   0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
-	//|  1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
-	//|   0    |  1/2   | val ? 0 |  >  |   (see Macro     |     |         |     |         |  >  |released1|
-	//|  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
+	//| OrXor1 | OrXor2 |     Sustain ?    | Source1 |     | Source2 |     | Source3 |     | Source1 |
+	//|:------:|:------:|:----------------:|:-------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
+	//|   0    |   0    |  'No Sustain' ?  |   val   |     |         |     |         |  >  |released1|
+	//|  1/2   |   0    |      > : 0xFF    |   val   |  >  |   val   |     |         |  >  |released1|
+	//|   0    |  1/2   |  (see Controls/  |   val   |     |         |     |         |  >  |released1|
+	//|  1/2   |  1/2   |    Interrupt)    |   val   |  >  |   val   |  >  |   val   |  >  |released1|
+	//* sustain is released and time stamps is in use (and no 'Interrupt' else mapping is stopped when released)
 	//
 	//1 The mapping won't be launched if this button is pressed
 	//2 except if this mapping is already running
