@@ -7,6 +7,7 @@ MappingDataDlg::MappingDataDlg()
 	, m_hDlg()
 	, m_parent()
 	, firsttime(false)
+	, grid(false)
 	, canprint(false)
 	, docked(0)
 	, docked_last(0)
@@ -454,8 +455,10 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				KillTimer(m_hDlg, 1);
 				if (IsWindowVisible(m_hDlg))
 				{
-					Hide();
-					Show();
+					ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_X), SW_HIDE);
+					ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_Y), SW_HIDE);
+					ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_X), SW_SHOW);
+					ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_Y), SW_SHOW);
 				}
 			}
 		}
@@ -549,21 +552,21 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_ADDSTRING, 0, (LPARAM)str);
 					if (mappingData.Target[4])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[0])
+					if (!mappingData.MouseAction[0])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[1])
+					if (!mappingData.MouseAction[1])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[2])
+					if (!mappingData.MouseAction[2])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[3])
+					if (!mappingData.MouseAction[3])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[4])
+					if (!mappingData.MouseAction[4])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[5])
+					if (!mappingData.MouseAction[5])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[6])
+					if (!mappingData.MouseAction[6])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, (LPARAM)str);
-					if ((WPARAM)!mappingData.MouseAction[7])
+					if (!mappingData.MouseAction[7])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, (LPARAM)str);
 				}
 				for (int i = 0; i < Mapping::mouse_Count; i++)
@@ -606,317 +609,322 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 					if (mappingData.MouseAction[7] == 2)
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, (LPARAM)str);
 				}
-				firsttime = true;
 			}
-
-			bool no[8];
-			bool nl[8];
-			for (int i = 0; i < 8; i++)
+			if (!firsttime || grid)
 			{
-				nl[i] = mappingData.NlRelease[i];
-				no[i] = nl[i] || mappingData.NoRelease[i];
-			}
-			if (no[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_1), SW_SHOW); if (nl[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_1), SW_SHOW);
-			if (no[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_2), SW_SHOW); if (nl[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_2), SW_SHOW);
-			if (no[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_3), SW_SHOW); if (nl[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_3), SW_SHOW);
-			if (no[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_4), SW_SHOW); if (nl[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_4), SW_SHOW);
-			if (no[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_5), SW_SHOW); if (nl[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_5), SW_SHOW);
-			if (no[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_6), SW_SHOW); if (nl[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_6), SW_SHOW);
-			if (no[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_7), SW_SHOW); if (nl[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_7), SW_SHOW);
-			if (no[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_8), SW_SHOW); if (nl[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_8), SW_SHOW);
-
-			if (mappingData.Overcontrol[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_1), SW_SHOW);
-			if (mappingData.Overcontrol[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_2), SW_SHOW);
-			if (mappingData.Overcontrol[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_3), SW_SHOW);
-			if (mappingData.Overcontrol[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_4), SW_SHOW);
-			if (mappingData.Overcontrol[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_5), SW_SHOW);
-			if (mappingData.Overcontrol[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_6), SW_SHOW);
-			if (mappingData.Overcontrol[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_7), SW_SHOW);
-			if (mappingData.Overcontrol[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_8), SW_SHOW);
-
-			if (mappingData.Switch[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_1), SW_SHOW);
-			if (mappingData.Switch[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_2), SW_SHOW);
-			if (mappingData.Switch[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_3), SW_SHOW);
-			if (mappingData.Switch[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_4), SW_SHOW);
-			if (mappingData.Switch[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_5), SW_SHOW);
-			if (mappingData.Switch[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_6), SW_SHOW);
-			if (mappingData.Switch[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_7), SW_SHOW);
-			if (mappingData.Switch[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_8), SW_SHOW);
-
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_SETCURSEL, mappingData.dsID[0], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_SETCURSEL, mappingData.dsID[1], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_SETCURSEL, mappingData.dsID[2], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_SETCURSEL, mappingData.dsID[3], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_SETCURSEL, mappingData.dsID[4], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_SETCURSEL, mappingData.vjID[0], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_SETCURSEL, mappingData.vjID[1], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_SETCURSEL, mappingData.vjID[2], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_SETCURSEL, mappingData.vjID[3], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_SETCURSEL, mappingData.vjID[4], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_SETCURSEL, mappingData.vjID[5], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_SETCURSEL, mappingData.vjID[6], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_SETCURSEL, mappingData.vjID[7], 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_1, mappingData.Target[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_2, mappingData.Target[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_3, mappingData.Target[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_4, mappingData.Target[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_TARGET_5, mappingData.Target[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_1_DISABLE, mappingData.dsDisable[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_2_DISABLE, mappingData.dsDisable[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_3_DISABLE, mappingData.dsDisable[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_4_DISABLE, mappingData.dsDisable[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_5_DISABLE, mappingData.dsDisable[4]);
-			if (mappingData.MouseAction[0])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, mappingData.vjDisable[0]);
-			}
-			if (mappingData.MouseAction[1])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, mappingData.vjDisable[1]);
-			}
-			if (mappingData.MouseAction[2])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, mappingData.vjDisable[2]);
-			}
-			if (mappingData.MouseAction[3])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, mappingData.vjDisable[3]);
-			}
-			if (mappingData.MouseAction[4])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, mappingData.vjDisable[4]);
-			}
-			if (mappingData.MouseAction[5])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, mappingData.vjDisable[5]);
-			}
-			if (mappingData.MouseAction[6])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, mappingData.vjDisable[6]);
-			}
-			if (mappingData.MouseAction[7])
-			{
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, BST_UNCHECKED);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE), false);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE), true);
-				CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, mappingData.vjDisable[7]);
-			}
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_2_OR, mappingData.OrXorNot[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_3_OR, mappingData.OrXorNot[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_4_NOT, mappingData.OrXorNot[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_DS_5_NOT, mappingData.OrXorNot[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_IF_MOUSE, mappingData.Ifmouse);
-			CheckDlgButton(hWnd, IDC_MAPPING_FORCE, mappingData.Force);
-			CheckDlgButton(hWnd, IDC_MAPPING_SHORT, mappingData.Short);
-			CheckDlgButton(hWnd, IDC_MAPPING_DOUBLE, mappingData.Double);
-			CheckDlgButton(hWnd, IDC_MAPPING_LONG, mappingData.Long);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_LED, CB_SETCURSEL, mappingData.Led, 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MACRO, mappingData.Macro);
-			CheckDlgButton(hWnd, IDC_MAPPING_PAUSE, mappingData.Pause);
-			CheckDlgButton(hWnd, IDC_MAPPING_TRANSITIVITY, mappingData.Transitivity);
-			CheckDlgButton(hWnd, IDC_MAPPING_TOGGLE, mappingData.Toggle);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_1, mappingData.OnRelease[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_2, mappingData.OnRelease[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_3, mappingData.OnRelease[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_4, mappingData.OnRelease[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_5, mappingData.OnRelease[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_6, mappingData.OnRelease[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_7, mappingData.OnRelease[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_8, mappingData.OnRelease[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_1, mappingData.NoRelease[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_2, mappingData.NoRelease[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_3, mappingData.NoRelease[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_4, mappingData.NoRelease[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_5, mappingData.NoRelease[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_6, mappingData.NoRelease[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_7, mappingData.NoRelease[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_8, mappingData.NoRelease[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_1, mappingData.NlRelease[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_2, mappingData.NlRelease[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_3, mappingData.NlRelease[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_4, mappingData.NlRelease[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_5, mappingData.NlRelease[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_6, mappingData.NlRelease[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_7, mappingData.NlRelease[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_8, mappingData.NlRelease[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_1, mappingData.MouseAction[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_2, mappingData.MouseAction[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_3, mappingData.MouseAction[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_4, mappingData.MouseAction[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_5, mappingData.MouseAction[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_6, mappingData.MouseAction[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_7, mappingData.MouseAction[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_8, mappingData.MouseAction[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_1, mappingData.Overcontrol[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_2, mappingData.Overcontrol[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_3, mappingData.Overcontrol[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_4, mappingData.Overcontrol[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_5, mappingData.Overcontrol[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_6, mappingData.Overcontrol[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_7, mappingData.Overcontrol[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_8, mappingData.Overcontrol[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_1, mappingData.Switch[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_2, mappingData.Switch[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_3, mappingData.Switch[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_4, mappingData.Switch[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_5, mappingData.Switch[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_6, mappingData.Switch[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_7, mappingData.Switch[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_8, mappingData.Switch[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_01, (mappingData.Mouse[0] == 1) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_02, (mappingData.Mouse[0] == 2) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_03, (mappingData.Mouse[0] == 3) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_04, (mappingData.Mouse[0] == 4) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, (mappingData.Mouse[0] == 5) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_11, (mappingData.Mouse[1] == 1) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_12, (mappingData.Mouse[1] == 2) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_13, (mappingData.Mouse[1] == 3) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_14, (mappingData.Mouse[1] == 4) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, (mappingData.Mouse[1] == 5) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_21, (mappingData.Mouse[2] == 1) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_22, (mappingData.Mouse[2] == 2) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_23, (mappingData.Mouse[2] == 3) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_24, (mappingData.Mouse[2] == 4) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, (mappingData.Mouse[2] == 5) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
-			CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_GRID_DEFAULT, mappingData.Mouse[6]);
-
-			canprint = false;
-			TCHAR buf[20];
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[0]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[1]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[2]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[3]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[4]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[5]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[6]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Start[7]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_START), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[0]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[1]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[2]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[3]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[4]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[5]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[6]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Stop[7]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_STOP), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Grid[0]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Grid[1]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Grid[2]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Grid[3]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Grid[4]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), buf);
-			swprintf_s(buf, TEXT("%d"), mappingData.Grid[5]);
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), buf);
-			canprint = true;
-
-			if (
-				(mappingData.Mouse[0] == 5 && !mappingData.Mouse[3]) ||
-				(mappingData.Mouse[1] == 5 && !mappingData.Mouse[4]) ||
-				(mappingData.Mouse[2] == 5 && !mappingData.Mouse[5])
-				)
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), true);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), true);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), true);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), true);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), true);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), true);
-			}
-			else
-			{
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), false);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), false);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), false);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), false);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), false);
-				EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), false);
-
-				for (int i = 0; i < 8; i++)
+				if (
+					(mappingData.Mouse[0] == 5 && !mappingData.Mouse[3]) ||
+					(mappingData.Mouse[1] == 5 && !mappingData.Mouse[4]) ||
+					(mappingData.Mouse[2] == 5 && !mappingData.Mouse[5])
+					)
 				{
-					if (mappingData.MouseAction[i] == 1)
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), true);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), true);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), true);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), true);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), true);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), true);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), false);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), false);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), false);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), false);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), false);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), false);
+
+					for (int i = 0; i < 8; i++)
 					{
-						if (mappingData.vjID[i] == mappingData.MOVE_TO_XY || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_XY)
+						if (mappingData.MouseAction[i] == 1)
 						{
-							EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), true);
-							EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), true);
-						}
-						if (mappingData.vjID[i] == mappingData.MOVE_TO_WH || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_WH)
-						{
-							EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), true);
-							EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), true);
-						}
-						if (mappingData.vjID[i] == mappingData.MOVE_TO_NN || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_NN)
-						{
-							EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), true);
-							EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), true);
+							if (mappingData.vjID[i] == mappingData.MOVE_TO_XY || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_XY)
+							{
+								EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), true);
+								EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), true);
+							}
+							if (mappingData.vjID[i] == mappingData.MOVE_TO_WH || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_WH)
+							{
+								EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), true);
+								EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), true);
+							}
+							if (mappingData.vjID[i] == mappingData.MOVE_TO_NN || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_NN)
+							{
+								EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), true);
+								EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), true);
+							}
 						}
 					}
 				}
 			}
+			if (!grid)
+			{
+				bool no[8];
+				bool nl[8];
+				for (int i = 0; i < 8; i++)
+				{
+					nl[i] = mappingData.NlRelease[i];
+					no[i] = nl[i] || mappingData.NoRelease[i];
+				}
+				if (no[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_1), SW_SHOW); if (nl[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_1), SW_SHOW);
+				if (no[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_2), SW_SHOW); if (nl[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_2), SW_SHOW);
+				if (no[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_3), SW_SHOW); if (nl[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_3), SW_SHOW);
+				if (no[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_4), SW_SHOW); if (nl[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_4), SW_SHOW);
+				if (no[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_5), SW_SHOW); if (nl[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_5), SW_SHOW);
+				if (no[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_6), SW_SHOW); if (nl[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_6), SW_SHOW);
+				if (no[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_7), SW_SHOW); if (nl[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_7), SW_SHOW);
+				if (no[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NORELEASE_8), SW_SHOW); if (nl[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_NLRELEASE_8), SW_SHOW);
+
+				if (mappingData.Overcontrol[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_1), SW_SHOW);
+				if (mappingData.Overcontrol[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_2), SW_SHOW);
+				if (mappingData.Overcontrol[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_3), SW_SHOW);
+				if (mappingData.Overcontrol[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_4), SW_SHOW);
+				if (mappingData.Overcontrol[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_5), SW_SHOW);
+				if (mappingData.Overcontrol[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_6), SW_SHOW);
+				if (mappingData.Overcontrol[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_7), SW_SHOW);
+				if (mappingData.Overcontrol[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_OVERCONTROL_8), SW_SHOW);
+
+				if (mappingData.Switch[0]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_1), SW_SHOW);
+				if (mappingData.Switch[1]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_2), SW_SHOW);
+				if (mappingData.Switch[2]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_3), SW_SHOW);
+				if (mappingData.Switch[3]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_4), SW_SHOW);
+				if (mappingData.Switch[4]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_5), SW_SHOW);
+				if (mappingData.Switch[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_6), SW_SHOW);
+				if (mappingData.Switch[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_7), SW_SHOW);
+				if (mappingData.Switch[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_8), SW_SHOW);
+
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_SETCURSEL, mappingData.dsID[0], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_SETCURSEL, mappingData.dsID[1], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_SETCURSEL, mappingData.dsID[2], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_SETCURSEL, mappingData.dsID[3], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_SETCURSEL, mappingData.dsID[4], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_SETCURSEL, mappingData.vjID[0], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_SETCURSEL, mappingData.vjID[1], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_SETCURSEL, mappingData.vjID[2], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_SETCURSEL, mappingData.vjID[3], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_SETCURSEL, mappingData.vjID[4], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_SETCURSEL, mappingData.vjID[5], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_SETCURSEL, mappingData.vjID[6], 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_SETCURSEL, mappingData.vjID[7], 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_TARGET_1, mappingData.Target[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_TARGET_2, mappingData.Target[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_TARGET_3, mappingData.Target[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_TARGET_4, mappingData.Target[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_TARGET_5, mappingData.Target[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_1_DISABLE, mappingData.dsDisable[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_2_DISABLE, mappingData.dsDisable[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_3_DISABLE, mappingData.dsDisable[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_4_DISABLE, mappingData.dsDisable[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_5_DISABLE, mappingData.dsDisable[4]);
+				if (mappingData.MouseAction[0])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, mappingData.vjDisable[0]);
+				}
+				if (mappingData.MouseAction[1])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, mappingData.vjDisable[1]);
+				}
+				if (mappingData.MouseAction[2])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, mappingData.vjDisable[2]);
+				}
+				if (mappingData.MouseAction[3])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, mappingData.vjDisable[3]);
+				}
+				if (mappingData.MouseAction[4])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, mappingData.vjDisable[4]);
+				}
+				if (mappingData.MouseAction[5])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, mappingData.vjDisable[5]);
+				}
+				if (mappingData.MouseAction[6])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, mappingData.vjDisable[6]);
+				}
+				if (mappingData.MouseAction[7])
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, BST_UNCHECKED);
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE), false);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE), true);
+					CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, mappingData.vjDisable[7]);
+				}
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_2_OR, mappingData.OrXorNot[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_3_OR, mappingData.OrXorNot[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_4_NOT, mappingData.OrXorNot[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_DS_5_NOT, mappingData.OrXorNot[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_IF_MOUSE, mappingData.Ifmouse);
+				CheckDlgButton(hWnd, IDC_MAPPING_FORCE, mappingData.Force);
+				CheckDlgButton(hWnd, IDC_MAPPING_SHORT, mappingData.Short);
+				CheckDlgButton(hWnd, IDC_MAPPING_DOUBLE, mappingData.Double);
+				CheckDlgButton(hWnd, IDC_MAPPING_LONG, mappingData.Long);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_LED, CB_SETCURSEL, mappingData.Led, 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MACRO, mappingData.Macro);
+				CheckDlgButton(hWnd, IDC_MAPPING_PAUSE, mappingData.Pause);
+				CheckDlgButton(hWnd, IDC_MAPPING_TRANSITIVITY, mappingData.Transitivity);
+				CheckDlgButton(hWnd, IDC_MAPPING_TOGGLE, mappingData.Toggle);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_1, mappingData.OnRelease[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_2, mappingData.OnRelease[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_3, mappingData.OnRelease[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_4, mappingData.OnRelease[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_5, mappingData.OnRelease[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_6, mappingData.OnRelease[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_7, mappingData.OnRelease[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_ONRELEASE_8, mappingData.OnRelease[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_1, mappingData.NoRelease[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_2, mappingData.NoRelease[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_3, mappingData.NoRelease[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_4, mappingData.NoRelease[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_5, mappingData.NoRelease[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_6, mappingData.NoRelease[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_7, mappingData.NoRelease[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_8, mappingData.NoRelease[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_1, mappingData.NlRelease[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_2, mappingData.NlRelease[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_3, mappingData.NlRelease[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_4, mappingData.NlRelease[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_5, mappingData.NlRelease[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_6, mappingData.NlRelease[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_7, mappingData.NlRelease[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_8, mappingData.NlRelease[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_1, mappingData.MouseAction[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_2, mappingData.MouseAction[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_3, mappingData.MouseAction[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_4, mappingData.MouseAction[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_5, mappingData.MouseAction[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_6, mappingData.MouseAction[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_7, mappingData.MouseAction[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_ACTION_8, mappingData.MouseAction[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_1, mappingData.Overcontrol[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_2, mappingData.Overcontrol[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_3, mappingData.Overcontrol[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_4, mappingData.Overcontrol[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_5, mappingData.Overcontrol[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_6, mappingData.Overcontrol[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_7, mappingData.Overcontrol[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_8, mappingData.Overcontrol[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_1, mappingData.Switch[0]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_2, mappingData.Switch[1]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_3, mappingData.Switch[2]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_4, mappingData.Switch[3]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_5, mappingData.Switch[4]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_6, mappingData.Switch[5]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_7, mappingData.Switch[6]);
+				CheckDlgButton(hWnd, IDC_MAPPING_SWITCH_8, mappingData.Switch[7]);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_01, (mappingData.Mouse[0] == 1) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_02, (mappingData.Mouse[0] == 2) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_03, (mappingData.Mouse[0] == 3) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_04, (mappingData.Mouse[0] == 4) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, (mappingData.Mouse[0] == 5) ? ((mappingData.Mouse[3]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_11, (mappingData.Mouse[1] == 1) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_12, (mappingData.Mouse[1] == 2) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_13, (mappingData.Mouse[1] == 3) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_14, (mappingData.Mouse[1] == 4) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, (mappingData.Mouse[1] == 5) ? ((mappingData.Mouse[4]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_21, (mappingData.Mouse[2] == 1) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_22, (mappingData.Mouse[2] == 2) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_23, (mappingData.Mouse[2] == 3) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_24, (mappingData.Mouse[2] == 4) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, (mappingData.Mouse[2] == 5) ? ((mappingData.Mouse[5]) ? 2 : 1) : 0);
+				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_GRID_DEFAULT, mappingData.Mouse[6]);
+
+				canprint = false;
+				TCHAR buf[20];
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[0]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[1]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[2]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[3]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[4]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[5]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[6]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Start[7]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_START), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[0]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[1]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[2]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[3]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[4]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[5]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[6]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Stop[7]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_STOP), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Grid[0]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Grid[1]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Grid[2]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Grid[3]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_H), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Grid[4]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW), buf);
+				swprintf_s(buf, TEXT("%d"), mappingData.Grid[5]);
+				SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH), buf);
+				canprint = true;
+			}
+			grid = false;
+			firsttime = true;
 		}
 		break;
 	case WM_INITDIALOG:
@@ -1021,6 +1029,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[0] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID1] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1030,6 +1039,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[1] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID2] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1039,6 +1049,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[2] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID3] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1048,6 +1059,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[3] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID4] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1057,6 +1069,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[4] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID5] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1066,6 +1079,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[5] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID6] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1075,6 +1089,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[6] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID7] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1084,6 +1099,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				mappingData.vjID[7] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID8] = true;
+				grid = true;
 				Hide();
 				Show();
 			}
@@ -1746,7 +1762,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_02, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_03, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_04, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_05))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1755,8 +1777,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse1] = true;
 			Modified[Mofified_Mouse4] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_02:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1766,7 +1786,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_01, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_03, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_04, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_05))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1775,8 +1801,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse1] = true;
 			Modified[Mofified_Mouse4] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_03:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1786,7 +1810,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_01, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_02, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_04, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_05))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1795,8 +1825,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse1] = true;
 			Modified[Mofified_Mouse4] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_04:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1806,7 +1834,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_01, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_02, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_03, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_05))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_05, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1815,8 +1849,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse1] = true;
 			Modified[Mofified_Mouse4] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_05:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1835,6 +1867,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse1] = true;
 			Modified[Mofified_Mouse4] = true;
+			grid = true;
 			Hide();
 			Show();
 			break;
@@ -1846,7 +1879,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_12, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_13, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_14, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_15))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1855,8 +1894,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse2] = true;
 			Modified[Mofified_Mouse5] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_12:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1866,7 +1903,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_11, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_13, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_14, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_15))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1875,8 +1918,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse2] = true;
 			Modified[Mofified_Mouse5] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_13:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1886,7 +1927,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_11, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_12, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_14, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_15))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1895,8 +1942,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse2] = true;
 			Modified[Mofified_Mouse5] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_14:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1906,7 +1951,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_11, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_12, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_13, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_15))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_15, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1915,8 +1966,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse2] = true;
 			Modified[Mofified_Mouse5] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_15:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1935,6 +1984,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse2] = true;
 			Modified[Mofified_Mouse5] = true;
+			grid = true;
 			Hide();
 			Show();
 			break;
@@ -1946,7 +1996,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_22, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_23, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_24, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_25))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1955,8 +2011,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse3] = true;
 			Modified[Mofified_Mouse6] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_22:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1966,7 +2020,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_21, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_23, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_24, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_25))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1975,8 +2035,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse3] = true;
 			Modified[Mofified_Mouse6] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_23:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -1986,7 +2044,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_21, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_22, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_24, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_25))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -1995,8 +2059,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse3] = true;
 			Modified[Mofified_Mouse6] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_24:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -2006,7 +2068,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_21, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_22, BST_UNCHECKED);
 				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_23, BST_UNCHECKED);
-				CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+				if (IsDlgButtonChecked(hWnd, IDC_MAPPING_MOUSE_25))
+				{
+					CheckDlgButton(hWnd, IDC_MAPPING_MOUSE_25, BST_UNCHECKED);
+					grid = true;
+					Hide();
+					Show();
+				}
 			}
 			else
 			{
@@ -2015,8 +2083,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse3] = true;
 			Modified[Mofified_Mouse6] = true;
-			Hide();
-			Show();
 			break;
 		case IDC_MAPPING_MOUSE_25:
 			if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
@@ -2035,6 +2101,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 			Modified[Mofified_Mouse3] = true;
 			Modified[Mofified_Mouse6] = true;
+			grid = true;
 			Hide();
 			Show();
 			break;

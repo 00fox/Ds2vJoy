@@ -159,6 +159,7 @@ private:
 	HWND m_parent;
 
 	bool firsttime;
+	bool grid;
 	bool canprint;
 	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now() - std::chrono::milliseconds(4000);
