@@ -242,12 +242,13 @@ Over two next sources you'll find 'or', double 'xor' conditions instead of simpl
 
 - The source value used to calculate destination value is then:
 
-| OrXor1 | OrXor2 | Source1 |     |     Released ?   |     | Source2 |     | Source3 |     | Source1 |
-|:------:|:------:|:-------:|:---:|:----------------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
-|   0    |   0    | val ? 0 |  >  |     Sustain ?    |     |         |     |         |  >  |released1|
-|  1/2   |   0    | val ? 0 |  >  | 0xFF : released1 |  >  | val ? 0 |     |         |  >  |released1|
-|   0    |  1/2   | val ? 0 |  >  |  (see Interrupt  |     |         |     |         |  >  |released1|
-|  1/2   |  1/2   | val ? 0 |  >  |    condition)    |  >  | val ? 0 |  >  | val ? 0 |  >  |released1|
+| OrXor1 | OrXor2 |     Sustain ?    | Source1 |     | Source2 |     | Source3 |     | Source1 |
+|:------:|:------:|:----------------:|:-------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
+|   0    |   0    |  'No Sustain' ?  |   val   |     |         |     |         |  >  |released1|
+|  1/2   |   0    |      > : 0xFF    |   val   |  >  |   val   |     |         |  >  |released1|
+|   0    |  1/2   |  (see Controls/  |   val   |     |         |     |         |  >  |released1|
+|  1/2   |  1/2   |    Interrupt)    |   val   |  >  |   val   |  >  |   val   |  >  |released1|
+* sustain is released and time stamps is in use (and no 'Interrupt' else mapping is stopped when released)
 
 ______________________________________________________________________________________ Not
 
@@ -288,6 +289,8 @@ ________________________________________________________________________________
 Under central led, you'll find 4 checkboxes
 - Interrupt: Interrupt macros on release (even if timestamp not finished)
   - double, No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
+    - second source too if first is not pushed and OrXor1
+    - third source too if first is not pushed, second isn't in used and OrXor1 + OrXor2
 - Pause: pause this mapping while a 'not' condition
   - otherwise:
     - if 'not' is a simple, and 'not' button is pressed, the mapping is interrupted
