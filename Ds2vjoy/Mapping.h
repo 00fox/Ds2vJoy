@@ -246,6 +246,7 @@ public:
 	WCHAR Notice[MAX_PATH];
 
 private:
+	void PreLaunchDisable();			//Disable vJoy buttons during Short, First step of Double and Longs, if dsDisable[i] == 2
 	BOOL CanBeActivated();				//Used for Short/Double to know if it can be activated/available to run second step, taking account of disable states and Or/Xor conditions
 	dsButton* m_ds[5] = { 0 };
 	vJoyButton* m_vj[13] = { 0 };

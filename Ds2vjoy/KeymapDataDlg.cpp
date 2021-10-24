@@ -51,6 +51,7 @@ void KeymapDataDlg::Open(HWND parent, int mode)
 	PostMessage(m_hWnd, WM_SIZE, 0, -1);
 }
 
+/*
 INT_PTR KeymapDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	KeymapDataDlg* dlg;
@@ -65,6 +66,27 @@ INT_PTR KeymapDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return dlg->_proc(hWnd, uMsg, wParam, lParam);
 	else
 		return NULL;
+}
+*/
+
+INT_PTR CALLBACK KeymapDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam)
+{
+	KeymapDataDlg* dlg;
+
+	if (uMsg == WM_INITDIALOG)
+	{
+		dlg = reinterpret_cast<KeymapDataDlg*>(lparam);
+		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+	}
+	else
+		dlg = reinterpret_cast<KeymapDataDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+	if (dlg)
+	{
+		INT_PTR result;
+		result = dlg->_proc(hWnd, uMsg, wparam, lparam);
+		return result;
+	}
+	return DefWindowProcW(hWnd, uMsg, wparam, lparam);
 }
 
 INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -35,6 +35,7 @@ void RapidFireDataDlg::Open(HWND parent, int mode)
 	PostMessage(m_hWnd, WM_SIZE, 0, -1);
 }
 
+/*
 INT_PTR RapidFireDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	RapidFireDataDlg* dlg;
@@ -49,6 +50,27 @@ INT_PTR RapidFireDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		return dlg->_proc(hWnd, uMsg, wParam, lParam);
 	else
 		return NULL;
+}
+*/
+
+INT_PTR CALLBACK RapidFireDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam)
+{
+	RapidFireDataDlg* dlg;
+
+	if (uMsg == WM_INITDIALOG)
+	{
+		dlg = reinterpret_cast<RapidFireDataDlg*>(lparam);
+		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+	}
+	else
+		dlg = reinterpret_cast<RapidFireDataDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+	if (dlg)
+	{
+		INT_PTR result;
+		result = dlg->_proc(hWnd, uMsg, wparam, lparam);
+		return result;
+	}
+	return DefWindowProcW(hWnd, uMsg, wparam, lparam);
 }
 
 INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

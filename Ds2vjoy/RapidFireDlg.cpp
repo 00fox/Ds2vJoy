@@ -86,6 +86,7 @@ void RapidFireDlg::redrawMenu(int ntabs)
 	}
 }
 
+/*
 INT_PTR RapidFireDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	RapidFireDlg* dlg;
@@ -100,6 +101,27 @@ INT_PTR RapidFireDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return dlg->_proc(hWnd, uMsg, wParam, lParam);
 	else
 		return NULL;
+}
+*/
+
+INT_PTR CALLBACK RapidFireDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam)
+{
+	RapidFireDlg* dlg;
+
+	if (uMsg == WM_INITDIALOG)
+	{
+		dlg = reinterpret_cast<RapidFireDlg*>(lparam);
+		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+	}
+	else
+		dlg = reinterpret_cast<RapidFireDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+	if (dlg)
+	{
+		INT_PTR result;
+		result = dlg->_proc(hWnd, uMsg, wparam, lparam);
+		return result;
+	}
+	return DefWindowProcW(hWnd, uMsg, wparam, lparam);
 }
 
 INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

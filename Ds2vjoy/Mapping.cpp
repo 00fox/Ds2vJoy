@@ -254,6 +254,9 @@ const WCHAR* Mapping::vJoyString()
 
 const WCHAR* Mapping::NoticeString()
 {
+	if (Enable == 2)
+		return L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒";
+
 	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
 	WCHAR* head = buf;
@@ -873,12 +876,16 @@ void Mapping::Run(double average)
 						if (pushed[0]) { killed0 = true; }
 						if (pushed[1]) { killed1 = true; }
 					}
+				if (!killed)
+					PreLaunchDisable();
 				break;
 			case 4: //Long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
 					killed = true;
 				if (end - start >= std::chrono::milliseconds(tape.LongPress) && !killed)
 					activated = true;
+				if (!killed)
+					PreLaunchDisable();
 				break;
 			case 2: //Double
 				if (available)
@@ -892,12 +899,16 @@ void Mapping::Run(double average)
 						killed = true;
 				}
 				else
+				{
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
 						if (pushed[0]) { killed0 = true; }
 						if (pushed[1]) { killed1 = true; }
 					}
+					if (!killed)
+						PreLaunchDisable();
+				}
 				break;
 			case 5: //Double short
 				if (available)
@@ -912,12 +923,16 @@ void Mapping::Run(double average)
 						killed = true;
 				}
 				else
+				{
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
 						if (pushed[0]) { killed0 = true; }
 						if (pushed[1]) { killed1 = true; }
 					}
+					if (!killed)
+						PreLaunchDisable();
+				}
 				break;
 			case 6: //Double long
 				if (available)
@@ -932,24 +947,32 @@ void Mapping::Run(double average)
 						killed = true;
 				}
 				else
+				{
 					if (end - start >= std::chrono::milliseconds(tape.LongPress))
 					{
 						killed = true;
 						if (pushed[0]) { killed0 = true; }
 						if (pushed[1]) { killed1 = true; }
 					}
+					if (!killed)
+						PreLaunchDisable();
+				}
 				break;
 			case 7: //Medium long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
 					killed = true;
 				if (end - start > std::chrono::milliseconds(tape.LongPress * 2) && !killed)
 					activated = true;
+				if (!killed)
+					PreLaunchDisable();
 				break;
 			case 8: //Very long
 				if (end - release < std::chrono::milliseconds(tape.LongPress))
 					killed = true;
 				if (end - start > std::chrono::milliseconds(tape.VeryLongPress) && !killed)
 					activated = true;
+				if (!killed)
+					PreLaunchDisable();
 				break;
 			}
 		}
@@ -975,22 +998,7 @@ void Mapping::Run(double average)
 						available = false;
 					}
 					else
-					{
-						for (int i = 0; i < 5; i++)
-						{
-							if (dsDisable[i] == 2)
-								if (Target[i])
-								{
-									if (m_vj[i])
-										vjDisabled.push_back(dsID[i]);
-								}
-								else
-								{
-									if (m_ds[i])
-										dsDisabled.push_back(dsID[i]);
-								}
-						}
-					}
+						PreLaunchDisable();
 				}
 				break;
 			case 4: //Long
@@ -1008,20 +1016,7 @@ void Mapping::Run(double average)
 					{
 						if (CanBeActivated())
 							available = true;
-						for (int i = 0; i < 5; i++)
-						{
-							if (dsDisable[i] == 2)
-								if (Target[i])
-								{
-									if (m_vj[i])
-										vjDisabled.push_back(dsID[i]);
-								}
-								else
-								{
-									if (m_ds[i])
-										dsDisabled.push_back(dsID[i]);
-								}
-						}
+						PreLaunchDisable();
 					}
 				}
 				break;
@@ -1420,7 +1415,10 @@ void Mapping::Run(double average)
 					if (Target[i])
 					{
 						if (m_vj[i])
+						{
 							vjDisabled.push_back(dsID[i]);
+							m_vj[i]->SetPushed(false);
+						}
 					}
 					else
 					{
@@ -1430,15 +1428,13 @@ void Mapping::Run(double average)
 			}
 			for (int i = 0; i < 8; i++)
 			{
-				if (vjDisable[i] == 2)
+				if ((vjDisable[i] == 2) || (vjDisable[i] == 1 && started[i] && !done[i]))
 				{
 					if (m_vj[i + 5])
+					{
 						vjDisabled.push_back(vjID[i]);
-				}
-				else if (vjDisable[i] == 1 && started[i] && !done[i])
-				{
-					if (m_vj[i + 5])
-						vjDisabled.push_back(vjID[i]);
+						m_vj[i + 5]->SetPushed(false);
+					}
 				}
 			}
 		}
@@ -1512,6 +1508,27 @@ void Mapping::Run(double average)
 	}
 
 	cycle = (cycle == 18446744073709551615) ? 0 : cycle + 1;
+}
+
+void Mapping::PreLaunchDisable()
+{
+	for (int i = 0; i < 5; i++)
+	{
+		if (dsDisable[i] == 2)
+			if (Target[i])
+			{
+				if (m_vj[i])
+				{
+					vjDisabled.push_back(dsID[i]);
+					m_vj[i]->SetPushed(false);
+				}
+			}
+			else
+			{
+				if (m_ds[i])
+					dsDisabled.push_back(dsID[i]);
+			}
+	}
 }
 
 BOOL Mapping::CanBeActivated()

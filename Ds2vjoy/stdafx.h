@@ -50,6 +50,7 @@ using namespace std::filesystem;
 #include "Log.h"						//Log
 #include <Commdlg.h>					//SettingDlg
 #include "time.h"						//Mapping & dsButton
+#include <bitset>						//MappingDlg
 //#include <vector>						//Keymap
 //#include <map>						//RapidFire
 #include <psapi.h>						//Guardian (EnumProcesses, EnumProcessModules & GetModuleBaseName)

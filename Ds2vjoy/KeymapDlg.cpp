@@ -87,6 +87,7 @@ void KeymapDlg::redrawMenu(int ntabs)
 	}
 }
 
+/*
 INT_PTR CALLBACK KeymapDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	KeymapDlg* dlg;
@@ -101,6 +102,27 @@ INT_PTR CALLBACK KeymapDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		return dlg->_proc(hWnd, uMsg, wParam, lParam);
 	else
 		return NULL;
+}
+*/
+
+INT_PTR CALLBACK KeymapDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam)
+{
+	KeymapDlg* dlg;
+
+	if (uMsg == WM_INITDIALOG)
+	{
+		dlg = reinterpret_cast<KeymapDlg*>(lparam);
+		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+	}
+	else
+		dlg = reinterpret_cast<KeymapDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+	if (dlg)
+	{
+		INT_PTR result;
+		result = dlg->_proc(hWnd, uMsg, wparam, lparam);
+		return result;
+	}
+	return DefWindowProcW(hWnd, uMsg, wparam, lparam);
 }
 
 INT_PTR KeymapDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

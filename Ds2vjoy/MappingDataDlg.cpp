@@ -77,7 +77,6 @@ INT_PTR CALLBACK MappingDataDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wparam, LPARA
 	if (uMsg == WM_INITDIALOG)
 	{
 		dlg = reinterpret_cast<MappingDataDlg*>(lparam);
-		dlg->m_hDlg = hWnd;
 		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
 	}
 	else

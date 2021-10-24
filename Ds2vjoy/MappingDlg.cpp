@@ -2,7 +2,6 @@
 #include "MappingDlg.h"
 #include "MappingDataDlg.h"
 #include "Ds2vJoy.h"
-#include <bitset>
 
 MappingDlg::MappingDlg()
 	:m_hWnd(0)
@@ -312,6 +311,7 @@ void MappingDlg::redrawListReminder()
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_32), 458, win.bottom - win.top - 17, 11, 11, FALSE);
 }
 
+/*
 INT_PTR MappingDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	MappingDlg* dlg;
@@ -326,6 +326,27 @@ INT_PTR MappingDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return dlg->_proc(hWnd, uMsg, wParam, lParam);
 	else
 		return NULL;
+}
+*/
+
+INT_PTR CALLBACK MappingDlg::Proc(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam)
+{
+	MappingDlg* dlg;
+
+	if (uMsg == WM_INITDIALOG)
+	{
+		dlg = reinterpret_cast<MappingDlg*>(lparam);
+		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+	}
+	else
+		dlg = reinterpret_cast<MappingDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+	if (dlg)
+	{
+		INT_PTR result;
+		result = dlg->_proc(hWnd, uMsg, wparam, lparam);
+		return result;
+	}
+	return DefWindowProcW(hWnd, uMsg, wparam, lparam);
 }
 
 INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -1858,6 +1879,7 @@ void MappingDlg::addNoticeDlg()
 				GetWindowRect(m_hWnd, &rect);
 				GetWindowRect(m_hDlg2, &rect2);
 				MoveWindow2(rect.left + 275, rect.top + 30, rect2.right - rect2.left, rect2.bottom - rect2.top, false);
+				WCHAR* ret = lstrcpynW(NoticeDlg, mDDlg.mappingData.Notice, MAX_PATH);
 				SetWindowText(GetDlgItem(m_hDlg2, IDC_MIND_TEXT), mDDlg.mappingData.Notice);
 				SetFocus(m_hDlg2);
 			}
