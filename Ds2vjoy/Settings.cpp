@@ -618,7 +618,7 @@ void Settings::Load(int category)
 			int dstotalvalues_DS4 = 0;
 			int vjtotalvalues_DS4 = 0;
 			WCHAR* head = buf;
-			int ret = GetPrivateProfileSectionW(ViGEmtxt, buf, sizeof(buf), m_file);
+			int ret = GetPrivateProfileSectionW(ViGEmtxt, buf, n, m_file);
 			if (ret > 0 && ret - 2 != n)
 			{
 				WCHAR* key = head, * value;
