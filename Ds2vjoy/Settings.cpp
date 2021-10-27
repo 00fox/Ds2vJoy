@@ -8,6 +8,33 @@ Settings::Settings()
 
 Settings::~Settings()
 {
+	DeleteObject(hB_BackGround);
+	DeleteObject(hB_Back_CLONE);
+	DeleteObject(hB_Grey);
+	DeleteObject(hB_DLG);
+	DeleteObject(hB_MSGBOX);
+	DeleteObject(hB_SCROLLBAR);
+	DeleteObject(hB_BTN);
+	DeleteObject(hB_BTN_Border);
+	DeleteObject(hB_Not_Installed);
+	DeleteObject(hB_Running);
+	DeleteObject(hB_Stopped);
+	DeleteObject(hB_Paused);
+	DeleteObject(hB_STATIC);
+	DeleteObject(hB_STATIC_Mouse1);
+	DeleteObject(hB_STATIC_Mouse2);
+	DeleteObject(hB_STATIC_POSTIT);
+	DeleteObject(hB_POSTIT_RAND0);
+	DeleteObject(hB_POSTIT_RAND1);
+	DeleteObject(hB_POSTIT_RAND2);
+	DeleteObject(hB_POSTIT_RAND3);
+	DeleteObject(hB_EDIT);
+	DeleteObject(hB_EDIT_TERMINAL);
+	DeleteObject(hB_LISTBOX);
+	DeleteObject(hB_MENU);
+	DeleteObject(hB_MENU_CLONE);
+	DeleteObject(hB_MENU_SELECTED);
+	DeleteObject(hB_MENU_HIGHLIGHT);
 }
 
 void Settings::Init(HINSTANCE hInst, HWND hWnd)
@@ -229,7 +256,17 @@ void Settings::Load(int category)
 						case Mapping_OrXorNot:	for (int i = 0; i < 4; i++) { btn.OrXorNot[i] = max(0, min(2, CheckboxString(key, i))); } break;
 						case Mapping_dsDisable:	for (int i = 0; i < 5; i++) { btn.dsDisable[i] = max(0, min(2, CheckboxString(key, i))); } break;
 						case Mapping_MouseAction:for (int i = 0; i < 8; i++) { btn.MouseAction[i] = max(0, min(2, CheckboxString(key, i))); } break;
-						case Mapping_vjID:		for (int i = 0; i < 8; i++) { btn.vjID[i] = max(0, min((btn.MouseAction[i]) ? ((btn.MouseAction[i] == 1) ? Mapping::mouse_Count : vJoyAxisMoveID::axismove_Count) : vJoyButtonID::button_Count, vjIDString(key, i))); } break;
+						case Mapping_vjID:		for (int i = 0; i < 8; i++)
+						{
+							btn.vjID[i] = max(0, min((btn.MouseAction[i]) ? ((btn.MouseAction[i] == 1) ? Mapping::mouse_Count : vJoyAxisMoveID::axismove_Count) : vJoyButtonID::button_Count, vjIDString(key, i)));
+							if (VersionDateCheck < 202110261 && btn.MouseAction[i] == 1)
+							{
+								if (btn.vjID[i] > 47)
+									btn.vjID[i] += 10;
+								else if (btn.vjID[i] > 38)
+									btn.vjID[i] += 1;
+							}
+						} break;
 						case Mapping_Overcontrol:for (int i = 0; i < 8; i++) { btn.Overcontrol[i] = max(0, min(2, CheckboxString(key, i))); } break;
 						case Mapping_Switch:	for (int i = 0; i < 8; i++) { btn.Switch[i] = max(0, min(2, CheckboxString(key, i))); } break;
 						case Mapping_OnRelease:	for (int i = 0; i < 8; i++) { btn.OnRelease[i] = max(0, min(2, CheckboxString(key, i))); } break;

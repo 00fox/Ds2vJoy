@@ -100,6 +100,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	switch (uMsg)
 	{
 //	case WM_NCCALCSIZE:
+// 	{
 //		if (wParam)
 //		{
 //			NCCALCSIZE_PARAMS FAR* lpncsp = (NCCALCSIZE_PARAMS FAR*)lParam;
@@ -108,60 +109,77 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //			return TRUE;
 //		}
 //		return FALSE;
+//	}
 	case WM_CTLCOLORDLG:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_DLG);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_DLG);
+		return (LRESULT)tape.hB_DLG;
+	}
 	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_MSGBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		return (LRESULT)tape.hB_MSGBOX;
+	}
 	case WM_CTLCOLORSCROLLBAR:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_SCROLLBAR);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(191, 200, 196));
-		return (LRESULT)hBrushColor;
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
 	}
 	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_BTN);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		return (LRESULT)tape.hB_BTN;
+	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
 		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_STATIC);
 		if (CtrlID == IDC_MAPPING_X || CtrlID == IDC_MAPPING_Y)
 		{
-			hBrushColor = (danger) ? CreateSolidBrush(RGB(180, 0, 180)) : CreateSolidBrush(RGB(180, 180, 0));
 			if (danger)
-				SetTextColor(hdcStatic, RGB(224, 224, 255));
+			{
+				SetTextColor(hdcStatic, tape.Tx_STATIC_Mouse2);
+				return (LRESULT)tape.hB_STATIC_Mouse2;
+			}
 			else
-				SetTextColor(hdcStatic, RGB(24, 24, 92));
+			{
+				SetTextColor(hdcStatic, tape.Tx_STATIC_Mouse1);
+				return (LRESULT)tape.hB_STATIC_Mouse1;
+			}
 		}
 		else
 		{
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
-			SetTextColor(hdcStatic, RGB(24, 24, 92));
+			SetTextColor(hdcStatic, tape.Tx_STATIC);
+			return (LRESULT)tape.hB_STATIC;
 		}
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(36, 163, 163));
-		return (LRESULT)hBrushColor;
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
-		SetTextColor(hdcStatic, RGB(62, 20, 102));
+		SetTextColor(hdcStatic, tape.Tx_EDIT);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
+		return (LRESULT)tape.hB_EDIT;
 	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_LISTBOX);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
+		return (LRESULT)tape.hB_LISTBOX;
 	}
 	case WM_PAINT:
 	{
@@ -171,12 +189,10 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			HDC hDC = BeginPaint(hWnd, &ps);
 
 			RECT rect;
-
 			GetClientRect(hWnd, &rect);
+			FillRect(hDC, &rect, tape.hB_BackGround);
 
-			HBRUSH brush = CreateSolidBrush(RGB(210, 210, 215));
-			FillRect(hDC, &rect, brush);
-			DeleteObject(brush);
+			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
 		}
 		return FALSE;

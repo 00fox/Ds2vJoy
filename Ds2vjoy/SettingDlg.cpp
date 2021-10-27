@@ -39,56 +39,62 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CTLCOLORDLG:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_DLG);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_DLG);
+		return (LRESULT)tape.hB_DLG;
+	}
 	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_MSGBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		return (LRESULT)tape.hB_MSGBOX;
+	}
 	case WM_CTLCOLORSCROLLBAR:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_SCROLLBAR);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(191, 200, 196));
-		return (LRESULT)hBrushColor;
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
 	}
 	case WM_CTLCOLORBTN:
 	{
 		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_BTN);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return TRUE;
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		return (LRESULT)tape.hB_BTN;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
 		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
 		if (CtrlID == IDC_STATIC_EXITING)
-			SetTextColor(hdcStatic, RGB(10, 10, 10));
+			SetTextColor(hdcStatic, tape.Tx_STATIC_EXITING);
 		else
-			SetTextColor(hdcStatic, RGB(100, 93, 79));
+			SetTextColor(hdcStatic, tape.Tx_STATIC);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(36, 163, 163));
-		return (LRESULT)hBrushColor;
+		SetBkColor(hdcStatic, tape.Bk_STATIC);
+		return (LRESULT)tape.hB_STATIC;
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_EDIT);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
+		return (LRESULT)tape.hB_EDIT;
 	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_LISTBOX);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
+		return (LRESULT)tape.hB_LISTBOX;
 	}
 	case WM_PAINT:
 	{
@@ -99,44 +105,42 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			HBRUSH brush = CreateSolidBrush(RGB(210, 210, 215));
-			FillRect(hDC, &rect, brush);
+			FillRect(hDC, &rect, tape.hB_BackGround);
 //			Rectangle(hDC, 122, 199, 261, 225);
 //			RoundRect(hDC, 118, 142, 256, 186, 20, 20);
 
+			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
 
 			HWND ledbutton = GetDlgItem(hWnd, IDC_COLOR);
 			hDC = BeginPaint(ledbutton, &ps);
 			GetClientRect(ledbutton, &rect);
 
-			brush = CreateSolidBrush(RGB(128, 128, 128));
 			DrawEdge(hDC, &rect, EDGE_RAISED, BF_RECT);
 
-			brush = CreateSolidBrush(RGB(210, 210, 215));
 			rect.top -= 1;
 			rect.left -= 1;
 			rect.right += 1;
 			rect.bottom += 1;
 			DrawFocusRect(hDC, &rect);
 
-			DWORD ledcolor = tape.LED_Color;
-
-			brush = CreateSolidBrush(RGB(GetRValue(ledcolor), GetGValue(ledcolor), GetBValue(ledcolor)));
 			rect.top += 4;
 			rect.left += 4;
 			rect.right -= 4;
 			rect.bottom -= 4;
+			DWORD ledcolor = tape.LED_Color;
+			HBRUSH brush = CreateSolidBrush(RGB(GetRValue(ledcolor), GetGValue(ledcolor), GetBValue(ledcolor)));
 			FillRect(hDC, &rect, brush);
+			DeleteObject(brush);
 
 			if (GetRValue(ledcolor) + GetGValue(ledcolor) + GetBValue(ledcolor) > 381)
-				SetTextColor(hDC, RGB(45, 45, 45));
+				SetTextColor(hDC, tape.Tx_BTN_Heavy);
 			else
-				SetTextColor(hDC, RGB(210, 210, 215));
+				SetTextColor(hDC, tape.Tx_BTN_Light);
 
 			DrawText(hDC, L"LED", 3, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-			DeleteObject(brush);
+			::ReleaseDC(hWnd, hDC);
 			EndPaint(ledbutton, &ps);
 		}
 		return FALSE;

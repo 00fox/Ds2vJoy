@@ -246,8 +246,11 @@ struct LANGSTRS
 	WCHAR* MouseAction_VOLUME_UP;
 	WCHAR* MouseAction_VOLUME_DOWN;
 	WCHAR* MouseAction_MEMORIZE_MODE;
+	WCHAR* MouseAction_TO_MEM_MODE;
 	WCHAR* MouseAction_TO_MODE;
 	WCHAR* MouseAction_TO_LAST_MODE;
+	WCHAR* MouseAction_BASE_TO_MODE;
+	WCHAR* MouseAction_TO_BASE_MODE;
 	WCHAR* MouseAction_FORGOT_RELEASED;
 	WCHAR* MouseAction_IF_RELEASED_GOTO;
 	WCHAR* MouseAction_IF_PUSHED_GOTO;

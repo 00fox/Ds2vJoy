@@ -251,8 +251,11 @@ void LoadLanguage()
 	I18N.MouseAction_VOLUME_UP = GetText(IDS_MOUSE_VOLUME_UP, L"Volume up");
 	I18N.MouseAction_VOLUME_DOWN = GetText(IDS_MOUSE_VOLUME_DOWN, L"Volume down");
 	I18N.MouseAction_MEMORIZE_MODE = GetText(IDS_MOUSE_MEMORIZE_MODE, L"Memorize mode");
+	I18N.MouseAction_TO_MEM_MODE = GetText(IDS_MOUSE_TO_MEM_MODE, L"To Last Mode");
 	I18N.MouseAction_TO_MODE = GetText(IDS_MOUSE_TO_MODE, L"To Mode: ");
 	I18N.MouseAction_TO_LAST_MODE = GetText(IDS_MOUSE_TO_LAST_MODE, L"To Last Mode");
+	I18N.MouseAction_BASE_TO_MODE = GetText(IDS_MOUSE_BASE_TO_MODE, L"Base To: ");
+	I18N.MouseAction_TO_BASE_MODE = GetText(IDS_MOUSE_TO_BASE_MODE, L"To Base Mode");
 	I18N.MouseAction_FORGOT_RELEASED = GetText(IDS_MOUSE_FORGOT_RELEASED, L"Forgot released");
 	I18N.MouseAction_IF_RELEASED_GOTO = GetText(IDS_MOUSE_IF_RELEASED_GOTO, L"If released goto");
 	I18N.MouseAction_IF_PUSHED_GOTO = GetText(IDS_MOUSE_IF_PUSHED_GOTO, L"If pushed goto");
@@ -677,8 +680,11 @@ void FreeLanguage()
 	delete[] I18N.MouseAction_VOLUME_UP;
 	delete[] I18N.MouseAction_VOLUME_DOWN;
 	delete[] I18N.MouseAction_MEMORIZE_MODE;
+	delete[] I18N.MouseAction_TO_MEM_MODE;
 	delete[] I18N.MouseAction_TO_MODE;
 	delete[] I18N.MouseAction_TO_LAST_MODE;
+	delete[] I18N.MouseAction_BASE_TO_MODE;
+	delete[] I18N.MouseAction_TO_BASE_MODE;
 	delete[] I18N.MouseAction_IF_RELEASED_GOTO;
 	delete[] I18N.MouseAction_IF_PUSHED_GOTO;
 	delete[] I18N.MouseAction_RETURN_TO;

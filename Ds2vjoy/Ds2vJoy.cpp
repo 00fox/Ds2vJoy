@@ -132,6 +132,7 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+//	wcex.hbrBackground  = (HBRUSH)GetStockObject(WHITE_BRUSH);
 //	wcex.hbrBackground	= CreateSolidBrush(RGB(0, 0, 0));
 //	wcex.lpszMenuName   = MAKEINTRESOURCEW(IDS_DS2VJOY);
 	wcex.lpszMenuName   = 0;
@@ -815,6 +816,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     switch (message)
     {
+	case WM_CTLCOLOREDIT:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor((HDC)wParam, tape.Tx_EDIT_TERMINAL);
+		SetBkMode((HDC)wParam, OPAQUE);
+		SetBkColor(hdcStatic, tape.Bk_EDIT);
+		return (LRESULT)tape.hB_EDIT_TERMINAL;
+	}
+	case WM_PAINT:
+	{
+		if (!IsIconic(hWnd))
+		{
+			PAINTSTRUCT ps;
+			HDC hDC = BeginPaint(hWnd, &ps);
+
+			RECT rect;
+			GetClientRect(hWnd, &rect);
+			FillRect(hDC, &rect, tape.hB_BackGround);
+
+			::ReleaseDC(hWnd, hDC);
+			EndPaint(hWnd, &ps);
+		}
+		return FALSE;
+	}
 	case WM_MEASUREITEM:
 	{
 		LPMEASUREITEMSTRUCT DrawMenuSize = (LPMEASUREITEMSTRUCT)lParam;
@@ -875,16 +900,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			BOOL bSelected = DrawMenuStructure->itemState & ODS_SELECTED;
 
-			// Background
-			HBRUSH hBrushColor = ::CreateSolidBrush(RGB(200, 200, 205));
-			::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
-
 			// Highlight
 			if (DrawMenuStructure->itemState & ODS_SELECTED)
-			{
-				 hBrushColor = ::CreateSolidBrush(::GetSysColor(COLOR_HIGHLIGHT));
-				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
-			}
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_HIGHLIGHT);
+			// Background
+			else
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_CLONE);
 
 			// Caption
 			WCHAR wszBuffer[MAX_PATH];
@@ -893,7 +914,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				COLORREF crPrevText = 0;
 				COLORREF crCurrText = 0;
-				crCurrText = ::GetSysColor((bSelected) ? COLOR_HIGHLIGHTTEXT : RGB(166, 134, 170));
+				crCurrText = ::GetSysColor((bSelected) ? tape.Tx_MENU_HIGHLIGHT : tape.Tx_MENU);
 				crPrevText = ::SetTextColor(DrawMenuStructure->hDC, crCurrText);
 
 				int nAcceleratorDelimiter;
@@ -940,31 +961,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		break;
-	}
-	case WM_CTLCOLOREDIT:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		SetTextColor((HDC)wParam, RGB(172, 196, 226));
-		SetBkMode((HDC)wParam, OPAQUE);
-		SetBkColor(hdcStatic, RGB(0, 0, 0));
-		return (INT_PTR)CreateSolidBrush(RGB(0, 0, 0));
-	}
-	case WM_PAINT:
-	{
-		if (!IsIconic(hWnd))
-		{
-			PAINTSTRUCT ps;
-			HDC hDC = BeginPaint(hWnd, &ps);
-
-			RECT rect;
-			GetClientRect(hWnd, &rect);
-
-			HBRUSH brush = CreateSolidBrush(RGB(210, 210, 215));
-			FillRect(hDC, &rect, brush);
-			DeleteObject(brush);
-			EndPaint(hWnd, &ps);
-		}
-		return FALSE;
 	}
 	case WM_SHOWWINDOW:
 		switch (TabCtrl_GetCurSel(hTab))

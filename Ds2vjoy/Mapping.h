@@ -59,6 +59,7 @@ public:
 		VOLUME_UP,
 		VOLUME_DOWN,
 		MEMORIZE_MODE,
+		TO_MEM_MODE,
 		TO_MODE1,
 		TO_MODE2,
 		TO_MODE3,
@@ -68,6 +69,15 @@ public:
 		TO_MODE7,
 		TO_MODE8,
 		TO_LAST_MODE,
+		BASE_TO_MODE1,
+		BASE_TO_MODE2,
+		BASE_TO_MODE3,
+		BASE_TO_MODE4,
+		BASE_TO_MODE5,
+		BASE_TO_MODE6,
+		BASE_TO_MODE7,
+		BASE_TO_MODE8,
+		TO_BASE_MODE,
 		FORGOT_RELEASED,
 		IF_RELEASED_GOTO,
 		IF_PUSHED_GOTO,
@@ -250,7 +260,6 @@ private:
 	BOOL CanBeActivated();				//Used for Short/Double to know if it can be activated/available to run second step, taking account of disable states and Or/Xor conditions
 	dsButton* m_ds[5] = { 0 };
 	vJoyButton* m_vj[13] = { 0 };
-	unsigned char lastmode;				//Memorized mode stocked for this mapping only, when change to n(0-8, 0=Always) mode
 	char tomode = -1;					//Destination mode stocked for this mapping only, when change to n(0-8, 0=Always) mode, available only for one turn, -1 after
 	unsigned char locked;				//Different levels to trigger again when mode changed
 	unsigned char modechanged;			//If mode has been changed by another mapping (mode<>tomode)
@@ -303,6 +312,9 @@ static vJoyButton* m_vj_RZ;
 static vJoyButton* m_vj_SL0;
 static vJoyButton* m_vj_SL1;
 extern unsigned char mode;										//Actual mode, shared by all mappings
+static unsigned char lastmode;									//Memorized mode, when changed by special actions TO_MODE1-8
+static unsigned char memmode;									//Memorized mode, by special action MEMORIZE_MODE
+static unsigned char basemode;									//Base mode, changed by special actions BASE_TO_MODE1-8
 static bool mouse_toggle[8] = { false };						//State of each possible 'Active mouse' toggle
 static bool m_toggle[vJoyButtonID::button_Count] = { false };	//State of each individual vJoy button toggle
 static std::vector<byte> dsDisabled;							//array of disabled dsButton to determine all nexts legit step

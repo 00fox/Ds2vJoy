@@ -47,72 +47,73 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CTLCOLORDLG:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_DLG);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_DLG);
+		return (LRESULT)tape.hB_DLG;
+	}
 	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_MSGBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		return (LRESULT)tape.hB_MSGBOX;
+	}
 	case WM_CTLCOLORSCROLLBAR:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_SCROLLBAR);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(191, 200, 196));
-		return (LRESULT)hBrushColor;
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
 	}
 	case WM_CTLCOLORBTN:
 	{
-		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor = CreateSolidBrush(RGB(128, 128, 128));
+		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
 		SetBkMode(hdcStatic, TRANSPARENT);
-
 		switch (vg.GetViGEmState())
 		{
 		case -1:
 		case 0:
-			if (CtrlID == IDC_VIGEM_INSTALL) hBrushColor = CreateSolidBrush(RGB(160, 160, 160));
-			if (CtrlID == IDC_VIGEM_STATUS) hBrushColor = CreateSolidBrush(RGB(160, 160, 160));
+			if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Not_Installed;
+			if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Not_Installed;
 			break;
 		case 1:
-			if (CtrlID == IDC_VIGEM_INSTALL) hBrushColor = CreateSolidBrush(RGB(240, 240, 0));
-			if (CtrlID == IDC_VIGEM_STATUS) hBrushColor = CreateSolidBrush(RGB(240, 240, 0));
+			if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Running;
+			if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Running;
 			break;
 		case 2:
-			if (CtrlID == IDC_VIGEM_INSTALL) hBrushColor = CreateSolidBrush(RGB(240, 240, 0));
-			if (CtrlID == IDC_VIGEM_STATUS) hBrushColor = CreateSolidBrush(RGB(96, 192, 96));
+			if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Running;
+			if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Paused;
 			break;
 		}
-		return (LRESULT)hBrushColor;
-		return TRUE;
+		return (LRESULT)tape.hB_Grey;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
-		SetTextColor(hdcStatic, RGB(100, 93, 79));
+		SetTextColor(hdcStatic, tape.Tx_STATIC);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(36, 163, 163));
-		return (LRESULT)hBrushColor;
+		SetBkColor(hdcStatic, tape.Bk_STATIC);
+		return (LRESULT)tape.hB_STATIC;
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_EDIT);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
+		return (LRESULT)tape.hB_EDIT;
 	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
+		SetTextColor(hdcStatic, tape.Tx_LISTBOX);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
+		return (LRESULT)tape.hB_LISTBOX;
 	}
 	case WM_PAINT:
 	{
@@ -123,9 +124,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-
-			HBRUSH brush = CreateSolidBrush(RGB(210, 210, 215));
-			FillRect(hDC, &rect, brush);
+			FillRect(hDC, &rect, tape.hB_BackGround);
 
 			LPCWSTR b1Text = L"Waiting...";
 			LPCWSTR b2Text = L"Waiting...";
@@ -147,24 +146,25 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 
-			brush = CreateSolidBrush(RGB(195, 195, 200));
 			HFONT hFont = CreateFont(13, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
 
+			::ReleaseDC(hWnd, hDC);
 			hDC = BeginPaint(GetDlgItem(hWnd, IDC_VIGEM_INSTALL), &ps);
 			GetClientRect(GetDlgItem(hWnd, IDC_VIGEM_INSTALL), &rect);
 			HFONT oldHFont = (HFONT)SelectObject(hDC, hFont);
 			DrawText(hDC, b1Text, 9, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			SelectObject(hDC, oldHFont);
-			FrameRect(hDC, &rect, brush);
+			FrameRect(hDC, &rect, tape.hB_BTN_Border);
 
+			::ReleaseDC(hWnd, hDC);
 			hDC = BeginPaint(GetDlgItem(hWnd, IDC_VIGEM_STATUS), &ps);
 			GetClientRect(GetDlgItem(hWnd, IDC_VIGEM_STATUS), &rect);
 			oldHFont = (HFONT)SelectObject(hDC, hFont);
 			DrawText(hDC, b2Text, 9, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 			SelectObject(hDC, oldHFont);
-			FrameRect(hDC, &rect, brush);
+			FrameRect(hDC, &rect, tape.hB_BTN_Border);
 
-			DeleteObject(brush);
+			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
 		}
 		return FALSE;

@@ -230,6 +230,11 @@ const WCHAR* Mapping::vJoyString()
 			head += wsprintf(head, L"#");
 		else if (vjDisable[i])
 			head += wsprintf(head, L">");
+
+		if (Switch[i] == 1)
+			head += wsprintf(head, L"✓");
+		else if (Switch[i])
+			head += wsprintf(head, L"✕");
 	}
 
 	if (Led)
@@ -409,6 +414,8 @@ BOOL Mapping::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
 
 	mode = 1;
 	lastmode = 1;
+	memmode = 1;
+	basemode = 1;
 	locked = 0;
 	modechanged = 0;
 	for (int i = 0; i < 8; i++)
@@ -1259,17 +1266,27 @@ void Mapping::Run(double average)
 							}
 						break;
 					}
-					case MEMORIZE_MODE: lastmode = mode; done[i] = true; break;
-					case TO_MODE1: tomode = 1; mode = 1; done[i] = true; break;
-					case TO_MODE2: tomode = 2; mode = 2; done[i] = true; break;
-					case TO_MODE3: tomode = 3; mode = 3; done[i] = true; break;
-					case TO_MODE4: tomode = 4; mode = 4; done[i] = true; break;
-					case TO_MODE5: tomode = 5; mode = 5; done[i] = true; break;
-					case TO_MODE6: tomode = 6; mode = 6; done[i] = true; break;
-					case TO_MODE7: tomode = 7; mode = 7; done[i] = true; break;
-					case TO_MODE8: tomode = 8; mode = 8; done[i] = true; break;
-					case TO_LAST_MODE: tomode = lastmode; mode = lastmode; done[i] = true; break;
+					case MEMORIZE_MODE: memmode = mode; done[i] = true; break;
+					case TO_MEM_MODE: lastmode = mode; tomode = memmode; mode = memmode; done[i] = true; break;
+					case TO_MODE1: lastmode = mode; tomode = 1; mode = 1; done[i] = true; break;
+					case TO_MODE2: lastmode = mode; tomode = 2; mode = 2; done[i] = true; break;
+					case TO_MODE3: lastmode = mode; tomode = 3; mode = 3; done[i] = true; break;
+					case TO_MODE4: lastmode = mode; tomode = 4; mode = 4; done[i] = true; break;
+					case TO_MODE5: lastmode = mode; tomode = 5; mode = 5; done[i] = true; break;
+					case TO_MODE6: lastmode = mode; tomode = 6; mode = 6; done[i] = true; break;
+					case TO_MODE7: lastmode = mode; tomode = 7; mode = 7; done[i] = true; break;
+					case TO_MODE8: lastmode = mode; tomode = 8; mode = 8; done[i] = true; break;
+					case TO_LAST_MODE: { unsigned char lastmodetmp = lastmode; lastmode = mode; tomode = lastmodetmp; mode = lastmodetmp; done[i] = true; } break;
 					case FORGOT_RELEASED: released = false; done[i] = true; break;
+					case BASE_TO_MODE1: basemode = 1; done[i] = true; break;
+					case BASE_TO_MODE2: basemode = 2; done[i] = true; break;
+					case BASE_TO_MODE3: basemode = 3; done[i] = true; break;
+					case BASE_TO_MODE4: basemode = 4; done[i] = true; break;
+					case BASE_TO_MODE5: basemode = 5; done[i] = true; break;
+					case BASE_TO_MODE6: basemode = 6; done[i] = true; break;
+					case BASE_TO_MODE7: basemode = 7; done[i] = true; break;
+					case BASE_TO_MODE8: basemode = 8; done[i] = true; break;
+					case TO_BASE_MODE: lastmode = mode; tomode = basemode; mode = basemode; done[i] = true; break;
 					case IF_RELEASED_GOTO: if (TimeActiondone == -1 && released) TimeActiondone = i; done[i] = true; break;
 					case IF_PUSHED_GOTO: if (TimeActiondone == -1 && !released) TimeActiondone = i; done[i] = true; break;
 					case RETURN_TO: if (TimeActiondone == -1) TimeActiondone = i; done[i] = true; break;
@@ -1670,6 +1687,7 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 	case VOLUME_UP: return I18N.MouseAction_VOLUME_UP;
 	case VOLUME_DOWN: return I18N.MouseAction_VOLUME_DOWN;
 	case MEMORIZE_MODE: return I18N.MouseAction_MEMORIZE_MODE;
+	case TO_MEM_MODE: return I18N.MouseAction_TO_MEM_MODE;
 	case TO_MODE1: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(1)).c_str());
 	case TO_MODE2: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(2)).c_str());
 	case TO_MODE3: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(3)).c_str());
@@ -1679,6 +1697,15 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 	case TO_MODE7: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(7)).c_str());
 	case TO_MODE8: return (WCHAR*)((I18N.MouseAction_TO_MODE + std::to_wstring(8)).c_str());
 	case TO_LAST_MODE: return I18N.MouseAction_TO_LAST_MODE;
+	case BASE_TO_MODE1: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(1)).c_str());
+	case BASE_TO_MODE2: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(2)).c_str());
+	case BASE_TO_MODE3: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(3)).c_str());
+	case BASE_TO_MODE4: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(4)).c_str());
+	case BASE_TO_MODE5: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(5)).c_str());
+	case BASE_TO_MODE6: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(6)).c_str());
+	case BASE_TO_MODE7: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(7)).c_str());
+	case BASE_TO_MODE8: return (WCHAR*)((I18N.MouseAction_BASE_TO_MODE + std::to_wstring(8)).c_str());
+	case TO_BASE_MODE: return I18N.MouseAction_TO_BASE_MODE;
 	case FORGOT_RELEASED: return I18N.MouseAction_FORGOT_RELEASED;
 	case IF_RELEASED_GOTO: return I18N.MouseAction_IF_RELEASED_GOTO;
 	case IF_PUSHED_GOTO: return I18N.MouseAction_IF_PUSHED_GOTO;

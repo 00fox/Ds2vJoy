@@ -102,7 +102,7 @@ void MappingDlg::Init2(HINSTANCE hInst, HWND hWnd)
 	lStyle = lStyle & ~WS_CAPTION;
 	SetWindowLong(m_hDlg, GWL_STYLE, lStyle);
 	HFONT hFont = CreateFont(12, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe Print");
-	SendDlgItemMessage(m_hDlg, IDC_STATIC, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_STATIC_POSTIT, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
 	Hide();
 	
 	m_ReminderId[0] = IDC_POST_ITS_1;
@@ -276,7 +276,7 @@ void MappingDlg::redrawListReminder()
 	GetWindowRect(m_hDlg, &win);
 	::MoveWindow(m_hList, 0, 35, win.right - win.left, win.bottom - win.top - 59, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_CLEAR), 6, win.bottom - win.top - 19, 46, 11, FALSE);
-	::MoveWindow(GetDlgItem(m_hDlg, IDC_STATIC), 6, win.bottom - win.top - 19, 74, 11, FALSE);
+	::MoveWindow(GetDlgItem(m_hDlg, IDC_STATIC_POSTIT), 6, win.bottom - win.top - 19, 74, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_1), 85, win.bottom - win.top - 17, 11, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_2), 94, win.bottom - win.top - 17, 11, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_3), 107, win.bottom - win.top - 17, 11, 11, FALSE);
@@ -353,97 +353,188 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_INITDIALOG:
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_1), L"1");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_2), L"2");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_3), L"3");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_4), L"4");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_5), L"5");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_6), L"6");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_7), L"7");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_8), L"8");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_9), L"9");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_10), L"10");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_11), L"11");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_12), L"12");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_13), L"13");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_14), L"14");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_15), L"15");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_16), L"16");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_17), L"17");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_18), L"18");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_19), L"19");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_20), L"20");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_21), L"21");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_22), L"22");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_23), L"23");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_24), L"24");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_25), L"25");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_26), L"26");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_27), L"27");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_28), L"28");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_29), L"29");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_30), L"30");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_31), L"31");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_32), L"32");
-		break;
-	case WM_SHOWWINDOW:
+	case WM_CTLCOLORDLG:
 	{
-		lasttab = 15;
-		SendMessage(m_hList, LVM_SETBKCOLOR, 0, (LPARAM)RGB(210, 210, 215));
-		SendMessage(m_hList, LVM_SETTEXTCOLOR, 0, (LPARAM)RGB(10, 10, 10));
-		SendMessage(m_hList, LVM_SETTEXTBKCOLOR, 0, (LPARAM)RGB(225, 225, 230));
-
-		if (m_isClonedList)
-		{
-			HFONT hFont = CreateFont(16, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"MS Shell Dlg");
-			SendDlgItemMessage(hWnd, IDCANCEL, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
-
-			CheckDlgButton(hWnd, IDC_POST_ITS_1, tape.Reminder[0]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_2, tape.Reminder[1]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_3, tape.Reminder[2]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_4, tape.Reminder[3]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_5, tape.Reminder[4]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_6, tape.Reminder[5]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_7, tape.Reminder[6]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_8, tape.Reminder[7]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_9, tape.Reminder[8]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_10, tape.Reminder[9]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_11, tape.Reminder[10]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_12, tape.Reminder[11]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_13, tape.Reminder[12]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_14, tape.Reminder[13]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_15, tape.Reminder[14]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_16, tape.Reminder[15]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_17, tape.Reminder[16]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_18, tape.Reminder[17]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_19, tape.Reminder[18]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_20, tape.Reminder[19]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_21, tape.Reminder[20]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_22, tape.Reminder[21]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_23, tape.Reminder[22]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_24, tape.Reminder[23]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_25, tape.Reminder[24]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_26, tape.Reminder[25]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_27, tape.Reminder[26]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_28, tape.Reminder[27]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_29, tape.Reminder[28]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_30, tape.Reminder[29]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_31, tape.Reminder[30]);
-			CheckDlgButton(hWnd, IDC_POST_ITS_32, tape.Reminder[31]);
-		}
-
-		if (wParam == TRUE)
-			load();
-		m_active = true;
-		break;
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_DLG);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_DLG);
+		return (LRESULT)tape.hB_DLG;
 	}
-	case WM_SIZE:
-		if (m_isClonedList)
-			redrawListReminder();
+	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_MSGBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		return (LRESULT)tape.hB_MSGBOX;
+	}
+	case WM_CTLCOLORSCROLLBAR:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_SCROLLBAR);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
+	}
+	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_BTN);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		return (LRESULT)tape.hB_BTN;
+	}
+	case WM_CTLCOLORSTATIC:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
+		if (CtrlID == IDC_STATIC_POSTIT)
+		{
+			SetTextColor(hdcStatic, tape.Tx_STATIC_POSTIT);
+			SetBkColor(hdcStatic, tape.Bk_STATIC_POSTIT);
+			return (LRESULT)GetStockObject(NULL_BRUSH);
+		}
+		else if (CtrlID == IDC_STATIC_CLONE)
+		{
+			SetTextColor(hdcStatic, tape.Tx_STATIC_CLONE);
+			SetBkMode(hdcStatic, TRANSPARENT);
+			return (LRESULT)tape.hB_STATIC;
+		}
 		else
-			::MoveWindow(m_hList, 0, 0, LOWORD(lParam), HIWORD(lParam), FALSE);
-		break;
+		{
+			SetTextColor(hdcStatic, tape.Tx_STATIC);
+			SetBkMode(hdcStatic, TRANSPARENT);
+			return (LRESULT)GetStockObject(NULL_BRUSH);
+		}
+	}
+	case WM_CTLCOLOREDIT:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_EDIT);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		return (LRESULT)tape.hB_EDIT;
+	}
+	case WM_CTLCOLORLISTBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_LISTBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		return (LRESULT)tape.hB_LISTBOX;
+	}
+	case WM_PAINT:
+	{
+		if (!IsIconic(hWnd))
+		{
+			PAINTSTRUCT ps;
+			HDC hDC = BeginPaint(hWnd, &ps);
+
+			RECT rect;
+			GetClientRect(hWnd, &rect);
+			FillRect(hDC, &rect, tape.hB_Back_CLONE);
+
+			::ReleaseDC(hWnd, hDC);
+			EndPaint(hWnd, &ps);
+
+			for (int i = 0; i < 32; i++)
+			{
+				if (!tape.Reminder[i])
+				{
+					hDC = BeginPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
+					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
+					rect.right -= 1;
+					rect.bottom -= 1;
+					FillRect(hDC, &rect, tape.hB_STATIC_POSTIT);
+					if (tape.vJoyUsed[i])
+					{
+						rect.bottom -= 1;
+						rect.right -= 1;
+						POINT Pt;
+						SelectObject(hDC, GetStockObject(DC_PEN));
+						SetDCPenColor(hDC, RGB(90, 90, 90));
+						if (i & 1)
+						{
+							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
+							LineTo(hDC, rect.right, rect.bottom);
+							LineTo(hDC, rect.right, rect.bottom - 4);
+							LineTo(hDC, rect.right - 4, rect.bottom);
+							MoveToEx(hDC, rect.right - 3, rect.bottom - 1, &Pt);
+							LineTo(hDC, rect.right - 1, rect.bottom - 1);
+							LineTo(hDC, rect.right - 1, rect.bottom - 3);
+							LineTo(hDC, rect.right - 3, rect.bottom - 1);
+						}
+						else
+						{
+							MoveToEx(hDC, rect.left + 4, rect.bottom, &Pt);
+							LineTo(hDC, rect.left, rect.bottom);
+							LineTo(hDC, rect.left, rect.bottom - 4);
+							LineTo(hDC, rect.left + 4, rect.bottom);
+							MoveToEx(hDC, rect.left + 3, rect.bottom - 1, &Pt);
+							LineTo(hDC, rect.left + 1, rect.bottom - 1);
+							LineTo(hDC, rect.left + 1, rect.bottom - 3);
+							LineTo(hDC, rect.left + 3, rect.bottom - 1);
+						}
+					}
+
+					::ReleaseDC(hWnd, hDC);
+					EndPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
+				}
+			}
+
+			for (int i = 0; i < 32; i++)
+			{
+				if (tape.Reminder[i])
+				{
+					hDC = BeginPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
+					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
+					rect.right -= 1;
+					rect.bottom -= 1;
+					if (!moving || m_Randcolor[i] == 0)
+						FillRect(hDC, &rect, tape.hB_POSTIT_RAND0);
+					else if (m_Randcolor[i] == 1)
+						FillRect(hDC, &rect, tape.hB_POSTIT_RAND1);
+					else if (m_Randcolor[i] == 2)
+						FillRect(hDC, &rect, tape.hB_POSTIT_RAND2);
+					else
+						FillRect(hDC, &rect, tape.hB_POSTIT_RAND3);
+					if (tape.vJoyUsed[i])
+					{
+						rect.bottom -= 1;
+						rect.right -= 1;
+						POINT Pt;
+						SelectObject(hDC, GetStockObject(DC_PEN));
+						SetDCPenColor(hDC, RGB(95, 95, 95));
+						if (i & 1)
+						{
+							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
+							LineTo(hDC, rect.right, rect.bottom);
+							LineTo(hDC, rect.right, rect.bottom - 4);
+							LineTo(hDC, rect.right - 4, rect.bottom);
+							MoveToEx(hDC, rect.right - 3, rect.bottom - 1, &Pt);
+							LineTo(hDC, rect.right - 1, rect.bottom - 1);
+							LineTo(hDC, rect.right - 1, rect.bottom - 3);
+							LineTo(hDC, rect.right - 3, rect.bottom - 1);
+						}
+						else
+						{
+							MoveToEx(hDC, rect.left + 4, rect.bottom, &Pt);
+							LineTo(hDC, rect.left, rect.bottom);
+							LineTo(hDC, rect.left, rect.bottom - 4);
+							LineTo(hDC, rect.left + 4, rect.bottom);
+							MoveToEx(hDC, rect.left + 3, rect.bottom - 1, &Pt);
+							LineTo(hDC, rect.left + 1, rect.bottom - 1);
+							LineTo(hDC, rect.left + 1, rect.bottom - 3);
+							LineTo(hDC, rect.left + 3, rect.bottom - 1);
+						}
+					}
+
+					::ReleaseDC(hWnd, hDC);
+					EndPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
+				}
+			}
+		}
+		return FALSE;
+	}
 	case WM_MEASUREITEM:
 	{
 		LPMEASUREITEMSTRUCT DrawMenuSize = (LPMEASUREITEMSTRUCT)lParam;
@@ -535,12 +626,10 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //			BOOL bChecked = DrawMenuStructure->itemState & ODS_CHECKED;
 
 			// Background
-			HBRUSH hBrushColor;
 			if (m_isClonedList)
-				hBrushColor = ::CreateSolidBrush(RGB(200, 200, 205));
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_CLONE);
 			else
-				hBrushColor = ::CreateSolidBrush(RGB(205, 205, 210));
-			::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU);
 /*
 			// Delimiter
 			COLORREF crCurrPen = 0;
@@ -572,15 +661,9 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			// Highlight
 			if (m_isClonedList && itemnumber == m_Tab)
-			{
-				HBRUSH hBrushColor = ::CreateSolidBrush(RGB(153, 160, 157));
-				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
-			}
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_SELECTED);
 			else if (bSelected)
-			{
-				HBRUSH hBrushColor = ::CreateSolidBrush(::GetSysColor(COLOR_HIGHLIGHT));
-				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), hBrushColor);
-			}
+				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_HIGHLIGHT);
 
 			// Caption
 			WCHAR wszBuffer[MAX_PATH];
@@ -637,186 +720,6 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		break;
-	}
-	case WM_CTLCOLORSCROLLBAR:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(191, 200, 196));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_CTLCOLORDLG:
-	case WM_CTLCOLORMSGBOX:
-	case WM_CTLCOLORBTN:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
-		SetTextColor(hdcStatic, RGB(100, 93, 79));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(36, 163, 163));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_CTLCOLORSTATIC:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		if (::GetDlgCtrlID((HWND)lParam) == IDC_STATIC)
-		{
-			SetTextColor(hdcStatic, RGB(0, 0, 255));
-			SetBkColor(hdcStatic, RGB(240, 240, 0));
-		}
-		else if (::GetDlgCtrlID((HWND)lParam) == IDC_STATIC_CLONE)
-		{
-			static HBRUSH hBrushColor;
-			hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
-			SetTextColor(hdcStatic, RGB(100, 93, 79));
-			SetBkMode(hdcStatic, TRANSPARENT);
-			return (LRESULT)hBrushColor;
-		}
-		else
-		{
-			SetTextColor(hdcStatic, RGB(62, 20, 102));
-			SetBkMode(hdcStatic, TRANSPARENT);
-		}
-		return (LRESULT)GetStockObject(NULL_BRUSH);
-	}
-	case WM_CTLCOLOREDIT:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
-		SetTextColor(hdcStatic, RGB(62, 20, 102));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_CTLCOLORLISTBOX:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_PAINT:
-	{
-		if (!IsIconic(hWnd))
-		{
-			PAINTSTRUCT ps;
-			HDC hDC = BeginPaint(hWnd, &ps);
-
-			RECT rect;
-			GetClientRect(hWnd, &rect);
-
-			HBRUSH brush = CreateSolidBrush(RGB(240, 240, 240));
-			FillRect(hDC, &rect, brush);
-			DeleteObject(brush);
-			EndPaint(hWnd, &ps);
-
-			for (int i = 0; i < 32; i++)
-			{
-				if (!tape.Reminder[i])
-				{
-					hDC = BeginPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
-					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
-					rect.right -= 1;
-					rect.bottom -= 1;
-					brush = CreateSolidBrush(RGB(175, 175, 175));
-					FillRect(hDC, &rect, brush);
-					if (tape.vJoyUsed[i])
-					{
-						rect.bottom -= 1;
-						rect.right -= 1;
-						POINT Pt;
-						SelectObject(hDC, GetStockObject(DC_PEN));
-						SetDCPenColor(hDC, RGB(90, 90, 90));
-						if (i & 1)
-						{
-							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
-							LineTo(hDC, rect.right, rect.bottom);
-							LineTo(hDC, rect.right, rect.bottom - 4);
-							LineTo(hDC, rect.right - 4, rect.bottom);
-							MoveToEx(hDC, rect.right - 3, rect.bottom - 1, &Pt);
-							LineTo(hDC, rect.right - 1, rect.bottom - 1);
-							LineTo(hDC, rect.right - 1, rect.bottom - 3);
-							LineTo(hDC, rect.right - 3, rect.bottom - 1);
-						}
-						else
-						{
-							MoveToEx(hDC, rect.left + 4, rect.bottom, &Pt);
-							LineTo(hDC, rect.left, rect.bottom);
-							LineTo(hDC, rect.left, rect.bottom - 4);
-							LineTo(hDC, rect.left + 4, rect.bottom);
-							MoveToEx(hDC, rect.left + 3, rect.bottom - 1, &Pt);
-							LineTo(hDC, rect.left + 1, rect.bottom - 1);
-							LineTo(hDC, rect.left + 1, rect.bottom - 3);
-							LineTo(hDC, rect.left + 3, rect.bottom - 1);
-						}
-					}
-					DeleteObject(brush);
-					EndPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
-				}
-			}
-
-			for (int i = 0; i < 32; i++)
-			{
-				if (tape.Reminder[i])
-				{
-					hDC = BeginPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
-					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
-					rect.right -= 1;
-					rect.bottom -= 1;
-					if (!moving || m_Randcolor[i] == 0)
-						brush = CreateSolidBrush(RGB(210, 210, 255));
-					else if (m_Randcolor[i] == 1)
-						brush = CreateSolidBrush(RGB(210, 225, 0));
-					else if (m_Randcolor[i] == 2)
-						brush = CreateSolidBrush(RGB(240, 240, 0));
-					else
-						brush = CreateSolidBrush(RGB(225, 115, 210));
-					FillRect(hDC, &rect, brush);
-					if (tape.vJoyUsed[i])
-					{
-						rect.bottom -= 1;
-						rect.right -= 1;
-						POINT Pt;
-						SelectObject(hDC, GetStockObject(DC_PEN));
-						SetDCPenColor(hDC, RGB(95, 95, 95));
-						if (i & 1)
-						{
-							MoveToEx(hDC, rect.right - 4, rect.bottom, &Pt);
-							LineTo(hDC, rect.right, rect.bottom);
-							LineTo(hDC, rect.right, rect.bottom - 4);
-							LineTo(hDC, rect.right - 4, rect.bottom);
-							MoveToEx(hDC, rect.right - 3, rect.bottom - 1, &Pt);
-							LineTo(hDC, rect.right - 1, rect.bottom - 1);
-							LineTo(hDC, rect.right - 1, rect.bottom - 3);
-							LineTo(hDC, rect.right - 3, rect.bottom - 1);
-						}
-						else
-						{
-							MoveToEx(hDC, rect.left + 4, rect.bottom, &Pt);
-							LineTo(hDC, rect.left, rect.bottom);
-							LineTo(hDC, rect.left, rect.bottom - 4);
-							LineTo(hDC, rect.left + 4, rect.bottom);
-							MoveToEx(hDC, rect.left + 3, rect.bottom - 1, &Pt);
-							LineTo(hDC, rect.left + 1, rect.bottom - 1);
-							LineTo(hDC, rect.left + 1, rect.bottom - 3);
-							LineTo(hDC, rect.left + 3, rect.bottom - 1);
-						}
-					}
-					EndPaint(GetDlgItem(hWnd, m_ReminderId[i]), &ps);
-				}
-			}
-
-			DeleteObject(brush);
-		}
-		return FALSE;
 	}
 	case WM_NOTIFY:
 		switch (((LPNMHDR)lParam)->code)
@@ -1265,6 +1168,97 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				EndDrag(LOWORD(lParam), HIWORD(lParam));
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
+		break;
+	case WM_SIZE:
+		if (m_isClonedList)
+			redrawListReminder();
+		else
+			::MoveWindow(m_hList, 0, 0, LOWORD(lParam), HIWORD(lParam), FALSE);
+		break;
+	case WM_SHOWWINDOW:
+	{
+		lasttab = 15;
+		SendMessage(m_hList, LVM_SETBKCOLOR, 0, (LPARAM)RGB(210, 210, 215));
+		SendMessage(m_hList, LVM_SETTEXTCOLOR, 0, (LPARAM)RGB(10, 10, 10));
+		SendMessage(m_hList, LVM_SETTEXTBKCOLOR, 0, (LPARAM)RGB(225, 225, 230));
+
+		if (m_isClonedList)
+		{
+			HFONT hFont = CreateFont(16, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"MS Shell Dlg");
+			SendDlgItemMessage(hWnd, IDCANCEL, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
+
+			CheckDlgButton(hWnd, IDC_POST_ITS_1, tape.Reminder[0]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_2, tape.Reminder[1]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_3, tape.Reminder[2]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_4, tape.Reminder[3]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_5, tape.Reminder[4]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_6, tape.Reminder[5]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_7, tape.Reminder[6]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_8, tape.Reminder[7]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_9, tape.Reminder[8]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_10, tape.Reminder[9]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_11, tape.Reminder[10]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_12, tape.Reminder[11]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_13, tape.Reminder[12]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_14, tape.Reminder[13]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_15, tape.Reminder[14]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_16, tape.Reminder[15]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_17, tape.Reminder[16]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_18, tape.Reminder[17]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_19, tape.Reminder[18]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_20, tape.Reminder[19]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_21, tape.Reminder[20]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_22, tape.Reminder[21]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_23, tape.Reminder[22]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_24, tape.Reminder[23]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_25, tape.Reminder[24]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_26, tape.Reminder[25]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_27, tape.Reminder[26]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_28, tape.Reminder[27]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_29, tape.Reminder[28]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_30, tape.Reminder[29]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_31, tape.Reminder[30]);
+			CheckDlgButton(hWnd, IDC_POST_ITS_32, tape.Reminder[31]);
+		}
+
+		if (wParam == TRUE)
+			load();
+		m_active = true;
+		break;
+	}
+	case WM_INITDIALOG:
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_1), L"1");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_2), L"2");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_3), L"3");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_4), L"4");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_5), L"5");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_6), L"6");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_7), L"7");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_8), L"8");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_9), L"9");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_10), L"10");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_11), L"11");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_12), L"12");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_13), L"13");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_14), L"14");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_15), L"15");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_16), L"16");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_17), L"17");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_18), L"18");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_19), L"19");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_20), L"20");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_21), L"21");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_22), L"22");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_23), L"23");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_24), L"24");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_25), L"25");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_26), L"26");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_27), L"27");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_28), L"28");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_29), L"29");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_30), L"30");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_31), L"31");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_32), L"32");
 		break;
 	case WM_COMMAND:
 		if (m_isClonedList)

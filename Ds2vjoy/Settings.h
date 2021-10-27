@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int VersionDate = 202110251;
+	const int VersionDate = 202110271;
 
 	WCHAR Settingstxt[20];
 	WCHAR Mappingtxt[20];
@@ -131,6 +131,60 @@ public:
 
 	HWND ActualhWnd;
 	HWND LoghWnd;
+
+	HBRUSH hB_BackGround =		CreateSolidBrush(RGB(210, 210, 215));
+	HBRUSH hB_Back_CLONE =		CreateSolidBrush(RGB(240, 240, 240));
+	HBRUSH hB_Grey =			CreateSolidBrush(RGB(128, 128, 128));
+	HBRUSH hB_DLG =				CreateSolidBrush(RGB(191, 200, 196));
+	HBRUSH hB_MSGBOX =			CreateSolidBrush(RGB(191, 200, 196));
+	HBRUSH hB_SCROLLBAR =		CreateSolidBrush(RGB(191, 200, 196));
+	HBRUSH hB_BTN =				CreateSolidBrush(RGB(210, 210, 215));
+	HBRUSH hB_BTN_Border =		CreateSolidBrush(RGB(195, 195, 200));
+	HBRUSH hB_Not_Installed =	CreateSolidBrush(RGB(160, 160, 160));
+	HBRUSH hB_Running =			CreateSolidBrush(RGB(240, 240, 0));
+	HBRUSH hB_Stopped =			CreateSolidBrush(RGB(255, 140, 0));
+	HBRUSH hB_Paused =			CreateSolidBrush(RGB(96, 192, 96));
+	HBRUSH hB_STATIC =			CreateSolidBrush(RGB(210, 210, 215));
+	HBRUSH hB_STATIC_Mouse1 =	CreateSolidBrush(RGB(180, 180, 0));
+	HBRUSH hB_STATIC_Mouse2 =	CreateSolidBrush(RGB(180, 0, 180));
+	HBRUSH hB_STATIC_POSTIT =	CreateSolidBrush(RGB(175, 175, 175));
+	HBRUSH hB_POSTIT_RAND0 =	CreateSolidBrush(RGB(210, 210, 255));
+	HBRUSH hB_POSTIT_RAND1 =	CreateSolidBrush(RGB(210, 225, 0));
+	HBRUSH hB_POSTIT_RAND2 =	CreateSolidBrush(RGB(240, 240, 0));
+	HBRUSH hB_POSTIT_RAND3 =	CreateSolidBrush(RGB(225, 115, 210));
+	HBRUSH hB_EDIT =			CreateSolidBrush(RGB(228, 228, 232));
+	HBRUSH hB_EDIT_TERMINAL =	CreateSolidBrush(RGB(0, 0, 0));
+	HBRUSH hB_LISTBOX =			CreateSolidBrush(RGB(216, 215, 220));
+	HBRUSH hB_MENU =			CreateSolidBrush(RGB(205, 205, 210));
+	HBRUSH hB_MENU_CLONE =		CreateSolidBrush(RGB(200, 200, 205));
+	HBRUSH hB_MENU_SELECTED =	CreateSolidBrush(RGB(153, 160, 157));
+	HBRUSH hB_MENU_HIGHLIGHT =	CreateSolidBrush(::GetSysColor(COLOR_HIGHLIGHT));
+
+	COLORREF TextColor =		RGB(10, 10, 10);
+	COLORREF Tx_DLG =			RGB(10, 10, 10);
+	COLORREF Tx_MSGBOX =		RGB(10, 10, 10);
+	COLORREF Tx_SCROLLBAR =		RGB(10, 10, 10);
+	COLORREF Tx_BTN =			RGB(100, 93, 79);
+	COLORREF Tx_BTN_Heavy =		RGB(45, 45, 45);
+	COLORREF Tx_BTN_Light =		RGB(210, 210, 215);
+	COLORREF Tx_STATIC =		RGB(100, 93, 79);
+	COLORREF Tx_STATIC_Mouse1 =	RGB(24, 24, 92);
+	COLORREF Tx_STATIC_Mouse2 =	RGB(224, 224, 255);
+	COLORREF Tx_STATIC_POSTIT =	RGB(0, 0, 255);
+	COLORREF Tx_STATIC_CLONE =	RGB(100, 93, 79);
+	COLORREF Tx_STATIC_EXITING =RGB(10, 10, 10);
+	COLORREF Tx_EDIT =			RGB(10, 10, 10);
+	COLORREF Tx_EDIT_TERMINAL =	RGB(172, 196, 226);
+	COLORREF Tx_LISTBOX =		RGB(10, 10, 10);
+	COLORREF Tx_MENU =			RGB(166, 134, 170);
+	COLORREF Tx_MENU_HIGHLIGHT =COLOR_HIGHLIGHTTEXT;
+	COLORREF Bk_DLG =			RGB(191, 200, 196);
+	COLORREF Bk_MSGBOX =		RGB(191, 200, 196);
+	COLORREF Bk_SCROLLBAR =		RGB(191, 200, 196);
+	COLORREF Bk_BTN =			RGB(36, 163, 163);
+	COLORREF Bk_STATIC =		RGB(36, 163, 163);
+	COLORREF Bk_STATIC_POSTIT=	RGB(240, 240, 0);
+	COLORREF Bk_EDIT =			RGB(0, 0, 0);
 
 	Mappings Mappingdata;
 	Keymaps Keymapdata;

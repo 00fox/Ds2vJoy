@@ -95,6 +95,80 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static RECT rect;
 	switch (uMsg)
 	{
+	case WM_CTLCOLORDLG:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_DLG);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_DLG);
+		return (LRESULT)tape.hB_DLG;
+	}
+	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_MSGBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		return (LRESULT)tape.hB_MSGBOX;
+	}
+	case WM_CTLCOLORSCROLLBAR:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_SCROLLBAR);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
+	}
+	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_BTN);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		return (LRESULT)tape.hB_BTN;
+	}
+	case WM_CTLCOLORSTATIC:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_STATIC);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_STATIC);
+		return (LRESULT)tape.hB_STATIC;
+	}
+	case WM_CTLCOLOREDIT:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_EDIT);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		return (LRESULT)tape.hB_EDIT;
+	}
+	case WM_CTLCOLORLISTBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.Tx_LISTBOX);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		return (LRESULT)tape.hB_LISTBOX;
+	}
+	case WM_PAINT:
+	{
+		if (!IsIconic(hWnd))
+		{
+			PAINTSTRUCT ps;
+			HDC hDC = BeginPaint(hWnd, &ps);
+
+			RECT rect;
+			GetClientRect(hWnd, &rect);
+			FillRect(hDC, &rect, tape.hB_BackGround);
+
+			POINT Pt;
+			MoveToEx(hDC, 469, rect.top, &Pt);
+			LineTo(hDC, 469, rect.bottom);
+
+			::ReleaseDC(hWnd, hDC);
+			EndPaint(hWnd, &ps);
+		}
+		return FALSE;
+	}
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;
 	case WM_SYSKEYDOWN:
@@ -106,72 +180,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SetWindowText(hWnd, keymapData.ValueString(1));
 			return TRUE;
 		}
-	}
-	case WM_CTLCOLORDLG:
-	case WM_CTLCOLORMSGBOX:
-	case WM_CTLCOLORSCROLLBAR:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(191, 200, 196));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(191, 200, 196));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_CTLCOLORBTN:
-	case WM_CTLCOLORSTATIC:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(210, 210, 215));
-		SetTextColor(hdcStatic, RGB(100, 93, 79));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(36, 163, 163));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_CTLCOLOREDIT:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(228, 228, 232));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_CTLCOLORLISTBOX:
-	{
-		HDC hdcStatic = (HDC)wParam;
-		static HBRUSH hBrushColor;
-		hBrushColor = CreateSolidBrush(RGB(216, 215, 220));
-		SetTextColor(hdcStatic, RGB(10, 10, 10));
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, RGB(255, 255, 0));
-		return (LRESULT)hBrushColor;
-	}
-	case WM_PAINT:
-	{
-		if (!IsIconic(hWnd))
-		{
-			PAINTSTRUCT ps;
-			HDC hDC = BeginPaint(hWnd, &ps);
-
-			RECT rect;
-			GetClientRect(hWnd, &rect);
-
-			HBRUSH brush = CreateSolidBrush(RGB(210, 210, 215));
-			FillRect(hDC, &rect, brush);
-
-			POINT Pt;
-			MoveToEx(hDC, 469, rect.top, &Pt);
-			LineTo(hDC, 469, rect.bottom);
-
-			DeleteObject(brush);
-
-			EndPaint(hWnd, &ps);
-		}
-		return FALSE;
+		break;
 	}
 	case WM_RESET_FINDWINDOW:
 	{
