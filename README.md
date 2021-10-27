@@ -127,6 +127,8 @@ vJoy Button:
 - See a brief of what will be launched like vJoy, modes, mouse action (different from mouse)
 - '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
   - '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
+- '✓' Indicates this button will be switched on, as long as it is not swithed off again, or toggled
+  - '✕' Indicates this button will be switched off, as long as it is not swithed on, or toggled
 
 Tags:
 | Tag | Description
@@ -347,8 +349,11 @@ At the left of destinations, you'll find special mouse, sound, modes and time ac
   - if on trigger, variable speed following the pressure force, otherwise exponential
     - Other keystrokes that do not require adaptive pressure, can easily be added using a vJoy button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
 - MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
+- TO_MEM_MODE: Go back to memorized mode
 - TO_MODE: Switch to mode 1-8
-- TO_LAST_MODE: Go back to last mode, memorized when MEMORIZE_MODE used
+- TO_LAST_MODE: Go back to last mode
+- BASE_TO_MODE: Change base mode to 1-8 (base mode is a virtual concept about a real mode, therefore, can be used to emulate different cases to which all other modes go back after)
+- TO_BASE_MODE: Go back to base mode
 - FORGOT_RELEASED: Loose the released state if source has been released before, and force it to check it again
 - IF RELEASED GOTO: Go to the specified point of the timeline, if source has been released (use stop value)
 - IF PUSHED GOTO: Go to the specified point of the timeline, if source is still pushed (use stop value)
