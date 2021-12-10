@@ -448,7 +448,7 @@ Like for normal axis, the value of axis movement takes place over last axis valu
   - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
-![Axis movements](Doc/8_D2svJoy_vJoy_Movements.png)
+![Axis movements](Doc/8_Ds2vJoy_vJoy_Movements.png)
 - Complete turn, clockwise or counterclockwise, starting by the north (motorization, loops, perpetual motion)
 - Stay at the middle (combos and technology)
 - Stay at one of the eight typical position of the circonference (W, NW, N, NE, E, SE, S, SW)
@@ -533,7 +533,7 @@ Sort, order, add, delete, copy or edit (double click or menu)
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
-![RapidFire Editing](Doc/11_D2svJoy_RapidFire_Editing.png)
+![RapidFire Editing](Doc/11_Ds2vJoy_RapidFire_Editing.png)
 
 After the first time has passed, release and press repeatedly
 - If you specify the simultaneous press condition, you can also enable repeated hits (of the D-pad keys or □ △ × ○ for example), only when another (L1 or R1 for example) is pressed
@@ -571,7 +571,7 @@ Method:
 | S     | It will use Postmessage to send keys to specified process
 | S+A   | It will activate window of the specified process before (each key if 'Natual typing' is in use)
 
-![Keymap Editing](Doc/13_D2svJoy_Keymap_Editing.png)
+![Keymap Editing](Doc/13_Ds2vJoy_Keymap_Editing.png)
 
 You can now enter up to 64 characters per keymap
 
@@ -588,7 +588,7 @@ You can now enter up to 64 characters per keymap
 - KEYEVENTF_SCANCODE: If specified, wScan identifies the key and wVk is ignored.
   * https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
 
-![Keymap Window Post](Doc/14_D2svJoy_Keymap_Post.png)
+![Keymap Window Post](Doc/14_Ds2vJoy_Keymap_Post.png)
 
 You will find.
 
@@ -627,7 +627,7 @@ And you can enter from 1 to 5 programs name and location which can be launched a
 Picture talk by itself
 
 ## Efficiency
-![Efficiency](Doc/20_D2svJoy_Efficiency.png)
+![Efficiency](Doc/20_Ds2vJoy_Efficiency.png)
 
 There is no resize but some other stuff
 
