@@ -44,7 +44,7 @@ Content:
 - You can see which button is pressed by launching Monitor vJoy but when under vJoy and ViGEm tabs, you can see them directly in status bar to easily test quick configurations
 
 ## Log
-![Log](Doc/1_D2svJoy_Log.png)
+![Log](Doc/1_Ds2vJoy_Log.png)
 
 Satus is separated in 4 colums which are:
 - Battery
@@ -53,7 +53,7 @@ Satus is separated in 4 colums which are:
 - Mode (1-8) and Profile (1-3)
 
 ## Settings
-![Settings](Doc/2_D2svJoy_Settings.png)
+![Settings](Doc/2_Ds2vJoy_Settings.png)
 
 - Choose between preferred Sony® joypad, vJoy device in use
   - but for example if you chosen DS5 and only DS4 is connected this one will be in used
@@ -74,7 +74,7 @@ Satus is separated in 4 colums which are:
 - Led is calm wave fluctuating, and can color be stopped on exit
 
 ## vJoy
-![vJoy](Doc/3_D2svJoy_vJoy.png)
+![vJoy](Doc/3_Ds2vJoy_vJoy.png)
 
 Each line correspond to a different mapping
 
@@ -97,7 +97,7 @@ There is a dual view mode, where you can clone a tab
 - Otherwise, automatically hidden, outside extended mode, if you change tabs
 - You get it back if you change again for vJoy Tab, until you manually close it
 
-![vJoy](Doc/4_D2svJoy_vJoy_Tools.png)
+![vJoy](Doc/4_Ds2vJoy_vJoy_Tools.png)
 
 Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
@@ -126,7 +126,7 @@ Sorting order (Programmed method):
 |   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
 * in either case, vj are the first valid ones found among the eight available, no matter where you put them.
 
-![vJoy](Doc/5_D2svJoy_vJoy_List.png.png)
+![vJoy](Doc/5_Ds2vJoy_vJoy_List.png.png)
 
 DS Button:
 - First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
@@ -165,7 +165,7 @@ Tags:
 You can sort by clicking on column headers of the list, but be careful you'll have to manually reorder if order is important in your mapping. But even in this case, it can still can be useful
 
 ## vJoy editing
-![vJoy Editing](Doc/6_D2svJoy_vJoy_Editing.png)
+![vJoy Editing](Doc/6_Ds2vJoy_vJoy_Editing.png)
 
 - First row is source
   - First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
@@ -346,7 +346,7 @@ Table of Transitivity:
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
 
-![vJoy Help](Doc/7_D2svJoy_vJoy_Help.png)
+![vJoy Help](Doc/7_Ds2vJoy_vJoy_Help.png)
 
 You can find this help directly in Ds2vJoy by pressing help below grid entries
 ______________________________________________________________________________________ Special actions
@@ -502,7 +502,7 @@ An example of a simple advanced script for mouse:
     (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
-![vJoy](Doc/9_D2svJoy_vJoy_Example.png)
+![vJoy](Doc/9_Ds2vJoy_vJoy_Example.png)
 
 This is an example of how enter a fictive mode when push simultaneously L1 and R1 without using modes and the need of L1R1 special button
 
@@ -522,7 +522,7 @@ This is an example of how enter a fictive mode when push simultaneously L1 and R
 ```
 
 ## RapidFire
-![RapidFire](Doc/10_D2svJoy_RapidFire.png)
+![RapidFire](Doc/10_Ds2vJoy_RapidFire.png)
 
 You can set repeated hits with the assigned vJoy button
 
@@ -541,7 +541,7 @@ After the first time has passed, release and press repeatedly
 - If you enter an odd number for 'Press time', 0-19 milliseconds will be added, different each turn
 
 ## Keymap
-![Keymap](Doc/12_D2svJoy_Keymap.png)
+![Keymap](Doc/12_Ds2vJoy_Keymap.png)
 
 You can send a keydown when the button is pressed and a keyup when it is released
 
@@ -593,7 +593,7 @@ You can now enter up to 64 characters per keymap
 You will find.
 
 ## ViGEm
-![ViGEm](15_D2svJoy_ViGEm.png)
+![ViGEm](15_Ds2vJoy_ViGEm.png)
 
 Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
@@ -605,7 +605,7 @@ If you plan to use ViGEm X360 with vJoy as source, remember to change in the vJo
 - AXISR Y: RZ > RZINV
 
 ## Guardian
-![Guardian](16_D2svJoy_Guardian.png)
+![Guardian](16_Ds2vJoy_Guardian.png)
 
 Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/start this service)
 - A restart may be necessary after installing Guardian to have it properly running
@@ -615,14 +615,14 @@ Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/star
 - Whitelist section, bypass the guardian for programs you need to achieve this
 
 ## Links
-![Links](Doc/18_D2svJoy_Links.png)
+![Links](Doc/18_Ds2vJoy_Links.png)
 
 You'll find source of inspiration for this project
 
 And you can enter from 1 to 5 programs name and location which can be launched after that through systray menu
 
 ## Tray
-![Tray](Doc/19_D2svJoy_Tray.png)
+![Tray](Doc/19_Ds2vJoy_Tray.png)
 
 Picture talk by itself
 
