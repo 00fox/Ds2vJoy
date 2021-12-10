@@ -126,7 +126,7 @@ Sorting order (Programmed method):
 |   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
 * in either case, vj are the first valid ones found among the eight available, no matter where you put them.
 
-![vJoy](Doc/5_D2svJoy_List.png)
+![vJoy](Doc/5_D2svJoy_vJoy_List.png.png)
 
 DS Button:
 - First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
