@@ -1,12 +1,28 @@
 ﻿# Ds2vJoy
-DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits only
+DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits
 
-Fork from @090 DS4vJoy and DS5vJoy projects
-- Bluetooth compatible
-- Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
-- Combinations, modes (known as shifted), macros and time based operations allowed
-- Control complex mouse operations
+You can combine one or more of these options, no one is required:
+- DualShock™ and DualSense™ as source
+  - Bluetooth compatible
+  - A lot of buttons added (individual axes, L1R1 the same time etc)
+- Keyboard and mouse as source or destination
+- vJoy (universal joystick) as source or destination (but in exclusive mode)
+- viGEm (playstation or xbox emulation) as destination
+
+Content:
+- Combinations, Modes (known as shifted), Macros, and Time based operations allowed
+- All logical arithmetic, you can register multiple operations executed in order, one line, one full mapping
+  - multiple source to activate one is possible, with and, or, xor and not
+  - triggers added like if mouse activated, onRelease, disabled, even if disabled...
+- Several logical operations, like Toggle, Switch, Transitivity, Sustain, Pause
+- Control complex mouse operations, Sniper, Navigate in a grid when needed...
+- Control axis movements, 170 different movements can be done, fused, protected (OverControl)
+- Special actions, mouse, sound, modes, window, stats and time actions
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
+- Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
+- Multiple efficiency, like docking, insight, transparency, automatic full height, minimize & restore
+- Microsoft Edge WebView2 for internet, with automation, stay overgame (soon)
+- Simple notepad, rapid access (soon)
 
 **Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests**
 
@@ -28,7 +44,7 @@ Fork from @090 DS4vJoy and DS5vJoy projects
 - You can see which button is pressed by launching Monitor vJoy but when under vJoy and ViGEm tabs, you can see them directly in status bar to easily test quick configurations
 
 ## Log
-![Log](Doc/1.png)
+![Log](Doc/1_D2svJoy_Log.png)
 
 Satus is separated in 4 colums which are:
 - Battery
@@ -37,7 +53,7 @@ Satus is separated in 4 colums which are:
 - Mode (1-8) and Profile (1-3)
 
 ## Settings
-![Settings](Doc/2.png)
+![Settings](Doc/2_D2svJoy_Settings.png)
 
 - Choose between preferred Sony® joypad, vJoy device in use
   - but for example if you chosen DS5 and only DS4 is connected this one will be in used
@@ -58,7 +74,7 @@ Satus is separated in 4 colums which are:
 - Led is calm wave fluctuating, and can color be stopped on exit
 
 ## vJoy
-![vJoy](Doc/3.png)
+![vJoy](Doc/3_D2svJoy_vJoy.png)
 
 Each line correspond to a different mapping
 
@@ -71,7 +87,7 @@ Each tab corresponds to a drawer, in which you can organize the different mappin
 - Each of these tabs are by default, like the first one, set to 'Always', but just show their numbers.
 - 'Always' means that all mappings, if they are checked, will always work, just, the tabs are processed in the order of appearance
 - But you can assign a mode for each of these tabs, which allows you to say that the mappings they contain will only be active in this mode
-- The tabs left in the 'Always' position will remain active even if you are in another mode than the starting one: the 1 (see vJoy editing, special mouse actions, sound and modes, to know how)
+- The tabs left in the 'Always' position will remain active even if you are in another mode than the starting one (1) (see Special mouse actions to know how)
 - The first tab is neutral and cannot be assigned to another mode, the others (1-8) all can. There is no order to follow, and two tabs can share the same mode. On the other hand, the order of processing is also the order of the tabs
 
 There is a dual view mode, where you can clone a tab
@@ -81,7 +97,7 @@ There is a dual view mode, where you can clone a tab
 - Otherwise, automatically hidden, outside extended mode, if you change tabs
 - You get it back if you change again for vJoy Tab, until you manually close it
 
-![vJoy](Doc/3b.png)
+![vJoy](Doc/4_D2svJoy_vJoy_Tools.png)
 
 Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
@@ -110,7 +126,7 @@ Sorting order (Programmed method):
 |   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
 * in either case, vj are the first valid ones found among the eight available, no matter where you put them.
 
-![vJoy](Doc/3c.png)
+![vJoy](Doc/5_D2svJoy_List.png)
 
 DS Button:
 - First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
@@ -124,7 +140,7 @@ DS Button:
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
-- See a brief of what will be launched like vJoy, modes, mouse action (different from mouse)
+- See a brief of what will be launched like vJoy, modes, special actions
 - '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
   - '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
 - '✓' Indicates this button will be switched on, as long as it is not swithed off again, or toggled
@@ -149,7 +165,7 @@ Tags:
 You can sort by clicking on column headers of the list, but be careful you'll have to manually reorder if order is important in your mapping. But even in this case, it can still can be useful
 
 ## vJoy editing
-![vJoy Editing](Doc/4.png)
+![vJoy Editing](Doc/6_D2svJoy_vJoy_Editing.png)
 
 - First row is source
   - First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
@@ -158,13 +174,11 @@ You can sort by clicking on column headers of the list, but be careful you'll ha
 - Solo is central led and battery status
   - central led is working as long as the mapping is active and doesn't react to conditions
 - Eight ones are destination (together, or in a timeline)
-- Group of checkboxes is for mouse choice (to use with special mouse action ACTIVE_MOUSE)
-- Group of numbers, Grid, is either for special mouse actions,
+- Group of checkboxes is for mouse choice (to use with special action ACTIVE_MOUSE)
+- Group of numbers, Grid, is either for special actions,
   - or to use mouse in a zone instead of the full screen, divided or not in a grid
   - or to use mouse in the full screen, divided
-- Two digits in the lower right corner are the mouse coordinates, to make it easier to enter special mouse actions
-  - click on the left number to start capture, the color changes for 3s, and after 3s it come back to its normal state with the mouse point you were at captured
-  - click on the right number, while you already selected an element of the grid, insert the coordinates into this column (x,y or w,h or nw,nh)
+- Two digits in the lower right corner are the mouse coordinates (see Efficiency)
 
 ______________________________________________________________________________________ Input method
 
@@ -209,6 +223,13 @@ RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE,
 - Different parts of the touchpad (all, Up, Only touch part, Left, Right and 4 corners)
 - Simultaneous presses, L1R1 L2R2 (you have a short - configurable - time to press both buttons same time, and will be released only when both will)
 - Battery level
+
+RAW NAMES: MOUSE_AXEX, MOUSE_AXEY, MOUSE_LEFT, MOUSE_RIGHT, MOUSE_UP, MOUSE_DOWN
+- Mouse movements, keep cursor in center of screen if mouse isn not captured
+
+RAW NAMES: KID_LBUTTON, KID_MBUTTON, KID_RBUTTON, KID_XBUTTON1, KID_XBUTTON2, KID_F1, KID_F2, KID_F3, KID_F4, KID_F5, KID_F6, KID_F7, KID_F8, KID_F9, KID_F10, KID_F11, KID_F12, KID_0, KID_1, KID_2, KID_3, KID_4, KID_5, KID_6, KID_7, KID_8, KID_9, KID_OEM_MINUS, KID_OEM_PLUS, KID_OEM_1, KID_OEM_2, KID_OEM_3, KID_OEM_4, KID_OEM_5, KID_OEM_6, KID_OEM_7, KID_OEM_8, KID_OEM_102, KID_OEM_COMMA, KID_OEM_PERIOD, KID_A, KID_B, KID_C, KID_D, KID_E, KID_F, KID_G, KID_H, KID_I, KID_J, KID_K, KID_L, KID_M, KID_N, KID_O, KID_P, KID_Q, KID_R, KID_S, KID_T, KID_U, KID_V, KID_W, KID_X, KID_Y, KID_Z, KID_ESCAPE, KID_TAB, KID_RETURN, KID_SPACE, KID_BACK, KID_DELETE, KID_INSERT, KID_NUMLOCK, KID_LSHIFT, KID_RSHIFT, KID_LCONTROL, KID_RCONTROL, KID_LWIN, KID_RWIN, KID_LMENU, KID_RMENU, KID_LEFT, KID_UP, KID_RIGHT, KID_DOWN, KID_PRIOR, KID_NEXT, KID_END, KID_HOME, KID_NUMPAD0, KID_NUMPAD1, KID_NUMPAD2, KID_NUMPAD3, KID_NUMPAD4, KID_NUMPAD5, KID_NUMPAD6, KID_NUMPAD7, KID_NUMPAD8, KID_NUMPAD9, KID_DIVIDE, KID_MULTIPLY, KID_SUBTRACT, KID_ADD, KID_SEPARATOR, KID_DECIMAL
+- Mouse buttons
+- Keyboard
 
 RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR, SL1TR, XINV, YINV, ZINV, RXINV, RYINV, RZINV, SL0INV, SL1INV, DPAD1_LEFT, DPAD1_UP_LEFT, DPAD1_UP, DPAD1_UP_RIGHT, DPAD1_RIGHT, DPAD1_DOWN_RIGHT, DPAD1_DOWN, DPAD1_DOWN_LEFT, DPAD2_LEFT, DPAD2_UP_LEFT, DPAD2_UP, DPAD2_UP_RIGHT, DPAD2_RIGHT, DPAD2_DOWN_RIGHT, DPAD2_DOWN, DPAD2_DOWN_LEFT, DPAD3_LEFT, DPAD3_UP_LEFT, DPAD3_UP, DPAD3_UP_RIGHT, DPAD3_RIGHT, DPAD3_DOWN_RIGHT, DPAD3_DOWN, DPAD3_DOWN_LEFT, DPAD4_LEFT, DPAD4_UP_LEFT, DPAD4_UP, DPAD4_UP_RIGHT, DPAD4_RIGHT, DPAD4_DOWN_RIGHT, DPAD4_DOWN, DPAD4_DOWN_LEFT
 - Usual vJoy buttons
@@ -303,7 +324,7 @@ Under central led, you'll find 4 checkboxes
 - Toggle: satisfy mapping conditions one time to start, second one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
-  - and for mouse if ACTIVE_MOUSE mouse action is used (see below)
+  - and for mouse if ACTIVE_MOUSE special action is used (see below)
   
 ______________________________________________________________________________________ Transitivity
 
@@ -325,9 +346,12 @@ Table of Transitivity:
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
 
-______________________________________________________________________________________ Mouse, sound, modes and time
+![vJoy Help](Doc/7_D2svJoy_vJoy_Help.png)
 
-At the left of destinations, you'll find special mouse, sound, modes and time actions
+You can find this help directly in Ds2vJoy by pressing help below grid entries
+______________________________________________________________________________________ Special actions
+
+At the left of destinations, you'll find special mouse, sound, modes, window, stats and time actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
@@ -361,6 +385,10 @@ At the left of destinations, you'll find special mouse, sound, modes and time ac
 - INTERRUPT: same as 'Interrupt' condition, but time dependent
 - NO_SUSTAIN: same as 'No sustain' condition, but time dependent
 - PAUSE: same as 'Pause' condition, but time dependent
+- BEEP1/BEEP2/BEEP3: Different beep sounds
+- RESET_STATS: Reset All stats (see Efficiency)
+- ADDSTAT1-8: Add a counter on a stat of your choice (1 to 8) (see Efficiency)
+- MINIMIZE/RESTORE: Put main window minimized or restore it
 
 ______________________________________________________________________________________ Example
 
@@ -420,7 +448,7 @@ Like for normal axis, the value of axis movement takes place over last axis valu
   - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
-![Axis movements](Doc/16.png)
+![Axis movements](Doc/8_D2svJoy_vJoy_Movements.png)
 - Complete turn, clockwise or counterclockwise, starting by the north (motorization, loops, perpetual motion)
 - Stay at the middle (combos and technology)
 - Stay at one of the eight typical position of the circonference (W, NW, N, NE, E, SE, S, SW)
@@ -474,28 +502,11 @@ An example of a simple advanced script for mouse:
     (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
-An example of advanced script for targeting:
-```
-  1st mapping: DS L2R2 -[double] DS R2 active vJoy 128
-    when you first press L2R2 nothing happen as R2 is pressed
-    as soon as you release only R2, the conditions is respected, and then button 128 is pressed
-    as R2 is double checked, it doesn't stop the mapping while already running,
-    so until you release both L2 and R2, 128 stay pressed
-    (you could even press R2 and release only L2 for other actions and come back after to only L2)
-  2nd mapping: vJoy 128 + DS R2 do target forward target (you place on the button you wish)
-  Do the same for the left, with button 127 and target backward target (you place on the button you wish)
-    and then until you release Both L2 & R2, you can easily swap target
-    and individual L2 and R2 stay free to be affected to usual actions
-    (you may differ them by 100ms and add -[simple] DS L2R2)
-```
+![vJoy](Doc/9_D2svJoy_vJoy_Example.png)
 
-![vJoy](Doc/3c.png)
-
-Look at this third picture of vJoy section,
+This is an example of how enter a fictive mode when push simultaneously L1 and R1 without using modes and the need of L1R1 special button
 
 ```
-  This is an example of how enter a fictive mode when push simultaneously L1 and R1
-    without using modes and the need of L1R1 special button
   Mode exit when you release both L1 and R1
   L1 and R1 special actions are not triggered first,
     they will if you have released L1 before pushed it again,
@@ -510,12 +521,8 @@ Look at this third picture of vJoy section,
   By using mode there is more simple methods
 ```
 
-![vJoy Help](Doc/5.png)
-
-You can find this help directly in Ds2vJoy by pressing help below grid entries
-
 ## RapidFire
-![RapidFire](Doc/6.png)
+![RapidFire](Doc/10_D2svJoy_RapidFire.png)
 
 You can set repeated hits with the assigned vJoy button
 
@@ -526,7 +533,7 @@ Sort, order, add, delete, copy or edit (double click or menu)
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
-![RapidFire Editing](Doc/7.png)
+![RapidFire Editing](Doc/11_D2svJoy_RapidFire_Editing.png)
 
 After the first time has passed, release and press repeatedly
 - If you specify the simultaneous press condition, you can also enable repeated hits (of the D-pad keys or □ △ × ○ for example), only when another (L1 or R1 for example) is pressed
@@ -534,7 +541,7 @@ After the first time has passed, release and press repeatedly
 - If you enter an odd number for 'Press time', 0-19 milliseconds will be added, different each turn
 
 ## Keymap
-![Keymap](Doc/8.png)
+![Keymap](Doc/12_D2svJoy_Keymap.png)
 
 You can send a keydown when the button is pressed and a keyup when it is released
 
@@ -564,7 +571,7 @@ Method:
 | S     | It will use Postmessage to send keys to specified process
 | S+A   | It will activate window of the specified process before (each key if 'Natual typing' is in use)
 
-![Keymap Editing](Doc/9.png)
+![Keymap Editing](Doc/13_D2svJoy_Keymap_Editing.png)
 
 You can now enter up to 64 characters per keymap
 
@@ -581,12 +588,12 @@ You can now enter up to 64 characters per keymap
 - KEYEVENTF_SCANCODE: If specified, wScan identifies the key and wVk is ignored.
   * https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
 
-![Keymap Window Post](Doc/10.png)
+![Keymap Window Post](Doc/14_D2svJoy_Keymap_Post.png)
 
 You will find.
 
 ## ViGEm
-![ViGEm](Doc/11.png)
+![ViGEm](15_D2svJoy_ViGEm.png)
 
 Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
@@ -598,7 +605,7 @@ If you plan to use ViGEm X360 with vJoy as source, remember to change in the vJo
 - AXISR Y: RZ > RZINV
 
 ## Guardian
-![Guardian](Doc/12.png)
+![Guardian](16_D2svJoy_Guardian.png)
 
 Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/start this service)
 - A restart may be necessary after installing Guardian to have it properly running
@@ -608,28 +615,35 @@ Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/star
 - Whitelist section, bypass the guardian for programs you need to achieve this
 
 ## Links
-![Links](Doc/13.png)
+![Links](Doc/18_D2svJoy_Links.png)
 
 You'll find source of inspiration for this project
 
 And you can enter from 1 to 5 programs name and location which can be launched after that through systray menu
 
 ## Tray
-![Tray](Doc/14.png)
+![Tray](Doc/19_D2svJoy_Tray.png)
 
 Picture talk by itself
 
 ## Efficiency
-![Efficiency](Doc/15.png)
+![Efficiency](Doc/20_D2svJoy_Efficiency.png)
 
 There is no resize but some other stuff
 
-On bottom right, you can see a Reminder to remember dispatch of attributed buttons
-- You can use it as you wish, it is saved as soon as you change a state, and you get it back next session 
-- Corner indicator automatically indicates all vJoy buttons (1-32) used in all mappings
+- Two digits in the lower right corner are the mouse coordinates, to make it easier to enter special mouse actions
+  - click on the left number to start capture, the color changes for 3s, and after 3s it come back to its normal state with the mouse point you were at captured
+  - click on the right number, while you already selected an element of the grid, insert the coordinates into this column (x,y or w,h or nw,nh)
+- Stats is a group of eight number digits
+  - They can be reseted individually by clicking on it, or all the same time, with RESET_STATS special action
+  - You incremente them by adding ADDSTAT1-8 special actions to your script to add a counter on a stat of your choice (1 to 8)
+- On bottom right, you can see a Reminder to remember dispatch of attributed buttons
+  - You can use it as you wish, it is saved as soon as you change a state, and you get it back next session 
+  - Corner indicator automatically indicates all vJoy buttons (1-32) used in all mappings
+- Right click on window caption, or the background of a child to alternate plain or transparency
 
-## Thanks
-* https://github.com/090 (a lot)
+## Related links and source
+* https://github.com/090 (merci pour le cadre et la base)
 * https://sourceforge.net/projects/vjoystick
 * https://github.com/ViGEm/ViGEmBus
 * https://github.com/ViGEm/ViGEmClient
@@ -642,6 +656,7 @@ On bottom right, you can see a Reminder to remember dispatch of attributed butto
 * https://notepad-plus-plus.org
 * http://www.planetpointy.co.uk/joystick-test-application
 * https://github.com/microsoft/Windows-driver-samples/tree/master/setup/devcon
+* https://github.com/MicrosoftEdge/WebView2Samples
 
 ## Development environment
 - Win10 64bit + Visual Studio 2019 (Community is fine)
