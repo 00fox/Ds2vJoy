@@ -74,7 +74,7 @@ Satus is separated in 4 colums which are:
 - Led is calm wave fluctuating, and can color be stopped on exit
 
 ## vJoy
-![vJoy](Doc/3_Ds2vJoy_vJoy.png)
+![vJoy](Doc/3_Ds2vJoy_Mapping.png)
 
 Each line correspond to a different mapping
 
@@ -97,7 +97,7 @@ There is a dual view mode, where you can clone a tab
 - Otherwise, automatically hidden, outside extended mode, if you change tabs
 - You get it back if you change again for vJoy Tab, until you manually close it
 
-![vJoy](Doc/4_Ds2vJoy_vJoy_Tools.png)
+![vJoy](Doc/4_Ds2vJoy_Mapping_Tools.png)
 
 Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
@@ -126,7 +126,7 @@ Sorting order (Programmed method):
 |   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
 * in either case, vj are the first valid ones found among the eight available, no matter where you put them.
 
-![vJoy](Doc/5_Ds2vJoy_vJoy_List.png.png)
+![vJoy](Doc/5_Ds2vJoy_Mapping_List.png.png)
 
 DS Button:
 - First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
@@ -141,6 +141,7 @@ DS Button:
 
 vJoy Button:
 - See a brief of what will be launched like vJoy, modes, special actions
+- You don't need vJoy installed, if not, buttons are virtual, but usefull for remapping etc, if yes, they match vJoy selected device number
 - '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
   - '>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
 - '✓' Indicates this button will be switched on, as long as it is not swithed off again, or toggled
@@ -165,7 +166,7 @@ Tags:
 You can sort by clicking on column headers of the list, but be careful you'll have to manually reorder if order is important in your mapping. But even in this case, it can still can be useful
 
 ## vJoy editing
-![vJoy Editing](Doc/6_Ds2vJoy_vJoy_Editing.png)
+![vJoy Editing](Doc/6_Ds2vJoy_Mapping_Editing.png)
 
 - First row is source
   - First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
@@ -346,7 +347,7 @@ Table of Transitivity:
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
 
-![vJoy Help](Doc/7_Ds2vJoy_vJoy_Help.png)
+![vJoy Help](Doc/7_Ds2vJoy_Mapping_Help.png)
 
 You can find this help directly in Ds2vJoy by pressing help below grid entries
 ______________________________________________________________________________________ Special actions
@@ -448,7 +449,7 @@ Like for normal axis, the value of axis movement takes place over last axis valu
   - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
-![Axis movements](Doc/8_Ds2vJoy_vJoy_Movements.png)
+![Axis movements](Doc/8_Ds2vJoy_Mapping_Movements.png)
 - Complete turn, clockwise or counterclockwise, starting by the north (motorization, loops, perpetual motion)
 - Stay at the middle (combos and technology)
 - Stay at one of the eight typical position of the circonference (W, NW, N, NE, E, SE, S, SW)
@@ -502,7 +503,7 @@ An example of a simple advanced script for mouse:
     (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
-![vJoy](Doc/9_Ds2vJoy_vJoy_Example.png)
+![vJoy](Doc/9_Ds2vJoy_Mapping_Example.png)
 
 This is an example of how enter a fictive mode when push simultaneously L1 and R1 without using modes and the need of L1R1 special button
 
