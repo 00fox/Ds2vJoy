@@ -644,7 +644,7 @@ There is no resize but some other stuff
 - Right click on window caption, or the background of a child to alternate plain or transparency
 
 ## Related links and source
-* https://github.com/090 (merci pour le cadre et la base)
+* https://github.com/090 (merci pour la structure de depart)
 * https://sourceforge.net/projects/vjoystick
 * https://github.com/ViGEm/ViGEmBus
 * https://github.com/ViGEm/ViGEmClient
