@@ -19,7 +19,6 @@ Content:
 - Control axis movements, 170 different movements can be done, fused, protected (OverControl)
 - Special actions, mouse, sound, modes, window, stats and time actions
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
-- Vibration compatible (If you select vJoy or ViGEm from the game, the operation of DS4 will be reflected)
 - Multiple efficiency, like docking, insight, transparency, automatic full height, minimize & restore
 - Microsoft Edge WebView2 for internet, with automation, stay overgame (soon)
 - Simple notepad, rapid access (soon)
