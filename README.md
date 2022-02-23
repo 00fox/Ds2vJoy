@@ -615,11 +615,6 @@ You'll find source of inspiration for this project
 
 And you can enter from 1 to 5 programs name and location which can be launched after that through systray menu
 
-## Tray
-![Tray](Doc/19_Ds2vJoy_Tray.png)
-
-Picture talk by itself
-
 ## Notepad
 
 Click on maximize to hide/show notepad
@@ -628,6 +623,11 @@ You can install full Notepad font used by default, you can install it on your sy
 You can specify your own font, for that manually edit Ds2vJoy.ini file, and modify NotepadFont=NotepadFont,16,0
 - For example, NotepadFont=Consolas,14,6 change the font to Consolas family, height of 14, width of 6 (0 is default)
 Remember you can use MINIMIZE/RESTORE special actions, for example, quickly hide/show the notepad over the game, and you can right click on window's title bar to make the window semi transparent.
+
+## Tray
+![Tray](Doc/19_Ds2vJoy_Tray.png)
+
+Picture talk by itself
 
 ## Efficiency
 ![Efficiency](Doc/20_Ds2vJoy_Efficiency.png)
@@ -672,6 +672,6 @@ There is no resize but some other stuff
 * https://www.inputmapper.com
 
 ## Development environment
-- Win11 64bit + Visual Studio 2022 (Community is fine)
+- Win11 64bit + Visual Studio 2022 Community
 - Sony® DualShock™ and DualSense™
 - Intel® Wireless Bluetooth from Asus ROG
