@@ -1,5 +1,5 @@
 ﻿# Ds2vJoy
-DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits
+DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits (Windows 11 Approved)
 
 You can combine one or more of these options, no one is required:
 - DualShock™ and DualSense™ as source
@@ -21,7 +21,7 @@ Content:
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
 - Multiple efficiency, like docking, insight, transparency, automatic full height, minimize & restore
 - Microsoft Edge WebView2 for internet, with automation, stay overgame (soon)
-- Simple notepad, rapid access (soon)
+- Simple notepad, rapid access
 
 **Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests**
 
@@ -57,6 +57,7 @@ Satus is separated in 4 colums which are:
 - Choose between preferred Sony® joypad, vJoy device in use
   - but for example if you chosen DS5 and only DS4 is connected this one will be in used
   - You may have to restart the program to change apply
+- Choose if you want keyboard, mouse or both as source (use more ressources)
 - Usual Configurations
 - Triggers mode (only works with DS5)
   - May be used only for touch pleasure
@@ -70,7 +71,7 @@ Satus is separated in 4 colums which are:
   - Simultaneous is R1L1 or R2L2 the same time (with this 40ms as default delta)
 - Multiple touchpad divide in multiple buttons,
   - But for more simple uses, there is a lot of special buttons (see vJoy)
-- Led is calm wave fluctuating, and can color be stopped on exit
+- Led is calm wave fluctuating, you can modify the frequency, and color can be stopped on exit
 
 ## vJoy
 ![vJoy](Doc/3_Ds2vJoy_Mapping.png)
@@ -98,16 +99,12 @@ There is a dual view mode, where you can clone a tab
 
 ![vJoy](Doc/4_Ds2vJoy_Mapping_Tools.png)
 
-Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
+Order, add, delete, copy or edit (double click or right click menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
-- Two different orders exist for each column
-  - single click corresponds to single column natural ordering, except there isn't inverted order, you can proceed on several columns in succession
-  - clicking twice consecutively on the same, launch a programmed sort operation (see table below)
-  - for security reasons, you have to maintain the right button down and then left click on the column header (avoid unwanted sorts, while order is important in your mapping)
-    - Instead, with a simple left click, you change the view (one for mapping different of clone's) and get a 'Notice' column instead of 'vJoy+Tags'
-    - Then with a right click on an item, you can manage to add and view a note, comment, notice, reminder, game rule, combo description, etc. different for each (max 260 characters)
-    - Views (which one) are saved, and restored when you open the program again
-  - (vJoy only, RapidFire and Keymap use natural + reverse order without the need of right mouse button down)
+- Two different views exist
+  - Each source, destination, tagg
+  - Each source, notice
+  - Swap between them by right clicking on the list and choosing 'Swap view' in the menu that will pop
 - Edit, delete, copy and move actions can process multiple mappings the same time
   - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
   - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
@@ -115,27 +112,18 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
-Sorting order (Programmed method):
-| column | 1      | 2     | 3     | 4     | 5     | 7     | 8    |
-|:------:|:------ |:----- |:----- |:----- |:----- |:----- |:---- |
-|   1    | Enable | ds1   | dsor  | dsnot | Led   | vj    | Tags |
-|   2    | Enable | dsor  | dsnot | Led   | vj    | ds1   | Tags |
-|   3    | Enable | dsnot | Led   | vj    | ds1   | dsor  | Tags |
-|   4    | Enable | Led   | vj    | ds1   | dsor  | dsnot | Tags |
-|   5    | Enable | Tags  | ds1   | dsor  | dsnot | Led   | vj   |
-* in either case, vj are the first valid ones found among the eight available, no matter where you put them.
-
 ![vJoy](Doc/5_Ds2vJoy_Mapping_List.png.png)
 
 DS Button:
 - First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
-- '+' Indicates combination (second column)
-- '||' Indicates combination with or condition (second column)
-  - '⊕' Indicates combination with xor condition (second column)
-- '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions) (third column)
-  - '--' Indicates this mapping won't be launched if this button is pressed, but continue if already launched (third column)
+- '+' Indicates combination (columns 2,3,4,5)
+- '||' Indicates combination with or condition (second and third columns)
+  - '⊕' Indicates combination with xor condition (second and third columns)
+- '-' Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions) (third and fourth columns)
+  - '=' Indicates this mapping won't be launched if this button is pressed, but continue if already launched (third and fourth columns)
 - '#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated (all)
   - '✱' Even if Short (or Double), while release time, before time to activate spent (or second press)
+- Purple indicates simple disable, blue indictates double disable, grey indicates inactive mapping
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
 vJoy Button:
@@ -162,8 +150,6 @@ Tags:
 |  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
 - a lowercase indicates that the checkbox is double checked for this condition
 
-You can sort by clicking on column headers of the list, but be careful you'll have to manually reorder if order is important in your mapping. But even in this case, it can still can be useful
-
 ## vJoy editing
 ![vJoy Editing](Doc/6_Ds2vJoy_Mapping_Editing.png)
 
@@ -186,11 +172,11 @@ Under first source you'll find 3 checkboxes which determine the method
 | Checkboxes    | Method          | Description
 |:------------- |:--------------- |:--------------------------------------------------
 | None          | Simple          | Start when pressed, stop when release
-| First         | Short*          | You have to press and release quickly
+| First         | Short(1)        | You have to press and release quickly
 | Second        | Double          | You'll have to double press in a limited time
 | Third         | Long            | You have to stay pressed from a certain time
 | 1 & 2         | Double short(1) | Second press acting like short
-| 2 & 2         | Double long     | Second press acting like long
+| 2 & 3         | Double long     | Second press acting like long
 | 1 & 3         | Medium long     | Like long but after double long
 | All           | Very long       | 
 
@@ -250,7 +236,8 @@ Over first source you can find special requirements
 
 ______________________________________________________________________________________ Or/Xor
 
-Over two next sources you'll find 'or', double 'xor' conditions instead of simple combination
+Over two next sources you'll find 'or'
+- double, 'xor' conditions instead of simple combination
 - If only first 'or' is used and first source is killed to launch the mapping (for example, pushed more than a short press),
   and still pushed, second source is still available. But both will have to be released to be available to trigger the mapping again
 - The mapping is launched over those conditions:
@@ -291,11 +278,14 @@ Over two last sources you'll find not condition,
 ______________________________________________________________________________________ Time stamps
 
 Destinations can be effected with time stamps for tricky actions, macros or combos
-- Enter start (if not as soon as) or/and end (of not when release)
+- Enter start (if not as soon as) or/and end (if not when release)
 - If you enter an odd number, 0-9 milliseconds will be added, different each time
+
+______________________________________________________________________________________ OnRelease
+
 - Middle check box, OnRelease, is to begin the action on release
   - double, only the up press, even if some other timestamps are finished
-- Upper one, NoRelease, is to decide to not do release action while transitivity mode active (see below) and mode changed
+- Upper one, NoRelease, is to decide to not do release action while transitivity mode active (see Transitivity) and mode changed
   - double, one turn of this release action will still be performed then stopped
 - Upper one again, NlRelease (normal release), is to decide not perform NoRelease condition if back to initial mode
   - double, not perform NoRelease condition while the new mode
@@ -321,7 +311,7 @@ Under central led, you'll find 4 checkboxes
   - double: One time, used in Transitivity (see table of transitivity below)
 - Transitivity: Principal way of transitivity which brings different behaviors and transition possibilities while mode changed
   - double, Come back, another way of transitivity which brings its owns (see table of transitivity below)
-- Toggle: satisfy mapping conditions one time to start, second one to stop
+- Toggle: Satisfy mapping condition once to start, once again one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
   - and for mouse if ACTIVE_MOUSE special action is used (see below)
@@ -349,9 +339,13 @@ Table of Transitivity:
 ![vJoy Help](Doc/7_Ds2vJoy_Mapping_Help.png)
 
 You can find this help directly in Ds2vJoy by pressing help below grid entries
-______________________________________________________________________________________ Special actions
 
-At the left of destinations, you'll find special mouse, sound, modes, window, stats and time actions
+At the left of destinations, you'll find destination actions type choice:
+
+______________________________________________________________________________________ Mouse actions
+
+Simple, you'll find mouse actions
+
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
@@ -368,6 +362,11 @@ At the left of destinations, you'll find special mouse, sound, modes, window, st
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
   - or fixed scroll adjusted for games that don't support the number of wheel ticks signal
+
+______________________________________________________________________________________ Special actions
+
+Double, you'll find sound, modes, window, stats and time actions
+
 - MUTE_SOUND
 - VOLUME_UP, VOLUME_DOWN
   - if on trigger, variable speed following the pressure force, otherwise exponential
@@ -433,19 +432,13 @@ A simple example with time actions:
 
 ______________________________________________________________________________________ Axis mouvements
 
-Double, you'll find Axis movements
+Triple, you'll find Axis movements
 
 RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN, XY_CENTER, XY_LEFT, XY_UP_LEFT, XY_UP, XY_UP_RIGHT, XY_RIGHT, XY_DOWN_RIGHT, XY_DOWN, XY_DOWN_LEFT, XY_Q1_CW, XY_Q1_CN, XY_Q2_CW, XY_Q2_CN, XY_Q3_CW, XY_Q3_CN, XY_Q4_CW, XY_Q4_CN, XY_E1_CW, XY_E1_CN, XY_E2_CW, XY_E2_CN, XY_E3_CW, XY_E3_CN, XY_E4_CW, XY_E4_CN, XY_E5_CW, XY_E5_CN, XY_E6_CW, XY_E6_CN, XY_E7_CW, XY_E7_CN, XY_E8_CW, XY_E8_CN, XY_C_L, XY_C_UL, XY_C_U, XY_C_UR, XY_C_R, XY_C_DR, XY_C_D, XY_C_DL, XY_2C_L, XY_2C_UL, XY_2C_U, XY_2C_UR, XY_2C_R, XY_2C_DR, XY_2C_D, XY_2C_DL, XY_D_L, XY_D_UL, XY_D_U, XY_D_UR, XY_D_R, XY_D_DR, XY_D_D, XY_D_DL, XY_T_L_CW, XY_T_L_CN, XY_T_U_CW, XY_T_U_CN, XY_T_R_CW, XY_T_R_CN, XY_T_D_CW, XY_T_D_CN, XY_S_L_CW, XY_S_L_CN, XY_S_U_CW, XY_S_U_CN, XY_S_R_CW, XY_S_R_CN, XY_S_D_CW, XY_S_D_CN, XY_L_L_CW, XY_L_L_CN, XY_L_U_CW, XY_L_U_CN, XY_L_R_CW, XY_L_R_CN, XY_L_D_CW, XY_L_D_CN, ZRZ_CENTER, ZRZ_LEFT, ZRZ_UP_LEFT, ZRZ_UP, ZRZ_UP_RIGHT, ZRZ_RIGHT, ZRZ_DOWN_RIGHT, ZRZ_DOWN, ZRZ_DOWN_LEFT, ZRZ_Q1_CW, ZRZ_Q1_CN, ZRZ_Q2_CW, ZRZ_Q2_CN, ZRZ_Q3_CW, ZRZ_Q3_CN, ZRZ_Q4_CW, ZRZ_Q4_CN, ZRZ_E1_CW, ZRZ_E1_CN, ZRZ_E2_CW, ZRZ_E2_CN, ZRZ_E3_CW, ZRZ_E3_CN, ZRZ_E4_CW, ZRZ_E4_CN, ZRZ_E5_CW, ZRZ_E5_CN, ZRZ_E6_CW, ZRZ_E6_CN, ZRZ_E7_CW, ZRZ_E7_CN, ZRZ_E8_CW, ZRZ_E8_CN, ZRZ_C_L, ZRZ_C_UL, ZRZ_C_U, ZRZ_C_UR, ZRZ_C_R, ZRZ_C_DR, ZRZ_C_D, ZRZ_C_DL, ZRZ_2C_L, ZRZ_2C_UL, ZRZ_2C_U, ZRZ_2C_UR, ZRZ_2C_R, ZRZ_2C_DR, ZRZ_2C_D, ZRZ_2C_DL, ZRZ_D_L, ZRZ_D_UL, ZRZ_D_U, ZRZ_D_UR, ZRZ_D_R, ZRZ_D_DR, ZRZ_D_D, ZRZ_D_DL, ZRZ_T_L_CW, ZRZ_T_L_CN, ZRZ_T_U_CW, ZRZ_T_U_CN, ZRZ_T_R_CW, ZRZ_T_R_CN, ZRZ_T_D_CW, ZRZ_T_D_CN, ZRZ_S_L_CW, ZRZ_S_L_CN, ZRZ_S_U_CW, ZRZ_S_U_CN, ZRZ_S_R_CW, ZRZ_S_R_CN, ZRZ_S_D_CW, ZRZ_S_D_CN, ZRZ_L_L_CW, ZRZ_L_L_CN, ZRZ_L_U_CW, ZRZ_L_U_CN, ZRZ_L_R_CW, ZRZ_L_R_CN, ZRZ_L_D_CW, ZRZ_L_D_CN
 - if no start/stop time is entered, the value used to calculate the position is the usual source calculation value
 - otherwise, the movement undergoes its complete evolution over time, going from start to stop
   - if OnRelease is used, the movement will start after release
     - double, the movement start at the start time, undergoes its complete evolution over time, going from start to stop, and stay at its maximum if finished before release + stop time
-
-Upper one, Overcontrol:
-Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
-  - but you can use Overcontrol checkbox to fuse values
-    - double, Protect: further axis action which should overpass this one won't be permit (may be used on other vJoy buttons)
-  - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
 ![Axis movements](Doc/8_Ds2vJoy_Mapping_Movements.png)
@@ -460,6 +453,25 @@ All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revoluti
 - Four sides, eight moves, of the two triangles (upside and downside base, identical to the square)
 - Four sides, eight moves, of the square
 - Four sides, eight moves, of the lozange (diamond)
+
+______________________________________________________________________________________ Overcontrol
+
+Upper one, Overcontrol:
+
+Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
+  - but you can use Overcontrol checkbox to fuse values
+    - double, Protect: further axis action which should overpass this one won't be permit (may be used on other vJoy buttons)
+  - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
+
+______________________________________________________________________________________ Switch
+
+Downer one, Switch:
+
+simple, On
+  - double, Off
+Switch can be use in conjunction or independently from Toggle
+  - In conjuction it forces the toggle state
+  - Otherwize it acts as a linear commutator
 
 ______________________________________________________________________________________ Mouse
 
@@ -481,14 +493,7 @@ There is different modes for each
 * Last solo checkbox is for when you have together raid/grid and another mouse mode active, to determine which one is the default one
 * Sniper mouse mode, which require liberty of movement but not erratic while near center, use Sniper Axis, near no threshold and not no threshold, to help stabilizating when little force is exerted or even released
 
-______________________________________________________________________________________ Grid
-
-In this numbers group at the right
-- left ones are for first points, central ones for second point,
-  - Or they are for MOVE_TO_XY/MOVE_TO_WH, SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH special mouse actions (two left/central numbers of the grid)
-- two last ones are to divide the zone in a grid, then you are always docked to a point of this grid (or whole screen)
-
-______________________________________________________________________________________ Examples
+______________________________________________________________________________________ Example
 
 An example of a simple advanced script for mouse:
 ```
@@ -502,24 +507,13 @@ An example of a simple advanced script for mouse:
     (you may differ them by 100ms and add -[simple] DS L2R2)
 ```
 
-![vJoy](Doc/9_Ds2vJoy_Mapping_Example.png)
+______________________________________________________________________________________ Grid
 
-This is an example of how enter a fictive mode when push simultaneously L1 and R1 without using modes and the need of L1R1 special button
-
-```
-  Mode exit when you release both L1 and R1
-  L1 and R1 special actions are not triggered first,
-    they will if you have released L1 before pushed it again,
-     for L1 special action, the same for R1
-  You can swap between both, as long as you don't release both buttons together
-  An example of utilization: L1 and R1 are shifted keys
-    for example they add shift, control, and control shift together to other buttons
-     or simply act as L1 + Cross, L1 + L2 + Triangle etc.
-    when pushed together, you usually never release one and pushed it again, without releasing the other
-    also, you can add the possibility to add two actions, to L1 and R1,
-     For example, target previous/next enemy
-  By using mode there is more simple methods
-```
+In this numbers group at the right
+- left ones are for first point, central ones for second point,
+  - Or they are for MOVE_TO_XY/MOVE_TO_WH/MOVE_TO_NN, SAVE_AND_MOVE_TO_XY/SAVE_AND_MOVE_TO_WH/SAVE_AND_MOVE_TO_NN special mouse actions (two left/central numbers of the grid)
+- two last ones are for third point,
+  - Or to divide the zone in a grid, then you are always docked to a point of this grid (or whole screen)
 
 ## RapidFire
 ![RapidFire](Doc/10_Ds2vJoy_RapidFire.png)
@@ -626,6 +620,15 @@ And you can enter from 1 to 5 programs name and location which can be launched a
 
 Picture talk by itself
 
+## Notepad
+
+Click on maximize to hide/show notepad
+Notepad is saved every 5 seconds of inactivity if there was any modification, while Notepad is shown, or as soon as you close it
+You can install full Notepad font used by default, you can install it on your system. You'll find it under Ds2vJoy/Fonts directory
+You can specify your own font, for that manually edit Ds2vJoy.ini file, and modify NotepadFont=NotepadFont,16,0
+- For example, NotepadFont=Consolas,14,6 change the font to Consolas family, height of 14, width of 6 (0 is default)
+Remember you can use MINIMIZE/RESTORE special actions, for example, quickly hide/show the notepad over the game, and you can right click on window's title bar to make the window semi transparent.
+
 ## Efficiency
 ![Efficiency](Doc/20_Ds2vJoy_Efficiency.png)
 
@@ -643,22 +646,32 @@ There is no resize but some other stuff
 - Right click on window caption, or the background of a child to alternate plain or transparency
 
 ## Related links and source
-* https://github.com/090 (merci pour la structure de depart)
+* https://github.com/090 (merci pour la structure de départ)
+
 * https://sourceforge.net/projects/vjoystick
+
+* https://developer.microsoft.com/en-us/microsoft-edge/webview2
+* https://github.com/MicrosoftEdge/WebView2Samples
+* https://github.com/microsoft/Windows-driver-samples/tree/master/setup/devcon
+
 * https://github.com/ViGEm/ViGEmBus
 * https://github.com/ViGEm/ViGEmClient
 * https://github.com/ViGEm/HidGuardian
 * https://github.com/ViGEm/HidCerberus
-* https://github.com/Jays2Kings/DS4Windows
-* https://www.inputmapper.com
-* http://www.wischik.com/lu/programmer/zip_utils.html
+
+* https://www.codeproject.com/Articles/28870/Better-Way-to-Sleep-Control-Execution-and-Limit-CP
 * https://github.com/stbrumme/crc32
+* https://github.com/elnormous/HTTPRequest
+* http://www.wischik.com/lu/programmer/zip_utils.html
+
 * https://notepad-plus-plus.org
 * http://www.planetpointy.co.uk/joystick-test-application
-* https://github.com/microsoft/Windows-driver-samples/tree/master/setup/devcon
-* https://github.com/MicrosoftEdge/WebView2Samples
+
+* https://www.autohotkey.com/
+* https://github.com/Jays2Kings/DS4Windows
+* https://www.inputmapper.com
 
 ## Development environment
-- Win10 64bit + Visual Studio 2019 (Community is fine)
+- Win11 64bit + Visual Studio 2022 (Community is fine)
 - Sony® DualShock™ and DualSense™
 - Intel® Wireless Bluetooth from Asus ROG
