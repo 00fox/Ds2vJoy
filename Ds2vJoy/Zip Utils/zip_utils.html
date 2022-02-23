@@ -1,0 +1,360 @@
+<html>
+<head>
+<title>Zip Utils - clean, elegant, simple, C++/win32</title>
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+BODY, P, H1, H2, H3, H4, H5, H6, LI, TD, TH, DD, DT
+{
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+	font-size: 10pt;
+	color: black;
+}
+BODY
+{
+	background-color: #ffffff;
+	color: #000000;
+	/*Scrollbar-face-color: #ffcc99; 
+	Scrollbar-arrow-color: black;*/
+}
+LI,UL,OL
+{
+	list-style-image: none;
+}
+H1, H2, H3, H4, H5, TH
+{
+	font-weight: bold;
+}
+H2, H3, H5
+{
+	color: #ff9900;
+}
+H1
+{
+	font-size: 16pt;
+}
+H2
+{
+	font-size: 13pt;
+}
+H3
+{
+	font-family: Arial, sans-serif;
+	font-size: 11pt;
+}
+H4
+{
+	font-size: 10pt;
+	margin-bottom: 2px;
+}
+H5
+{
+	font-size: 9pt;
+	margin-bottom: 2px;
+}
+H6
+{
+	color: #626262;
+	font-size: 65%;
+	font-weight: normal;
+}
+DD
+{
+	margin-left: 20px;
+}
+PRE
+{
+	background-color: #FBEDBB;
+	padding: 7pt;
+	background-image: url(/images/codebg.gif);
+	font: 9pt "Courier New", Courier, mono;
+	white-space: pre;
+	width: 100%;
+	/*overflow: auto;*/
+}
+CODE
+{
+	color: #990000;
+	font-family: "Courier New", Courier, mono;
+}
+a:link    { text-decoration:none;      }
+a:visited { text-decoration:none;      }
+a:active  { text-decoration:underline; }
+a:hover   { text-decoration:underline; }
+.cpp-comment,.cs-comment,.vb-comment	{ COLOR: green; FONT-STYLE: italic; }
+.cpp-keyword,.cs-keyword, .vb-function	{ COLOR: blue; }
+.cpp-preprocessor, .cs-preprocessor		{ COLOR: navy; }
+.cpp-string,.cs-string,.vb-string		{ COLOR: purple; }
+.cpp-literal,.cs-literal,.vb-literal	{ COLOR: midnightblue }
+.vb-keyword,.vb-statement	{ COLOR: blue; font-weight:normal;}
+</style>
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+
+<h1>Zip Utils - clean, elegant, simple, C++/win32</h1>
+
+<p>Adding zip/unzip easily, no LIBS or DLLs, with an elegant and simple API.<br>
+This article can be found on CodeProject at
+<a href="http://www.codeproject.com/useritems/zip_utils.asp">www.codeproject.com/useritems/zip_utils.asp</a>, where there is also a discussion board.<br>
+by Lucian Wischik, <a href="http://www.wischik.com/lu">www.wischik.com/lu</a>.</p>
+
+<P><IMG height=207 alt="zipping and unzipping in action!" src="zip_utils.gif" width=540></P>
+
+<UL class=download>
+<LI><A href="zip_utils_src.zip">Download source files - 216 Kb</A> </LI></UL>
+
+
+<H2>Introduction</H2>
+
+<P>This source code shows how to add zip/unzip functionality to your programs. Lots of people have
+written their own wrappers around zip, and indeed there are several articles on codeproject that
+are based on earlier versions of my own code. How is this version different?</P>
+
+<UL>
+<LI><STRONG>Clean packaging.</STRONG> There's one pair of files <CODE>zip.cpp</CODE>,<CODE>zip.h</CODE>
+    to add to your project if you want zip. Another pair <CODE>unzip.cpp</CODE>,<CODE>unzip.h</CODE>
+    if you want unzip (or both if you want both!). There are <EM>NO</EM> additional libraries or
+    DLLs to worry about.</LI>
+<LI><STRONG>Clean API.</STRONG> Most other APIs around zip/unzip are terrible. This one is best.
+    The API is short, clean, and in a familiar win32 style. Most other APIs wrap things up in classes,
+    which is ugly overkill for such a small problem and always turns out too inflexible. Mine don't.
+    See the code snippets below.</LI>
+<LI><STRONG>Flexibility.</STRONG> With this code you can unzip from a zip that's in a diskfile,
+    memory-buffer, pipe. You can unzip into a diskfile, memory-buffer or pipe. The same for creating
+    zipfiles. This means that at last you don't need to write out your files to a temporary directory
+    before using them! One noteworthy feature is that you can <EM>unzip directly from an embedded
+    resource</EM> into a memory buffer or onto a diskfile, which is great for installers. Another
+    is the ability to create your zip in dynamically growable memory backed by the system pagefile.
+    Despite all this power, the API remains clean and simple. The power didn't come from just writing
+    wrappers around other people's code. It came from restructuring the internals of zlib and info-zip
+    source code. My code is unique in what it does here.</LI>
+<LI><STRONG>Encryption.</STRONG> This version supports password-based zip encryption. Passwords are
+    absent from many other zip libraries, including gzip.</LI>
+<LI><STRONG>Unicode.</STRONG> This version supports unicode filenames.</LI>
+<LI><STRONG>Windows CE.</STRONG> This version works as it is under Windows CE. No need to alter makefiles
+    or #defines, or worry about compatability of any LIB/DLL.</LI>
+<LI><STRONG>Bugfixes.</STRONG> This code is based on gzip 1.1.4, which fixes a security vulnerability
+    in 1.1.3. (An earlier version of my code used 1.1.3, and has crept into other codeproject articles...)</LI>
+</UL>
+
+<P>At its core my code uses zlib and info-zip. See at end for acknowledgements.</P>
+
+
+<H2>Using the code</H2>
+
+<P>To add zip functionality to your code, add the file <CODE>zip.cpp</CODE> to your project,
+and <CODE><span class='cpp-preprocessor'>#include "zip.h"</span></CODE> to your source code.</P>
+
+<P>Similarly for unzipping, add the file <CODE>unzip.cpp</CODE> to the project and
+<CODE><span class='cpp-preprocessor'>#include "unzip.h"</span></CODE> to your source code.
+Zip and unzip can co-exist happily a single application. Or you can omit one or the other if
+you're trying to save space.</P>
+
+<P>The following code snippets show how to use zip/unzip. They are taken from one of the demo applications
+including in the download. It also has project files for Visual Studio .NET and Borland C++Builder6 and
+Embedded Visual C++ 3. The code snippets here use ASCII. But the functions all take arguments of type
+TCHAR* rather than char*, so you can use it fine under Unicode.</P>
+
+<H3>Example 1 - create a zipfile from existing files</H3>
+
+<PRE>
+  <span class='cpp-comment'>// We place the file "simple.bmp" inside, but inside</span>
+  <span class='cpp-comment'>// the zipfile it will actually be called "znsimple.bmp".</span>
+  <span class='cpp-comment'>// Similarly the textfile.</span>
+
+  HZIP hz = CreateZip(<span class='cpp-string'>"simple1.zip"</span>,<span class='cpp-literal'>0</span>);
+  ZipAdd(hz,<span class='cpp-string'>"znsimple.bmp"</span>,  <span class='cpp-string'>"simple.bmp"</span>);
+  ZipAdd(hz,<span class='cpp-string'>"znsimple.txt"</span>,  <span class='cpp-string'>"simple.txt"</span>);
+  CloseZip(hz);
+</PRE>
+
+
+<H3>Example 2 - unzip a zipfile using the names it has inside it</H3>
+
+<PRE>
+  HZIP hz = OpenZip(<span class='cpp-string'>"\\simple1.zip"</span>,<span class='cpp-literal'>0</span>);
+  ZIPENTRY ze; GetZipItem(hz,-<span class='cpp-literal'>1</span>,&amp;ze); <span class='cpp-keyword'>int</span> numitems=ze.index;
+  <span class='cpp-comment'>// -1 gives overall information about the zipfile</span>
+  <span class='cpp-keyword'>for</span> (<span class='cpp-keyword'>int</span> zi=<span class='cpp-literal'>0</span>; zi&lt;numitems; zi++)
+  { ZIPENTRY ze; GetZipItem(hz,zi,&amp;ze); <span class='cpp-comment'>// fetch individual details</span>
+    UnzipItem(hz, zi, ze.name);         <span class='cpp-comment'>// e.g. the item's name.</span>
+  }
+  CloseZip(hz);
+</PRE>
+
+
+<H3>Example 3- unzip from resource directly into memory</H3>
+
+<P>This technique is useful for small games, where you want to keep all resources bundled up inside
+the executable, but restricting the size.</P>
+
+<P>Suppose we used a .rc with<BR>
+<CODE><span class='cpp-literal'>1</span> RCDATA <span class='cpp-string'>"file.zip"</span></CODE><BR>
+to embed the zipfile as a resource.
+
+<PRE>
+  HRSRC hrsrc = FindResource(hInstance,MAKEINTRESOURCE(<span class='cpp-literal'>1</span>),RT_RCDATA);
+  HANDLE hglob = LoadResource(hInstance,hrsrc);
+  <span class='cpp-keyword'>void</span> *zipbuf = LockResource(hglob);
+  <span class='cpp-keyword'>unsigned</span> <span class='cpp-keyword'>int</span> ziplen = SizeofResource(hInstance,hrsrc);
+  hz = OpenZip(zipbuf, ziplen, <span class='cpp-literal'>0</span>);
+  ZIPENTRY ze; <span class='cpp-keyword'>int</span> i; FindZipItem(hz,<span class='cpp-string'>"sample.jpg"</span>,<span class='cpp-keyword'>true</span>,&amp;i,&amp;ze);
+  <span class='cpp-comment'>// that lets us search for an item by filename.</span>
+  <span class='cpp-comment'>// Now we unzip it to a membuffer.</span>
+  <span class='cpp-keyword'>char</span> *ibuf = <span class='cpp-keyword'>new</span> <span class='cpp-keyword'>char</span>[ze.unc_size];
+  UnzipItem(hz,i, ibuf, ze.unc_size);
+  ...
+  <span class='cpp-keyword'>delete</span>[] ibuf;
+  CloseZip(hz);
+  <span class='cpp-comment'>// note: no need to free resources obtained through Find/Load/LockResource</span>
+</PRE>
+
+
+<H3>Example 4 - unzip chunk by chunk to a membuffer</H3>
+
+<P>Normally when you call <CODE>UnzipItem(...)</CODE> it gives the return-code ZR_OK.
+But if you gave it too small a buffer so that it couldn't fit it all in, then it return ZR_MORE.</P>
+
+<PRE>
+  <span class='cpp-keyword'>char</span> buf[<span class='cpp-literal'>1024</span>]; ZRESULT zr=ZR_MORE; <span class='cpp-keyword'>unsigned</span> <span class='cpp-keyword'>long</span> totsize=<span class='cpp-literal'>0</span>;
+  <span class='cpp-keyword'>while</span> (zr==ZR_MORE)
+  { zr = UnzipItem(hz,i, buf,<span class='cpp-literal'>1024</span>);
+    <span class='cpp-keyword'>unsigned</span> <span class='cpp-keyword'>long</span> bufsize=<span class='cpp-literal'>1024</span>; <span class='cpp-keyword'>if</span> (zr==ZR_OK) bufsize=ze.unc_size-totsize;
+    <span class='cpp-comment'>... maybe write the buffer to a disk file here</span>
+    totsize+=bufsize;
+  }
+</PRE>
+
+<p>One final option: if you compile with "ZIP_STD" defined for the preprocessor, then
+zip and unzip will compile using solely stdlib -- with no windows dependencies. They
+can compile under linux with g++. Note that some of the prototypes in zip.h and unzip.h
+will change accordingly: filetimes will be time_t structures rather than FILETIME, and
+various functions will use FILE* rather than HANDLE, and it doesn't support unicode
+or memory-mapping. The example program "std" does this.</p>
+
+
+<h2>Common Questions</h2>
+
+<p><strong>STRICT?</strong> I think you should always compile with
+STRICT (in project-settings/preprocessor/defines), and full warnings
+turned on. Without STRICT, the HZIP handle becomes interchangeable
+with all other handles.</p>
+
+
+<p><strong>How to show a progress dialog?</strong> One of the included examples,
+"progress", shows how to do this.</p>
+
+<p><strong>How to add/remove files from an existing zipfile?</strong> The zip_utils
+currently only allow you to OpenZip() for unzipping, or CreateZip() for adding, but
+don't allow you to mix the two. To modify an existing zip (eg. adding or removing
+a file) you need to create a new zip and copy all the existing items from the
+old into the new. One of the included examples, "modify", shows how to do this.
+It defines two functions:</p>
+<pre>
+  ZRESULT RemoveFileFromZip(<span class='cpp-keyword'>const</span> TCHAR *zip, <span class='cpp-keyword'>const</span> TCHAR *name);
+  ZRESULT AddFileToZip(<span class='cpp-keyword'>const</span> TCHAR *zip, <span class='cpp-keyword'>const</span> TCHAR *name, <span class='cpp-keyword'>const</span> TCHAR *fn);
+  <span class='cpp-comment'>// eg. AddFileToZip("c:\\archive.zip","znsimple.txt","c:\\docs\\file.txt");</span>
+  <span class='cpp-comment'>// If the zipfile already contained that thing (case-insensitive), it is removed.</span>
+  <span class='cpp-comment'>// These two functions are defined in "modify.cpp"</span>
+</pre>
+
+<p><strong>"fatal error C1010: unexpected end of file</strong> while looking for precompiled header directive".
+To fix this, select zip.cpp and unzip.cpp and change
+<em>Project &gt; Settings &gt; C++ &gt; PrecompiledHeaders</em> to <em>NotUsingPrecompiledHeaders</em>.</p>
+
+
+<h2>Discussion</h2>
+
+<p>Efrat says: "I think the design is very bad", and so objects when I say that
+my API is clean and others are not. (Actually, he says my documentation is the most conceited he's seen and my design is the worst that he's seen!)
+I've reproduced his comments here, with my responses, so you can make a
+more informed decision whether to use my library.</p>
+
+
+<p><em>[Efrat]</em> Better instead to use the
+<a href="http://home.comcast.net/~jturkanis/iostreams/libs/iostreams/doc/home.html">boost IOStream library</a>.<br>
+<em>[Response]</em> I love the boost library. If people can figure out how to
+add it to their projects and zip/unzip with it, they should definitely use boost rather
+than my code. (I'm still trying to figure it out, though, and couldn't get it to
+compile under CE).</p>
+
+<p><em>[Efrat]</em> A compressed archive has internal state; it's a classic object; the author's
+criticisms of OOP are unjustified. "OOP doesn't mean placing your code in a cpp file."<br>
+<em>[Response]</em> I'm trying not to be OOP.
+(1) you'll never inherit from an archive, nor invoke virtual methods from it:
+we only use encapsulation, not any of the other pillars of OOP. By using an opaque handle HZIP
+rather than a class, I indicate this clearly to the programmer. Also
+(2) C++ classes don't work cleanly across DLLs. Handles like HZIPs do.<br>
+<em>[Efrat]</em> For intance, progress-notifications should be done by virtual functions in a
+derived class, not by callbacks.<br>
+<em>[Response]</em> To get progress, you invoke UnzipItem in a while loop, and each iteration
+unzips a little bit more of the file. This is clean, re-entrant, and has a simple API. I think
+this is an easier API than inheriting from a class. I think inheritance from
+library classes is bad, in general.</p>
+
+<p><em>[Efrat]</em> Compression should go in a DLL.<br>
+<em>[Response]</em> I disagree. DLLs are always pain, for developers as well as users.
+Unzip only adds 40k in any case.</p>
+
+<p><em>[Efrat]</em> The API doesn't use the type system to differentiate between
+an HZIP for zipping and an HZIP for unzipping.<br>
+<em>[Response]</em> This was intentional. The difference between zipping and unzipping
+is an current implementation drawback. I think an API should be clean, "aspirational", and
+you shouldn't encode current implementation limitations into the type system.</p>
+
+<p><em>[Efrat]</em> The API uses error-codes, rather than exceptions, but anyone who has
+graudated Programming 101 knows exceptions are better.<br>
+<em>[Response]</em> I think exceptions are not welcomed anywhere nearly as widely as Efrat
+suggests. Also, they don't work cleanly across DLL boundaries, and they don't work on
+PocketPC.</p>
+
+<p><em>[Efrat]</em> The API is unflexible; it should be coded for change, not just coded
+for all the options that were conceived while designing (handles,files, memory). Most
+users will think of sources and targets which this design can't support.</br>
+<em>[Response]</em> The original zip uses FILE*s, which are effectively the same as windows
+pipes. I also provided memory-buffers which adds an enormous amount of flexibility
+that's easy to use and requires no additional programming. For any users who <em>need</em>
+sources and targets which can't be reached via a memory buffer, they shouldn't use
+these zip_utils.</p>
+
+<em>[Efrat]</em> The is unnecessarily Windows-specific. The original zlib works great
+and is portable; zip_utils offers no advantages.
+Compression is memory-manipulation and IO and so should not be platform-specific.<br>
+<em>[Response]</em> In the olden days before STL, "cross-platform" code inevitably meant
+(1) peppered with so many #ifdefs that you couldn't read it, (2) didn't work straight
+away under windows. I started from and old code-base, and so Efrat's proposed bottom-up
+rewrite was not possible. The advantage this code offers over zlib is that it's
+just a single file to add to your project, it works first time under windows, you can
+add it easily as a cpp module to your project (not just dll/lib), and the API is simpler.</p>
+
+
+<p>In general, Efrat wants code to be a clean extensible framework. I don't; I want
+small compact code that works fine as it is. Furthermore, I think that "framework-isation"
+is the biggest source of bugs and code overruns in the industry.</p>
+
+
+
+
+<H2>Acknowledgements</H2>
+
+<p>This version of article was updated on 28th July 2005. Many thanks to the readers at CodeProject who
+found bugs and contributed fixes to an earlier version. There was one terrible bug where, after a large
+file had been unzipped, then the next one might not work. Alvin77 spotted this bug.</p>
+
+<P>My work is a repackaged form of extracts from the zlib code available at
+<a target=_top href="http://www.gzip.org/zlib">www.gzip.org/zlib</A> by Jean-Loup
+Gailly and Mark Adler and others. Also from the info-zip source code at
+<a target=_top href="http://www.info-zip.org">www.info-zip.org</A>. Plus a
+bunch of my own changes. The original source code can be found at those two
+mentioned websites. Also the original copyright notices can be found there,
+and also inside the files zip.cpp and unzip.cpp of my code.</P>
+
+
+
+</body>
+</html>

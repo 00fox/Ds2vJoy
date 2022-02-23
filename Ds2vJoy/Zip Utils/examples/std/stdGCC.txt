@@ -1,0 +1,6 @@
+To compile under G++, use this command line:
+
+g++ -DZIP_STD std.cpp ../../zip.cpp ../../unzip.cpp
+
+This defines "ZIP_STD", which makes zip.cpp and unzip.cpp
+compile using stdlib functions rather than windows functions.
