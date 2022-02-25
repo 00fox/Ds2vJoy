@@ -801,7 +801,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static bool extended = false;
 	static bool cloned = false;
 	static bool notepad = false;
-	static unsigned char PreviousTab = 0;
+	static unsigned char PreviousTab = 15;
 	static unsigned char Notepadtab = 0;
 	static unsigned long m_flag_drag = 0;
 	static short x = 0;
@@ -1276,8 +1276,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				TabCtrl_InsertItem(hTab, 9, &tc_item);
 				TabCtrl_SetCurFocus(hTab, 9);
 			}
-			else
+			else if (PreviousTab != 15)
 				TabCtrl_SetCurFocus(hTab, PreviousTab);
+			PreviousTab = 15;
 		}
 
 		ds.PreOpen();
