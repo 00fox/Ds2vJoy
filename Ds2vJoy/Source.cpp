@@ -90,14 +90,7 @@ void dsDevice::PreOpen()
 		if (!SetupDiGetDeviceInterfaceDetail(hDevInfo, &DeviceInterfaceData, detail, RequiredSize, &dwRequiredSize, NULL))
 			continue;
 
-		dsHandle = CreateFile(
-			detail->DevicePath,
-			GENERIC_READ | GENERIC_WRITE,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL,
-			OPEN_EXISTING,
-			NULL,
-			NULL);
+		dsHandle = CreateFile(detail->DevicePath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 
 		if (dsHandle == INVALID_HANDLE_VALUE)
 			continue;
@@ -610,11 +603,11 @@ void dsDevice::InputLoop()
 			}
 		}
 
-		if (tape.MouseActive)
-			_parseMouse(&updateflag);
-
-		if (tape.KeyboardActive)
+		if (tape.KeyboardActive || tape.KeyboardActivetmp)
 			_parseKeyboard(&updateflag);
+
+		if (tape.MouseActive || tape.MouseActivetmp)
+			_parseMouse(&updateflag);
 
 		//Callback
 		if (m_callback)

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-////////////////////////////// "Source.h"
+class ExplorerDlg;
+void CreateNewThread(ExplorerDlg* app);
 
-
-/////////////////////////extern HINSTANCE hInst;
-
+//std::function<void()> GetAcceleratorKeyFunction(UINT key);

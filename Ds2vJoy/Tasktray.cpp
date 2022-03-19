@@ -74,9 +74,9 @@ void Tasktray::CreateMenu()
 	AppendMenu(m_menu, MF_GRAYED, IDM_GUARDIAN, _T("Guardian"));
 	for (int i = 0; i < 5; i++) { SwapMenuitem(i); };
 	AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(m_menu, MF_POPUP, IDM_ABOUT, _T("About"));
+	AppendMenu(m_menu, MF_POPUP, IDM_MENU_ABOUT, _T("About"));
 	AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(m_menu, MF_POPUP, IDM_EXIT, _T("Exit"));
+	AppendMenu(m_menu, MF_POPUP, IDM_MENU_EXIT, _T("Exit"));
 //	DeleteMenu(m_menu, 1, MF_BYPOSITION);
 //	InsertMenu(m_menu, 1, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL);
 //	AppendMenu(m_menu, MF_POPUP, IDM_EXIT, _T("Exit"));

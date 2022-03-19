@@ -381,24 +381,24 @@ void ViGEmDlg::_ShowWindow(HWND hWnd)
 	}
 }
 
-INT_PTR CALLBACK ViGEmDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK ViGEmDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	ViGEmDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<ViGEmDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<ViGEmDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<ViGEmDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<ViGEmDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

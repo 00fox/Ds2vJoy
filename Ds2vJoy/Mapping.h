@@ -9,7 +9,8 @@
 class Mapping
 {
 public:
-	enum LedActionID {
+	enum LedActionID
+	{
 		Led_Action_none,
 		Led_Action_Led1,
 		Led_Action_Led2,
@@ -20,7 +21,8 @@ public:
 		Led_Action_Count
 	};
 
-	enum MouseActionID {
+	enum MouseActionID
+	{
 		mouse_none,
 		ACTIVE_MOUSE,
 		MOVE_BACK,
@@ -59,7 +61,8 @@ public:
 		mouse_Count
 	};
 
-	enum SpecialActionID {
+	enum SpecialActionID
+	{
 		special_none,
 		MUTE_SOUND,
 		VOLUME_UP,
@@ -103,9 +106,55 @@ public:
 		ADDSTAT6,
 		ADDSTAT7,
 		ADDSTAT8,
+		KBD_INPUT_ON,
+		KBD_INPUT_OFF,
+		MSE_INPUT_ON,
+		MSE_INPUT_OFF,
+		SCREENSHOT,
 		MINIMIZE,
 		RESTORE,
+		TRANSPARENCY,
 		special_Count
+	};
+
+	enum ModulesActionID
+	{
+		modules_none,
+		NOTEPAD,
+		NOTEPAD_DOWN,
+		NOTEPAD_UP,
+		WEB_DOWN,
+		WEB_UP,
+		WEB_LEFT,
+		WEB_RIGHT,
+		WEB_PREVIOUSTAB,
+		WEB_NEXTTAB,
+		WEB_CLOSETAB,
+		WEB_FULLSCREEN,
+		WEB_HOME,
+		WEB_FAVORITE1,
+		WEB_FAVORITE2,
+		WEB_FAVORITE3,
+		WEB_FAVORITE4,
+		WEB_FAVORITE5,
+		WEB_FAVORITE6,
+		WEB_FAVORITE7,
+		WEB_FAVORITE8,
+		WEB_FAVORITE9,
+		WEB_BACK,
+		WEB_NEXT,
+		WEB_REFRESH,
+		WEB_CANCEL,
+		WEB_AUTOREFRESH,
+		WEB_ZOOMMINUS,
+		WEB_ZOOMPLUS,
+		WEB_ZOOMRESET,
+		WEB_ZOOMSET,
+		WEB_VISIBILITY,
+		WEB_SCREENSHOT,
+		WEB_DARKMODE,
+		WEB_DARKMODE2,
+		modules_Count
 	};
 
 	Mapping();
@@ -150,6 +199,7 @@ public:
 	void				Run(double average);
 	static WCHAR*		MouseString(MouseActionID id);
 	static WCHAR*		SpecialString(SpecialActionID id);
+	static WCHAR*		ModulesString(ModulesActionID id);
 	static WCHAR*		LedString(LedActionID id);
 
 	unsigned char		Enable = 0;
@@ -250,7 +300,7 @@ public:
 	//1 this button will be disabled for next mappings if this mapping is running (except with Force)
 	//2 if Short (or Double), even when release time, before time to activate spent (or second press)
 	unsigned char		ActionType[8] = { 0 };
-	//0 vJoy button, 1 Mouse action, 2 Special action, 3 Axis movement
+	//0 vJoy button, 1 Mouse action, 2 Special action, 3 Axis movement, Web & Notepad
 	unsigned char		Overcontrol[8] = { 0 };
 	//0 axis of same type overpass precedent values, 1 values are merged, 2 if in use, next mapping won't interfer
 	unsigned char		Switch[8] = { 0 };
@@ -284,7 +334,7 @@ public:
 	//| 3     | Move     | Slow     | the same but adapted for game movements, or precise mouse
 	//| 4     | Sniper   | Accuracy | extreme precision
 	//| 5     | Raid     | Grid     | move inside a zone whom coordinates are entered in numbers group at the right
-	short				Grid[6] = { 0 };
+	unsigned short		Grid[6] = { 0 };
 	//0 x, 1 y, 2 w, 3 h, 4 nw, 5 nh
 	//x and y define the starting point of the grid in which the mouse stay if you have activated grid mouse
 	//w and h are the width and height of the grid
@@ -420,21 +470,22 @@ private:
 	static std::vector<byte> vjUsed = { };
 	//memorize all vJoyButton used to release them at RunLast step of Ds2vJoy callback if necessary
 
-	extern unsigned char mode;
+	extern unsigned char		mode;
 	//Actual mode, shared by all mappings
-	extern unsigned char mousemode[3];
+	extern unsigned char		mousemode[3];
 	//[0]left axis, [1]touchpad, [2]right axis
 	//0: deactivate, 1: absolute, 2: mouse, 3: move or slow, 4: sniper or accuracy, 5: raid or grid
-	extern unsigned char mouseabolute;
+	extern unsigned char		mouseabolute;
 	//Which one is absolute ([0]left axis, [1]touchpad or [2]right axis)(last one activated)
-	extern short		grid[6];
+	extern unsigned short		grid[6];
 	//Grid to move cursor inside (x,y,w,h,nw,nh)
-	extern bool			defaultmouse;
+	extern bool					defaultmouse;
 	//false:all expept grid, true grid
-	extern std::vector<char> gridmove;
+	extern std::vector<char>	gridmove;
 	//movements to be done in a grid, with GRID_LEFT/UP/RIGHT/DOWN mouse actions
 
 	typedef std::vector<Mapping>		Mappings;
 	typedef Mapping::MouseActionID		MouseActionID;
 	typedef Mapping::SpecialActionID	SpecialActionID;
+	typedef Mapping::ModulesActionID	ModulesActionID;
 	typedef Mapping::LedActionID		LedActionID;

@@ -30,24 +30,24 @@ void NotepadDlg::_InitDialog(HWND hWnd)
 	SetWindowText(GetDlgItem(hWnd, IDC_NOTEPAD), tape.Notepad.c_str());
 }
 
-INT_PTR CALLBACK NotepadDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK NotepadDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	NotepadDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<NotepadDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<NotepadDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<NotepadDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<NotepadDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 LRESULT CALLBACK NotepadDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -137,17 +137,32 @@ LRESULT CALLBACK NotepadDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		}
 		break;
 	}
+	case WM_CLOSE:
+	{
+		if (GetKeyState(VK_ESCAPE) < 0 || GetKeyState(VK_CANCEL) < 0)
+			return 0;
+		else
+			return DefWindowProc(hWnd, message, wParam, lParam);
+	}
 	default:
-		return DefWindowProcW(hWnd, message, wParam, lParam);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+void NotepadDlg::Scroll(bool scrollUp, bool page)
+{
+	if (page)
+		SendMessage(m_hEdit, EM_SCROLL, (scrollUp) ? SB_PAGEUP : SB_PAGEDOWN, NULL);
+	else
+		SendMessage(m_hEdit, EM_SCROLL, (scrollUp) ? SB_LINEUP : SB_LINEDOWN, NULL);
 }
 
 void NotepadDlg::Save()
 {
 	const int n = 512 * 1024;
 	WCHAR* buf = new WCHAR[n];
-	GetWindowText(m_hEdit, buf, MAX_PATH);
+	GetWindowText(m_hEdit, buf, n);
 	tape.Notepad = buf;
 	tape.Save(tape.Setting_Notepad);
 	SetWindowText(m_hWnd, I18N.APP_TITLE);

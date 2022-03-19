@@ -27,14 +27,14 @@ void ViGEm::InitClient(bool verbose)
 	client = vigem_alloc();
 	if (client == nullptr)
 	{
-		echo(L"Error allocating memory to ViGEm");
+		echo(I18N.ViGEm_Memory_allocating_error);
 		return;
 	}
 
 	err = vigem_connect(client);
 	if (!VIGEM_SUCCESS(err))
 	{
-		echo(L"ViGEm Bus connection failed with error: %s", ViGEmError(err));
+		echo(I18N.ViGEm_Bus_connection_failed, ViGEmError(err));
 		return;
 	}
 	else
@@ -60,7 +60,7 @@ void ViGEm::InitPad(bool verbose)
 		if (!VIGEM_SUCCESS(err))
 		{
 			vigem_free(client);
-			echo(L"Target ViGEm plugin failed with error: %s", ViGEmError(err));
+			echo(I18N.ViGEm_Target_plugin_failed, ViGEmError(err));
 			return;
 		}
 
@@ -74,7 +74,7 @@ void ViGEm::InitPad(bool verbose)
 		if (!VIGEM_SUCCESS(err))
 		{
 			vigem_free(client);
-			echo(L"Target ViGEm plugin failed with error: %s", ViGEmError(err));
+			echo(I18N.ViGEm_Target_plugin_failed, ViGEmError(err));
 			return;
 		}
 
@@ -315,13 +315,11 @@ BOOL ViGEm::ViGEmInstall(bool verbose)
 
 		if (ViGEmState() == 1)
 		{
-			echo(L"ViGEm driver is installed");
+			echo(I18N.ViGEm_driver_installed);
 			return TRUE;
 		}
 	}
-
-	if (verbose)
-		echo(L"ERROR: ViGEm driver instalation failed");
+	echo(I18N.ViGEm_driver_instalation_failed);
 
 	return FALSE;
 }
@@ -339,11 +337,11 @@ BOOL ViGEm::ViGEmUninstall(bool verbose)
 
 		if (ViGEmState() < 1)
 		{
-			echo(L"ViGEm driver is uninstalled");
+			echo(I18N.ViGEm_driver_uninstalled);
 			ViGEmUninstall = TRUE;
 		}
 		else
-			echo(L"ERROR: ViGEm driver uninstalation failed");
+			echo(I18N.ViGEm_driver_uninstalation_failed);
 	}
 	else
 	{
@@ -413,7 +411,7 @@ BOOL ViGEm::ViGEmDisable(bool verbose)
 	}
 
 	std::wstring devconpath = L"Devcon.exe disable Nefarius\\ViGEmBus\\Gen1";
-	LaunchCmd((ExePath() + devconpath).c_str());
+	LaunchCmd(devconpath.c_str());
 
 	if (ViGEmState() == 2)
 	{
@@ -476,7 +474,7 @@ WCHAR* ViGEm::X360_String(int id)
 	case XUSB_GAMEPAD_RIGHT_SHOULDER: return I18N.Gamepad_RIGHT_BUMPER;
 	case XUSB_GAMEPAD_LEFT_TRIGGER: return I18N.Gamepad_LEFT_TRIGGER;
 	case XUSB_GAMEPAD_RIGHT_TRIGGER: return I18N.Gamepad_RIGHT_TRIGGER;
-	default: return L"???";
+	default: return WCHARI(L"???");
 	}
 }
 
@@ -508,6 +506,6 @@ WCHAR* ViGEm::DS4_String(int id)
 	case DS4_BUTTON_TRIGGER_RIGHT: return I18N.Button_R2;
 	case DS4_BUTTON_LEFT_TR: return I18N.Button_L2TRIGGER;
 	case DS4_BUTTON_RIGHT_TR: return I18N.Button_R2TRIGGER;
-	default: return L"???";
+	default: return WCHARI(L"???");
 	}
 }

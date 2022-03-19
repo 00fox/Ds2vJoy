@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+/////////////////////////////////////////////////////////////////////////////
 //
 #include "Resource.h"
 
@@ -39,6 +39,26 @@ IDI_DS2VJOY_ICON32      ICON                    "icon32.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "Ds2vJoy.bmp"
+
+IDB_BITMAP2             BITMAP                  "Ds2vJoyHelp.bmp"
+
+//IDI_WEBVIEW2_BACKGROUND BITMAP                  "WebView2.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Font
+//
+
+IDR_NOTEPAD_TTF         FONT                    "Fonts/NotepadFont.ttf"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // RCDATA
 //
 
@@ -47,6 +67,8 @@ IDR_DEVCON_EXE          RCDATA                  "Devcon/Devcon.exe"
 IDR_VJOYINTERFACE_DLL   RCDATA                  "vJoy/vJoyInterface.dll"
 
 IDR_VIGEMCLIENT_DLL     RCDATA                  "ViGEm/ViGEmClient.dll"
+
+IDR_WEBVIEW2LOADER_DLL  RCDATA                  "WebView2/WebView2Loader.dll"
 
 IDR_VIGEMBUS_ZIP        RCDATA                  "ViGEm/ViGEmBus.zip"
 
@@ -57,21 +79,164 @@ IDR_HIDCERBERUS_ZIP     RCDATA                  "HidGuardian/HidCerberus.zip"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Font
+// Accelerator
 //
 
-IDR_NOTEPAD_TTF         FONT                    "Fonts/NotepadFont_full.ttf"
+IDR_DS2VJOY ACCELERATORS
+BEGIN
+    "?",            IDM_MENU_ABOUT,         ASCII, ALT
+    "/",            IDM_MENU_ABOUT,         ASCII, ALT
+END
 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Accelerator
+// Menu
 //
 
-IDS_DS2VJOY ACCELERATORS
+IDR_DS2VJOY MENU
 BEGIN
-    "?",            IDM_ABOUT,              ASCII,  ALT
-    "/",            IDM_ABOUT,              ASCII,  ALT
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_EXIT
+    END
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_ABOUT
+    END
+END
+
+IDR_MENU_TABS MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_SEE_VIEW2
+        MENUITEM "",                            IDM_MENU_TO_MODE_0
+        MENUITEM "",                            IDM_MENU_TO_MODE_1
+        MENUITEM "",                            IDM_MENU_TO_MODE_2
+        MENUITEM "",                            IDM_MENU_TO_MODE_3
+        MENUITEM "",                            IDM_MENU_TO_MODE_4
+        MENUITEM "",                            IDM_MENU_TO_MODE_5
+        MENUITEM "",                            IDM_MENU_TO_MODE_6
+        MENUITEM "",                            IDM_MENU_TO_MODE_7
+        MENUITEM "",                            IDM_MENU_TO_MODE_8
+    END
+END
+
+IDR_MENU_CLONE MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_CLONE_TO_MODE_0
+        MENUITEM "",                            IDM_CLONE_TO_MODE_1
+        MENUITEM "",                            IDM_CLONE_TO_MODE_2
+        MENUITEM "",                            IDM_CLONE_TO_MODE_3
+        MENUITEM "",                            IDM_CLONE_TO_MODE_4
+        MENUITEM "",                            IDM_CLONE_TO_MODE_5
+        MENUITEM "",                            IDM_CLONE_TO_MODE_6
+        MENUITEM "",                            IDM_CLONE_TO_MODE_7
+        MENUITEM "",                            IDM_CLONE_TO_MODE_8
+    END
+END
+
+IDR_MENU_MAPPING MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_ADD
+        MENUITEM "",                            IDM_MENU_EDIT
+        MENUITEM "",                            IDM_MENU_DEL
+        MENUITEM "",                            IDM_MENU_COPY
+        MENUITEM "",                            IDM_MENU_SEPARATOR
+        MENUITEM "",                            IDM_MENU_MOVE_TO_0
+        MENUITEM "",                            IDM_MENU_MOVE_TO_1
+        MENUITEM "",                            IDM_MENU_MOVE_TO_2
+        MENUITEM "",                            IDM_MENU_MOVE_TO_3
+        MENUITEM "",                            IDM_MENU_MOVE_TO_4
+        MENUITEM "",                            IDM_MENU_MOVE_TO_5
+        MENUITEM "",                            IDM_MENU_MOVE_TO_6
+        MENUITEM "",                            IDM_MENU_MOVE_TO_7
+        MENUITEM "",                            IDM_MENU_MOVE_TO_8
+        MENUITEM "",                            IDM_MENU_SWAP_VIEW
+        MENUITEM "",                            IDM_MENU_ADD_NOTICE
+    END
+END
+
+IDR_MENU_EDITING MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_ADD
+        MENUITEM "",                            IDM_MENU_EDIT
+        MENUITEM "",                            IDM_MENU_DEL
+        MENUITEM "",                            IDM_MENU_COPY
+        MENUITEM "",                            IDM_MENU_SEPARATOR
+    END
+END
+
+IDR_MENU_WEB MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_WEB_PDF_PORTRAIT
+        MENUITEM "",                            IDM_MENU_WEB_PDF_LANDSCAPE
+        MENUITEM "",                            IDM_MENU_WEB_SCREENSHOT
+        MENUITEM "",                            IDM_MENU_SEPARATOR1
+//      MENUITEM SEPARATOR
+        MENUITEM "",                            IDM_MENU_WEB_TOPMOST
+        MENUITEM "",                            IDM_MENU_WEB_VISIBILITY
+        MENUITEM "",                            IDM_MENU_WEB_DARK_MODE
+        MENUITEM "",                            IDM_MENU_WEB_DARK_MODE_2
+        MENUITEM "",                            IDM_MENU_WEB_BOUNDS_MODE
+        MENUITEM "",                            IDM_MENU_WEB_BLOCK_IMAGES
+        MENUITEM "",                            IDM_MENU_SEPARATOR2
+//      MENUITEM SEPARATOR
+        MENUITEM "",                            IDM_MENU_WEB_CLOSE_WEBVIEW
+        MENUITEM "",                            IDM_MENU_WEB_REINIT
+        MENUITEM "",                            IDM_MENU_WEB_NEW_WINDOW
+        MENUITEM "",                            IDM_MENU_WEB_NEW_THREAD
+        MENUITEM "",                            IDM_MENU_WEB_CLEAR_CACHE
+        MENUITEM "",                            IDM_MENU_WEB_CLEAR_COOKIES
+        MENUITEM "",                            IDM_MENU_WEB_DELETE_DATAFOLDER
+        MENUITEM "",                            IDM_MENU_SEPARATOR3
+//      MENUITEM SEPARATOR
+        MENUITEM "",                            IDM_MENU_WEB_INJECT_SCRIPT
+        MENUITEM "",                            IDM_MENU_WEB_INITIALIZE_SCRIPT
+        MENUITEM "",                            IDM_MENU_WEB_USE_DEFERRED_SCRIPT
+        MENUITEM "",                            IDM_MENU_WEB_COMPLETE_DEFERRED
+        MENUITEM "",                            IDM_MENU_WEB_POST_MESSAGE_STRING
+        MENUITEM "",                            IDM_MENU_WEB_POST_MESSAGE_JSON
+        MENUITEM "",                            IDM_MENU_WEB_SUBSCRIBE_CDP_EVENT
+        MENUITEM "",                            IDM_MENU_WEB_CALL_CDP_METHOD
+        MENUITEM "",                            IDM_MENU_WEB_COM_OBJECT
+        MENUITEM "",                            IDM_MENU_SEPARATOR4
+//      MENUITEM SEPARATOR
+        MENUITEM "",                            IDM_MENU_WEB_FLAGS
+        MENUITEM "",                            IDM_MENU_WEB_LANGUAGE
+        MENUITEM "",                            IDM_MENU_WEB_USERAGENT
+        MENUITEM "",                            IDM_MENU_WEB_BLACKLIST
+        MENUITEM "",                            IDM_MENU_WEB_TASK_MANAGER
+//      MENUITEM "",                            IDM_MENU_SEPARATOR5
+//      MENUITEM SEPARATOR
+//      MENUITEM "",                            IDM_WEB_EXIT
+    END
+END
+
+IDR_MENU_FAVORITES MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "",                            IDM_MENU_WEB_FAV_0
+        MENUITEM "",                            IDM_MENU_WEB_FAV_1
+        MENUITEM "",                            IDM_MENU_WEB_FAV_2
+        MENUITEM "",                            IDM_MENU_WEB_FAV_3
+        MENUITEM "",                            IDM_MENU_WEB_FAV_4
+        MENUITEM "",                            IDM_MENU_WEB_FAV_5
+        MENUITEM "",                            IDM_MENU_WEB_FAV_6
+        MENUITEM "",                            IDM_MENU_WEB_FAV_7
+        MENUITEM "",                            IDM_MENU_WEB_FAV_8
+        MENUITEM "",                            IDM_MENU_WEB_FAV_9
+    END
 END
 
 
@@ -139,6 +304,10 @@ BEGIN
     BEGIN
     END
 
+    IDD_EXPLORER, DIALOG
+    BEGIN
+    END
+
     IDD_LINKS, DIALOG
     BEGIN
     END
@@ -146,152 +315,12 @@ BEGIN
     IDD_NOTEPAD, DIALOG
     BEGIN
     END
+
+    IDD_DIALOG_INPUT, DIALOG
+    BEGIN
+    END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDR_DS2VJOY MENU
-BEGIN
-    POPUP "File(&F)"
-    BEGIN
-        MENUITEM "Exit application(&X)",        IDM_EXIT
-    END
-    POPUP "Help(&H)"
-    BEGIN
-        MENUITEM "About(&A)...",                IDM_ABOUT
-    END
-END
-
-IDR_MENU_TABS MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Clone to view2",              IDM_MENU_SEE_VIEW2
-        MENUITEM "Set to Always",               IDM_MENU_TO_MODE_0
-        MENUITEM "Set to mode 1",               IDM_MENU_TO_MODE_1
-        MENUITEM "Set to mode 2",               IDM_MENU_TO_MODE_2
-        MENUITEM "Set to mode 3",               IDM_MENU_TO_MODE_3
-        MENUITEM "Set to mode 4",               IDM_MENU_TO_MODE_4
-        MENUITEM "Set to mode 5",               IDM_MENU_TO_MODE_5
-        MENUITEM "Set to mode 6",               IDM_MENU_TO_MODE_6
-        MENUITEM "Set to mode 7",               IDM_MENU_TO_MODE_7
-        MENUITEM "Set to mode 8",               IDM_MENU_TO_MODE_8
-    END
-END
-
-IDR_MENU_CLONE MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Clone 1st tab",               IDM_MENU_TO_MODE_0
-        MENUITEM "Clone tab 1",                 IDM_MENU_TO_MODE_1
-        MENUITEM "Clone tab 2",                 IDM_MENU_TO_MODE_2
-        MENUITEM "Clone tab 3",                 IDM_MENU_TO_MODE_3
-        MENUITEM "Clone tab 4",                 IDM_MENU_TO_MODE_4
-        MENUITEM "Clone tab 5",                 IDM_MENU_TO_MODE_5
-        MENUITEM "Clone tab 6",                 IDM_MENU_TO_MODE_6
-        MENUITEM "Clone tab 7",                 IDM_MENU_TO_MODE_7
-        MENUITEM "Clone tab 8",                 IDM_MENU_TO_MODE_8
-    END
-END
-
-IDR_MENU_MAPPING MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Add",                         IDM_MENU_ADD
-        MENUITEM "Edit",                        IDM_MENU_EDIT
-        MENUITEM "Delete",                      IDM_MENU_DEL
-        MENUITEM "Copy",                        IDM_MENU_COPY
-        MENUITEM "Separator",                   IDM_MENU_SEPARATOR
-        MENUITEM "Move to 0",                   IDM_MENU_MOVE_TO_0
-        MENUITEM "Move to 1",                   IDM_MENU_MOVE_TO_1
-        MENUITEM "Move to 2",                   IDM_MENU_MOVE_TO_2
-        MENUITEM "Move to 3",                   IDM_MENU_MOVE_TO_3
-        MENUITEM "Move to 4",                   IDM_MENU_MOVE_TO_4
-        MENUITEM "Move to 5",                   IDM_MENU_MOVE_TO_5
-        MENUITEM "Move to 6",                   IDM_MENU_MOVE_TO_6
-        MENUITEM "Move to 7",                   IDM_MENU_MOVE_TO_7
-        MENUITEM "Move to 8",                   IDM_MENU_MOVE_TO_8
-        MENUITEM "Swap view",                   IDM_MENU_SWAP_VIEW
-        MENUITEM "Add notice",                  IDM_MENU_ADD_NOTICE
-    END
-END
-
-IDR_MENU_EDITING MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Add",                         IDM_MENU_ADD
-        MENUITEM "Edit",                        IDM_MENU_EDIT
-        MENUITEM "Delete",                      IDM_MENU_DEL
-        MENUITEM "Copy",                        IDM_MENU_COPY
-        MENUITEM "Separator",                   IDM_MENU_SEPARATOR
-    END
-END
-
-IDR_MENU_WEB MENU
-BEGIN
-    POPUP "File(&F)"
-    BEGIN
-        MENUITEM "Print to PDF Portrait",       IDM_WEB_PDF_PORTRAIT
-        MENUITEM "Print to PDF Landscape",      IDM_WEB_PDF_LANDSCAPE
-        MENUITEM "Save Screenshot",             IDM_WEB_SCREENSHOT
-        MENUITEM "   ----------",               IDM_MENU_SEPARATOR1
-        MENUITEM "Toggle TopMost",              IDM_WEB_TOPMOST
-        MENUITEM "Toggle Visibility",           IDM_WEB_VISIBILITY
-        MENUITEM "Dark mode",                   IDM_WEB_DARK_MODE
-        MENUITEM "Dark mode 2",                 IDM_WEB_DARK_MODE_2
-        MENUITEM "Raw/Scale Pixels",            IDM_WEB_BOUNDS_MODE
-        MENUITEM "Toggle Block Images",         IDM_WEB_BLOCK_IMAGES
-        MENUITEM "   ----------",               IDM_MENU_SEPARATOR2
-        MENUITEM "Close WebView",               IDM_WEB_CLOSE_WEBVIEW
-        MENUITEM "Create WebView",              IDM_WEB_REINIT
-        MENUITEM "Create New Window",           IDM_WEB_NEW_WINDOW
-        MENUITEM "Create New Thread",           IDM_WEB_NEW_THREAD
-        MENUITEM "Delete UserData Folder",      IDM_WEB_DELETE_DATAFOLDER
-        MENUITEM "   ----------",               IDM_MENU_SEPARATOR3
-        MENUITEM "Inject Script",               IDM_WEB_INJECT_SCRIPT
-        MENUITEM "Add Initialize Script",       IDM_WEB_INITIALIZE_SCRIPT
-        MENUITEM "JavaScript Deferred",         IDM_WEB_USE_DEFERRED_SCRIPT
-        MENUITEM "JavaScript Complete",         IDM_WEB_COMPLETE_DEFERRED_SCRIPT
-        MENUITEM "Post Message String",         IDM_WEB_POST_MESSAGE_STRING
-        MENUITEM "Post Message JSON",           IDM_WEB_POST_MESSAGE_JSON
-        MENUITEM "Subscribe CDP event",         IDM_WEB_SUBSCRIBE_CDP_EVENT
-        MENUITEM "Call CDP method",             IDM_WEB_CALL_CDP_METHOD
-        MENUITEM "Add COM object",              IDM_WEB_COM_OBJECT
-        MENUITEM "   ----------",               IDM_MENU_SEPARATOR4
-        MENUITEM "Flags",                       IDM_WEB_FLAGS
-        MENUITEM "Language",                    IDM_WEB_LANGUAGE
-        MENUITEM "User Agent",                  IDM_WEB_USERAGENT
-        MENUITEM "Blacklist",                   IDM_WEB_BLACKLIST
-        MENUITEM "Task Manager",                IDM_WEB_TASK_MANAGER
-        MENUITEM "   ----------",               IDM_MENU_SEPARATOR5
-        MENUITEM "Exit application",            IDM_WEB_EXIT
-    END
-END
-
-IDR_MENU_FAVORITES MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Favorite 0",                  IDM_BUTTON_FAV_0
-        MENUITEM "Favorite 1",                  IDM_BUTTON_FAV_1
-        MENUITEM "Favorite 2",                  IDM_BUTTON_FAV_2
-        MENUITEM "Favorite 3",                  IDM_BUTTON_FAV_3
-        MENUITEM "Favorite 4",                  IDM_BUTTON_FAV_4
-        MENUITEM "Favorite 5",                  IDM_BUTTON_FAV_5
-        MENUITEM "Favorite 6",                  IDM_BUTTON_FAV_6
-        MENUITEM "Favorite 7",                  IDM_BUTTON_FAV_7
-        MENUITEM "Favorite 8",                  IDM_BUTTON_FAV_8
-        MENUITEM "Favorite 9",                  IDM_BUTTON_FAV_9
-    END
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -311,10 +340,10 @@ BEGIN
 END
 
 IDD_LOG DIALOGEX 0, 0, 468, 241
-STYLE DS_SETFONT | WS_CHILD | WS_BORDER
+STYLE DS_SETFONT | WS_CHILD
 FONT 5, "Consolas", 400, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_LOG,0,0,468,241,ES_MULTILINE | ES_UPPERCASE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL,WS_EX_TRANSPARENT | WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_LOG,0,0,468,241,ES_MULTILINE | ES_UPPERCASE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL, WS_EX_TRANSPARENT
 END
 
 IDD_SETTINGS DIALOGEX 0, 0, 468, 241
@@ -362,16 +391,19 @@ BEGIN
     RTEXT           "",IDC_SETTINGS_TEXT_LONG,237,89,54,12
     RTEXT           "",IDC_SETTINGS_TEXT_VERY_LONG,237,110,54,12
     RTEXT           "",IDC_SETTINGS_TEXT_WEBREFRESH,237,131,54,12
+    RTEXT           "",IDC_SETTINGS_TEXT_OPACITY,237,152,54,12
     LTEXT           "",IDC_SETTINGS_UNIT_THRESHOLD,319,50,16,10
     LTEXT           "",IDC_SETTINGS_UNIT_SIMULTANEOUS,319,70,16,10
     LTEXT           "",IDC_SETTINGS_UNIT_LONG,319,91,16,10
     LTEXT           "",IDC_SETTINGS_UNIT_VERY_LONG,319,112,16,10
     LTEXT           "",IDC_SETTINGS_UNIT_WEB_REFRESH,319,133,16,10
+    RTEXT           "",IDC_SETTINGS_UNIT_OPACITY,319,154,54,12
     EDITTEXT        IDC_SETTINGS_THRESHOLD,294,48,23,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
     EDITTEXT        IDC_SETTINGS_SIMULTANEOUS,294,69,23,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
     EDITTEXT        IDC_SETTINGS_LONG,294,90,23,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
     EDITTEXT        IDC_SETTINGS_VERY_LONG,294,111,23,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
     EDITTEXT        IDC_SETTINGS_WEBREFRESH,294,132,23,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
+    EDITTEXT        IDC_SETTINGS_OPACITY,294,153,23,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
     GROUPBOX        "",IDC_SETTINGS_MULTIPLE_TOUCHPAD,371,49,83,123
     LTEXT           "",IDC_SETTINGS_TEXT_FIRST_BUTTON,381,63,67,13
     COMBOBOX        IDC_SETTINGS_FIRST_BUTTON,375,76,74,144,CBS_DROPDOWNLIST | WS_VSCROLL
@@ -488,14 +520,14 @@ BEGIN
     CONTROL         "",IDC_MAPPING_PAUSE,"Button",BS_OWNERDRAW,44,203,12,12
     CONTROL         "",IDC_MAPPING_TRANSITIVITY,"Button",BS_OWNERDRAW,44,228,12,12
     CONTROL         "",IDC_MAPPING_TOGGLE,"Button",BS_OWNERDRAW,44,252,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_1,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,108,91,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_2,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,199,91,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_3,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,290,91,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_4,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,381,91,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_5,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,108,147,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_6,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,199,147,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_7,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,290,147,12,12
-    CONTROL         "",IDC_MAPPING_OVERCONTROL_8,"Button",BS_AUTO3STATE | NOT WS_VISIBLE,381,147,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_1,"Button",BS_OWNERDRAW,108,91,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_2,"Button",BS_OWNERDRAW,199,91,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_3,"Button",BS_OWNERDRAW,290,91,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_4,"Button",BS_OWNERDRAW,381,91,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_5,"Button",BS_OWNERDRAW,108,147,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_6,"Button",BS_OWNERDRAW,199,147,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_7,"Button",BS_OWNERDRAW,290,147,12,12
+    CONTROL         "",IDC_MAPPING_OVERCONTROL_8,"Button",BS_OWNERDRAW,381,147,12,12
     CONTROL         "",IDC_MAPPING_ACTION_1,"Button",BS_OWNERDRAW,108,102,12,12
     CONTROL         "",IDC_MAPPING_ACTION_2,"Button",BS_OWNERDRAW,199,102,12,12
     CONTROL         "",IDC_MAPPING_ACTION_3,"Button",BS_OWNERDRAW,290,102,12,12
@@ -802,12 +834,18 @@ BEGIN
     RTEXT           "",IDC_HID_LEGEND5,386,128,29,10,0,WS_EX_TRANSPARENT
 END
 
+IDD_EXPLORER DIALOGEX 0, 0, 0, 0
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 500, 0, 0x0
+BEGIN
+END
+
 IDD_LINKS DIALOGEX 0, 0, 468, 241
 STYLE DS_SETFONT | WS_CHILD | WS_BORDER
 FONT 5, "Consolas", 400, 0, 0x1
 BEGIN
-    LTEXT           "",IDC_LINKS_TEXT1,9,3,150,13,0,WS_EX_TRANSPARENT
-    LTEXT           "",IDC_LINKS_TEXT2,237,3,150,13,0,WS_EX_TRANSPARENT
+    LTEXT           "",IDC_LINKS_TEXT1,9,3,220,13,0,WS_EX_TRANSPARENT
+    LTEXT           "",IDC_LINKS_TEXT2,237,3,220,13,0,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_WEBURL0,11,20,218,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_WEBURL1,11,37,218,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_WEBURL2,11,55,218,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
@@ -818,8 +856,8 @@ BEGIN
     EDITTEXT        IDC_LINKS_WEBURL7,240,55,218,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_WEBURL8,240,73,218,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_WEBURL9,240,91,218,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
-    LTEXT           "",IDC_LINKS_TEXT3,9,112,88,13,0,WS_EX_TRANSPARENT
-    LTEXT           "",IDC_LINKS_TEXT4,126,112,255,13,0,WS_EX_TRANSPARENT
+    LTEXT           "",IDC_LINKS_TEXT3,9,112,110,13,0,WS_EX_TRANSPARENT
+    LTEXT           "",IDC_LINKS_TEXT4,126,112,330,13,0,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_APP1NAME,11,128,107,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_APP2NAME,11,146,107,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
     EDITTEXT        IDC_LINKS_APP3NAME,11,164,107,16,ES_AUTOHSCROLL | ES_OEMCONVERT,WS_EX_TRANSPARENT
@@ -843,7 +881,19 @@ IDD_NOTEPAD DIALOGEX 0, 0, 474, 287
 STYLE DS_SETFONT | WS_CHILD
 FONT 5, "Consolas", 400, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_NOTEPAD,0,0,474,287,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_NOTEPAD,0,0,474,287,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL, WS_EX_TRANSPARENT
+END
+
+IDD_DIALOG_INPUT DIALOGEX 0, 0, 309, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Input"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Static",IDC_EDIT_LABEL,7,3,295,123
+    EDITTEXT        IDC_EDIT_DESCRIPTION,14,14,281,28,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_INPUT,14,44,281,79,ES_WANTRETURN | ES_MULTILINE | ES_AUTOHSCROLL
+    PUSHBUTTON      "",IDC_EDIT_CLEAR,198,126,50,14
+    DEFPUSHBUTTON   "",IDC_EDIT_OK,252,126,50,14
 END
 
 
@@ -881,67 +931,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
-//
-
-IDB_BITMAP1             BITMAP                  "Ds2vJoy.bmp"
-
-IDB_BITMAP2             BITMAP                  "Ds2vJoyHelp.bmp"
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// AFX_DIALOG_LAYOUT
-//
-
-IDD_SETTINGS AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_KEYMAP_ADD AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_VIGEM AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_GUARDIAN AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_LINKS AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_MAPPING_ADD AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_RAPIDFIRE_ADD AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_CLONE AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-IDD_ABOUTBOX AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 
@@ -965,4 +954,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

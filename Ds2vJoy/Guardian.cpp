@@ -264,13 +264,11 @@ BOOL Guardian::GuardianInstall(bool verbose)
 
 		if (GuardianState() == 1)
 		{
-			echo(L"HidGuardian driver is installed");
+			echo(I18N.HidGuardian_driver_installed);
 			return TRUE;
 		}
 	}
-
-	if (verbose)
-		echo(L"ERROR: HidGuardian driver instalation failed");
+	echo(I18N.HidGuardian_driver_instalation_failed);
 
 	return FALSE;
 }
@@ -291,11 +289,11 @@ BOOL Guardian::GuardianUninstall(bool verbose)
 
 		if (GuardianState() < 1)
 		{
-			echo(L"HidGuardian driver is uninstalled");
+			echo(I18N.HidGuardian_driver_uninstalled);
 			GuardianUninstall = TRUE;
 		}
 		else
-			echo(L"ERROR: HidGuardian driver uninstalation failed");
+			echo(I18N.HidGuardian_driver_uninstalation_failed);
 	}
 	else
 	{
@@ -365,7 +363,7 @@ BOOL Guardian::GuardianDisable(bool verbose)
 	}
 
 	std::wstring devconpath = L"Devcon.exe disable Root\\HidGuardian";
-	LaunchCmd((ExePath() + devconpath).c_str());
+	LaunchCmd(devconpath.c_str());
 
 	if (GuardianState() == 2)
 	{
@@ -384,7 +382,7 @@ int Guardian::HidCerberusState(bool verbose)
 {
 	char HidCerberusState = -1;
 
-	HidCerberusState = GetServiceState(L"HidCerberus.Srv");
+	HidCerberusState = GetServiceState(WCHARI(L"HidCerberus.Srv"));
 
 	if (verbose)
 		switch (HidCerberusState)
@@ -424,15 +422,13 @@ BOOL Guardian::HidCerberusInstall(bool verbose)
 			echo(exepath.c_str());
 		}
 		LPWSTR exepathtmp = (LPWSTR)(LPCWSTR)exepath.c_str();
-		if (ServiceInstall(L"HidCerberus.Srv", exepathtmp, SERVICE_WIN32_OWN_PROCESS, verbose))
+		if (ServiceInstall(WCHARI(L"HidCerberus.Srv"), exepathtmp, SERVICE_WIN32_OWN_PROCESS, verbose))
 		{
-			if (!verbose)
-				echo(L"HidCerberus service installed");
+			echo(I18N.HidCerberus_service_installed);
 			return TRUE;
 		}
 	}
-	if (verbose)
-		echo(L"ERROR: HidCerberus service not installed");
+	echo(I18N.HidCerberus_service_instalation_failed);
 
 	return FALSE;
 }
@@ -443,14 +439,13 @@ BOOL Guardian::HidCerberusUninstall(bool verbose)
 
 	if (HidCerberusState() > 0)
 	{
-		if (ServiceDelete(L"HidCerberus.Srv", verbose))
+		if (ServiceDelete(WCHARI(L"HidCerberus.Srv"), verbose))
 		{
-			if (verbose)
-				echo(L"HidCerberus service is uninstalled");
+			echo(I18N.HidCerberus_service_uninstalled);
 			HidCerberusUninstall = TRUE;
 		}
 		else
-			echo(L"ERROR: HidCerberus service uninstalation failed");
+			echo(I18N.HidCerberus_service_uninstalation_failed);
 	}
 	else
 	{
@@ -471,24 +466,24 @@ BOOL Guardian::HidCerberusUninstall(bool verbose)
 
 BOOL Guardian::HidCerberusStart(bool verbose)
 {
-	return ServiceStart(L"HidCerberus.Srv", verbose);
+	return ServiceStart(WCHARI(L"HidCerberus.Srv"), verbose);
 }
 
 BOOL Guardian::HidCerberusStop(bool verbose)
 {
-	return ServiceStop(L"HidCerberus.Srv", verbose);
+	return ServiceStop(WCHARI(L"HidCerberus.Srv"), verbose);
 }
 
 BOOL Guardian::WhitelistDs2vJoy()
 {
-	int pid = _getpid();
+	tape.Ds2vJoyPID = _getpid();
 
-	if (pid != 0 && HidCerberusState() == 4)
+	if (tape.Ds2vJoyPID != 0 && HidCerberusState() == 4)
 	{
-		if (WhitelistByPID(pid))
+		if (WhitelistByPID(tape.Ds2vJoyPID))
 		{
-			ProcessPIDs.push_back(pid);
-			echo(L"Added to Guardian: Ds2vJoy (%u)", pid);
+			ProcessPIDs.push_back(tape.Ds2vJoyPID);
+			tape.DsvJoyAddedToGuardian = true;
 
 			return TRUE;
 		}
@@ -566,7 +561,7 @@ void Guardian::WhitelistByExeName(std::wstring ProcessExeName)
 						if (WhitelistByPID((int)AllProcessesPIDs[i]))
 						{
 							ProcessPIDs.push_back((int)AllProcessesPIDs[i]);
-							echo(L"Added to Guardian: %s (%u)", ProcessExeName.c_str(), AllProcessesPIDs[i]);
+							echo(I18N.HidGuardian_Added_to_Guardian, ProcessExeName.c_str(), AllProcessesPIDs[i]);
 						}
 					}
 				}
@@ -598,7 +593,7 @@ void Guardian::RemoveWhitelistByExeName(std::wstring ProcessExeName)
 						ProcessPIDs.erase(pos);
 					}
 					if (RemoveWhitelistByPID((int)AllProcessesPIDs[i]))
-						echo(L"Removed from Guardian: %s (%u)", ProcessExeName.c_str(), AllProcessesPIDs[i]);
+						echo(I18N.HidGuardian_Removed_from_Guardian, ProcessExeName.c_str(), AllProcessesPIDs[i]);
 				}
 			}
 		}

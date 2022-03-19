@@ -77,6 +77,8 @@ const WCHAR* Mapping::vJoyString()
 				head += swprintf_s(head, MAX_PATH, L" %s", SpecialString((SpecialActionID)vjID[i]));
 			else if (ActionType[i] == 3)
 				head += swprintf_s(head, MAX_PATH, L" %s", vJoyButton::StringAxis((vJoyAxisMoveID)vjID[i]));
+			else if (ActionType[i] == 4)
+				head += swprintf_s(head, MAX_PATH, L" %s", ModulesString((ModulesActionID)vjID[i]));
 			else if(vjID[i] != vJoyButton::none)
 				head += swprintf_s(head, MAX_PATH, L" %s", vJoyButton::String((vJoyButtonID)vjID[i]));
 		}
@@ -88,6 +90,8 @@ const WCHAR* Mapping::vJoyString()
 				{ head += swprintf_s(head, MAX_PATH, L"%s", SpecialString((SpecialActionID)vjID[i])); firstplus = true; }
 			else if (ActionType[i] == 3)
 				{ head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::StringAxis((vJoyAxisMoveID)vjID[i])); firstplus = true; }
+			else if (ActionType[i] == 4)
+				{ head += swprintf_s(head, MAX_PATH, L"%s", ModulesString((ModulesActionID)vjID[i])); firstplus = true; }
 			else if (vjID[i] != vJoyButton::none)
 				{ head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::String((vJoyButtonID)vjID[i])); firstplus = true; }
 		}
@@ -261,7 +265,7 @@ void Mapping::PreLoad()
 	for (int i = 0; i < 8; i++)
 		mouse_toggle[i] = false;
 	for (int i = 0; i < Led_Action_Count; i++)
-		Ledactive[i] = false ;
+		Ledactive[i] = false;
 }
 
 BOOL Mapping::LoadDevice(HWND hWnd, dsDevice* ds, vJoyDevice* vjoy)
@@ -1201,9 +1205,11 @@ void Mapping::Run(double average)
 					case ADDSTAT6: { tape.Stat[5] += 1; break; }
 					case ADDSTAT7: { tape.Stat[6] += 1; break; }
 					case ADDSTAT8: { tape.Stat[7] += 1; break; }
+					case SCREENSHOT: { PostMessage(m_hWnd, WM_SCREENSHOT, MAKEWPARAM(Grid[0], Grid[1]), MAKELPARAM(Grid[2], Grid[3])); break; }
 					case MINIMIZE: { PostMessage(m_hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); break; }
 					case RESTORE: { PostMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0); break; }
-					default: {  std::thread(SpecialActions, (SpecialActionID)vjID[i]).detach(); break; }
+					case TRANSPARENCY: { PostMessage(m_hWnd, WM_TRANSPARENCY, 0, 1); break; }
+					default: { std::thread(SpecialActions, (SpecialActionID)vjID[i]).detach(); break; }
 					}
 					ran[i] = true;
 				}
@@ -1250,6 +1256,130 @@ void Mapping::Run(double average)
 					}
 				}
 				ran[i] = true;
+			}
+			else if (ActionType[i] == 4)
+			{
+				if (started[i] && !done[i] && (!ran[i] || vjID[i] == WEB_ZOOMMINUS || vjID[i] == WEB_ZOOMPLUS ||
+						vjID[i] == WEB_DOWN || vjID[i] == WEB_UP || vjID[i] == WEB_LEFT || vjID[i] == WEB_RIGHT))
+				{
+					switch (vjID[i])
+					{
+					case NOTEPAD: { PostMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); break; }
+					case NOTEPAD_DOWN: { PostMessage(m_hWnd, WM_NOTEPAD_SCROLL, 0, 0); break; }
+					case NOTEPAD_UP: { PostMessage(m_hWnd, WM_NOTEPAD_SCROLL, 0, 1); break; }
+					}
+
+					if (tape.isExplorerLoaded)
+					switch (vjID[i])
+					{
+					case WEB_DOWN:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % 18))
+						{
+							if (modulo == -1)
+								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, 90);
+							else
+								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, (540 / modulo));
+						}
+						break;
+					}
+					case WEB_UP:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % 18))
+						{
+							if (modulo == -1)
+								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, -90);
+							else
+								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, (-540 / modulo));
+						}
+						break;
+					}
+					case WEB_LEFT:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % 18))
+						{
+							if (modulo == -1)
+								PostMessage(m_hWnd, WM_WEB_SCROLL, -90, 0);
+							else
+								PostMessage(m_hWnd, WM_WEB_SCROLL, (-540 / modulo), 0);
+						}
+						break;
+					}
+					case WEB_RIGHT:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % 18))
+						{
+							if (modulo == -1)
+								PostMessage(m_hWnd, WM_WEB_SCROLL, 90, 0);
+							else
+								PostMessage(m_hWnd, WM_WEB_SCROLL, (540 / modulo), 0);
+						}
+						break;
+					}
+					case WEB_PREVIOUSTAB: { PostMessage(m_hWnd, WM_WEB_CHANGETAB, 0, 0); break; }
+					case WEB_NEXTTAB: { PostMessage(m_hWnd, WM_WEB_CHANGETAB, 0, 1); break; }
+					case WEB_CLOSETAB: { PostMessage(m_hWnd, WM_COMMAND, ID_WEBCLOSE, 0); break; }
+					case WEB_FULLSCREEN: { PostMessage(m_hWnd, WM_WEB_FULLSCREEN, 0, 0); break; }
+					case WEB_FAVORITE1: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 1); break; }
+					case WEB_FAVORITE2: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 2); break; }
+					case WEB_FAVORITE3: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 3); break; }
+					case WEB_FAVORITE4: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 4); break; }
+					case WEB_FAVORITE5: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 5); break; }
+					case WEB_FAVORITE6: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 6); break; }
+					case WEB_FAVORITE7: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 7); break; }
+					case WEB_FAVORITE8: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 8); break; }
+					case WEB_FAVORITE9: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 9); break; }
+					case WEB_HOME: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 0); break; }
+					case WEB_BACK: { PostMessage(m_hWnd, WM_WEB_BACK, 0, 0); break; }
+					case WEB_NEXT: { PostMessage(m_hWnd, WM_WEB_NEXT, 0, 0); break; }
+					case WEB_REFRESH: { PostMessage(m_hWnd, WM_WEB_REFRESH, 0, 0); break; }
+					case WEB_CANCEL: { PostMessage(m_hWnd, WM_WEB_CANCEL, 0, 0); break; }
+					case WEB_AUTOREFRESH: { PostMessage(m_hWnd, WM_WEB_AUTOREFRESH, 0, 0); break; }
+					case WEB_ZOOMMINUS:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
+									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 0);
+							}
+							else
+							{
+								if (!(cycle % (modulo)))
+									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 0);
+							}
+						break;
+					}
+					case WEB_ZOOMPLUS:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
+									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 1);
+							}
+							else
+							{
+								if (!(cycle % (modulo)))
+									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 1);
+							}
+						break;
+					}
+					case WEB_ZOOMRESET: { PostMessage(m_hWnd, WM_WEB_ZOOMRESET, 0, 0); break; }
+					case WEB_ZOOMSET: { PostMessage(m_hWnd, WM_WEB_ZOOMSET, 0, 0); break; }
+					case WEB_VISIBILITY: { PostMessage(m_hWnd, WM_WEB_VISIBILITY, 0, 0); break; }
+					case WEB_SCREENSHOT: { PostMessage(m_hWnd, WM_WEB_SCREENSHOT, 0, 0); break; }
+					case WEB_DARKMODE: { PostMessage(m_hWnd, WM_WEB_DARKMODE, 0, 1); break; }
+					case WEB_DARKMODE2: { PostMessage(m_hWnd, WM_WEB_DARKMODE, 0, 2); break; }
+					}
+					ran[i] = true;
+				}
 			}
 			else
 			{
@@ -1533,14 +1663,14 @@ WCHAR* Mapping::LedString(LedActionID id)
 {
 	switch (id)
 	{
-	case Led_Action_none: return L"";
+	case Led_Action_none: return WCHARI(L"");
 	case Led_Action_Led1: return I18N.LedAction_Led_1;
 	case Led_Action_Led2: return I18N.LedAction_Led_2;
 	case Led_Action_Led3: return I18N.LedAction_Led_3;
 	case Led_Action_Led4: return I18N.LedAction_Led_4;
 	case Led_Action_Led5: return I18N.LedAction_Led_5;
 	case Led_Action_Battery: return I18N.LedAction_BATTERY;
-	default: return L"???";
+	default: return WCHARI(L"???");
 	}
 }
 
@@ -1548,7 +1678,7 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 {
 	switch (id)
 	{
-	case mouse_none: return L"";
+	case mouse_none: return WCHARI(L"");
 	case ACTIVE_MOUSE: return I18N.MouseAction_ACTIVE_MOUSE;
 	case SAVE_POSITION: return I18N.MouseAction_SAVE_POSITION;
 	case MOVE_BACK: return I18N.MouseAction_MOVE_BACK;
@@ -1583,7 +1713,7 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 	case X2_DOWN: return I18N.MouseAction_X2_DOWN;
 	case SCROLL_UP_VARIABLE: return I18N.MouseAction_SCROLL_UP_VARIABLE;
 	case SCROLL_DOWN_VARIABLE: return I18N.MouseAction_SCROLL_DOWN_VARIABLE;
-	default: return L"???";
+	default: return WCHARI(L"???");
 	}
 }
 
@@ -1591,52 +1721,101 @@ WCHAR* Mapping::SpecialString(SpecialActionID id)
 {
 	switch (id)
 	{
-	case mouse_none: return L"";
-	case MUTE_SOUND: return I18N.MouseAction_MUTE_SOUND;
-	case VOLUME_UP: return I18N.MouseAction_VOLUME_UP;
-	case VOLUME_DOWN: return I18N.MouseAction_VOLUME_DOWN;
-	case MEMORIZE_MODE: return I18N.MouseAction_MEMORIZE_MODE;
-	case TO_MEM_MODE: return I18N.MouseAction_TO_MEM_MODE;
-	case TO_MODE1: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(1));
-	case TO_MODE2: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(2));
-	case TO_MODE3: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(3));
-	case TO_MODE4: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(4));
-	case TO_MODE5: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(5));
-	case TO_MODE6: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(6));
-	case TO_MODE7: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(7));
-	case TO_MODE8: return WCHARI(I18N.MouseAction_TO_MODE + std::to_wstring(8));
-	case TO_LAST_MODE: return I18N.MouseAction_TO_LAST_MODE;
-	case BASE_TO_MODE1: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(1));
-	case BASE_TO_MODE2: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(2));
-	case BASE_TO_MODE3: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(3));
-	case BASE_TO_MODE4: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(4));
-	case BASE_TO_MODE5: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(5));
-	case BASE_TO_MODE6: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(6));
-	case BASE_TO_MODE7: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(7));
-	case BASE_TO_MODE8: return WCHARI(I18N.MouseAction_BASE_TO_MODE + std::to_wstring(8));
-	case TO_BASE_MODE: return I18N.MouseAction_TO_BASE_MODE;
-	case FORGOT_RELEASED: return I18N.MouseAction_FORGOT_RELEASED;
-	case IF_RELEASED_GOTO: return I18N.MouseAction_IF_RELEASED_GOTO;
-	case IF_PUSHED_GOTO: return I18N.MouseAction_IF_PUSHED_GOTO;
-	case RETURN_TO: return I18N.MouseAction_RETURN_TO;
-	case INTERRUPT: return I18N.MouseAction_MOUSE_INTERRUPT;
-	case NO_SUSTAIN: return I18N.MouseAction_MOUSE_NO_SUSTAIN;
-	case PAUSE: return I18N.MouseAction_MOUSE_PAUSE;
-	case BEEP1: return I18N.MouseAction_BEEP1;
-	case BEEP2: return I18N.MouseAction_BEEP2;
-	case BEEP3: return I18N.MouseAction_BEEP3;
-	case RESET_STATS: return I18N.MouseAction_RESET_STATS;
-	case ADDSTAT1: return I18N.MouseAction_ADDSTAT1;
-	case ADDSTAT2: return I18N.MouseAction_ADDSTAT2;
-	case ADDSTAT3: return I18N.MouseAction_ADDSTAT3;
-	case ADDSTAT4: return I18N.MouseAction_ADDSTAT4;
-	case ADDSTAT5: return I18N.MouseAction_ADDSTAT5;
-	case ADDSTAT6: return I18N.MouseAction_ADDSTAT6;
-	case ADDSTAT7: return I18N.MouseAction_ADDSTAT7;
-	case ADDSTAT8: return I18N.MouseAction_ADDSTAT8;
-	case MINIMIZE: return I18N.MouseAction_MINIMIZE;
-	case RESTORE: return I18N.MouseAction_RESTORE;
-	default: return L"???";
+	case mouse_none: return WCHARI(L"");
+	case MUTE_SOUND: return I18N.SpecialAction_MUTE_SOUND;
+	case VOLUME_UP: return I18N.SpecialAction_VOLUME_UP;
+	case VOLUME_DOWN: return I18N.SpecialAction_VOLUME_DOWN;
+	case MEMORIZE_MODE: return I18N.SpecialAction_MEMORIZE_MODE;
+	case TO_MEM_MODE: return I18N.SpecialAction_TO_MEM_MODE;
+	case TO_MODE1: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(1));
+	case TO_MODE2: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(2));
+	case TO_MODE3: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(3));
+	case TO_MODE4: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(4));
+	case TO_MODE5: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(5));
+	case TO_MODE6: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(6));
+	case TO_MODE7: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(7));
+	case TO_MODE8: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(8));
+	case TO_LAST_MODE: return I18N.SpecialAction_TO_LAST_MODE;
+	case BASE_TO_MODE1: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(1));
+	case BASE_TO_MODE2: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(2));
+	case BASE_TO_MODE3: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(3));
+	case BASE_TO_MODE4: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(4));
+	case BASE_TO_MODE5: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(5));
+	case BASE_TO_MODE6: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(6));
+	case BASE_TO_MODE7: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(7));
+	case BASE_TO_MODE8: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(8));
+	case TO_BASE_MODE: return I18N.SpecialAction_TO_BASE_MODE;
+	case FORGOT_RELEASED: return I18N.SpecialAction_FORGOT_RELEASED;
+	case IF_RELEASED_GOTO: return I18N.SpecialAction_IF_RELEASED_GOTO;
+	case IF_PUSHED_GOTO: return I18N.SpecialAction_IF_PUSHED_GOTO;
+	case RETURN_TO: return I18N.SpecialAction_RETURN_TO;
+	case INTERRUPT: return I18N.SpecialAction_MOUSE_INTERRUPT;
+	case NO_SUSTAIN: return I18N.SpecialAction_MOUSE_NO_SUSTAIN;
+	case PAUSE: return I18N.SpecialAction_MOUSE_PAUSE;
+	case BEEP1: return I18N.SpecialAction_BEEP1;
+	case BEEP2: return I18N.SpecialAction_BEEP2;
+	case BEEP3: return I18N.SpecialAction_BEEP3;
+	case RESET_STATS: return I18N.SpecialAction_RESET_STATS;
+	case ADDSTAT1: return I18N.SpecialAction_ADDSTAT1;
+	case ADDSTAT2: return I18N.SpecialAction_ADDSTAT2;
+	case ADDSTAT3: return I18N.SpecialAction_ADDSTAT3;
+	case ADDSTAT4: return I18N.SpecialAction_ADDSTAT4;
+	case ADDSTAT5: return I18N.SpecialAction_ADDSTAT5;
+	case ADDSTAT6: return I18N.SpecialAction_ADDSTAT6;
+	case ADDSTAT7: return I18N.SpecialAction_ADDSTAT7;
+	case ADDSTAT8: return I18N.SpecialAction_ADDSTAT8;
+	case KBD_INPUT_ON: return I18N.SpecialAction_KBD_INPUT_ON;
+	case KBD_INPUT_OFF: return I18N.SpecialAction_KBD_INPUT_OFF;
+	case MSE_INPUT_ON: return I18N.SpecialAction_MSE_INPUT_ON;
+	case MSE_INPUT_OFF: return I18N.SpecialAction_MSE_INPUT_OFF;
+	case SCREENSHOT: return I18N.SpecialAction_SCREENSHOT;
+	case MINIMIZE: return I18N.SpecialAction_MINIMIZE;
+	case RESTORE: return I18N.SpecialAction_RESTORE;
+	case TRANSPARENCY: return I18N.SpecialAction_TRANSPARENCY;
+	default: return WCHARI(L"???");
+	}
+}
+
+WCHAR* Mapping::ModulesString(ModulesActionID id)
+{
+	switch (id)
+	{
+	case modules_none: return WCHARI(L"");
+	case NOTEPAD: return I18N.ModulesAction_NOTEPAD;
+	case NOTEPAD_DOWN: return I18N.ModulesAction_NOTEPAD_DOWN;
+	case NOTEPAD_UP: return I18N.ModulesAction_NOTEPAD_UP;
+	case WEB_DOWN: return I18N.ModulesAction_WEB_DOWN;
+	case WEB_UP: return I18N.ModulesAction_WEB_UP;
+	case WEB_LEFT: return I18N.ModulesAction_WEB_LEFT;
+	case WEB_RIGHT: return I18N.ModulesAction_WEB_RIGHT;
+	case WEB_PREVIOUSTAB: return I18N.ModulesAction_WEB_PREVIOUSTAB;
+	case WEB_NEXTTAB: return I18N.ModulesAction_WEB_NEXTTAB;
+	case WEB_CLOSETAB: return I18N.ModulesAction_WEB_CLOSETAB;
+	case WEB_FULLSCREEN: return I18N.ModulesAction_WEB_FULLSCREEN;
+	case WEB_HOME: return I18N.ModulesAction_WEB_HOME;
+	case WEB_FAVORITE1: return I18N.ModulesAction_WEB_FAVORITE1;
+	case WEB_FAVORITE2: return I18N.ModulesAction_WEB_FAVORITE2;
+	case WEB_FAVORITE3: return I18N.ModulesAction_WEB_FAVORITE3;
+	case WEB_FAVORITE4: return I18N.ModulesAction_WEB_FAVORITE4;
+	case WEB_FAVORITE5: return I18N.ModulesAction_WEB_FAVORITE5;
+	case WEB_FAVORITE6: return I18N.ModulesAction_WEB_FAVORITE6;
+	case WEB_FAVORITE7: return I18N.ModulesAction_WEB_FAVORITE7;
+	case WEB_FAVORITE8: return I18N.ModulesAction_WEB_FAVORITE8;
+	case WEB_FAVORITE9: return I18N.ModulesAction_WEB_FAVORITE9;
+	case WEB_BACK: return I18N.ModulesAction_WEB_BACK;
+	case WEB_NEXT: return I18N.ModulesAction_WEB_NEXT;
+	case WEB_REFRESH: return I18N.ModulesAction_WEB_REFRESH;
+	case WEB_CANCEL: return I18N.ModulesAction_WEB_CANCEL;
+	case WEB_AUTOREFRESH: return I18N.ModulesAction_WEB_AUTOREFRESH;
+	case WEB_ZOOMMINUS: return I18N.ModulesAction_WEB_ZOOMMINUS;
+	case WEB_ZOOMPLUS: return I18N.ModulesAction_WEB_ZOOMPLUS;
+	case WEB_ZOOMRESET: return I18N.ModulesAction_WEB_ZOOMRESET;
+	case WEB_ZOOMSET: return I18N.ModulesAction_WEB_ZOOMSET;
+	case WEB_VISIBILITY: return I18N.ModulesAction_WEB_VISIBILITY;
+	case WEB_SCREENSHOT: return I18N.ModulesAction_WEB_SCREENSHOT;
+	case WEB_DARKMODE: return I18N.ModulesAction_WEB_DARKMODE;
+	case WEB_DARKMODE2: return I18N.ModulesAction_WEB_DARKMODE2;
+	default: return WCHARI(L"???");
 	}
 }
 
@@ -1999,5 +2178,9 @@ void SpecialActions(int action)
 	case Mapping::BEEP1: { Beep(234.9, 112); break; }
 	case Mapping::BEEP2: { Beep(385.3, 112); break; }
 	case Mapping::BEEP3: { Beep(551.8, 112); break; }
+	case Mapping::KBD_INPUT_ON: { tape.KeyboardActivetmp = true; tape.Save(tape.Setting_KeyboardActive); break; }
+	case Mapping::KBD_INPUT_OFF: { tape.KeyboardActivetmp = false; tape.Save(tape.Setting_KeyboardActive); break; }
+	case Mapping::MSE_INPUT_ON: { tape.MouseActivetmp = true; tape.Save(tape.Setting_MouseActive); break; }
+	case Mapping::MSE_INPUT_OFF: { tape.MouseActivetmp = false; tape.Save(tape.Setting_MouseActive); break; }
 	}
 }

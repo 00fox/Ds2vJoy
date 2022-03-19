@@ -54,16 +54,19 @@ void SettingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_TEXT_LONG, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_TEXT_VERY_LONG, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_TEXT_WEBREFRESH, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_TEXT_OPACITY, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_UNIT_THRESHOLD, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_UNIT_SIMULTANEOUS, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_UNIT_LONG, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_UNIT_VERY_LONG, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_UNIT_WEB_REFRESH, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_UNIT_OPACITY, WM_SETFONT, WPARAM(tape.hLegend2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_THRESHOLD, WM_SETFONT, WPARAM(tape.hLegend), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_SIMULTANEOUS, WM_SETFONT, WPARAM(tape.hLegend), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_LONG, WM_SETFONT, WPARAM(tape.hLegend), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_VERY_LONG, WM_SETFONT, WPARAM(tape.hLegend), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_WEBREFRESH, WM_SETFONT, WPARAM(tape.hLegend), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_OPACITY, WM_SETFONT, WPARAM(tape.hLegend), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_MULTIPLE_TOUCHPAD, WM_SETFONT, WPARAM(tape.hLegend3), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_TEXT_FIRST_BUTTON, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_SETTINGS_TEXT_COLUMN, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
@@ -99,11 +102,13 @@ void SettingDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_TEXT_LONG), I18N.SETTINGS_TEXT_LONG);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_TEXT_VERY_LONG), I18N.SETTINGS_TEXT_VERY_LONG);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_TEXT_WEBREFRESH), I18N.SETTINGS_TEXT_WEBREFRESH);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_TEXT_OPACITY), I18N.SETTINGS_TEXT_OPACITY);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_UNIT_THRESHOLD), I18N.SETTINGS_UNIT_THRESHOLD);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_UNIT_SIMULTANEOUS), I18N.SETTINGS_UNIT_SIMULTANEOUS);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_UNIT_LONG), I18N.SETTINGS_UNIT_LONG);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_UNIT_VERY_LONG), I18N.SETTINGS_UNIT_VERY_LONG);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_UNIT_WEB_REFRESH), I18N.SETTINGS_UNIT_WEB_REFRESH);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_UNIT_OPACITY), I18N.SETTINGS_UNIT_OPACITY);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_MULTIPLE_TOUCHPAD), I18N.SETTINGS_MULTIPLE_TOUCHPAD);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_TEXT_FIRST_BUTTON), I18N.SETTINGS_TEXT_FIRST_BUTTON);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_SETTINGS_TEXT_COLUMN), I18N.SETTINGS_TEXT_COLUMN);
@@ -192,6 +197,7 @@ void SettingDlg::_ShowWindow(HWND hWnd)
 	SetWindowText(GetDlgItem(hWnd, IDC_SETTINGS_LONG), WCHARI(20, L"%d", tape.LongPress));
 	SetWindowText(GetDlgItem(hWnd, IDC_SETTINGS_VERY_LONG), WCHARI(20, L"%d", tape.VeryLongPress));
 	SetWindowText(GetDlgItem(hWnd, IDC_SETTINGS_WEBREFRESH), WCHARI(20, L"%d", tape.WebRefreshTime));
+	SetWindowText(GetDlgItem(hWnd, IDC_SETTINGS_OPACITY), WCHARI(20, L"%d", tape.Opacity));
 
 	SendDlgItemMessage(hWnd, IDC_SETTINGS_FIRST_BUTTON, CB_SETCURSEL, LPARAM(tape.TouchPadButton), 0);
 	SendDlgItemMessage(hWnd, IDC_SETTINGS_COLUMN, CB_SETCURSEL, LPARAM(tape.TouchRow - 1), 0);
@@ -201,24 +207,24 @@ void SettingDlg::_ShowWindow(HWND hWnd)
 	CheckDlgButton(hWnd, IDC_SETTINGS_LED_CHK, tape.BlackLedOnExit);
 }
 
-INT_PTR CALLBACK SettingDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK SettingDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	SettingDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<SettingDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<SettingDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<SettingDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<SettingDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR SettingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -802,6 +808,26 @@ INT_PTR SettingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				GetWindowText((HWND)lParam, buf, 8);
 				tape.WebRefreshTime = max(1, min(9999, _wtoi(buf)));
 				tape.Save(tape.Setting_WebRefreshTime);
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_SETTINGS_OPACITY:
+		{
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+			{
+				WCHAR buf[8];
+				GetWindowText((HWND)lParam, buf, 8);
+				byte Opacitytmp = min(100, _wtoi(buf));
+				if (Opacitytmp > 19)
+				{
+					tape.Opacity = Opacitytmp;
+					tape.Save(tape.Setting_Opacity);
+					PostMessage(m_hWnd, WM_TRANSPARENCY, 0, 0);
+				}
 				break;
 			}
 			}

@@ -1,7 +1,4 @@
 #pragma once
-#include "stdafx.h"
-#include "uxtheme.h"
-#pragma comment (lib, "UxTheme.lib")
 
 /*
 //////////////////////////////////////////////////////////////////////
@@ -39,6 +36,7 @@ BOOL			LoadEmbeddedResource(WORD resourceID, std::vector<char>* output, DWORD* r
 BOOL			WriteEmbededResource(std::wstring filename, WORD resourceID, bool overwrite = true, bool hidden = false)
 BOOL			ExtractEmbededResource(std::wstring location, WORD resourceID, bool overwrite = true, bool forcehidden = false)
 void			ForceRemoveModule(LPCTSTR ModuleName, bool deletedll = false)
+HRESULT			SaveBitmap(std::wstring filename, HBITMAP bitmap, std::wstring format = L"png")
 
 ////////////////////////////////////////////////////////////////////// Diverse
 std::wstring	WinPath()
@@ -48,8 +46,12 @@ std::wstring	PrfPath()
 BOOL			LaunchProcess(LPWSTR lpCommandLine, bool wait = false)
 std::wstring	LaunchCmd(const wchar_t* cmd)
 BOOL			ClientArea(RECT* rect, bool points = false)	//x, y, w, h, true x, y, x', y'
-int				MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, int x, int y)
+int				MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, int x, int y, int wrap = 0)
+void			TextInputDialog(HWND parent, PCWSTR title, PCWSTR prompt, PCWSTR description, const std::wstring& defaultInput = L"", bool readOnly = false)
 void			CreateToolTip(HWND hWndParent, HWND hControlItem, PTSTR tooltipText)
+void			SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency)
+unsigned long	GetCursorType()
+HRESULT			ScreenCapturePart(int x, int y, int z, int t, std::wstring filename, bool scaling = true)
 
 ////////////////////////////////////////////////////////////////////// Process
 BOOL			IsWow64()
@@ -79,8 +81,20 @@ BOOL			DeviceRestart(std::wstring DriverID)
 */
 
 //////////////////////////////////////////////////////////////////////
-// 
-//////////////////////////////////////////////////////////////////////
+static HANDLE Cur_NORMAL = LoadImage(NULL, MAKEINTRESOURCE(OCR_NORMAL), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_IBEAM = LoadImage(NULL, MAKEINTRESOURCE(OCR_IBEAM), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_WAIT = LoadImage(NULL, MAKEINTRESOURCE(OCR_WAIT), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_CROSS = LoadImage(NULL, MAKEINTRESOURCE(OCR_CROSS), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_UP = LoadImage(NULL, MAKEINTRESOURCE(OCR_UP), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_SIZENWSE = LoadImage(NULL, MAKEINTRESOURCE(OCR_SIZENWSE), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_SIZENESW = LoadImage(NULL, MAKEINTRESOURCE(OCR_SIZENESW), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_SIZEWE = LoadImage(NULL, MAKEINTRESOURCE(OCR_SIZEWE), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_SIZENS = LoadImage(NULL, MAKEINTRESOURCE(OCR_SIZENS), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_SIZEALL = LoadImage(NULL, MAKEINTRESOURCE(OCR_SIZEALL), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_NO = LoadImage(NULL, MAKEINTRESOURCE(OCR_NO), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_HAND = LoadImage(NULL, MAKEINTRESOURCE(OCR_HAND), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_APPSTARTING = LoadImage(NULL, MAKEINTRESOURCE(OCR_APPSTARTING), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+static HANDLE Cur_HELP = LoadImage(NULL, MAKEINTRESOURCE(OCR_HELP), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
 
 ////////////////////////////////////////////////////////////////////// Convert
 // 
@@ -715,6 +729,25 @@ inline void ForceRemoveModule(LPCTSTR ModuleName, bool deletedll = false)
 		::DeleteFile(ModuleName);
 }
 
+//-----------------------------------------------------------------------------
+inline HRESULT SaveBitmap(std::wstring filename, HBITMAP bitmap, std::wstring format = L"png")
+{
+	CImage img;
+	CImage image;
+	image.Attach(bitmap);
+
+	if (format == L"bmp")
+		return image.Save((filename + L".bmp").c_str(), Gdiplus::ImageFormatBMP);
+	if (format == L"png")
+		return image.Save((filename + L".png").c_str(), Gdiplus::ImageFormatPNG);
+	if (format == L"jpg")
+		return image.Save((filename + L".jpg").c_str(), Gdiplus::ImageFormatJPEG);
+	if (format == L"gif")
+		return image.Save((filename + L".gif").c_str(), Gdiplus::ImageFormatGIF);
+	else
+		return E_FAIL;
+}
+
 ////////////////////////////////////////////////////////////////////// Diverse
 // 
 
@@ -873,13 +906,13 @@ static unsigned int MsgBox_start = 0;
 static unsigned int MsgBox_uType = 0;
 static unsigned int MsgBox_wrap = 0;
 
-inline LRESULT CALLBACK CBTProc(int message, WPARAM wParam, LPARAM lParam)
+inline LRESULT CALLBACK MsgBox_Proc(int message, WPARAM wParam, LPARAM lParam)
 {
-
 	static unsigned int MsgBox_cx = 0;
 	switch (message)
 	{
 	case HCBT_CREATEWND:
+	{
 		switch (++MsgBox_start)
 		{
 		case 1: //window
@@ -931,6 +964,7 @@ inline LRESULT CALLBACK CBTProc(int message, WPARAM wParam, LPARAM lParam)
 		break;
 		}
 		break;
+	}
 	}
 	return CallNextHookEx(NULL, message, wParam, lParam);
 }
@@ -1002,23 +1036,142 @@ inline int MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uTyp
 	MsgBox_start = 0;
 	MsgBox_uType = uType;
 	MsgBox_wrap = wrap;
-	if (x == 0 && y == 0)
-	{
-		RECT desk;
-		ClientArea(&desk);
-		MsgBox_x = desk.left + ((desk.right - desk.left - 400) / 2);
-		MsgBox_y = desk.top + ((desk.bottom - desk.top - 300) / 2);
-	}
-	else
-	{
-		MsgBox_x = x;
-		MsgBox_y = y;
-	}
-	HHOOK hHook = SetWindowsHookEx(WH_CBT, &CBTProc, NULL, GetCurrentThreadId());
+	MsgBox_x = x;
+	MsgBox_y = y;
+	HHOOK hHook = SetWindowsHookEx(WH_CBT, &MsgBox_Proc, NULL, GetCurrentThreadId());
 	int result = MessageBox(hWnd, lpText, lpCaption, uType);
 	if (hHook) UnhookWindowsHookEx(hHook);
 
 	return result;
+}
+
+//-----------------------------------------------------------------------------
+static PCWSTR TextInput_title;
+static PCWSTR TextInput_prompt;
+static PCWSTR TextInput_description;
+static bool TextInput_readOnly;
+static bool TextInput_confirmed;
+static std::wstring TextInput_input;
+static RECT TextInput_rect;
+
+inline static INT_PTR CALLBACK TextInput_Proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_BTN);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		return (LRESULT)tape.hB_BTN;
+	}
+	case WM_CTLCOLORSTATIC:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_STATIC);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_STATIC);
+		return (LRESULT)tape.hB_STATIC;
+	}
+	case WM_CTLCOLOREDIT:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+		SetBkMode(hdcStatic, OPAQUE);
+		SetBkColor((HDC)wParam, tape.ink_black);
+		return (LRESULT)tape.hB_black;
+	}
+	case WM_PAINT:
+	{
+		if (!IsIconic(hDlg))
+		{
+			PAINTSTRUCT ps;
+			HDC hDC = BeginPaint(hDlg, &ps);
+
+			RECT rect;
+			GetClientRect(hDlg, &rect);
+			FillRect(hDC, &rect, tape.hB_white);
+
+			::ReleaseDC(hDlg, hDC);
+			EndPaint(hDlg, &ps);
+		}
+		return FALSE;
+	}
+	case WM_INITDIALOG:
+	{
+		SetWindowPos(hDlg, HWND_TOP, TextInput_rect.left, TextInput_rect.top, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+		SetWindowText(hDlg, TextInput_title);
+		SetDlgItemText(hDlg, IDC_EDIT_LABEL, TextInput_prompt);
+		SetDlgItemText(hDlg, IDC_EDIT_DESCRIPTION, TextInput_description);
+		SetDlgItemText(hDlg, IDC_EDIT_CLEAR, L"Clear");
+		SetDlgItemText(hDlg, IDC_EDIT_OK, L"OK");
+		SetDlgItemText(hDlg, IDC_EDIT_INPUT, TextInput_input.data());
+		if (TextInput_readOnly)
+			EnableWindow(GetDlgItem(hDlg, IDC_EDIT_INPUT), false);
+		SendMessage(hDlg, DM_SETDEFID, NULL, NULL);
+		::SetFocus(NULL);
+		return (INT_PTR)TRUE;
+	}
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case IDC_EDIT_CLEAR:
+		{
+			SetWindowText(GetDlgItem(hDlg, IDC_EDIT_INPUT), L"");
+			break;
+		}
+		case IDC_EDIT_OK:
+		{
+			int length = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT_INPUT));
+			TextInput_input.resize(length);
+			PWSTR data = const_cast<PWSTR>(TextInput_input.data());
+			GetDlgItemText(hDlg, IDC_EDIT_INPUT, data, length + 1);
+			TextInput_confirmed = true;
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		}
+		break;
+	}
+	case WM_SYSCOMMAND:
+	{
+		switch (wParam)
+		{
+		case SC_CLOSE:
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		}
+		break;
+	}
+	case WM_CLOSE:
+	{
+		if (GetKeyState(VK_ESCAPE) < 0 || GetKeyState(VK_CANCEL) < 0)
+			return 0;
+		else
+			return DefWindowProc(hDlg, message, wParam, lParam);
+	}
+	case WM_NCDESTROY:
+	{
+		return (INT_PTR)TRUE;
+	}
+	}
+	return (INT_PTR)FALSE;
+}
+
+inline void TextInputDialog(HWND parent, PCWSTR title, PCWSTR prompt, PCWSTR description, const std::wstring& defaultInput = L"", bool readOnly = false)
+{
+	TextInput_title = title;
+	TextInput_prompt = prompt;
+	TextInput_description = description;
+	TextInput_readOnly = readOnly;
+	TextInput_confirmed = false;
+	TextInput_input = defaultInput;
+	GetWindowRect(parent, &TextInput_rect);
+	DialogBoxParam(GetModuleHandle(0), MAKEINTRESOURCE(IDD_DIALOG_INPUT), parent, TextInput_Proc, (LPARAM)NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -1030,11 +1183,7 @@ inline void CreateToolTip(
 	if (!hControlItem || !hWndParent || !tooltipText)
 		return;
 
-	HWND hwndTip = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
-		WS_POPUP | TTS_ALWAYSTIP /*| TTS_BALLOON*/,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-		hWndParent, NULL, GetModuleHandle(0), NULL);
-
+	HWND hwndTip = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_NOFADE | TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, hWndParent, NULL, GetModuleHandle(0), NULL);
 	if (!hwndTip)
 		return;
 
@@ -1086,6 +1235,58 @@ inline void SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency
 		(void)SetWindowLong(hwnd, GWL_EXSTYLE, lExStyle & ~WS_EX_LAYERED);
 		(void)RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 	}
+}
+
+//-----------------------------------------------------------------------------
+inline unsigned long GetCursorType()
+{
+	HCURSOR cursor = GetCursor();
+
+	if (cursor == Cur_NORMAL)			return OCR_NORMAL;			//Standard arrow
+	else if (cursor == Cur_IBEAM)		return OCR_IBEAM;			//I - beam
+	else if (cursor == Cur_WAIT)		return OCR_WAIT;			//Hourglass
+	else if (cursor == Cur_CROSS)		return OCR_CROSS;			//Crosshair
+	else if (cursor == Cur_UP)			return OCR_UP;				//Vertical arrow
+	else if (cursor == Cur_SIZENWSE)	return OCR_SIZENWSE;		//Double - pointed arrow pointing northwest and southeast
+	else if (cursor == Cur_SIZENESW)	return OCR_SIZENESW;		//Double - pointed arrow pointing northeast and southwest
+	else if (cursor == Cur_SIZEWE)		return OCR_SIZEWE;			//Double - pointed arrow pointing west and east
+	else if (cursor == Cur_SIZENS)		return OCR_SIZENS;			//Double - pointed arrow pointing north and south
+	else if (cursor == Cur_SIZEALL)		return OCR_SIZEALL;			//Four - pointed arrow pointing north, south, east, and west
+	else if (cursor == Cur_NO)			return OCR_NO;				//Slashed circle
+	else if (cursor == Cur_HAND)		return OCR_HAND;			//Hand
+	else if (cursor == Cur_APPSTARTING)	return OCR_APPSTARTING;		//Standard arrow and small hourglass
+	else if (cursor == Cur_HELP)		return OCR_HELP;			//Arrow and question mark
+	else								return NULL;
+}
+
+//-----------------------------------------------------------------------------
+inline HRESULT ScreenCapturePart(int x, int y, int z, int t, std::wstring filename, std::wstring format = L"png", bool scaling = true)
+{
+	z = (z > x) ? z : tape.W;
+	t = (t > y) ? t : tape.H;
+
+	x = (x >= z) ? 0 : x;
+	y = (y >= t) ? 0 : y;
+
+	int w = z - x;
+	int h = t - y;
+
+	double Hscale = (scaling) ? tape.Hscale : 1;
+	double Vscale = (scaling) ? tape.Vscale : 1;
+
+	HDC hdcSource = GetDC(NULL);
+	HDC hdcMemory = CreateCompatibleDC(hdcSource);
+
+	HBITMAP hBitmap = CreateCompatibleBitmap(hdcSource, w * Hscale, h * Vscale);
+	HBITMAP hBitmapOld = (HBITMAP)SelectObject(hdcMemory, hBitmap);
+
+	BitBlt(hdcMemory, 0, 0, w * Hscale, h * Vscale, hdcSource, x * Hscale, y * Vscale, SRCCOPY);
+	hBitmap = (HBITMAP)SelectObject(hdcMemory, hBitmapOld);
+
+	DeleteDC(hdcSource);
+	DeleteDC(hdcMemory);
+
+	return SaveBitmap(filename, hBitmap, format);
 }
 
 ////////////////////////////////////////////////////////////////////// Process

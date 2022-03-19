@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
-#include "Ds2vJoy.h"
 #include "Source.h"
+#include "Ds2vJoy.h"
 #include "vJoy.h"
 #include "SettingDlg.h"
 #include "MappingDlg.h"
@@ -13,13 +13,10 @@
 #include "ViGEmDlg.h"
 #include "Guardian.h"
 #include "GuardianDlg.h"
+#include "ExplorerDlg.h"
 #include "LinksDlg.h"
 #include "NotepadDlg.h"
 #include "Tasktray.h"
-
-HINSTANCE			hInst;
-WCHAR				szTitle[100];
-WCHAR				szWindowClass[100];
 
 bool				callbackpause;
 
@@ -49,7 +46,7 @@ unsigned char		mode = 1;
 static double		r;
 unsigned char		mousemode[3] = { 0 };
 unsigned char		mouseabolute = 1;
-short				grid[6] = { 0 };
+unsigned short		grid[6] = { 0 };
 bool				defaultmouse = false;
 std::vector<char>	gridmove = { };
 static double		mousefactor;
@@ -66,33 +63,77 @@ static WCHAR		vJoySatusString[80] = L"";
 static WCHAR		KeymapSatusString[80] = L"";
 static WCHAR		ViGEmSatusString[80] = L"";
 
-ATOM                RegisterWndClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-void				OutRun();
+bool isFullScreen = false;
+bool MouseIsOverMain = true;
+bool MouseIsOverTab = false;
+bool WebMenuVisible = false;
+static std::map<DWORD, HANDLE> s_threads;
+std::wstring initialUri = L"";
+std::vector<std::unique_ptr<ExplorerDlg>> web_tabs;
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-					 _In_opt_ HINSTANCE hPrevInstance,
-					 _In_ LPWSTR    lpCmdLine,
-					 _In_ int       nCmdShow)
+	   ATOM             RegisterWndClass(HINSTANCE hInstance);
+	   BOOL             InitInstance(HINSTANCE, int);
+static int              RunMessagePump();
+static DWORD WINAPI     ThreadProc(void* pvParam);
+static void             WaitForOtherThreads();
+static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+	   INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+//	   BOOL CALLBACK    EnumChildProc(HWND hwndChild, LPARAM lParam);
+	   void				OutRun();
+
+DPI_AWARENESS_CONTEXT dpiAwarenessContext = DPI_AWARENESS_CONTEXT_UNAWARE;
+//DPI_AWARENESS_CONTEXT dpiAwarenessContext = DPI_AWARENESS_CONTEXT_SYSTEM_AWARE;
+//DPI_AWARENESS_CONTEXT dpiAwarenessContext = DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE;
+//DPI_AWARENESS_CONTEXT dpiAwarenessContext = DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2;
+//DPI_AWARENESS_CONTEXT dpiAwarenessContext = DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED;
+
+#define NEXT_PARAM_CONTAINS(command) \
+	_wcsnicmp(nextParam.c_str(), command, ARRAYSIZE(command) - 1) == 0
+
+int APIENTRY wWinMain(_In_     HINSTANCE hInstance,
+					  _In_opt_ HINSTANCE hPrevInstance,
+					  _In_     LPWSTR    lpCmdLine,
+					  _In_     int       nCmdShow)
 {
+	tape.Ds2hInst = hInstance;
 	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
+	//UNREFERENCED_PARAMETER(lpCmdLine);
 
-	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, 100);
-	LoadStringW(hInstance, IDS_DS2VJOY, szWindowClass, 100);
+	LoadStringW(hInstance, IDS_DS2VJOY, tape.szWindowClass, 100);
+	LoadStringW(hInstance, IDS_APP_TITLE, tape.szTitle, 100);
+	SetCurrentProcessExplicitAppUserModelID(tape.szTitle);
 	RegisterWndClass(hInstance);
 
 	if (!InitInstance (hInstance, nCmdShow))
-	{
 		return FALSE;
+
+	SetProcessDpiAwarenessContext(dpiAwarenessContext);
+
+	if (lpCmdLine && lpCmdLine[0])
+	{
+		int paramCount = 0;
+		LPWSTR* params = CommandLineToArgvW(GetCommandLineW(), &paramCount);
+		for (int i = 0; i < paramCount; ++i)
+		{
+			std::wstring nextParam;
+			if (params[i][0] == L'-')
+			{
+				if (params[i][1] == L'-')
+					nextParam.assign(params[i] + 2);
+				else
+					nextParam.assign(params[i] + 1);
+			}
+			if (NEXT_PARAM_CONTAINS(L"url="))
+				initialUri = nextParam.substr(nextParam.find(L'=') + 1);
+		}
+		LocalFree(params);
 	}
 
-	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDS_DS2VJOY));
-
+	int retVal = RunMessagePump();
+	WaitForOtherThreads();
+	return retVal;
+/*
 	MSG msg;
-
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -101,8 +142,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			DispatchMessage(&msg);
 		}
 	}
-
 	return (int) msg.wParam;
+*/
 }
 
 ATOM RegisterWndClass(HINSTANCE hInstance)
@@ -115,50 +156,150 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 
 	WNDCLASSEXW wcex;
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
-
-//	wcex.style          = CS_HREDRAW | CS_VREDRAW;
-	wcex.style          = 0;
-	wcex.lpfnWndProc    = WndProc;
-	wcex.cbClsExtra     = 0;
-	wcex.cbWndExtra     = 0;
-	wcex.hInstance      = hInstance;
-	wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON));
-	wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-//	wcex.hbrBackground  = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wcex.cbSize			= sizeof(WNDCLASSEX);
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= hInstance;
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON));
+	wcex.hCursor		= LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
+//	wcex.hbrBackground	= (HBRUSH)GetStockObject(WHITE_BRUSH);
 //	wcex.hbrBackground	= CreateSolidBrush(RGB(0, 0, 0));
-//	wcex.lpszMenuName   = MAKEINTRESOURCEW(IDS_DS2VJOY);
-	wcex.lpszMenuName   = 0;
-	wcex.lpszClassName  = szWindowClass;
-	wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON32));
+	wcex.lpszMenuName	= 0;
+//	wcex.lpszMenuName	= MAKEINTRESOURCE(IDR_DS2VJOY);
+	wcex.lpszClassName	= tape.szWindowClass;
+	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON32));
 
 	return RegisterClassExW(&wcex);
 }
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-	hInst = hInstance;
-	DWORD dwStyle = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
-//	DWORD dwStyle = WS_OVERLAPPEDWINDOW;		// id + WS_THICKFRAME
+	DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX/* | WS_THICKFRAME*/;
+	tape.Ds2hWnd = CreateWindowExW(WS_EX_CONTROLPARENT, tape.szWindowClass, tape.szTitle, dwStyle, CW_USEDEFAULT, 0, 492, 327, nullptr, nullptr, hInstance, nullptr);
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, dwStyle, CW_USEDEFAULT, 0, 492, 327, nullptr, nullptr, hInstance, nullptr);
+	if (!tape.Ds2hWnd)
+		return FALSE;
+/*
+	{
+		HMENU hMenu_Ds2vJoy = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_DS2VJOY));
+		ModifyMenu(hMenu_Ds2vJoy, 0, MF_BYPOSITION | MF_STRING, 0, I18N.FILE);
+		ModifyMenu(hMenu_Ds2vJoy, 1, MF_BYPOSITION | MF_STRING, 0, I18N.HELP);
 
-   if (!hWnd)
-	  return FALSE;
-
+		int m_TabsID[4];
+		m_TabsID[0] = IDM_EXIT;
+		m_TabsID[1] = IDM_ABOUT;
+		MENUITEMINFO info;
+		for (int i = 0; i < 2; i++)
+		{
+			ZeroMemory(&info, sizeof(info));
+			info.cbSize = sizeof(info);
+			info.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_STRING;
+			GetMenuItemInfo(hMenu_Ds2vJoy, m_TabsID[i], FALSE, &info);
+			info.fType = MFT_OWNERDRAW;
+			info.fState = MFS_UNCHECKED;
+			switch (i)
+			{
+			case 0: info.dwTypeData = I18N.EXIT; break;
+			case 1: info.dwTypeData = I18N.ABOUT; break;
+			}
+			SetMenuItemInfo(hMenu_Ds2vJoy, m_TabsID[i], FALSE, &info);
+		}
+		
+		SetMenu(tape.Ds2hWnd, hMenu_Ds2vJoy);
+	}
+*/
    RECT desk;
    ClientArea(&desk);
-   SetWindowPos(hWnd, HWND_TOPMOST, (desk.right - desk.left) / 2 - 246, desk.top + 200, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+   SetWindowPos(tape.Ds2hWnd, HWND_TOPMOST, (desk.right - desk.left) / 2 - 246, desk.top + 200, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
 
-   ShowWindow(hWnd, nCmdShow);
+   ShowWindow(tape.Ds2hWnd, nCmdShow);
    if (nCmdShow== SW_SHOWMINNOACTIVE)
-	   SendMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+	   SendMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
    else if (nCmdShow == SW_RESTORE)
-	   SendMessage(hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
-   UpdateWindow(hWnd);
+	   SendMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+   UpdateWindow(tape.Ds2hWnd);
 
    return TRUE;
+}
+
+// Run the message pump for one thread.
+static int RunMessagePump()
+{
+	HACCEL hAccelTable = LoadAccelerators(tape.Ds2hInst, MAKEINTRESOURCE(IDR_DS2VJOY));
+	MSG msg;
+
+	while (GetMessage(&msg, nullptr, 0, 0))
+	{
+		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		{
+			if (!IsDialogMessage(GetAncestor(msg.hwnd, GA_ROOT), &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+	}
+
+	DWORD threadId = GetCurrentThreadId();
+	auto it = s_threads.find(threadId);
+	if (it != s_threads.end())
+	{
+		CloseHandle(it->second);
+		s_threads.erase(threadId);
+	}
+
+	return (int)msg.wParam;
+}
+
+// Make a new thread.
+void CreateNewThread(ExplorerDlg* dlg)
+{
+	DWORD threadId;
+	HANDLE thread = CreateThread(nullptr, 0, ThreadProc, reinterpret_cast<LPVOID>(dlg), STACK_SIZE_PARAM_IS_A_RESERVATION, &threadId);
+	s_threads.insert(std::pair<DWORD, HANDLE>(threadId, thread));
+	SetThreadDpiAwarenessContext(dpiAwarenessContext);
+}
+
+// This function is the starting point for new threads. It will open a new app window.
+static DWORD WINAPI ThreadProc(void* pvParam)
+{
+	ExplorerDlg* dlg = static_cast<ExplorerDlg*>(pvParam);
+	RECT win;
+	if (dlg->m_isHome)
+		GetWindowRect(tape.Ds2hWnd, &win);
+	else
+		GetWindowRect(dlg->m_hWnd, &win);
+	new ExplorerDlg(L"", false, tape.DefaultZoomValue, win);
+	return RunMessagePump();
+}
+
+// Called on the main thread.  Wait for all other threads to complete before exiting.
+static void WaitForOtherThreads()
+{
+	while (!s_threads.empty())
+	{
+		std::vector<HANDLE> threadHandles;
+		for (auto it = s_threads.begin(); it != s_threads.end(); ++it)
+			threadHandles.push_back(it->second);
+
+		HANDLE* handleArray = threadHandles.data();
+		DWORD dwIndex = MsgWaitForMultipleObjects(
+			static_cast<DWORD>(threadHandles.size()), threadHandles.data(), FALSE,
+			INFINITE, QS_ALLEVENTS);
+
+		if (dwIndex == WAIT_OBJECT_0 + threadHandles.size())
+		{
+			MSG msg;
+			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+	}
 }
 
 typedef struct _dsParams
@@ -796,16 +937,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static HWND hTab;
 	static HWND hTopMost;
 	static HWND hStatus;
+	static HWND hWebMenu;
+	static HWND hWebClose;
+	static HWND hTab_Explorer;
+	static HWND hTab_DeleteDF;
 	static bool load_dll = false;
 	static bool lastextended = false;
 	static bool extended = false;
 	static bool cloned = false;
 	static bool notepad = false;
 	static unsigned char PreviousTab = 15;
-	static unsigned char Notepadtab = 0;
+	static unsigned char PreviousNotepadTab = 0;
+	static unsigned char NotepadTab = 0;
 	static unsigned long m_flag_drag = 0;
+	static unsigned long m_flag_size = 0;
+	static RECT FirstMoveRect = { (0, 0, 0, 0) };
+	static RECT WebRect = { (0, 0, 0, 0) };
+	static bool FirstMove = false;
 	static short x = 0;
 	static short y = 0;
+	static bool first_WM_CREATE = false;
 
 	switch (message)
 	{
@@ -836,6 +987,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CREATE:
 	{
+		if (first_WM_CREATE)
+			break;
+		first_WM_CREATE = true;
 		load_dll = false;
 		std::vector<char> data;
 		DWORD resourceSize;
@@ -843,17 +997,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			WriteToFile(L"ViGEmClient.dll", data, resourceSize, true, true);
 		if (LoadEmbeddedResource(IDR_VJOYINTERFACE_DLL, &data, &resourceSize))
 			WriteToFile(L"vJoyInterface.dll", data, resourceSize, true, true);
+		if (LoadEmbeddedResource(IDR_WEBVIEW2LOADER_DLL, &data, &resourceSize))
+			WriteToFile(L"WebView2Loader.dll", data, resourceSize, true, true);
 		if (LoadEmbeddedResource(IDR_DEVCON_EXE, &data, &resourceSize))
 			WriteToFile(L"Devcon.exe", data, resourceSize, true, true);
-		if (isFileExists("vJoyInterface.dll") && isFileExists("ViGEmClient.dll"))
+		if (isFileExists("vJoyInterface.dll") && isFileExists("ViGEmClient.dll") && isFileExists("WebView2Loader.dll"))
 			load_dll = true;
 
-		_log.Init(hInst, hWnd, load_dll);
+		_log.Init(tape.Ds2hInst, hWnd, load_dll);
 
 		LoadLanguage();
 		InitCommonControls();
-		tape.Init(hInst, hWnd);
-		tape.OpenIni(L"Ds2vJoy.ini");
+		tape.Init(tape.Ds2hInst, hWnd);
+		tape.OpenIni(WCHARI(L"Ds2vJoy.ini"));
 		tape.Load(Settings::Setting_Category_All);
 		if (tape.BreakAndExit)
 			PostMessage(hWnd, WM_DESTROY, 0, 0);
@@ -862,29 +1018,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		if (load_dll)
 		{
-			tasktray.Init(hInst, hWnd);
-			sDlg.Init(hInst, hWnd);
-			mDlg.Init(hInst, hWnd);
-			rDlg.Init(hInst, hWnd);
-			kDlg.Init(hInst, hWnd);
-			vDlg.Init(hInst, hWnd);
-			gDlg.Init(hInst, hWnd);
-			iDlg.Init(hInst, hWnd);
-			nDlg.Init(hInst, hWnd);
-			mDlg2.Init(hInst, hWnd, true);	//Clone
-			mDDlg.Init(hInst, hWnd);
-			rDDlg.Init(hInst, hWnd);
-			kDDlg.Init(hInst, hWnd);
+			tasktray.Init(tape.Ds2hInst, hWnd);
+			sDlg.Init(tape.Ds2hInst, hWnd);
+			mDlg.Init(tape.Ds2hInst, hWnd);
+			rDlg.Init(tape.Ds2hInst, hWnd);
+			kDlg.Init(tape.Ds2hInst, hWnd);
+			vDlg.Init(tape.Ds2hInst, hWnd);
+			gDlg.Init(tape.Ds2hInst, hWnd);
+			iDlg.Init(tape.Ds2hInst, hWnd);
+			nDlg.Init(tape.Ds2hInst, hWnd);
+			mDlg2.Init(tape.Ds2hInst, hWnd, true);	//Clone
+			mDDlg.Init(tape.Ds2hInst, hWnd);
+			rDDlg.Init(tape.Ds2hInst, hWnd);
+			kDDlg.Init(tape.Ds2hInst, hWnd);
 			cbParams.vj = &vjoy;
 			cbParams.ds = &ds;
 			PostMessage(hWnd, WM_TRANSPARENCY, 0, 0);
+		}
+		else
+		{
+			DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+			SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU);
+			SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+
+			echo(I18N.Fatal_Error1);
+			echo();
+			echo(I18N.Fatal_Error2);
+			return FALSE;
 		}
 
 		if (tape.Tasktray)
 			PostMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
 
 		{
-			hTab = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH, 0, 0, 0, 0, hWnd, (HMENU)ID_TABMENU, hInst, NULL);
+			hTab = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH, 0, 0, 0, 0, hWnd, (HMENU)ID_TABMENU, tape.Ds2hInst, NULL);
 
 			TCITEM tc_item;
 			tc_item.mask = TCIF_TEXT;
@@ -911,22 +1078,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 
 			SendMessage(hTab, WM_SETFONT, WPARAM(tape.hTab1), TRUE);
-			SendMessage(hTab, TCM_SETITEMSIZE, 0, MAKELPARAM(48, 17));	//Remove if TCS_RIGHTJUSTIFY
-			SendMessage(hTab, TCM_SETPADDING, 0, MAKELPARAM(0, 2));
+			TabCtrl_SetItemSize(hTab, 48, 17);
+			TabCtrl_SetPadding(hTab, 0, 2);
 
 			TabCtrl_SetCurSel(hTab, 0);
 		}
 
-		if (!load_dll)
 		{
-			echo(L"!!!! ERROR !!!!");
-			echo();
-			echo(L"vJoyInterface.dll or ViGEmClient.dll cannot be uncompressed from memory, and not found in program directory");
-			return FALSE;
-		}
-
-		{
-			hTopMost = CreateWindowEx(0, L"button", L"↕", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | BS_PUSHLIKE | BS_CENTER, 451, 3, 20, 15, hWnd, (HMENU)ID_TOPMOST, hInst, NULL);
+			hTopMost = CreateWindowEx(0, L"button", L"↕", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | BS_PUSHLIKE | BS_CENTER, 451, 3, 20, 15, hWnd, (HMENU)ID_TOPMOST, tape.Ds2hInst, NULL);
 			SendMessage(hTopMost, WM_SETFONT, WPARAM(tape.hTopMost), TRUE);
 			if (tape.TopMost)
 			{
@@ -938,12 +1097,84 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 		{
-			hStatus = CreateStatusWindow(WS_CHILD | WS_VISIBLE | CCS_BOTTOM | SBARS_SIZEGRIP, NULL, hWnd, ID_STATUS);
+			hStatus = CreateWindowEx( 0, STATUSCLASSNAME, (PCTSTR)NULL, WS_CHILD | WS_VISIBLE | CCS_BOTTOM /*| SBARS_SIZEGRIP*/, 0, 0, 0, 0, hWnd, (HMENU)ID_STATUS, tape.Ds2hInst, NULL);
 			int width[4] = { 70,140,415,-1 };
 			SendMessage(hStatus, SB_SETPARTS, 4, LPARAM(width));
 			SendMessage(hStatus, SB_SETTEXT, 0, WPARAM(I18N.Status_Wait));
-
 			SendMessage(hStatus, WM_SETFONT, WPARAM(tape.hStatus), TRUE);
+		}
+
+		{
+			hWebMenu = CreateWindowEx(0, L"button", L"≡", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_CENTER, 0, 0, 22, 17, hWnd, (HMENU)ID_WEBMENU, tape.Ds2hInst, NULL);
+			SendMessage(hWebMenu, WM_SETFONT, WPARAM(tape.hWeb), TRUE);
+			ShowWindow(hWebMenu, SW_HIDE);
+			CreateToolTip(hWnd, hWebMenu, I18N.HELP_WEB_MENU);
+		}
+
+		{
+			hWebClose = CreateWindowEx(0, L"button", L"✕", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 454, 0, 22, 17, hWnd, (HMENU)ID_WEBCLOSE, tape.Ds2hInst, NULL);
+			SendMessage(hWebClose, WM_SETFONT, WPARAM(tape.hWebX), TRUE);
+			ShowWindow(hWebClose, SW_HIDE);
+			CreateToolTip(hWnd, hWebClose, I18N.HELP_WEB_CLOSE);
+		}
+
+		{
+			hTab_Explorer = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH | TCS_TOOLTIPS, 0, 0, 0, 0, hWnd, (HMENU)ID_TABEXPLORER, tape.Ds2hInst, NULL);
+			TCITEM tc_item;
+			tc_item.mask = TCIF_TEXT;
+			wchar_t tabtxt[256];
+			tc_item.pszText = WCHARI(L"1");
+			TabCtrl_InsertItem(hTab_Explorer, 0, &tc_item);
+			tc_item.pszText = WCHARI(L"+");
+			TabCtrl_InsertItem(hTab_Explorer, 1, &tc_item);
+
+			SendMessage(hTab_Explorer, WM_SETFONT, WPARAM(tape.hExplorer), TRUE);
+			TabCtrl_SetItemSize(hTab_Explorer, 18, 17);
+			TabCtrl_SetPadding(hTab_Explorer, 0, 1);
+
+			TabCtrl_SetCurSel(hTab_Explorer, 0);
+			ShowWindow(hTab_Explorer, SW_HIDE);
+		}
+
+		{
+			hTab_DeleteDF = CreateWindowEx(0, L"Static", L"", WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_CENTERIMAGE, 0, 0, 100, 100, hWnd, nullptr, tape.Ds2hInst, nullptr);
+			ShowWindow(hTab_DeleteDF, SW_HIDE);
+
+			HDC memoryDC = CreateCompatibleDC(NULL);
+			HBITMAP m_DeleteDF = CreateCompatibleBitmap(memoryDC, 100, 100);
+			HBITMAP hOldBitmap = (HBITMAP)SelectObject(memoryDC, m_DeleteDF);
+			SelectObject(memoryDC, tape.hDelete);
+			std::wstring text = L"deleting\ndata\nfolder";
+			RECT rect = { 0,19,100,100 };
+			SetTextColor(memoryDC, tape.ink_STATIC);
+			SetBkMode(memoryDC, TRANSPARENT);
+			SetBkColor(memoryDC, tape.Bk_STATIC);
+			DrawText(memoryDC, text.c_str(), text.size(), &rect, DT_CENTER | DT_WORDBREAK);
+			BITMAPINFO Bitmapinfo = { 0 };
+			Bitmapinfo.bmiHeader.biSize = sizeof(Bitmapinfo.bmiHeader);
+			GetDIBits(memoryDC, m_DeleteDF, 0, 0, NULL, &Bitmapinfo, DIB_RGB_COLORS);
+			DeleteDC(memoryDC);
+			
+			SendMessage(hTab_DeleteDF, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)m_DeleteDF);
+/*
+			OpenClipboard(Ds2hWnd);
+			EmptyClipboard();
+			SetClipboardData(CF_BITMAP, m_DeleteDF);
+			CloseClipboard();
+
+			HDC hDC = GetDC(hTab_DeleteDF);
+			HDC memoryDC2 = CreateCompatibleDC(hDC);
+			BITMAP Bitmap;
+			GetObject(m_DeleteDF, sizeof(Bitmap), &Bitmap);
+			SelectObject(memoryDC2, m_DeleteDF);
+
+			PAINTSTRUCT ps;
+			BeginPaint(hTab_DeleteDF, &ps);
+			StretchBlt(hDC, 0, 0, 100, 100, memoryDC2, 0, 0, Bitmap.bmWidth, Bitmap.bmHeight, SRCCOPY);
+			EndPaint(hTab_DeleteDF, &ps);
+			DeleteDC(memoryDC2);
+			ReleaseDC(hTab_DeleteDF, hDC);
+*/
 		}
 
 		echo(L"https://github.com/ytyra/Ds2vJoy 31/07/2021");
@@ -954,6 +1185,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		vjoy.Init(hWnd, true);
 		vg.Init(hWnd);
+		if (tape.DsvJoyAddedToGuardian)
+			echo(I18N.HidGuardian_Added_to_Guardian, I18N.APP_TITLE, tape.Ds2vJoyPID);
 		hid.Init(hWnd);
 
 		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
@@ -969,6 +1202,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 4, 5000, NULL);	//HidGuardian Whitelist Check
 		SetTimer(hWnd, 5, 10, NULL);	//When moving windows
 		SetTimer(hWnd, 6, 100, NULL);	//Print Profile, mode, mouse and vJoy Buttons when editing
+		SetTimer(hWnd, 7, 65, NULL);	//Set and focus explorer tab under cursor & Change window form when mouseover
 
 		break;
 	}
@@ -983,7 +1217,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam == 2)
 		{
-			CPULimiter limiter = 1;		//CPU percents
 /*			static COLORREF ledcolor;
 			ledcolor = tape.LED_Color;
 			if (ds.Active())
@@ -992,6 +1225,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ds.Write();
 			}
 */
+			CPULimiter limiter = 1;		//CPU percents
+
 			static COLORREF ledcolor;
 			static byte R = 0;
 			static byte G = 0;
@@ -1085,14 +1320,64 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		else if (wParam == 4)
+		{
 			hid.WhitelistCheck();
+		}
 		else if (wParam == 5)
 		{
 			if (m_flag_drag)
 			{
-				GetCursorPos(&tape.mousepoint);
-				SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x - x, tape.mousepoint.y - y, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
-				PostMessage(hWnd, WM_SIZE, -1, -3);
+				if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+				{
+					if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+						PostMessage(hWnd, WM_NCLBUTTONUP, 0, 0);
+				}
+				else
+				{
+					m_flag_drag++;
+					if (m_flag_drag == 4)
+					{
+						FirstMove = true;
+						SendMessage(hWnd, WM_MOVE, 0, 0);
+					}
+					if (m_flag_drag > 3 && !FirstMove)
+					{
+						GetCursorPos(&tape.mousepoint);
+						if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+						{
+							::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x - x, tape.mousepoint.y - y, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
+						}
+						else
+						{
+							::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x - x, tape.mousepoint.y - y, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+						}
+					}
+				}
+			}
+			else if (m_flag_size)
+			{
+				if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+				{
+					if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+						PostMessage(hWnd, WM_NCLBUTTONUP, 0, 0);
+				}
+				else
+				{
+					GetCursorPos(&tape.mousepoint);
+					RECT rect;
+					GetWindowRect(hWnd, &rect);
+					switch (m_flag_size)	//W-E-N-S-NW-SE-NE-SW
+					{
+					case 1: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x, rect.top, rect.right - tape.mousepoint.x, rect.bottom - rect.top, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 2: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, rect.left, rect.top, tape.mousepoint.x - rect.left, rect.bottom - rect.top, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 3: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, rect.left, tape.mousepoint.y, rect.right - rect.left, rect.bottom - tape.mousepoint.y, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 4: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, rect.left, rect.top, rect.right - rect.left, tape.mousepoint.y - rect.top, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 5: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x, tape.mousepoint.y, rect.right - tape.mousepoint.x, rect.bottom - tape.mousepoint.y, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 6: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, rect.left, rect.top, tape.mousepoint.x - rect.left, tape.mousepoint.y - rect.top, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 7: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, rect.left, tape.mousepoint.y, tape.mousepoint.x - rect.left, rect.bottom - tape.mousepoint.y, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					case 8: { ::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x, rect.top, rect.right - tape.mousepoint.x, tape.mousepoint.y - rect.top, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); break; }
+					}
+				}
 			}
 		}
 		else if (wParam == 6)
@@ -1126,6 +1411,148 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(ViGEmSatusString), SMTO_BLOCK, 1000, NULL);
 			}
 		}
+		else if (wParam == 7)
+		{
+			if (!IsIconic(hWnd) && IsWindowVisible(hWnd) && !isFullScreen)
+			{
+				if (!WebMenuVisible && tape.isExplorerLoaded && TabCtrl_GetCurSel(hTab) == 7)
+				{
+					static size_t tab = -1;
+					static bool entered_hTab_Explorer = false;
+					static size_t lastview_hTab_Explorer = -1;
+					if (!IsIconic(hWnd) && IsWindowVisible(hTab_Explorer) && !isFullScreen)
+					{
+						TCHITTESTINFO tabinfo;
+						GetCursorPos(&tape.mousepoint);
+						POINT pt = tape.mousepoint;
+						ScreenToClient(hTab_Explorer, &pt);
+						tabinfo.pt = pt;
+						tab = TabCtrl_HitTest(hTab_Explorer, &tabinfo);
+						if (tab < web_tabs.size() && tab != -1)
+						{
+							MouseIsOverTab = true;
+							if (lastview_hTab_Explorer == -1)
+							{
+								lastview_hTab_Explorer = 0;
+								web_tabs[tape.web_actualtab]->OnMouseOut();
+							}
+							if (tab != lastview_hTab_Explorer || entered_hTab_Explorer == false)
+							{
+								entered_hTab_Explorer = true;
+								web_tabs[lastview_hTab_Explorer]->Hide();
+								lastview_hTab_Explorer = tab;
+								web_tabs[tab]->OnMouseOut();
+								web_tabs[tab]->Show();
+							}
+						}
+						else if (entered_hTab_Explorer)
+						{
+							MouseIsOverTab = false;
+							entered_hTab_Explorer = false;
+							web_tabs[lastview_hTab_Explorer]->Hide();
+							lastview_hTab_Explorer = -1;
+							web_tabs[tape.web_actualtab]->OnMouseOver();
+							web_tabs[tape.web_actualtab]->Show();
+						}
+					}
+					if (GetCursorPos(&tape.mousepoint) && tab == -1)
+					{
+						if (tab)
+							ShowWindow(hTab_Explorer, SW_SHOW);
+						RECT win;
+						GetWindowRect(hWnd, &win);
+						if (MouseIsOverMain)
+						{
+							if (!PtInRect(&win, tape.mousepoint))
+							{
+								MouseIsOverTab = false;
+								MouseIsOverMain = false;
+								RECT win;
+								GetWindowRect(hWnd, &win);
+								win.left += 7;
+								win.right -= win.left + 7;
+								win.bottom -= win.top + 7;
+								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
+								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+								ShowWindow(hWebMenu, SW_HIDE);
+								if (tab == -1)
+									ShowWindow(hWebClose, SW_HIDE);
+								ShowWindow(hTab_Explorer, SW_HIDE);
+								web_tabs[tape.web_actualtab]->OnMouseOut();
+							}
+						}
+						else
+						{
+							if (PtInRect(&win, tape.mousepoint))
+							{
+								MouseIsOverMain = true;
+								RECT win;
+								GetWindowRect(hWnd, &win);
+								win.left -= 7;
+								win.right -= win.left - 7;
+								win.bottom -= win.top - 7;
+								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+								ShowWindow(hTab_Explorer, SW_SHOW);
+								ShowWindow(hWebMenu, SW_SHOW);
+								ShowWindow(hWebClose, SW_SHOW);
+								web_tabs[tape.web_actualtab]->OnMouseOver();
+							}
+						}
+					}
+				}
+				else if (TabCtrl_GetCurSel(hTab) == 9)
+				{
+					if (GetCursorPos(&tape.mousepoint))
+					{
+						RECT win;
+						GetWindowRect(hWnd, &win);
+						if (MouseIsOverMain)
+						{
+							if (!PtInRect(&win, tape.mousepoint))
+							{
+								MouseIsOverTab = false;
+								MouseIsOverMain = false;
+								RECT win;
+								GetWindowRect(hWnd, &win);
+								win.left += 7;
+								win.right -= win.left + 7;
+								win.bottom -= win.top + 7;
+								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
+								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+							}
+						}
+						else
+						{
+							if (PtInRect(&win, tape.mousepoint))
+							{
+								MouseIsOverMain = true;
+								RECT win;
+								GetWindowRect(hWnd, &win);
+								win.left -= 7;
+								win.right -= win.left - 7;
+								win.bottom -= win.top - 7;
+								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+								if (NotepadTab == 7)
+									SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+								else
+									SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (wParam == 8)
+		{
+			if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+				TabCtrl_SetCurFocus(hTab, 0);
+			break;
+		}
 		break;
 	}
 	case WM_RESET:
@@ -1152,8 +1579,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		callbackpause = true;
 
 		PreviousTab = TabCtrl_GetCurSel(hTab);
+		PreviousNotepadTab = NotepadTab;
 		TabCtrl_SetCurFocus(hTab, 0);
-		echo(I18N.Change_Settings);
+
+		if (!lParam)
+			echo(I18N.Change_Settings);
 
 		{
 			if ((wParam == 1) || (wParam == 2) || (wParam == 3))
@@ -1265,14 +1695,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ds.SetTargetSerial(tape.getSerial());
 
 		{
+			mDlg.redrawTabs(mDlg.m_Tab);
 			mDlg.SetTab(mDlg.m_Tab, PreviousTab == 2);
 			mDlg2.SetTab(mDlg2.m_Tab, false);
 			if (PreviousTab == 9)
 			{
-				TabCtrl_SetCurFocus(hTab, Notepadtab);
+				TabCtrl_SetCurFocus(hTab, PreviousNotepadTab);
 				TCITEM tc_item;
 				tc_item.mask = TCIF_TEXT;
-				tc_item.pszText = L"";
+				tc_item.pszText = WCHARI(L"");
 				TabCtrl_InsertItem(hTab, 9, &tc_item);
 				TabCtrl_SetCurFocus(hTab, 9);
 			}
@@ -1495,6 +1926,171 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			std::thread(OutRun).detach();
 		break;
 	}
+	case WM_CREATE_NEW_TAB:
+	{
+		int desttab = web_tabs.size();
+		RECT win;
+		GetWindowRect(tape.Ds2hWnd, &win);
+		std::wstring startpage = (LPCWSTR)wParam;
+		web_tabs.push_back(std::make_unique<ExplorerDlg>((startpage == L"") ? initialUri : startpage, true, tape.DefaultZoomValue, win));
+		TCITEM tc_item;
+		tc_item.mask = TCIF_TEXT;
+		wchar_t tabtxt[256];
+		swprintf_s(tabtxt, L"%d", desttab + 1);
+		tc_item.pszText = tabtxt;
+		TabCtrl_InsertItem(hTab_Explorer, desttab, &tc_item);
+		if (lParam)
+		{
+			tape.web_actualtab = desttab;
+			TabCtrl_SetCurSel(hTab_Explorer, desttab);
+			PostMessage(hWnd, WM_SIZE, 0, 0);
+		}
+		else
+			web_tabs[desttab]->Hide();
+		break;
+	}
+	case WM_CLOSE_ALL_TABS:
+	{
+		while (web_tabs.size() > 1)
+		{
+			if (tape.web_actualtab)
+			{
+				tape.web_actualtab = tape.web_actualtab - 1;
+				web_tabs.erase(web_tabs.begin() + tape.web_actualtab);
+				TabCtrl_DeleteItem(hTab_Explorer, tape.web_actualtab);
+			}
+			else
+			{
+				web_tabs.erase(web_tabs.begin() + tape.web_actualtab + 1);
+				TabCtrl_DeleteItem(hTab_Explorer, tape.web_actualtab + 1);
+			}
+		}
+		TCITEM tc_item;
+		tc_item.mask = TCIF_TEXT;
+		tc_item.pszText = WCHARI(L"1");
+		TabCtrl_SetItem(hTab_Explorer, 0, &tc_item);
+		TabCtrl_SetCurSel(hTab_Explorer, tape.web_actualtab);
+		break;
+	}
+	case WM_DELETE_DATA_FOLER:
+	{
+		ShowWindow(hTab_DeleteDF, SW_SHOW);
+		web_tabs[tape.web_actualtab]->Hide();
+		SetWindowPos(hTab_DeleteDF, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+		SendMessage(hWnd, WM_CLOSE_ALL_TABS, 0, 0);
+		web_tabs[tape.web_actualtab]->CleanupUserDataFolder();
+
+		ShowWindow(hTab_DeleteDF, SW_HIDE);
+		web_tabs[tape.web_actualtab]->ResizeEverything();
+		web_tabs[tape.web_actualtab]->Show();
+		break;
+	}
+	case WM_WEB_SCROLL:
+	{
+		web_tabs[tape.web_actualtab]->ScrollBy(wParam, lParam);
+		break;
+	}
+	case WM_WEB_CHANGETAB:
+	{
+		int desttab = TabCtrl_GetCurSel(hTab_Explorer);
+		if (lParam)
+		{
+			if (desttab < web_tabs.size() - 1)
+			{
+				web_tabs[desttab]->Hide();
+				web_tabs[desttab]->OnMouseOut();
+				tape.web_actualtab = desttab + 1;
+				TabCtrl_SetCurSel(hTab_Explorer, desttab + 1);
+			}
+		}
+		else
+		{
+			if (desttab)
+			{
+				web_tabs[desttab]->Hide();
+				web_tabs[desttab]->OnMouseOut();
+				tape.web_actualtab = desttab - 1;
+				TabCtrl_SetCurSel(hTab_Explorer, desttab - 1);
+			}
+		}
+		web_tabs[tape.web_actualtab]->ResizeEverything();
+		web_tabs[tape.web_actualtab]->Show();
+		break;
+	}
+	case WM_WEB_FULLSCREEN:
+	{
+		web_tabs[tape.web_actualtab]->ToggleFullScreen();
+		break;
+	}
+	case WM_WEB_FAVORITE:
+	{
+		web_tabs[tape.web_actualtab]->NavigateToFavorite(lParam);
+		break;
+	}
+	case WM_WEB_BACK:
+	{
+		web_tabs[tape.web_actualtab]->Back();
+		break;
+	}
+	case WM_WEB_NEXT:
+	{
+		web_tabs[tape.web_actualtab]->Forward();
+		break;
+	}
+	case WM_WEB_REFRESH:
+	{
+		web_tabs[tape.web_actualtab]->Refresh();
+		break;
+	}
+	case WM_WEB_CANCEL:
+	{
+		web_tabs[tape.web_actualtab]->Cancel();
+		break;
+	}
+	case WM_WEB_AUTOREFRESH:
+	{
+		web_tabs[tape.web_actualtab]->AutoRefresh();
+		break;
+	}
+	case WM_WEB_ZOOM:
+	{
+		if (lParam)
+			web_tabs[tape.web_actualtab]->ZoomPlus(1);
+		else
+			web_tabs[tape.web_actualtab]->ZoomMinus(1);
+		break;
+	}
+	case WM_WEB_ZOOMRESET:
+	{
+		web_tabs[tape.web_actualtab]->ZoomReset();
+		break;
+	}
+	case WM_WEB_ZOOMSET:
+	{
+		web_tabs[tape.web_actualtab]->ZoomSet();
+		break;
+	}
+	case WM_WEB_VISIBILITY:
+	{
+		web_tabs[tape.web_actualtab]->ToggleVisibility();
+		break;
+	}
+	case WM_WEB_SCREENSHOT:
+	{
+		web_tabs[tape.web_actualtab]->SaveScreenshot(true);
+		break;
+	}
+	case WM_WEB_DARKMODE:
+	{
+		web_tabs[tape.web_actualtab]->DarkMode(lParam);
+		break;
+	}
+	case WM_NOTEPAD_SCROLL:
+	{
+		nDlg.Scroll(lParam == 1);
+		break;
+	}
 	case WM_CREATE_MENU:
 	{
 		tasktray.CreateMenu();
@@ -1506,13 +2102,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 //		int bppScreen = wParam;
 //		int WScreen = LOWORD(lParam);
 //		int HScreen = HIWORD(lParam);
-		RECT rect;
-		GetClientRect(GetDesktopWindow(), &rect);
-		tape.W = (short)rect.right;
-		tape.H = (short)rect.bottom;
+
+		//RECT rect;
+		//GetClientRect(GetDesktopWindow(), &rect);
+		//tape.W = (short)rect.right;
+		//tape.H = (short)rect.bottom;
+
+		auto activeWindow = GetActiveWindow();
+		HMONITOR monitor = MonitorFromWindow(activeWindow, MONITOR_DEFAULTTONEAREST);
+
+		// Get the logical width and height of the monitor
+		MONITORINFOEX monitorInfoEx;
+		monitorInfoEx.cbSize = sizeof(monitorInfoEx);
+		GetMonitorInfo(monitor, &monitorInfoEx);
+		tape.W = monitorInfoEx.rcMonitor.right - monitorInfoEx.rcMonitor.left;
+		tape.H = monitorInfoEx.rcMonitor.bottom - monitorInfoEx.rcMonitor.top;
 		tape.w = (short)(tape.W / 2);
 		tape.h = (short)(tape.H / 2);
-		tape.proportianality = (tape.W > tape.H) ? (tape.W / tape.H) : (tape.H / tape.W);
+
+		// Get the physical width and height of the monitor
+		DEVMODE devMode;
+		devMode.dmSize = sizeof(devMode);
+		devMode.dmDriverExtra = 0;
+		EnumDisplaySettings(monitorInfoEx.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
+		tape.Wp = devMode.dmPelsWidth;
+		tape.Hp = devMode.dmPelsHeight;
+
+		// Calculate the scaling factor
+		tape.Hscale = double(tape.Wp) / double(tape.W);
+		tape.Vscale = double(tape.Hp) / double(tape.H);
+
+		tape.proportianality = (long(tape.W) > long(tape.H)) ? (long(tape.W) / long(tape.H)) : (long(tape.H) / long(tape.W));
 		r = sqrt(tape.w * tape.w + tape.h * tape.h);
 		double standard_r = sqrt(960 * 960 + 540 * 540);
 		mousefactor = 0.0000089 * (r / standard_r);
@@ -1525,6 +2145,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(hWnd, WM_SIZE, 0, 0);
 		break;
 	}
+	case WM_CHAR:
+	case WM_SYSKEYDOWN:
+	case WM_KEYDOWN:
+	{
+/*
+		// If bit 30, WM_KEYDOWN message is autorepeated
+		if (!(lParam & (1 << 30)))
+		{
+			if (auto action = GetAcceleratorKeyFunction((UINT)wParam))
+				action();
+		}
+*/
+		break;
+	}
+	case WM_SCREENSHOT:
+	{
+		std::wstring filename = ExePath() + L"\\" + std::to_wstring(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+		ScreenCapturePart(LOWORD(wParam), HIWORD(wParam), LOWORD(lParam), HIWORD(lParam), filename);
+		break;
+	}
 	case WM_NCRBUTTONDOWN:
 	case WM_TRANSPARENCY:
 	{
@@ -1534,7 +2174,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			tape.Save(tape.Setting_Transparency);
 		}
 		if (tape.Transparency)
-			SetWindowTransparent(hWnd, true, 60);
+			SetWindowTransparent(hWnd, true, tape.Opacity);
 		else
 			SetWindowTransparent(hWnd, false, NULL);
 		mDlg2.SetTransparency(tape.Transparency);
@@ -1543,105 +2183,210 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_NCLBUTTONDOWN:
 	{
+		if (!load_dll)
+		{
+			GetCursorPos(&tape.mousepoint);
+			RECT win;
+			GetWindowRect(hWnd, &win);
+			x = (short)(tape.mousepoint.x - win.left);
+			y = (short)(tape.mousepoint.y - win.top);
+			if (y >= 0 && y <= 30)
+			{
+				if (x > 438 && x < 485)
+					PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0); break;
+			}
+			break;
+		}
+
 		GetCursorPos(&tape.mousepoint);
-		RECT win;
-		GetWindowRect(hWnd, &win);
-		x = (short)(tape.mousepoint.x - win.left);
-		y = (short)(tape.mousepoint.y - win.top);
-		mDDlg.movable = false;
-		if (TabCtrl_GetCurSel(hTab) != 2)
-			mDlg2.Hide();
-		if (mDlg2.m_isCloned && TabCtrl_GetCurSel(hTab) == 2)
+		GetWindowRect(hWnd, &FirstMoveRect);
+		x = (short)(tape.mousepoint.x - FirstMoveRect.left);
+		y = (short)(tape.mousepoint.y - FirstMoveRect.top);
+
+		switch ((TabCtrl_GetCurSel(hTab) != 7 && NotepadTab != 7) ? OCR_NORMAL : GetCursorType())
 		{
-			mDlg2.moving = true;
-			mDlg2.SetTab(mDlg2.m_Tab);
-			SetFocus(hWnd);
+		case OCR_SIZEWE:	{ if (x < 15) m_flag_size = 1; else m_flag_size = 2; break; }
+		case OCR_SIZENS:	{ if (y < 15) m_flag_size = 3; else m_flag_size = 4; break; }
+		case OCR_SIZENWSE:	{ if (x < 15) m_flag_size = 5; else m_flag_size = 6; break; }
+		case OCR_SIZENESW:	{ if (x < 15) m_flag_size = 8; else m_flag_size = 7; break; }
+		case OCR_NORMAL:	{ m_flag_drag = true; break; }
 		}
-		SetFocus(hWnd);
-		if (!extended)
-		{
-			RECT win2;
-			GetWindowRect(mDDlg.m_hDlg, &win2);
-			mDDlg.m_y = win2.top - win.top;
-		}
-		else
-			extended = false;
-		mDDlg.docked = mDDlg.docked_last;
-		PostMessage(hWnd, WM_SIZE, -1, -3);
-		::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-		SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
-		m_flag_drag = true;
 		break;
 	}
 	case WM_NCLBUTTONUP:
 	{
-		mDDlg.movable = true;
-		bool minimize = false;
-		bool maximize = false;
-		bool close = false;
-		if (m_flag_drag < 3)
-			if (y >= 0 && y <= 30)
-			{
-				if (x > 345 && x < 392)
-					minimize = true;
-				else if (x > 392 && x < 438)
-					maximize = true;
-				else if (x > 438 && x < 485)
-					close = true;
-			}
-		m_flag_drag = false;
-		extended = (minimize || maximize || close) && lastextended;
-		lastextended = extended;
-		if (minimize || (close && tape.CloseMinimize))
-			{ PostMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); break; }
-		else if (maximize)
-			{ PostMessage(hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); break; }
-		else if (close)
-			{ PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0); break; }
-		RECT desk;
-		ClientArea(&desk, true);
-		if ((short)HIWORD(lParam) < desk.top + 2)
-		{
-			if (!extended)
-			{
-				CheckDlgButton(hWnd, ID_TOPMOST, BST_CHECKED);
-				::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-				lastextended = true;
-				extended = true;
-			}
-			if (mDDlg.docked == 2) { mDDlg.docked_last = mDDlg.docked; mDDlg.docked = 1; }
-			SendMessage(hWnd, WM_SIZE, 0, -2);
-			if (mDlg2.m_isCloned)
-			{
-				mDlg2.moving = false;
-				mDlg2.SetTab(mDlg2.m_Tab);
-				SetFocus(hWnd);
-			}
+		if (!load_dll)
 			break;
+
+		if (m_flag_size)
+		{
+			m_flag_size = false;
+			PostMessage(hWnd, WM_SIZE, -1, -3);
 		}
 		else
 		{
-			extended = false;
-			if (!tape.TopMost)
+			short m_flag_drag_tmp = m_flag_drag;
+			m_flag_drag = false;
+			GetCursorPos(&tape.mousepoint);
+			RECT win;
+			GetWindowRect(hWnd, &win);
+			x = (short)(tape.mousepoint.x - win.left);
+			y = (short)(tape.mousepoint.y - win.top);
+			mDDlg.movable = true;
+			bool minimize = false;
+			bool maximize = false;
+			bool close = false;
+			if (m_flag_drag_tmp < 10)
+				if (y >= 0 && y <= 30)
+				{
+					short z = x;
+					if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+					{
+						RECT rect;
+						GetClientRect(hWnd, &rect);
+						z = z - rect.right + 476;
+					}
+					if (z > 345 && z < 392)
+						minimize = true;
+					else if (z > 392 && z < 438)
+						maximize = true;
+					else if (z > 438 && z < 485)
+						close = true;
+				}
+			extended = (minimize || maximize || close) && lastextended;
+			lastextended = extended;
+			if (minimize || (close && tape.CloseMinimize))
 			{
-				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-				CheckDlgButton(hWnd, ID_TOPMOST, BST_UNCHECKED);
+				if (m_flag_drag_tmp > 3)
+				{
+					extended = lastextended;
+					::SetWindowPos(hWnd, HWND_TOPMOST, FirstMoveRect.left, FirstMoveRect.top, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
+				}
+				PostMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); break;
 			}
-			if (mDlg2.m_isCloned && TabCtrl_GetCurSel(hTab) == 2)
+			else if (maximize)
 			{
-				mDlg2.moving = false;
-				mDlg2.SetTab(mDlg2.m_Tab);
-				SetFocus(hWnd);
+				if (m_flag_drag_tmp > 3)
+				{
+					extended = lastextended;
+					::SetWindowPos(hWnd, HWND_TOPMOST, FirstMoveRect.left, FirstMoveRect.top, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
+				}
+				PostMessage(hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); break;
 			}
-			break;
+			else if (close)
+			{
+				if (m_flag_drag_tmp > 3)
+				{
+					extended = lastextended;
+					::SetWindowPos(hWnd, HWND_TOPMOST, FirstMoveRect.left, FirstMoveRect.top, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
+				}
+				PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0); break;
+			}
+			if (m_flag_drag_tmp > 3 && !FirstMove)
+			{
+				RECT desk;
+				ClientArea(&desk, true);
+				if ((short)HIWORD(lParam) < desk.top + 2)
+				{
+					if (!extended)
+					{
+						CheckDlgButton(hWnd, ID_TOPMOST, BST_CHECKED);
+						::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+						lastextended = true;
+						extended = true;
+					}
+					if (mDDlg.docked == 2) { mDDlg.docked_last = mDDlg.docked; mDDlg.docked = 1; }
+					SendMessage(hWnd, WM_SIZE, 0, -2);
+					if (mDlg2.m_isCloned)
+					{
+						mDlg2.moving = false;
+						mDlg2.SetTab(mDlg2.m_Tab);
+						SetFocus(hWnd);
+					}
+					break;
+				}
+				else
+				{
+					if (extended)
+					{
+						lastextended = true;
+						extended = false;
+						if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+						{
+							RECT rect;
+							GetClientRect(hWnd, &rect);
+							::SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, rect.right, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+						}
+						else
+							::SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+					}
+					else
+						lastextended = false;
+					if (!tape.TopMost)
+					{
+						::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+						CheckDlgButton(hWnd, ID_TOPMOST, BST_UNCHECKED);
+					}
+					if (mDlg2.m_isCloned && TabCtrl_GetCurSel(hTab) == 2)
+					{
+						mDlg2.moving = false;
+						mDlg2.SetTab(mDlg2.m_Tab);
+						SetFocus(hWnd);
+					}
+					break;
+				}
+				PostMessage(hWnd, WM_SIZE, -1, -3);
+			}
 		}
+		break;
 	}
 	case WM_MOVE:
 	{
-		if (m_flag_drag)
-			m_flag_drag++;
-		if (m_flag_drag && !(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
-			PostMessage(hWnd, WM_NCLBUTTONUP, 0, 0);
+		if (!load_dll)
+			break;
+
+		if (FirstMove)
+		{
+			RECT win;
+			GetWindowRect(hWnd, &win);
+			mDDlg.movable = false;
+			if (TabCtrl_GetCurSel(hTab) != 2)
+				mDlg2.Hide();
+			if (mDlg2.m_isCloned && TabCtrl_GetCurSel(hTab) == 2)
+			{
+				mDlg2.moving = true;
+				mDlg2.SetTab(mDlg2.m_Tab);
+				SetFocus(hWnd);
+			}
+			SetFocus(hWnd);
+			if (extended)
+			{
+				lastextended = true;
+				extended = false;
+				if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+				{
+					RECT rect;
+					GetClientRect(hWnd, &rect);
+					::SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, rect.right + 16, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+				}
+			}
+			else
+			{
+				lastextended = false;
+				RECT win2;
+				GetWindowRect(mDDlg.m_hDlg, &win2);
+				mDDlg.m_y = win2.top - win.top;
+			}
+			mDDlg.docked = mDDlg.docked_last;
+			PostMessage(hWnd, WM_SIZE, -1, -3);
+			::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+			if (TabCtrl_GetCurSel(hTab) != 7 || NotepadTab != 7)
+				::SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
+			else
+				::SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+		}
+		FirstMove = false;
+		PostMessage(hWnd, WM_SIZE, -1, -3);
 		break;
 	}
 	case WM_EXITSIZEMOVE:
@@ -1651,6 +2396,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_SIZE:
 	{
+		if (!load_dll)
+			break;
+
 		RECT win;
 		GetWindowRect(hWnd, &win);
 		RECT desk;
@@ -1661,17 +2409,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (extended)
 			{
 				mDlg2.MoveWindow(win.right - 7, desk.top + 31, 474, desk.bottom - 39, TRUE);
-				switch (TabCtrl_GetCurSel(hTab))
+				switch ((NotepadTab == 7) ? 7 : TabCtrl_GetCurSel(hTab))
 				{
 				case 0:
 				case 2:
 				case 3:
 				case 4:
-				case 7:
 				case 9:
 				{
 					if (!IsWindowVisible(kDDlg.m_hDlg) && !IsWindowVisible(rDDlg.m_hDlg))
-						SetWindowPos(hWnd, HWND_TOPMOST, win.left, desk.top, 492, desk.bottom, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+						::SetWindowPos(hWnd, HWND_TOPMOST, win.left, desk.top, 492, desk.bottom, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+					break;
+				}
+				case 7:
+				{
+					RECT rect;
+					GetClientRect(hWnd, &rect);
+					::SetWindowPos(hWnd, HWND_NOTOPMOST, win.left, desk.top, rect.right + 16, desk.bottom, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
 					break;
 				}
 				case 1:
@@ -1679,7 +2433,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 6:
 				case 8:
 				{
-					SetWindowPos(hWnd, HWND_TOPMOST, win.left, desk.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+					::SetWindowPos(hWnd, HWND_TOPMOST, win.left, desk.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
 					break;
 				}
 				}
@@ -1698,7 +2452,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				mDlg2.MoveWindow(win.right - 7, win.top + 31, 474, 288, TRUE);
 				if (wParam != -1)
-					SetWindowPos(hWnd, HWND_NOTOPMOST, win.left, win.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
+				{
+					if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+					{ ::SetWindowPos(hWnd, HWND_NOTOPMOST, win.left, win.top, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE); }
+					else
+					{ ::SetWindowPos(hWnd, HWND_NOTOPMOST, win.left, win.top, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE); }
+				}
 				if (lParam < -1)
 				{
 					GetWindowRect(hWnd, &win);
@@ -1722,6 +2481,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MoveWindow(hTopMost, rect.right - 25, 3, 20, 15, FALSE);
 		MoveWindow(hTab, 0, 0, rect.right, rect.bottom, FALSE);
 		MoveWindow(hStatus, 0, rect.bottom -24, rect.right, rect.bottom, FALSE);
+		MoveWindow(hTab_Explorer, 19, 0, rect.right - 41, 17, FALSE);
+		MoveWindow(hWebMenu, 0, 0, 22, 17, FALSE);
+		MoveWindow(hWebClose, rect.right - 22, 0, 22, 17, FALSE);
+		MoveWindow(hTab_DeleteDF, (rect.right / 2) - 50, (rect.bottom / 2) - 50, 100, 100, FALSE);
+
+		if (tape.isExplorerLoaded)
+			web_tabs[tape.web_actualtab]->ResizeEverything();
 
 		nDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 
@@ -1744,12 +2510,82 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hWnd, NULL, FALSE);
 		break;
 	}
+	case WM_NCLBUTTONDBLCLK:
+	{
+		if (TabCtrl_GetCurSel(hTab) == 7)
+		{
+			GetCursorPos(&tape.mousepoint);
+			RECT win;
+			GetWindowRect(hWnd, &win);
+			RECT rect;
+			GetClientRect(hWnd, &rect);
+			short t = (short)(tape.mousepoint.y - win.top);
+			if (t >= 0 && t <= 30)
+			{
+				if (tape.mousepoint.x - win.left - rect.right < -131)
+				{
+					web_tabs[tape.web_actualtab]->ToggleFullScreen();
+				}
+			}
+		}
+		break;
+	}
+	case WM_ENTER_FULLSCREEN:
+	{
+		isFullScreen = true;
+		ShowWindow(hTab_Explorer, SW_HIDE);
+		ShowWindow(hWebMenu, SW_HIDE);
+		ShowWindow(hWebClose, SW_HIDE);
+		DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+		SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
+		break;
+	}
+	case WM_EXIT_FULLSCREEN:
+	{
+		DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+		SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+		ShowWindow(hTab_Explorer, SW_SHOW);
+		ShowWindow(hWebMenu, SW_SHOW);
+		ShowWindow(hWebClose, SW_SHOW);
+		isFullScreen = false;
+		break;
+	}
 	case WM_NOTIFY:
 	{
+		switch (((LPNMLISTVIEW)lParam)->hdr.code)
+		{
+		case BCN_HOTITEMCHANGE:
+		{
+			switch (((NMBCHOTITEM*)lParam)->dwFlags)
+			{
+			case (HICF_ENTERING | HICF_MOUSE):
+				switch (((LPNMHDR)lParam)->idFrom)
+				{
+				case ID_WEBCLOSE:SetTimer(hWnd, 8, 70, NULL); break;
+				default:
+					return FALSE;
+				}
+				break;
+			case (HICF_LEAVING | HICF_MOUSE):
+				switch (((LPNMHDR)lParam)->idFrom)
+				{
+				case ID_WEBCLOSE:KillTimer(hWnd, 8); break;
+				default:
+					return FALSE;
+				}
+				break;
+			default:
+				return FALSE;
+			}
+			break;
+		}
+		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case ID_TABMENU:
 		{
+			static bool NotFromWeb = true;
+			NotFromWeb = true;
 			switch (((NMHDR*)lParam)->code)
 			{
 			case TCN_SELCHANGING:
@@ -1771,12 +2607,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 6: { gDlg.Hide(); break; }
 				case 7:
 				{
-					////////////////////////////////////eDlg.Hide();
+					NotFromWeb = false;
+					ShowWindow(hTab_Explorer, SW_HIDE);
+					ShowWindow(hWebMenu, SW_HIDE);
+					ShowWindow(hWebClose, SW_HIDE);
+					web_tabs[tape.web_actualtab]->Hide();
+					ShowWindow(hTab, SW_SHOW);
+					ShowWindow(hTopMost, SW_SHOW);
+					ShowWindow(hStatus, SW_SHOW);
 					break;
 				}
 				case 8: { iDlg.Hide(); break; }
 				case 9:
 				{
+					if (NotepadTab == 7)
+						NotFromWeb = false;
 					notepad = false;
 					TabCtrl_DeleteItem(hTab, 9);
 					nDlg.Hide();
@@ -1800,11 +2645,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 6: { gDlg.Show(); break; }
 				case 7: 
 				{
-					//ShowWindow(hTab, SW_HIDE);
-					//ShowWindow(hTab2, SW_HIDE);
-					//ShowWindow(hTopMost, SW_HIDE);
-					//ShowWindow(hStatus, SW_HIDE);
-					//////////////////////////////////eDlg.Show();
+					if (!tape.isExplorerLoaded && !tape.isWebView2Installing)
+					{
+						RECT win;
+						GetWindowRect(tape.Ds2hWnd, &win);
+						if (initialUri == L"")
+							initialUri = tape.WebURL[0];
+						web_tabs.push_back(std::make_unique<ExplorerDlg>(initialUri, true, tape.DefaultZoomValue, win));
+					}
+					{
+						MouseIsOverMain = true;
+						RECT win;
+						GetWindowRect(hWnd, &win);
+							win.right -= win.left;
+						win.bottom -= win.top;
+						DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+						SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+						SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+					}
+					ShowWindow(hTab, SW_HIDE);
+					ShowWindow(hTopMost, SW_HIDE);
+					ShowWindow(hStatus, SW_HIDE);
+					ShowWindow(hTab_Explorer, SW_SHOW);
+					ShowWindow(hWebMenu, SW_SHOW);
+					ShowWindow(hWebClose, SW_SHOW);
+					web_tabs[tape.web_actualtab]->OnMouseOver();
+					web_tabs[tape.web_actualtab]->Show();
 					break;
 				}
 				case 8: { iDlg.Show(); break; }
@@ -1818,7 +2684,80 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 				}
+				if (NotepadTab != 7)
+					PostMessage(hWnd, WM_SIZE, 0, -1);
 				break;
+			default:
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			break;
+		}
+		case ID_TABEXPLORER:
+		{
+			switch (((NMHDR*)lParam)->code)
+			{
+			case NM_RCLICK:
+			{
+				TCHITTESTINFO tabinfo;
+				GetCursorPos(&tape.mousepoint);
+				POINT pt = tape.mousepoint;
+				ScreenToClient(hTab_Explorer, &pt);
+				tabinfo.pt = pt;
+				int tab = TabCtrl_HitTest(hTab_Explorer, &tabinfo);
+				if (tab > -1 && tab < web_tabs.size())
+				{
+					::SetFocus(NULL);
+
+					if (tab == 0 && web_tabs.size() == 1)
+						web_tabs[0]->CloseWebView();
+					else
+					{
+						web_tabs.erase(web_tabs.begin() + tab);
+						if (tape.web_actualtab >= max(tab, 1))
+							tape.web_actualtab -= 1;
+
+						TabCtrl_DeleteAllItems(hTab_Explorer);
+						TCITEM tc_item;
+						tc_item.mask = TCIF_TEXT;
+						for (int i = 0; i < web_tabs.size(); i++)
+						{
+							WCHAR buff[MAX_PATH];
+							_snwprintf_s(buff, sizeof(buff), L"%d", i + 1);
+							tc_item.pszText = buff;
+							TabCtrl_InsertItem(hTab_Explorer, i, &tc_item);
+						}
+						tc_item.pszText = WCHARI(L"+");
+						TabCtrl_InsertItem(hTab_Explorer, web_tabs.size(), &tc_item);
+						TabCtrl_SetCurSel(hTab_Explorer, tape.web_actualtab);
+						web_tabs[tape.web_actualtab]->ResizeEverything();
+						web_tabs[tape.web_actualtab]->Show();
+					}
+				}
+				break;
+			}
+			case TCN_SELCHANGING:
+			{
+				int desttab = TabCtrl_GetCurSel(hTab_Explorer);
+				if (desttab != web_tabs.size())
+				{
+					web_tabs[desttab]->Hide();
+					web_tabs[desttab]->OnMouseOut();
+				}
+				break;
+			}
+			case TCN_SELCHANGE:
+			{
+				int desttab = TabCtrl_GetCurSel(hTab_Explorer);
+				if (desttab == web_tabs.size())
+					SendMessage(hWnd, WM_CREATE_NEW_TAB, (WPARAM)initialUri.c_str(), true);
+				else
+				{
+					tape.web_actualtab = desttab;
+					web_tabs[tape.web_actualtab]->ResizeEverything();
+					web_tabs[tape.web_actualtab]->Show();
+				}
+				break;
+			}
 			default:
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
@@ -1831,6 +2770,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (LOWORD(wParam))
 		{
+		case IDCANCEL: //Trap VK_ESCAPE
+		{
+			break;
+		}
 		case ID_TOPMOST:
 		{
 			if (SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED)
@@ -1839,7 +2782,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{ ::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); tape.TopMost = false; }
 			break;
 		}
-		case IDM_EXIT: { PostMessage(hWnd, WM_DESTROY, 0, 0); break; }
+		case IDM_MENU_EXIT:
+		{
+			PostMessage(hWnd, WM_DESTROY, 0, 0);
+			break;
+		}
 		case IDM_MAPPING:
 		{
 			tape.vJoyPaused = !tape.vJoyPaused;
@@ -1881,6 +2828,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hid.BlacklistInit(-1);
 			break;
 		}
+		case ID_WEBMENU:
+		{
+			::SetFocus(NULL);
+			web_tabs[tape.web_actualtab]->ShowMenu();
+			break;
+		}
+		case ID_WEBCLOSE:
+		{
+			if (lParam == -1)
+				TabCtrl_SetCurFocus(hTab, 0);
+			else
+			{
+				::SetFocus(NULL);
+				if (web_tabs.size() > 1 && tape.web_actualtab != web_tabs.size())
+				{
+					web_tabs.erase(web_tabs.begin() + tape.web_actualtab);
+					tape.web_actualtab = (tape.web_actualtab) ? tape.web_actualtab - 1 : 0;
+
+					TabCtrl_DeleteAllItems(hTab_Explorer);
+					TCITEM tc_item;
+					tc_item.mask = TCIF_TEXT;
+					for (int i = 0; i < web_tabs.size(); i++)
+					{
+						WCHAR buff[MAX_PATH];
+						_snwprintf_s(buff, sizeof(buff), L"%d", i + 1);
+						tc_item.pszText = buff;
+						TabCtrl_InsertItem(hTab_Explorer, i, &tc_item);
+					}
+					tc_item.pszText = WCHARI(L"+");
+					TabCtrl_InsertItem(hTab_Explorer, web_tabs.size(), &tc_item);
+					TabCtrl_SetCurSel(hTab_Explorer, tape.web_actualtab);
+					web_tabs[tape.web_actualtab]->ResizeEverything();
+					web_tabs[tape.web_actualtab]->Show();
+				}
+				else if (web_tabs.size() == 1)
+					web_tabs[tape.web_actualtab]->CloseWebView();
+			}
+			break;
+		}
 		case IDM_PROFILE1: { SendMessage(hWnd, WM_RELOAD, 1, 0); break; }
 		case IDM_PROFILE2: { SendMessage(hWnd, WM_RELOAD, 2, 0); break; }
 		case IDM_PROFILE3: { SendMessage(hWnd, WM_RELOAD, 3, 0); break; }
@@ -1889,7 +2875,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_APP3: { if (tape.App3Location) { if (!LaunchProcess(tape.App3Location)) { echo(I18N.TT_AppNotFound, tape.App3Location); } } break; }
 		case IDM_APP4: { if (tape.App4Location) { if (!LaunchProcess(tape.App4Location)) { echo(I18N.TT_AppNotFound, tape.App4Location); } } break; }
 		case IDM_APP5: { if (tape.App5Location) { if (!LaunchProcess(tape.App5Location)) { echo(I18N.TT_AppNotFound, tape.App5Location); } } break; }
-		case IDM_ABOUT: { DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About); break; }
+		case IDM_MENU_ABOUT: { DialogBox(tape.Ds2hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About); break; }
 		default: return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
@@ -1902,11 +2888,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case SC_CLOSE: { PostMessage(hWnd, WM_DESTROY, 0, 0); break; }
 		case SC_MINIMIZE:
 		{
-			::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-			tape.TopMost = false;
-			mDDlg.Hide();
-			mDlg2.Hide();
-			ShowWindow(hWnd, SW_HIDE);
+			if (load_dll)
+			{
+				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+				tape.TopMost = false;
+				mDDlg.Hide();
+				mDlg2.Hide();
+				ShowWindow(hWnd, SW_HIDE);
+			}
 			return FALSE;
 		}
 		case SC_MAXIMIZE:
@@ -1914,13 +2903,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (load_dll)
 			{
 				if (notepad)
-					TabCtrl_SetCurFocus(hTab, Notepadtab);
+				{
+					TabCtrl_SetCurFocus(hTab, NotepadTab);
+					NotepadTab = 0;
+				}
 				else
 				{
-					Notepadtab = TabCtrl_GetCurSel(hTab);
+					NotepadTab = TabCtrl_GetCurSel(hTab);
 					TCITEM tc_item;
 					tc_item.mask = TCIF_TEXT;
-					tc_item.pszText = L"";
+					tc_item.pszText = WCHARI(L"");
 					TabCtrl_InsertItem(hTab, 9, &tc_item);
 					TabCtrl_SetCurFocus(hTab, 9);
 				}
@@ -1936,6 +2928,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		}
 		break;
+	}
+	case WM_CLOSE:
+	{
+		if (GetKeyState(VK_ESCAPE) < 0 || GetKeyState(VK_CANCEL) < 0)
+			return 0;
+		else
+			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	case WM_DESTROY:
 	{
@@ -1970,9 +2969,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (hMod != 0)
 				::FreeLibrary(hMod);
 		}
+		{
+			HMODULE hMod = ::GetModuleHandle(L"WebView2Loader.dll");
+			if (hMod != 0)
+				::FreeLibrary(hMod);
+		}
 		::DeleteFile(L"ViGEmClient.dll");
 		::DeleteFile(L"vJoyInterface.dll");
+		::DeleteFile(L"WebView2Loader.dll");
 		::DeleteFile(L"Devcon.exe");
+		::DeleteFile(L"ViGEmClient.dmp");
 		break;
 	}
 	default:
@@ -2000,10 +3006,7 @@ INT_PTR CALLBACK About(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ClientArea(&desk);
 		RECT rect;
 		GetClientRect(hWnd, &rect);
-		SetWindowPos(hWnd, HWND_TOP,
-			desk.left + ((desk.right - desk.left - rect.right) / 2),
-			desk.top + ((desk.bottom - desk.top - rect.bottom) / 2),
-			0, 0, SWP_NOSIZE);
+		SetWindowPos(hWnd, HWND_TOP, desk.left + ((desk.right - desk.left - rect.right) / 2), desk.top + ((desk.bottom - desk.top - rect.bottom) / 2), 0, 0, SWP_NOSIZE);
 		SendDlgItemMessage(hWnd, IDC_ABOUT_1, WM_SETFONT, WPARAM(tape.hAbout), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(hWnd, IDC_ABOUT_2, WM_SETFONT, WPARAM(tape.hAbout), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(hWnd, IDC_ABOUT_3, WM_SETFONT, WPARAM(tape.hAbout), MAKELPARAM(TRUE, 0));
@@ -2053,6 +3056,16 @@ INT_PTR CALLBACK About(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return (INT_PTR)FALSE;
 }
 
+/*
+BOOL CALLBACK EnumChildProc(HWND hwndChild, LPARAM lParam)
+{
+	static int u = 0;
+	u++;
+	MessageBox(Ds2hWnd, std::to_wstring(u).c_str(), L"EnumChild", MB_OK);
+	return TRUE;
+}
+*/
+
 void OutRun()
 {
 	CPULimiter limiter = 1; //CPU percents
@@ -2072,3 +3085,38 @@ void OutRun()
 		}
 	}
 }
+
+/*
+std::function<void()> GetAcceleratorKeyFunction(UINT key)
+{
+	if (GetKeyState(VK_CONTROL) < 0)
+	{
+		if (GetKeyState(VK_SHIFT) < 0)
+		{
+			switch (key)
+			{
+			case 'S':
+			{
+				if (tape.isExplorerLoaded)
+					return [] { web_tabs[tape.web_actualtab]->SaveScreenshot(true); };
+				else
+					return nullptr;
+			}
+			}
+		}
+		else
+			switch (key)
+			{
+			case 'Q':
+			{
+				return [] { PostMessage(tape.Ds2hWnd, WM_DESTROY, 0, 0); };
+			}
+			case 'S':
+			{
+				PostMessage(tape.Ds2hWnd, WM_SCREENSHOT, MAKEWPARAM(0, 0), MAKELPARAM(0, 0));
+			}
+			}
+	}
+	return nullptr;
+}
+*/

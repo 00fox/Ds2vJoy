@@ -8,10 +8,11 @@ public:
 	~NotepadDlg();
 
 	void				Init(HINSTANCE, HWND);
+	void				Scroll(bool scrollUp = false, bool page = false);
+	void				Save();
 	void				Show();
 	void				Hide();
 	BOOL				MoveWindow(int, int, int, int, BOOL);
-	void				Save();
 
 	bool				m_pause = false;
 	short				m_back = -1;

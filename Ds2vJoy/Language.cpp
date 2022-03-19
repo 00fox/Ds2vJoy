@@ -2,21 +2,18 @@
 #include "Language.h"
 
 struct LANGSTRS I18N = { 0 };
-/*
 
-WCHAR* SetText(const WCHAR* txt)
-{
-	size_t tocopy = wcslen(txt) + 1;
-	WCHAR* ret = new WCHAR[tocopy];
-	wcscpy_s(ret, tocopy, txt);
-
-	return ret;
-}*/
 void LoadLanguage()
 {
 	//setlocale(LC_ALL, ".UTF8");
 	I18N.DS2VJOY											= WCHARI(IDS_DS2VJOY, L"DS2VJOY");
-	I18N.APP_TITLE											= WCHARI(IDS_DS2VJOY, L"IDS_APP_TITLE");
+	I18N.APP_TITLE											= WCHARI(IDS_APP_TITLE, L"Ds2vJoy");
+	I18N.Fatal_Error1										= WCHARI(L"!!!! ERROR !!!!");
+	I18N.Fatal_Error2										= WCHARI(L"     vJoyInterface.dll\r\n\
+         or   ViGEmClient.dll\r\n\
+         or   WebView2Loader.dll\r\n\
+              cannot be uncompressed from memory,\r\n\
+         and  not found in program directory");
 	I18N.FailedParse										= WCHARI(L"Failed to parse %s");
 	I18N.FailedRecv											= WCHARI(L"Failed to recv data from %s : %d");
 	I18N.FailedSendCmd										= WCHARI(L"Failed to send command to %s : %d");
@@ -47,6 +44,66 @@ void LoadLanguage()
 	I18N.vJoy_failed_acquire								= WCHARI(L"Failed to acquire vJoy (ID:%d)");
 	I18N.vJoy_failed_update									= WCHARI(L"Failed to update vJoy (ID:%d)");
 	I18N.vJoy_version										= WCHARI(L"vJoy version: DLL(%d.%d.%d), Driver(%d.%d.%d)");
+
+	I18N.HidGuardian_driver_installed						= WCHARI(L"HidGuardian driver is installed");
+	I18N.HidGuardian_driver_instalation_failed				= WCHARI(L"ERROR: HidGuardian driver instalation failed");
+	I18N.HidGuardian_driver_uninstalled						= WCHARI(L"HidGuardian driver is uninstalled");
+	I18N.HidGuardian_driver_uninstalation_failed			= WCHARI(L"ERROR: HidGuardian driver uninstalation failed");
+	I18N.HidCerberus_service_installed						= WCHARI(L"HidCerberus service installed");
+	I18N.HidCerberus_service_instalation_failed				= WCHARI(L"ERROR: HidCerberus service instalation failed");
+	I18N.HidCerberus_service_uninstalled					= WCHARI(L"HidCerberus service is uninstalled");
+	I18N.HidCerberus_service_uninstalation_failed			= WCHARI(L"ERROR: HidCerberus service uninstalation failed");
+	I18N.HidGuardian_Added_to_Guardian						= WCHARI(L"Added to Guardian: %s (%u)");
+	I18N.HidGuardian_Removed_from_Guardian					= WCHARI(L"Removed from Guardian: %s (%u)");
+
+	I18N.ViGEm_Memory_allocating_error						= WCHARI(L"Error allocating memory to ViGEm");
+	I18N.ViGEm_Bus_connection_failed						= WCHARI(L"ViGEm Bus connection failed with error: %s");
+	I18N.ViGEm_Target_plugin_failed							= WCHARI(L"Target ViGEm plugin failed with error: %s");
+	I18N.ViGEm_driver_installed								= WCHARI(L"ViGEm driver is installed");
+	I18N.ViGEm_driver_instalation_failed					= WCHARI(L"ERROR: ViGEm driver instalation failed");
+	I18N.ViGEm_driver_uninstalled							= WCHARI(L"ViGEm driver is uninstalled");
+	I18N.ViGEm_driver_uninstalation_failed					= WCHARI(L"ERROR: ViGEm driver uninstalation failed");
+
+	I18N.WebView2_Not_Installed_tittle						= WCHARI(L"WebView2 Runtime is not installed");
+	I18N.WebView2_Not_Installed_text						= WCHARI(L"Do you want to silently download and install it?\n\n\
+	You can manually install it,\n\
+	by following 'WebView2' link below the 'Links' tab");
+	I18N.WebView2_Installation_failed						= WCHARI(L"WebView2 installation failed");
+	I18N.WebView2_downloading_failed						= WCHARI(L"WebView2 dowloading failed");
+	I18N.WebView2_Permission								= L"Permission Request for:\n\n";
+	I18N.WebView2_MICROPHONE								= L"Microphone";
+	I18N.WebView2_CAMERA									= L"Camera";
+	I18N.WebView2_GEOLOCATION								= L"Geolocation";
+	I18N.WebView2_NOTIFICATIONS								= L"Notifications";
+	I18N.WebView2_OTHER_SENSORS								= L"Generic Sensors";
+	I18N.WebView2_CLIPBOARD_READ							= L"Clipboard Read";
+	I18N.WebView2_UNKNOWN_PERMISSION						= L"Unknown resource";
+	I18N.WebView2_Runtime_Failed_Found						= WCHARI(L"Couldn't find Edge WebView2 Runtime.\n\nDo you have a version installed?");
+	I18N.WebView2_Data_Folder_Failed_Overwrite				= WCHARI(L"User data folder cannot be created\nbecause a file with the same name already exists.");
+	I18N.WebView2_Data_Folder_Failed_Access					= WCHARI(L"Unable to create user data folder,\nAccess Denied.");
+	I18N.WebView2_Runtime_Failed_Start						= WCHARI(L"Edge runtime unable to start");
+	I18N.WebView2_Create_Environment_Failed					= WCHARI(L"Failed to create WebView2 environment");
+	I18N.WebView2_Create_Webview_Failed						= WCHARI(L"Failed to create WebView2");
+	I18N.WebView2_Cleanup_Data_Folder						= WCHARI(L"Cleanup User Data Folder");
+	I18N.WebView2_New_version								= WCHARI(L"New available version");
+	I18N.WebView2_PDF_Tittle								= WCHARI(L"Print to PDF");
+	I18N.WebView2_PDF_Progress								= WCHARI(L"Print to PDF already in progress.");
+	I18N.WebView2_PDF_Closing								= WCHARI(L"Print to PDF is in progress.\n\nContinue closing?");
+	I18N.WebView2_PDF_Succeeded								= WCHARI(L"Print to PDF succeeded");
+	I18N.WebView2_PDF_Failed								= WCHARI(L"Failed to create PDF");
+	I18N.WebView2_Screenshot_Tittle							= WCHARI(L"Screenshot");
+	I18N.WebView2_Preview_Captured							= WCHARI(L"Preview Captured");
+	I18N.WebView2_Capture_Failed							= WCHARI(L"Failed to create capture");
+	I18N.WebView2_Inject_Script_Tittle						= WCHARI(L"Inject Script Result");
+	I18N.WebView2_Inject_Script_Failed						= WCHARI(L"Inject Script failed");
+	I18N.WebView2_CDP_Event									= L"CDP Event Fired: ";
+	I18N.WebView2_CDP_Result								= WCHARI(L"CDP Method Result");
+	I18N.WebView2_AddHostObjectToScript_Failed				= WCHARI(L"AddHostObjectToScript failed");
+	I18N.WebView2_IDispatch_Failed							= WCHARI(L"COM object doesn't support IDispatch");
+	I18N.WebView2_CoCreateInstance_Failed					= WCHARI(L"CoCreateInstance failed");
+	I18N.WebView2_Convert_Failed							= WCHARI(L"Failed to convert string to CLSID or ProgID");
+	I18N.Suspend_Failed										= WCHARI(L"Failed to suspend WebView2");
+
 	I18N.Clone_of_Tab										= WCHARI(L" Clone of Tab ");
 	I18N.TabLog												= WCHARI(L"Log");
 	I18N.TabSettings										= WCHARI(L"Settings");
@@ -57,6 +114,7 @@ void LoadLanguage()
 	I18N.TabGuardian										= WCHARI(L"Guardian");
 	I18N.TabExplorer										= WCHARI(L"Web");
 	I18N.TabLinks											= WCHARI(L"Links");
+
 	I18N.dsButton											= WCHARI(L"DS Button");
 	I18N.vJoyButton											= WCHARI(L"vJoy Button");
 	I18N.Notice												= WCHARI(L"Notice");
@@ -66,6 +124,7 @@ void LoadLanguage()
 	I18N.RapidFire_State2									= WCHARI(L"UP: %d ms");
 	I18N.RapidFire_State3									= WCHARI(L"DOWN: %d ms");
 	I18N.TagsButton											= WCHARI(L"Tags");
+
 	I18N.Button_LX											= WCHARI(L"AXISL X");
 	I18N.Button_LY											= WCHARI(L"AXISL Y");
 	I18N.Button_RX											= WCHARI(L"AXISR X");
@@ -143,6 +202,7 @@ void LoadLanguage()
 	I18N.Button_L1R1										= WCHARI(L"L1R1");
 	I18N.Button_L2R2										= WCHARI(L"L2R2");
 	I18N.Button_BATTERY										= WCHARI(L"BATTERY");
+
 	I18N.vJoy_X												= WCHARI(L"X");
 	I18N.vJoy_Y												= WCHARI(L"Y");
 	I18N.vJoy_Z												= WCHARI(L"Z");
@@ -199,12 +259,14 @@ void LoadLanguage()
 	I18N.vJoy_DPAD4_DOWN_RIGHT								= WCHARI(L"POV4 ↓→");
 	I18N.vJoy_DPAD4_DOWN									= WCHARI(L"POV4 ↓");
 	I18N.vJoy_DPAD4_DOWN_LEFT								= WCHARI(L"POV4 ←↓");
+
 	I18N.LedAction_Led_1									= WCHARI(L"Led 1");
 	I18N.LedAction_Led_2									= WCHARI(L"Led 2");
 	I18N.LedAction_Led_3									= WCHARI(L"Led 3");
 	I18N.LedAction_Led_4									= WCHARI(L"Led 4");
 	I18N.LedAction_Led_5									= WCHARI(L"Led 5");
 	I18N.LedAction_BATTERY									= WCHARI(L"Battery status");
+
 	I18N.MouseAction_ACTIVE_MOUSE							= WCHARI(L"Active mouse");
 	I18N.MouseAction_SAVE_POSITION							= WCHARI(L"Save position");
 	I18N.MouseAction_MOVE_BACK								= WCHARI(L"Move back");
@@ -239,36 +301,44 @@ void LoadLanguage()
 	I18N.MouseAction_X2_DOWN								= WCHARI(L"X2 Down");
 	I18N.MouseAction_SCROLL_UP_VARIABLE						= WCHARI(L"Scroll ↑ incr");
 	I18N.MouseAction_SCROLL_DOWN_VARIABLE					= WCHARI(L"Scroll ↓ incr");
-	I18N.MouseAction_MUTE_SOUND								= WCHARI(L"Mute/Unmute");
-	I18N.MouseAction_VOLUME_UP								= WCHARI(L"Volume up");
-	I18N.MouseAction_VOLUME_DOWN							= WCHARI(L"Volume down");
-	I18N.MouseAction_MEMORIZE_MODE							= WCHARI(L"Memorize mode");
-	I18N.MouseAction_TO_MEM_MODE							= WCHARI(L"To Last Mode");
-	I18N.MouseAction_TO_MODE								= WCHARI(L"To Mode: ");
-	I18N.MouseAction_TO_LAST_MODE							= WCHARI(L"To Last Mode");
-	I18N.MouseAction_BASE_TO_MODE							= WCHARI(L"Base To: ");
-	I18N.MouseAction_TO_BASE_MODE							= WCHARI(L"To Base Mode");
-	I18N.MouseAction_FORGOT_RELEASED						= WCHARI(L"Forgot released");
-	I18N.MouseAction_IF_RELEASED_GOTO						= WCHARI(L"If released goto");
-	I18N.MouseAction_IF_PUSHED_GOTO							= WCHARI(L"If pushed goto");
-	I18N.MouseAction_RETURN_TO								= WCHARI(L"Return to");
-	I18N.MouseAction_MOUSE_INTERRUPT						= WCHARI(L"Interrupt");
-	I18N.MouseAction_MOUSE_NO_SUSTAIN						= WCHARI(L"No sustain");
-	I18N.MouseAction_MOUSE_PAUSE							= WCHARI(L"Pause");
-	I18N.MouseAction_BEEP1									= WCHARI(L"Beep 1");
-	I18N.MouseAction_BEEP2									= WCHARI(L"Beep 2");
-	I18N.MouseAction_BEEP3									= WCHARI(L"Beep 3");
-	I18N.MouseAction_RESET_STATS							= WCHARI(L"Reset stats");
-	I18N.MouseAction_ADDSTAT1								= WCHARI(L"Add stat 1");
-	I18N.MouseAction_ADDSTAT2								= WCHARI(L"Add stat 2");
-	I18N.MouseAction_ADDSTAT3								= WCHARI(L"Add stat 3");
-	I18N.MouseAction_ADDSTAT4								= WCHARI(L"Add stat 4");
-	I18N.MouseAction_ADDSTAT5								= WCHARI(L"Add stat 5");
-	I18N.MouseAction_ADDSTAT6								= WCHARI(L"Add stat 6");
-	I18N.MouseAction_ADDSTAT7								= WCHARI(L"Add stat 7");
-	I18N.MouseAction_ADDSTAT8								= WCHARI(L"Add stat 8");
-	I18N.MouseAction_MINIMIZE								= WCHARI(L"Minimize");
-	I18N.MouseAction_RESTORE								= WCHARI(L"Restore");
+
+	I18N.SpecialAction_MUTE_SOUND							= WCHARI(L"Mute/Unmute");
+	I18N.SpecialAction_VOLUME_UP							= WCHARI(L"Volume up");
+	I18N.SpecialAction_VOLUME_DOWN							= WCHARI(L"Volume down");
+	I18N.SpecialAction_MEMORIZE_MODE						= WCHARI(L"Memorize mode");
+	I18N.SpecialAction_TO_MEM_MODE							= WCHARI(L"To Last Mode");
+	I18N.SpecialAction_TO_MODE								= WCHARI(L"To Mode: ");
+	I18N.SpecialAction_TO_LAST_MODE							= WCHARI(L"To Last Mode");
+	I18N.SpecialAction_BASE_TO_MODE							= WCHARI(L"Base To: ");
+	I18N.SpecialAction_TO_BASE_MODE							= WCHARI(L"To Base Mode");
+	I18N.SpecialAction_FORGOT_RELEASED						= WCHARI(L"Forgot released");
+	I18N.SpecialAction_IF_RELEASED_GOTO						= WCHARI(L"If released goto");
+	I18N.SpecialAction_IF_PUSHED_GOTO						= WCHARI(L"If pushed goto");
+	I18N.SpecialAction_RETURN_TO							= WCHARI(L"Return to");
+	I18N.SpecialAction_MOUSE_INTERRUPT						= WCHARI(L"Interrupt");
+	I18N.SpecialAction_MOUSE_NO_SUSTAIN						= WCHARI(L"No sustain");
+	I18N.SpecialAction_MOUSE_PAUSE							= WCHARI(L"Pause");
+	I18N.SpecialAction_BEEP1								= WCHARI(L"Beep 1");
+	I18N.SpecialAction_BEEP2								= WCHARI(L"Beep 2");
+	I18N.SpecialAction_BEEP3								= WCHARI(L"Beep 3");
+	I18N.SpecialAction_RESET_STATS							= WCHARI(L"Reset stats");
+	I18N.SpecialAction_ADDSTAT1								= WCHARI(L"Add stat 1");
+	I18N.SpecialAction_ADDSTAT2								= WCHARI(L"Add stat 2");
+	I18N.SpecialAction_ADDSTAT3								= WCHARI(L"Add stat 3");
+	I18N.SpecialAction_ADDSTAT4								= WCHARI(L"Add stat 4");
+	I18N.SpecialAction_ADDSTAT5								= WCHARI(L"Add stat 5");
+	I18N.SpecialAction_ADDSTAT6								= WCHARI(L"Add stat 6");
+	I18N.SpecialAction_ADDSTAT7								= WCHARI(L"Add stat 7");
+	I18N.SpecialAction_ADDSTAT8								= WCHARI(L"Add stat 8");
+	I18N.SpecialAction_KBD_INPUT_ON							= WCHARI(L"KBD Input On	");
+	I18N.SpecialAction_KBD_INPUT_OFF						= WCHARI(L"KBD Input Off");
+	I18N.SpecialAction_MSE_INPUT_ON							= WCHARI(L"MSE Input On	");
+	I18N.SpecialAction_MSE_INPUT_OFF						= WCHARI(L"MSE Input Off");
+	I18N.SpecialAction_SCREENSHOT							= WCHARI(L"Screenshot");
+	I18N.SpecialAction_MINIMIZE								= WCHARI(L"Minimize");
+	I18N.SpecialAction_RESTORE								= WCHARI(L"Restore");
+	I18N.SpecialAction_TRANSPARENCY							= WCHARI(L"Transparency");
+
 	I18N.Axis_XY_CW											= WCHARI(L"XY ⭮");
 	I18N.Axis_XY_CN											= WCHARI(L"XY ⭯");
 	I18N.Axis_ZRZ_CW										= WCHARI(L"ZRZ ⭮");
@@ -439,6 +509,42 @@ void LoadLanguage()
 	I18N.Axis_ZRZ_L_DR_CN									= WCHARI(L"ZRZ ⯁⮥");
 	I18N.Axis_ZRZ_L_DL_CW									= WCHARI(L"ZRZ ⯁⮤");
 	I18N.Axis_ZRZ_L_DL_CN									= WCHARI(L"ZRZ ⯁⮡");
+
+	I18N.ModulesAction_NOTEPAD								= WCHARI(L"Notepad");
+	I18N.ModulesAction_NOTEPAD_DOWN							= WCHARI(L"Notepad ↓");
+	I18N.ModulesAction_NOTEPAD_UP							= WCHARI(L"Notepad ↑");
+	I18N.ModulesAction_WEB_DOWN								= WCHARI(L"Web ↓");
+	I18N.ModulesAction_WEB_UP								= WCHARI(L"Web ↑");
+	I18N.ModulesAction_WEB_LEFT								= WCHARI(L"Web ←");
+	I18N.ModulesAction_WEB_RIGHT							= WCHARI(L"Web →");
+	I18N.ModulesAction_WEB_PREVIOUSTAB						= WCHARI(L"Tab «");
+	I18N.ModulesAction_WEB_NEXTTAB							= WCHARI(L"Tab »");
+	I18N.ModulesAction_WEB_CLOSETAB							= WCHARI(L"Close Tab");
+	I18N.ModulesAction_WEB_FULLSCREEN						= WCHARI(L"FullScreen");
+	I18N.ModulesAction_WEB_HOME								= WCHARI(L"Home");
+	I18N.ModulesAction_WEB_FAVORITE1						= WCHARI(L"Favorite1");
+	I18N.ModulesAction_WEB_FAVORITE2						= WCHARI(L"Favorite2");
+	I18N.ModulesAction_WEB_FAVORITE3						= WCHARI(L"Favorite3");
+	I18N.ModulesAction_WEB_FAVORITE4						= WCHARI(L"Favorite4");
+	I18N.ModulesAction_WEB_FAVORITE5						= WCHARI(L"Favorite5");
+	I18N.ModulesAction_WEB_FAVORITE6						= WCHARI(L"Favorite6");
+	I18N.ModulesAction_WEB_FAVORITE7						= WCHARI(L"Favorite7");
+	I18N.ModulesAction_WEB_FAVORITE8						= WCHARI(L"Favorite8");
+	I18N.ModulesAction_WEB_FAVORITE9						= WCHARI(L"Favorite9");
+	I18N.ModulesAction_WEB_BACK								= WCHARI(L"Back");
+	I18N.ModulesAction_WEB_NEXT								= WCHARI(L"Next");
+	I18N.ModulesAction_WEB_REFRESH							= WCHARI(L"Refresh");
+	I18N.ModulesAction_WEB_CANCEL							= WCHARI(L"Cancel");
+	I18N.ModulesAction_WEB_AUTOREFRESH						= WCHARI(L"Autorefresh");
+	I18N.ModulesAction_WEB_ZOOMMINUS						= WCHARI(L"Zoom-");
+	I18N.ModulesAction_WEB_ZOOMPLUS							= WCHARI(L"Zoom+");
+	I18N.ModulesAction_WEB_ZOOMRESET						= WCHARI(L"Zoom Reset");
+	I18N.ModulesAction_WEB_ZOOMSET							= WCHARI(L"Zoom Set");
+	I18N.ModulesAction_WEB_VISIBILITY						= WCHARI(L"Visibility");
+	I18N.ModulesAction_WEB_SCREENSHOT						= WCHARI(L"Screenshot");
+	I18N.ModulesAction_WEB_DARKMODE							= WCHARI(L"Darkmode");
+	I18N.ModulesAction_WEB_DARKMODE2						= WCHARI(L"Darkmode2");
+
 	I18N.Gamepad_LEFT_STICK									= WCHARI(L"Lstick");
 	I18N.Gamepad_BACK										= WCHARI(L"Back");
 	I18N.Gamepad_START										= WCHARI(L"Start");
@@ -481,11 +587,13 @@ void LoadLanguage()
 	I18N.SETTINGS_TEXT_LONG									= WCHARI(L"Long");
 	I18N.SETTINGS_TEXT_VERY_LONG							= WCHARI(L"Very long");
 	I18N.SETTINGS_TEXT_WEBREFRESH							= WCHARI(L"Web refresh");
+	I18N.SETTINGS_TEXT_OPACITY								= WCHARI(L"Opacity");
 	I18N.SETTINGS_UNIT_THRESHOLD							= WCHARI(L"128");
 	I18N.SETTINGS_UNIT_SIMULTANEOUS							= WCHARI(L"ms");
 	I18N.SETTINGS_UNIT_LONG									= WCHARI(L"ms");
 	I18N.SETTINGS_UNIT_VERY_LONG							= WCHARI(L"ms");
 	I18N.SETTINGS_UNIT_WEB_REFRESH							= WCHARI(L"s");
+	I18N.SETTINGS_UNIT_OPACITY								= WCHARI(L"%");
 	I18N.SETTINGS_MULTIPLE_TOUCHPAD							= WCHARI(L"Multiple Touchpad:");
 	I18N.SETTINGS_TEXT_FIRST_BUTTON							= WCHARI(L"First button");
 	I18N.SETTINGS_TEXT_COLUMN								= WCHARI(L"Column");
@@ -572,8 +680,47 @@ void LoadLanguage()
 	I18N.HID_LEGEND3										= WCHARI(L"Running ");
 	I18N.HID_LEGEND4										= WCHARI(L"Stopped ");
 	I18N.HID_LEGEND5										= WCHARI(L"Paused ");
-	I18N.LINKS_TEXT1										= WCHARI(L"Add webbrowser links 1-5");
-	I18N.LINKS_TEXT2										= WCHARI(L"Add webbrowser links 6-10");
+	I18N.WEB_INJECT_SCRIPT_1								= WCHARI(L"Inject Script");
+	I18N.WEB_INJECT_SCRIPT_2								= WCHARI(L"Enter script code:");
+	I18N.WEB_INJECT_SCRIPT_3								= WCHARI(L"Enter the JavaScript code to run in the webview");
+	I18N.WEB_INITIALIZE_SCRIPT_1							= WCHARI(L"Add Initialize Script");
+	I18N.WEB_INITIALIZE_SCRIPT_2							= WCHARI(L"nitialization Script:");
+	I18N.WEB_INITIALIZE_SCRIPT_3							= WCHARI(L"Enter the JavaScript code to run as the initialization script\r\n\
+that runs before any script in the HTML document.");
+	I18N.WEB_POST_MESSAGE_STRING_1							= WCHARI(L"Post Web Message String");
+	I18N.WEB_POST_MESSAGE_STRING_2							= WCHARI(L"Web message string:");
+	I18N.WEB_POST_MESSAGE_STRING_3							= WCHARI(L"Enter the web message as a string");
+	I18N.WEB_POST_MESSAGE_JSON_1							= WCHARI(L"Post Web Message JSON");
+	I18N.WEB_POST_MESSAGE_JSON_2							= WCHARI(L"Web message JSON:");
+	I18N.WEB_POST_MESSAGE_JSON_3							= WCHARI(L"Enter the web message as JSON");
+	I18N.WEB_SUBSCRIBE_CDP_EVENT_1							= WCHARI(L"Subscribe to CDP Event");
+	I18N.WEB_SUBSCRIBE_CDP_EVENT_2							= WCHARI(L"CDP event name:");
+	I18N.WEB_SUBSCRIBE_CDP_EVENT_3							= WCHARI(L"Enter the name of the CDP event to subscribe to\r\n\
+You may also have to call the \"enable\" method of the\r\n\
+event's domain to receive events (for example \"Log.enable\")");
+	I18N.WEB_CALL_CDP_METHOD_1								= WCHARI(L"Call CDP Method");
+	I18N.WEB_CALL_CDP_METHOD_2								= WCHARI(L"CDP method name:");
+	I18N.WEB_CALL_CDP_METHOD_3								= WCHARI(L"Enter the CDP method name to call, followed by a space,\r\n\
+followed by the parameters in JSON format");
+	I18N.WEB_COM_OBJECT_1									= WCHARI(L"Add COM object");
+	I18N.WEB_COM_OBJECT_2									= WCHARI(L"CLSID or ProgID of COM object:");
+	I18N.WEB_COM_OBJECT_3									= WCHARI(L"Enter the CLSID (eg '{0002DF01-0000-0000-C000-000000000046}')\r\n\
+or ProgID (eg 'InternetExplorer.Application') of the COM object to create and\r\n\
+provide to the WebView as `window.chrome.remoteObjects.example`");
+	I18N.WEB_LANGUAGE_1										= WCHARI(L"Language");
+	I18N.WEB_LANGUAGE_2										= WCHARI(L"Language:");
+	I18N.WEB_LANGUAGE_3										= WCHARI(L"Enter a language to use for WebView, or leave blank to restore default");
+	I18N.WEB_USERAGENT_1									= WCHARI(L"User Agent");
+	I18N.WEB_USERAGENT_2									= WCHARI(L"User agent:");
+	I18N.WEB_USERAGENT_3									= WCHARI(L"Enter user agent, or leave blank to restore default");
+	I18N.WEB_BLACKLIST_1									= WCHARI(L"locked Sites");
+	I18N.WEB_BLACKLIST_2									= WCHARI(L"Sites:");
+	I18N.WEB_BLACKLIST_3									= WCHARI(L"Enter hostnames to block, separated by semicolons");
+	I18N.WEB_SCRIPT_DIALOG_1								= WCHARI(L"Script Dialog");
+	I18N.WEB_SCRIPT_DIALOG_2								= L"The page at '";
+	I18N.WEB_SCRIPT_DIALOG_3								= L"' says:";
+	I18N.LINKS_TEXT1										= WCHARI(L"Add webbrowser Home and Favorites 1-4");
+	I18N.LINKS_TEXT2										= WCHARI(L"Add webbrowser Favorites 5-9");
 	I18N.LINKS_TEXT3										= WCHARI(L"Add the name …");
 	I18N.LINKS_TEXT4										= WCHARI(L"… and location of 1-5 executables to place in tray menu");
 	I18N.LINKS_DS4VJOY										= WCHARI(L"<a>Ds4vJoy</a>");
@@ -600,6 +747,96 @@ void LoadLanguage()
 	I18N.STATE_ENABLE										= WCHARI(L"Enable");
 	I18N.STATE_DISABLE										= WCHARI(L"Disable");
 	I18N.STATE_WAITING										= WCHARI(L"Waiting...");
+
+	I18N.FILE												= WCHARI(L"File(&F)");
+	I18N.EXIT												= WCHARI(L"Exit application(&X)");
+	I18N.HELP												= WCHARI(L"Help(&H)");
+	I18N.ABOUT												= WCHARI(L"About(&A)...");
+
+	I18N.MENU_SEE_VIEW2										= WCHARI(L"Clone to view2");
+	I18N.MENU_TO_MODE_0										= WCHARI(L"Set to Always");
+	I18N.MENU_TO_MODE_1										= WCHARI(L"Set to mode 1");
+	I18N.MENU_TO_MODE_2										= WCHARI(L"Set to mode 2");
+	I18N.MENU_TO_MODE_3										= WCHARI(L"Set to mode 3");
+	I18N.MENU_TO_MODE_4										= WCHARI(L"Set to mode 4");
+	I18N.MENU_TO_MODE_5										= WCHARI(L"Set to mode 5");
+	I18N.MENU_TO_MODE_6										= WCHARI(L"Set to mode 6");
+	I18N.MENU_TO_MODE_7										= WCHARI(L"Set to mode 7");
+	I18N.MENU_TO_MODE_8										= WCHARI(L"Set to mode 8");
+
+	I18N.CLONE_TO_MODE_0                                    = WCHARI(L"Clone 1st tab");
+	I18N.CLONE_TO_MODE_1                                    = WCHARI(L"Clone tab 1");
+	I18N.CLONE_TO_MODE_2                                    = WCHARI(L"Clone tab 2");
+	I18N.CLONE_TO_MODE_3                                    = WCHARI(L"Clone tab 3");
+	I18N.CLONE_TO_MODE_4                                    = WCHARI(L"Clone tab 4");
+	I18N.CLONE_TO_MODE_5                                    = WCHARI(L"Clone tab 5");
+	I18N.CLONE_TO_MODE_6                                    = WCHARI(L"Clone tab 6");
+	I18N.CLONE_TO_MODE_7                                    = WCHARI(L"Clone tab 7");
+	I18N.CLONE_TO_MODE_8                                    = WCHARI(L"Clone tab 8");
+
+	I18N.MENU_ADD											= WCHARI(L"Add");
+	I18N.MENU_EDIT											= WCHARI(L"Edit");
+	I18N.MENU_DEL											= WCHARI(L"Delete");
+	I18N.MENU_COPY											= WCHARI(L"Copy");
+	I18N.MENU_SEPARATOR										= WCHARI(L"Separator");
+	I18N.MENU_MOVE_TO_0										= WCHARI(L"Move to 0");
+	I18N.MENU_MOVE_TO_1										= WCHARI(L"Move to 1");
+	I18N.MENU_MOVE_TO_2										= WCHARI(L"Move to 2");
+	I18N.MENU_MOVE_TO_3										= WCHARI(L"Move to 3");
+	I18N.MENU_MOVE_TO_4										= WCHARI(L"Move to 4");
+	I18N.MENU_MOVE_TO_5										= WCHARI(L"Move to 5");
+	I18N.MENU_MOVE_TO_6										= WCHARI(L"Move to 6");
+	I18N.MENU_MOVE_TO_7										= WCHARI(L"Move to 7");
+	I18N.MENU_MOVE_TO_8										= WCHARI(L"Move to 8");
+	I18N.MENU_SWAP_VIEW										= WCHARI(L"Swap view");
+	I18N.MENU_ADD_NOTICE									= WCHARI(L"Add notice");
+
+	I18N.MENU_SEPARATORN									= WCHARI(L"    —————————");
+	I18N.MENU_WEB_PDF_PORTRAIT								= WCHARI(L"Print to PDF Portrait");
+	I18N.MENU_WEB_PDF_LANDSCAPE								= WCHARI(L"Print to PDF Landscape");
+	I18N.MENU_WEB_SCREENSHOT								= WCHARI(L"Save Screenshot");
+
+	I18N.MENU_WEB_TOPMOST									= WCHARI(L"Toggle TopMost");
+	I18N.MENU_WEB_VISIBILITY								= WCHARI(L"Toggle Visibility");
+	I18N.MENU_WEB_DARK_MODE									= WCHARI(L"Dark mode");
+	I18N.MENU_WEB_DARK_MODE_2								= WCHARI(L"Dark mode 2");
+	I18N.MENU_WEB_BOUNDS_MODE								= WCHARI(L"Raw/Scale Pixels");
+	I18N.MENU_WEB_BLOCK_IMAGES								= WCHARI(L"Toggle Block Images");
+
+	I18N.MENU_WEB_CLOSE_WEBVIEW								= WCHARI(L"Close WebView");
+	I18N.MENU_WEB_REINIT									= WCHARI(L"Create WebView");
+	I18N.MENU_WEB_NEW_WINDOW								= WCHARI(L"Create New Window");
+	I18N.MENU_WEB_NEW_THREAD								= WCHARI(L"Create New Thread");
+	I18N.MENU_WEB_CLEAR_CACHE								= WCHARI(L"Clear cache");
+	I18N.MENU_WEB_CLEAR_COOKIES								= WCHARI(L"Clear cookies");
+	I18N.MENU_WEB_DELETE_DATAFOLDER							= WCHARI(L"Delete UserData Folder");
+
+	I18N.MENU_WEB_INJECT_SCRIPT								= WCHARI(L"Inject Script");
+	I18N.MENU_WEB_INITIALIZE_SCRIPT							= WCHARI(L"Add Initialize Script");
+	I18N.MENU_WEB_USE_DEFERRED_SCRIPT						= WCHARI(L"JavaScript Deferred");
+	I18N.MENU_WEB_COMPLETE_DEFERRED							= WCHARI(L"JavaScript Complete");
+	I18N.MENU_WEB_POST_MESSAGE_STRING						= WCHARI(L"Post Message String");
+	I18N.MENU_WEB_POST_MESSAGE_JSON							= WCHARI(L"Post Message JSON");
+	I18N.MENU_WEB_SUBSCRIBE_CDP_EVENT						= WCHARI(L"Subscribe CDP event");
+	I18N.MENU_WEB_CALL_CDP_METHOD							= WCHARI(L"Call CDP method");
+	I18N.MENU_WEB_COM_OBJECT								= WCHARI(L"Add COM object");
+
+	I18N.MENU_WEB_FLAGS										= WCHARI(L"Flags");
+	I18N.MENU_WEB_LANGUAGE									= WCHARI(L"Language");
+	I18N.MENU_WEB_USERAGENT									= WCHARI(L"User Agent");
+	I18N.MENU_WEB_BLACKLIST									= WCHARI(L"Blacklist");
+	I18N.MENU_WEB_TASK_MANAGER								= WCHARI(L"Task Manager");
+
+	I18N.MENU_WEB_FAV_0										= WCHARI(L"Home");
+	I18N.MENU_WEB_FAV_1										= WCHARI(L"Favorite 1");
+	I18N.MENU_WEB_FAV_2										= WCHARI(L"Favorite 2");
+	I18N.MENU_WEB_FAV_3										= WCHARI(L"Favorite 3");
+	I18N.MENU_WEB_FAV_4										= WCHARI(L"Favorite 4");
+	I18N.MENU_WEB_FAV_5										= WCHARI(L"Favorite 5");
+	I18N.MENU_WEB_FAV_6										= WCHARI(L"Favorite 6");
+	I18N.MENU_WEB_FAV_7										= WCHARI(L"Favorite 7");
+	I18N.MENU_WEB_FAV_8										= WCHARI(L"Favorite 8");
+	I18N.MENU_WEB_FAV_9										= WCHARI(L"Favorite 9");
 
 	I18N.HELP_IFMOUSE										= WCHARI(L"If mouse requirement:\n\
 If a mouse is already in use\n\
@@ -655,13 +892,13 @@ otherwise :\n\
 	if 'not' is a double, and 'not' button is pressed, the mapping still continue\n\
 double : One time, used in Transitivity as a modificator or action (see Transitivity)");
 	I18N.HELP_TRANSITIVITY									= WCHARI(L"Transitivity modificator:\n\
-simple, Transitivity:\n\
-	bring different transitions while mode changed\n\
-double, Come back:\n\
-	another way of transitivity which brings its owns\n\
-One time : Conduct\n\
-	If the source is already pushed when entering the new mode,\n\
-	the mapping is triggered\n\
+	simple, Transitivity:\n\
+		bring different transitions while mode changed\n\
+	double, Come back:\n\
+		another way of transitivity which brings its owns\n\
+	One time : Conduct\n\
+		If the source is already pushed when entering the new mode,\n\
+		the mapping is triggered\n\
 Transitivity : Complete\n\
 	You can release and trigger again in new mode\n\
 	if it was already active before changing mode\n\
@@ -859,6 +1096,19 @@ while you already selected an element of the grid\n\
 	(x, y or w, h or nw, nh)\n\
 	click on the right number,\n\
 	it will insert the coordinates into this column");
+
+	I18N.HELP_WEB_MENU										= WCHARI(L"Web menu");
+	I18N.HELP_WEB_CLOSE										= WCHARI(L"Left click: close actual tab\nRight click: quit web module");
+	I18N.HELP_WEB_FAVORITES									= WCHARI(L"Left click: go to favorite\nRight click: set favorite");
+	I18N.HELP_WEB_HOME										= WCHARI(L"Home");
+	I18N.HELP_WEB_BACK										= WCHARI(L"Back");
+	I18N.HELP_WEB_FORWARD									= WCHARI(L"Forward");
+	I18N.HELP_WEB_REFRESH									= WCHARI(L"Refresh");
+	I18N.HELP_WEB_GO										= WCHARI(L"Go");
+	I18N.HELP_WEB_STOP										= WCHARI(L"Stop");
+	I18N.HELP_WEB_AUTOREFRESH								= WCHARI(L"Autorefresh");
+	I18N.HELP_WEB_ZOOM_MINUS								= WCHARI(L"Left click: Zoom minus\nRight click: Return to default");
+	I18N.HELP_WEB_ZOOM_PLUS									= WCHARI(L"Left click: Zoom plus\nRight click: Set default");
 }
 
 void FreeLanguage()
@@ -868,6 +1118,8 @@ void FreeLanguage()
 	delete[] I18N.EMPTY;
 	delete[] I18N.DS2VJOY;
 	delete[] I18N.APP_TITLE;
+	delete[] I18N.Fatal_Error1;
+	delete[] I18N.Fatal_Error2;
 	delete[] I18N.FailedParse;
 	delete[] I18N.FailedRecv;
 	delete[] I18N.FailedSendCmd;
@@ -898,6 +1150,55 @@ void FreeLanguage()
 	delete[] I18N.vJoy_failed_acquire;
 	delete[] I18N.vJoy_failed_update;
 	delete[] I18N.vJoy_version;
+
+	delete[] I18N.HidGuardian_driver_installed;
+	delete[] I18N.HidGuardian_driver_instalation_failed;
+	delete[] I18N.HidGuardian_driver_uninstalled;
+	delete[] I18N.HidGuardian_driver_uninstalation_failed;
+	delete[] I18N.HidCerberus_service_installed;
+	delete[] I18N.HidCerberus_service_instalation_failed;
+	delete[] I18N.HidCerberus_service_uninstalled;
+	delete[] I18N.HidCerberus_service_uninstalation_failed;
+	delete[] I18N.HidGuardian_Added_to_Guardian;
+	delete[] I18N.HidGuardian_Removed_from_Guardian;
+
+	delete[] I18N.ViGEm_Memory_allocating_error;
+	delete[] I18N.ViGEm_Bus_connection_failed;
+	delete[] I18N.ViGEm_Target_plugin_failed;
+	delete[] I18N.ViGEm_driver_installed;
+	delete[] I18N.ViGEm_driver_instalation_failed;
+	delete[] I18N.ViGEm_driver_uninstalled;
+	delete[] I18N.ViGEm_driver_uninstalation_failed;
+
+	delete[] I18N.WebView2_Not_Installed_tittle;
+	delete[] I18N.WebView2_Not_Installed_text;
+	delete[] I18N.WebView2_Installation_failed;
+	delete[] I18N.WebView2_downloading_failed;
+	delete[] I18N.WebView2_Runtime_Failed_Found;
+	delete[] I18N.WebView2_Data_Folder_Failed_Overwrite;
+	delete[] I18N.WebView2_Data_Folder_Failed_Access;
+	delete[] I18N.WebView2_Runtime_Failed_Start;
+	delete[] I18N.WebView2_Create_Environment_Failed;
+	delete[] I18N.WebView2_Create_Webview_Failed;
+	delete[] I18N.WebView2_Cleanup_Data_Folder;
+	delete[] I18N.WebView2_New_version;
+	delete[] I18N.WebView2_PDF_Tittle;
+	delete[] I18N.WebView2_PDF_Progress;
+	delete[] I18N.WebView2_PDF_Closing;
+	delete[] I18N.WebView2_PDF_Succeeded;
+	delete[] I18N.WebView2_PDF_Failed;
+	delete[] I18N.WebView2_Screenshot_Tittle;
+	delete[] I18N.WebView2_Preview_Captured;
+	delete[] I18N.WebView2_Capture_Failed;
+	delete[] I18N.WebView2_Inject_Script_Tittle;
+	delete[] I18N.WebView2_Inject_Script_Failed;
+	delete[] I18N.WebView2_CDP_Result;
+	delete[] I18N.WebView2_AddHostObjectToScript_Failed;
+	delete[] I18N.WebView2_IDispatch_Failed;
+	delete[] I18N.WebView2_CoCreateInstance_Failed;
+	delete[] I18N.WebView2_Convert_Failed;
+	delete[] I18N.Suspend_Failed;
+
 	delete[] I18N.Clone_of_Tab;
 	delete[] I18N.TabLog;
 	delete[] I18N.TabSettings;
@@ -908,6 +1209,7 @@ void FreeLanguage()
 	delete[] I18N.TabGuardian;
 	delete[] I18N.TabExplorer;
 	delete[] I18N.TabLinks;
+
 	delete[] I18N.dsButton;
 	delete[] I18N.vJoyButton;
 	delete[] I18N.Notice;
@@ -917,6 +1219,7 @@ void FreeLanguage()
 	delete[] I18N.RapidFire_State2;
 	delete[] I18N.RapidFire_State3;
 	delete[] I18N.TagsButton;
+
 	delete[] I18N.Button_LX;
 	delete[] I18N.Button_LY;
 	delete[] I18N.Button_RX;
@@ -994,6 +1297,7 @@ void FreeLanguage()
 	delete[] I18N.Button_L1R1;
 	delete[] I18N.Button_L2R2;
 	delete[] I18N.Button_BATTERY;
+
 	delete[] I18N.vJoy_X;
 	delete[] I18N.vJoy_Y;
 	delete[] I18N.vJoy_Z;
@@ -1050,12 +1354,14 @@ void FreeLanguage()
 	delete[] I18N.vJoy_DPAD4_DOWN_RIGHT;
 	delete[] I18N.vJoy_DPAD4_DOWN;
 	delete[] I18N.vJoy_DPAD4_DOWN_LEFT;
+
 	delete[] I18N.LedAction_Led_1;
 	delete[] I18N.LedAction_Led_2;
 	delete[] I18N.LedAction_Led_3;
 	delete[] I18N.LedAction_Led_4;
 	delete[] I18N.LedAction_Led_5;
 	delete[] I18N.LedAction_BATTERY;
+
 	delete[] I18N.MouseAction_ACTIVE_MOUSE;
 	delete[] I18N.MouseAction_SAVE_POSITION;
 	delete[] I18N.MouseAction_MOVE_BACK;
@@ -1090,36 +1396,44 @@ void FreeLanguage()
 	delete[] I18N.MouseAction_X2_DOWN;
 	delete[] I18N.MouseAction_SCROLL_UP_VARIABLE;
 	delete[] I18N.MouseAction_SCROLL_DOWN_VARIABLE;
-	delete[] I18N.MouseAction_MUTE_SOUND;
-	delete[] I18N.MouseAction_VOLUME_UP;
-	delete[] I18N.MouseAction_VOLUME_DOWN;
-	delete[] I18N.MouseAction_MEMORIZE_MODE;
-	delete[] I18N.MouseAction_TO_MEM_MODE;
-	delete[] I18N.MouseAction_TO_MODE;
-	delete[] I18N.MouseAction_TO_LAST_MODE;
-	delete[] I18N.MouseAction_BASE_TO_MODE;
-	delete[] I18N.MouseAction_TO_BASE_MODE;
-	delete[] I18N.MouseAction_IF_RELEASED_GOTO;
-	delete[] I18N.MouseAction_IF_PUSHED_GOTO;
-	delete[] I18N.MouseAction_RETURN_TO;
-	delete[] I18N.MouseAction_FORGOT_RELEASED;
-	delete[] I18N.MouseAction_MOUSE_INTERRUPT;
-	delete[] I18N.MouseAction_MOUSE_NO_SUSTAIN;
-	delete[] I18N.MouseAction_MOUSE_PAUSE;
-	delete[] I18N.MouseAction_BEEP1;
-	delete[] I18N.MouseAction_BEEP2;
-	delete[] I18N.MouseAction_BEEP3;
-	delete[] I18N.MouseAction_RESET_STATS;
-	delete[] I18N.MouseAction_ADDSTAT1;
-	delete[] I18N.MouseAction_ADDSTAT2;
-	delete[] I18N.MouseAction_ADDSTAT3;
-	delete[] I18N.MouseAction_ADDSTAT4;
-	delete[] I18N.MouseAction_ADDSTAT5;
-	delete[] I18N.MouseAction_ADDSTAT6;
-	delete[] I18N.MouseAction_ADDSTAT7;
-	delete[] I18N.MouseAction_ADDSTAT8;
-	delete[] I18N.MouseAction_MINIMIZE;
-	delete[] I18N.MouseAction_RESTORE;
+
+	delete[] I18N.SpecialAction_MUTE_SOUND;
+	delete[] I18N.SpecialAction_VOLUME_UP;
+	delete[] I18N.SpecialAction_VOLUME_DOWN;
+	delete[] I18N.SpecialAction_MEMORIZE_MODE;
+	delete[] I18N.SpecialAction_TO_MEM_MODE;
+	delete[] I18N.SpecialAction_TO_MODE;
+	delete[] I18N.SpecialAction_TO_LAST_MODE;
+	delete[] I18N.SpecialAction_BASE_TO_MODE;
+	delete[] I18N.SpecialAction_TO_BASE_MODE;
+	delete[] I18N.SpecialAction_IF_RELEASED_GOTO;
+	delete[] I18N.SpecialAction_IF_PUSHED_GOTO;
+	delete[] I18N.SpecialAction_RETURN_TO;
+	delete[] I18N.SpecialAction_FORGOT_RELEASED;
+	delete[] I18N.SpecialAction_MOUSE_INTERRUPT;
+	delete[] I18N.SpecialAction_MOUSE_NO_SUSTAIN;
+	delete[] I18N.SpecialAction_MOUSE_PAUSE;
+	delete[] I18N.SpecialAction_BEEP1;
+	delete[] I18N.SpecialAction_BEEP2;
+	delete[] I18N.SpecialAction_BEEP3;
+	delete[] I18N.SpecialAction_RESET_STATS;
+	delete[] I18N.SpecialAction_ADDSTAT1;
+	delete[] I18N.SpecialAction_ADDSTAT2;
+	delete[] I18N.SpecialAction_ADDSTAT3;
+	delete[] I18N.SpecialAction_ADDSTAT4;
+	delete[] I18N.SpecialAction_ADDSTAT5;
+	delete[] I18N.SpecialAction_ADDSTAT6;
+	delete[] I18N.SpecialAction_ADDSTAT7;
+	delete[] I18N.SpecialAction_ADDSTAT8;
+	delete[] I18N.SpecialAction_KBD_INPUT_ON;
+	delete[] I18N.SpecialAction_KBD_INPUT_OFF;
+	delete[] I18N.SpecialAction_MSE_INPUT_ON;
+	delete[] I18N.SpecialAction_MSE_INPUT_OFF;
+	delete[] I18N.SpecialAction_SCREENSHOT;
+	delete[] I18N.SpecialAction_MINIMIZE;
+	delete[] I18N.SpecialAction_RESTORE;
+	delete[] I18N.SpecialAction_TRANSPARENCY;
+
 	delete[] I18N.Axis_XY_CW;
 	delete[] I18N.Axis_XY_CN;
 	delete[] I18N.Axis_ZRZ_CW;
@@ -1290,6 +1604,40 @@ void FreeLanguage()
 	delete[] I18N.Axis_ZRZ_L_DR_CN;
 	delete[] I18N.Axis_ZRZ_L_DL_CW;
 	delete[] I18N.Axis_ZRZ_L_DL_CN;
+
+	delete[] I18N.ModulesAction_NOTEPAD_DOWN;
+	delete[] I18N.ModulesAction_NOTEPAD_UP;
+	delete[] I18N.ModulesAction_WEB_DOWN;
+	delete[] I18N.ModulesAction_WEB_UP;
+	delete[] I18N.ModulesAction_WEB_LEFT;
+	delete[] I18N.ModulesAction_WEB_RIGHT;
+	delete[] I18N.ModulesAction_WEB_PREVIOUSTAB;
+	delete[] I18N.ModulesAction_WEB_NEXTTAB;
+	delete[] I18N.ModulesAction_WEB_CLOSETAB;
+	delete[] I18N.ModulesAction_WEB_HOME;
+	delete[] I18N.ModulesAction_WEB_FAVORITE1;
+	delete[] I18N.ModulesAction_WEB_FAVORITE2;
+	delete[] I18N.ModulesAction_WEB_FAVORITE3;
+	delete[] I18N.ModulesAction_WEB_FAVORITE4;
+	delete[] I18N.ModulesAction_WEB_FAVORITE5;
+	delete[] I18N.ModulesAction_WEB_FAVORITE6;
+	delete[] I18N.ModulesAction_WEB_FAVORITE7;
+	delete[] I18N.ModulesAction_WEB_FAVORITE8;
+	delete[] I18N.ModulesAction_WEB_FAVORITE9;
+	delete[] I18N.ModulesAction_WEB_BACK;
+	delete[] I18N.ModulesAction_WEB_NEXT;
+	delete[] I18N.ModulesAction_WEB_REFRESH;
+	delete[] I18N.ModulesAction_WEB_CANCEL;
+	delete[] I18N.ModulesAction_WEB_AUTOREFRESH;
+	delete[] I18N.ModulesAction_WEB_ZOOMMINUS;
+	delete[] I18N.ModulesAction_WEB_ZOOMPLUS;
+	delete[] I18N.ModulesAction_WEB_ZOOMRESET;
+	delete[] I18N.ModulesAction_WEB_ZOOMSET;
+	delete[] I18N.ModulesAction_WEB_VISIBILITY;
+	delete[] I18N.ModulesAction_WEB_SCREENSHOT;
+	delete[] I18N.ModulesAction_WEB_DARKMODE;
+	delete[] I18N.ModulesAction_WEB_DARKMODE2;
+
 	delete[] I18N.Gamepad_LEFT_STICK;
 	delete[] I18N.Gamepad_BACK;
 	delete[] I18N.Gamepad_START;
@@ -1332,11 +1680,13 @@ void FreeLanguage()
 	delete[] I18N.SETTINGS_TEXT_LONG;
 	delete[] I18N.SETTINGS_TEXT_VERY_LONG;
 	delete[] I18N.SETTINGS_TEXT_WEBREFRESH;
+	delete[] I18N.SETTINGS_TEXT_OPACITY;
 	delete[] I18N.SETTINGS_UNIT_THRESHOLD;
 	delete[] I18N.SETTINGS_UNIT_SIMULTANEOUS;
 	delete[] I18N.SETTINGS_UNIT_LONG;
 	delete[] I18N.SETTINGS_UNIT_VERY_LONG;
 	delete[] I18N.SETTINGS_UNIT_WEB_REFRESH;
+	delete[] I18N.SETTINGS_UNIT_OPACITY;
 	delete[] I18N.SETTINGS_MULTIPLE_TOUCHPAD;
 	delete[] I18N.SETTINGS_TEXT_FIRST_BUTTON;
 	delete[] I18N.SETTINGS_TEXT_COLUMN;
@@ -1423,6 +1773,37 @@ void FreeLanguage()
 	delete[] I18N.HID_LEGEND3;
 	delete[] I18N.HID_LEGEND4;
 	delete[] I18N.HID_LEGEND5;
+	delete[] I18N.WEB_INJECT_SCRIPT_1;
+	delete[] I18N.WEB_INJECT_SCRIPT_2;
+	delete[] I18N.WEB_INJECT_SCRIPT_3;
+	delete[] I18N.WEB_INITIALIZE_SCRIPT_1;
+	delete[] I18N.WEB_INITIALIZE_SCRIPT_2;
+	delete[] I18N.WEB_INITIALIZE_SCRIPT_3;
+	delete[] I18N.WEB_POST_MESSAGE_STRING_1;
+	delete[] I18N.WEB_POST_MESSAGE_STRING_2;
+	delete[] I18N.WEB_POST_MESSAGE_STRING_3;
+	delete[] I18N.WEB_POST_MESSAGE_JSON_1;
+	delete[] I18N.WEB_POST_MESSAGE_JSON_2;
+	delete[] I18N.WEB_POST_MESSAGE_JSON_3;
+	delete[] I18N.WEB_SUBSCRIBE_CDP_EVENT_1;
+	delete[] I18N.WEB_SUBSCRIBE_CDP_EVENT_2;
+	delete[] I18N.WEB_SUBSCRIBE_CDP_EVENT_3;
+	delete[] I18N.WEB_CALL_CDP_METHOD_1;
+	delete[] I18N.WEB_CALL_CDP_METHOD_2;
+	delete[] I18N.WEB_CALL_CDP_METHOD_3;
+	delete[] I18N.WEB_COM_OBJECT_1;
+	delete[] I18N.WEB_COM_OBJECT_2;
+	delete[] I18N.WEB_COM_OBJECT_3;
+	delete[] I18N.WEB_LANGUAGE_1;
+	delete[] I18N.WEB_LANGUAGE_2;
+	delete[] I18N.WEB_LANGUAGE_3;
+	delete[] I18N.WEB_USERAGENT_1;
+	delete[] I18N.WEB_USERAGENT_2;
+	delete[] I18N.WEB_USERAGENT_3;
+	delete[] I18N.WEB_BLACKLIST_1;
+	delete[] I18N.WEB_BLACKLIST_2;
+	delete[] I18N.WEB_BLACKLIST_3;
+	delete[] I18N.WEB_SCRIPT_DIALOG_1;
 	delete[] I18N.LINKS_TEXT1;
 	delete[] I18N.LINKS_TEXT2;
 	delete[] I18N.LINKS_TEXT3;
@@ -1451,7 +1832,88 @@ void FreeLanguage()
 	delete[] I18N.STATE_ENABLE;
 	delete[] I18N.STATE_DISABLE;
 	delete[] I18N.STATE_WAITING;
-	
+
+	delete[] I18N.FILE;
+	delete[] I18N.EXIT;
+	delete[] I18N.HELP;
+	delete[] I18N.ABOUT;
+	delete[] I18N.MENU_SEE_VIEW2;
+	delete[] I18N.MENU_TO_MODE_0;
+	delete[] I18N.MENU_TO_MODE_1;
+	delete[] I18N.MENU_TO_MODE_2;
+	delete[] I18N.MENU_TO_MODE_3;
+	delete[] I18N.MENU_TO_MODE_4;
+	delete[] I18N.MENU_TO_MODE_5;
+	delete[] I18N.MENU_TO_MODE_6;
+	delete[] I18N.MENU_TO_MODE_7;
+	delete[] I18N.MENU_TO_MODE_8;
+	delete[] I18N.CLONE_TO_MODE_0;
+	delete[] I18N.CLONE_TO_MODE_1;
+	delete[] I18N.CLONE_TO_MODE_2;
+	delete[] I18N.CLONE_TO_MODE_3;
+	delete[] I18N.CLONE_TO_MODE_4;
+	delete[] I18N.CLONE_TO_MODE_5;
+	delete[] I18N.CLONE_TO_MODE_6;
+	delete[] I18N.CLONE_TO_MODE_7;
+	delete[] I18N.CLONE_TO_MODE_8;
+	delete[] I18N.MENU_ADD;
+	delete[] I18N.MENU_EDIT;
+	delete[] I18N.MENU_DEL;
+	delete[] I18N.MENU_COPY;
+	delete[] I18N.MENU_SEPARATOR;
+	delete[] I18N.MENU_MOVE_TO_0;
+	delete[] I18N.MENU_MOVE_TO_1;
+	delete[] I18N.MENU_MOVE_TO_2;
+	delete[] I18N.MENU_MOVE_TO_3;
+	delete[] I18N.MENU_MOVE_TO_4;
+	delete[] I18N.MENU_MOVE_TO_5;
+	delete[] I18N.MENU_MOVE_TO_6;
+	delete[] I18N.MENU_MOVE_TO_7;
+	delete[] I18N.MENU_MOVE_TO_8;
+	delete[] I18N.MENU_SWAP_VIEW;
+	delete[] I18N.MENU_ADD_NOTICE;
+	delete[] I18N.MENU_SEPARATORN;
+	delete[] I18N.MENU_WEB_PDF_PORTRAIT;
+	delete[] I18N.MENU_WEB_PDF_LANDSCAPE;
+	delete[] I18N.MENU_WEB_SCREENSHOT;
+	delete[] I18N.MENU_WEB_TOPMOST;
+	delete[] I18N.MENU_WEB_VISIBILITY;
+	delete[] I18N.MENU_WEB_DARK_MODE;
+	delete[] I18N.MENU_WEB_DARK_MODE_2;
+	delete[] I18N.MENU_WEB_BOUNDS_MODE;
+	delete[] I18N.MENU_WEB_BLOCK_IMAGES;
+	delete[] I18N.MENU_WEB_CLOSE_WEBVIEW;
+	delete[] I18N.MENU_WEB_REINIT;
+	delete[] I18N.MENU_WEB_NEW_WINDOW;
+	delete[] I18N.MENU_WEB_NEW_THREAD;
+	delete[] I18N.MENU_WEB_CLEAR_CACHE;
+	delete[] I18N.MENU_WEB_CLEAR_COOKIES;
+	delete[] I18N.MENU_WEB_DELETE_DATAFOLDER;
+	delete[] I18N.MENU_WEB_INJECT_SCRIPT;
+	delete[] I18N.MENU_WEB_INITIALIZE_SCRIPT;
+	delete[] I18N.MENU_WEB_USE_DEFERRED_SCRIPT;
+	delete[] I18N.MENU_WEB_COMPLETE_DEFERRED;
+	delete[] I18N.MENU_WEB_POST_MESSAGE_STRING;
+	delete[] I18N.MENU_WEB_POST_MESSAGE_JSON;
+	delete[] I18N.MENU_WEB_SUBSCRIBE_CDP_EVENT;
+	delete[] I18N.MENU_WEB_CALL_CDP_METHOD;
+	delete[] I18N.MENU_WEB_COM_OBJECT;
+	delete[] I18N.MENU_WEB_FLAGS;
+	delete[] I18N.MENU_WEB_LANGUAGE;
+	delete[] I18N.MENU_WEB_USERAGENT;
+	delete[] I18N.MENU_WEB_BLACKLIST;
+	delete[] I18N.MENU_WEB_TASK_MANAGER;
+	delete[] I18N.MENU_WEB_FAV_0;
+	delete[] I18N.MENU_WEB_FAV_1;
+	delete[] I18N.MENU_WEB_FAV_2;
+	delete[] I18N.MENU_WEB_FAV_3;
+	delete[] I18N.MENU_WEB_FAV_4;
+	delete[] I18N.MENU_WEB_FAV_5;
+	delete[] I18N.MENU_WEB_FAV_6;
+	delete[] I18N.MENU_WEB_FAV_7;
+	delete[] I18N.MENU_WEB_FAV_8;
+	delete[] I18N.MENU_WEB_FAV_9;
+
 	delete[] I18N.HELP_IFMOUSE;
 	delete[] I18N.HELP_FORCE;
 	delete[] I18N.HELP_SHORT;
@@ -1497,4 +1959,17 @@ void FreeLanguage()
 	delete[] I18N.HELP_GRID_NW;
 	delete[] I18N.HELP_GRID_NH;
 	delete[] I18N.HELP_DIGITS;
+
+	delete[] I18N.HELP_WEB_MENU;
+	delete[] I18N.HELP_WEB_CLOSE;
+	delete[] I18N.HELP_WEB_FAVORITES;
+	delete[] I18N.HELP_WEB_HOME;
+	delete[] I18N.HELP_WEB_BACK;
+	delete[] I18N.HELP_WEB_FORWARD;
+	delete[] I18N.HELP_WEB_REFRESH;
+	delete[] I18N.HELP_WEB_GO;
+	delete[] I18N.HELP_WEB_STOP;
+	delete[] I18N.HELP_WEB_AUTOREFRESH;
+	delete[] I18N.HELP_WEB_ZOOM_MINUS;
+	delete[] I18N.HELP_WEB_ZOOM_PLUS;
 }

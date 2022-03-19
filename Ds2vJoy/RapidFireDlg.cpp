@@ -43,10 +43,10 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	col.pszText = I18N.Setting;
 	col.cx = 112;
 	ListView_InsertColumn(m_hList, 1, &col);
-	col.pszText = L"";
+	col.pszText = WCHARI(L"");
 	col.cx = 112;
 	ListView_InsertColumn(m_hList, 2, &col);
-	col.pszText = L"";
+	col.pszText = WCHARI(L"");
 	col.cx = 111;
 	ListView_InsertColumn(m_hList, 3, &col);
 
@@ -69,10 +69,18 @@ void RapidFireDlg::redrawMenu(int ntabs)
 	{
 		ZeroMemory(&info, sizeof(info));
 		info.cbSize = sizeof(info);
-		info.fMask = MIIM_FTYPE | MIIM_STATE;
+		info.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_STRING;
 		GetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 		info.fType = MFT_OWNERDRAW;
-		info.fState = 0;
+		info.fState = MFS_UNCHECKED;
+		switch (i)
+		{
+		case 0: info.dwTypeData = I18N.MENU_ADD; break;
+		case 1: info.dwTypeData = I18N.MENU_EDIT; break;
+		case 2: info.dwTypeData = I18N.MENU_DEL; break;
+		case 3: info.dwTypeData = I18N.MENU_COPY; break;
+		case 4: info.dwTypeData = I18N.MENU_SEPARATOR; break;
+		}
 		SetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 	}
 }
@@ -93,24 +101,24 @@ void RapidFireDlg::_ShowWindow(HWND hWnd)
 	m_active = true;
 }
 
-INT_PTR CALLBACK RapidFireDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK RapidFireDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	RapidFireDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<RapidFireDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<RapidFireDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<RapidFireDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<RapidFireDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

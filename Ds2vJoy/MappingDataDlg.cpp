@@ -260,14 +260,6 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 
 	Hide();
 	
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_1);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_2);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_3);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_4);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_5);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_6);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_7);
-	mouseoverCB.push_back(IDC_MAPPING_ACTION_8);
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_1);
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_2);
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_3);
@@ -405,14 +397,6 @@ void MappingDataDlg::Open(HWND parent, int mode, int tab)
 	firsttime = false;
 	canprint = false;
 
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_1));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_2));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_3));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_4));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_5));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_6));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_7));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_8));
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1));
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2));
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3));
@@ -447,24 +431,24 @@ void MappingDataDlg::_InitDialog(HWND hWnd)
 	}
 }
 
-INT_PTR CALLBACK MappingDataDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK MappingDataDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	MappingDataDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<MappingDataDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<MappingDataDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<MappingDataDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<MappingDataDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -895,6 +879,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"M"); break; }
 				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"S"); break; }
 				case 3: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"A"); break; }
+				case 4: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"W"); break; }
 				}
 				break;
 			}
@@ -913,6 +898,22 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
 				}
 				break;
+			}
+			case IDC_MAPPING_OVERCONTROL_1:
+			case IDC_MAPPING_OVERCONTROL_2:
+			case IDC_MAPPING_OVERCONTROL_3:
+			case IDC_MAPPING_OVERCONTROL_4:
+			case IDC_MAPPING_OVERCONTROL_5:
+			case IDC_MAPPING_OVERCONTROL_6:
+			case IDC_MAPPING_OVERCONTROL_7:
+			case IDC_MAPPING_OVERCONTROL_8:
+			{
+			switch (mappingData.Overcontrol[DrawMenuStructure->CtlID - IDC_MAPPING_OVERCONTROL_1])
+			{
+			case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); break; }
+			case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+			}
+			break;
 			}
 			case IDC_MAPPING_VJOY_1_DISABLE:
 			case IDC_MAPPING_VJOY_2_DISABLE:
@@ -1196,6 +1197,26 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					if (mappingData.ActionType[7] == 3)
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
 				}
+				for (int i = 0; i < Mapping::modules_Count; i++)
+				{
+					const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+					if (mappingData.ActionType[0] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[1] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[2] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[3] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[4] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[5] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[6] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[7] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+				}
 				SendMessage(hWnd, WM_GRID, 0, 0);
 			}
 
@@ -1263,14 +1284,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_6, mappingData.NlRelease[5]);
 			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_7, mappingData.NlRelease[6]);
 			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_8, mappingData.NlRelease[7]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_1, mappingData.Overcontrol[0]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_2, mappingData.Overcontrol[1]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_3, mappingData.Overcontrol[2]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_4, mappingData.Overcontrol[3]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_5, mappingData.Overcontrol[4]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_6, mappingData.Overcontrol[5]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_7, mappingData.Overcontrol[6]);
-			CheckDlgButton(hWnd, IDC_MAPPING_OVERCONTROL_8, mappingData.Overcontrol[7]);
 
 			canprint = false;
 			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_START), WCHARI(20, L"%d", mappingData.Start[0]));
@@ -1345,6 +1358,14 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH));
 					}
 				}
+				else if (mappingData.ActionType[i] == 2)
+					if (mappingData.vjID[i] == mappingData.SCREENSHOT)
+					{
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_X));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_W));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_H));
+					}
 			}
 		}
 		if (mappingData.ActionType[0])
@@ -1620,46 +1641,30 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (((LPNMHDR)lParam)->idFrom)
 				{
-				case IDC_MAPPING_ACTION_1:			{ state[0] = state[0] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_2:			{ state[1] = state[1] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_3:			{ state[2] = state[2] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_4:			{ state[3] = state[3] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_5:			{ state[4] = state[4] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_6:			{ state[5] = state[5] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_7:			{ state[6] = state[6] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_8:			{ state[7] = state[7] | 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_1:		{ state[0] = state[0] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_2:		{ state[1] = state[1] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_3:		{ state[2] = state[2] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_4:		{ state[3] = state[3] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_5:		{ state[4] = state[4] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_6:		{ state[5] = state[5] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_7:		{ state[6] = state[6] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_8:		{ state[7] = state[7] | 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_ONRELEASE_1:		{ state[8] = state[8] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_2:		{ state[9] = state[9] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_3:		{ state[10] = state[10] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_4:		{ state[11] = state[11] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_5:		{ state[12] = state[12] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_6:		{ state[13] = state[13] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_7:		{ state[14] = state[14] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_8:		{ state[15] = state[15] | 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_1:		{ state[8] = state[8] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_2:		{ state[9] = state[9] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_3:		{ state[10] = state[10] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_4:		{ state[11] = state[11] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_5:		{ state[12] = state[12] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_6:		{ state[13] = state[13] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_7:		{ state[14] = state[14] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_8:		{ state[15] = state[15] | 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_1:		{ state[8] = state[8] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_2:		{ state[9] = state[9] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_3:		{ state[10] = state[10] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_4:		{ state[11] = state[11] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_5:		{ state[12] = state[12] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_6:		{ state[13] = state[13] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_7:		{ state[14] = state[14] | 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_8:		{ state[15] = state[15] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_1:		{ state[0] = state[0] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_2:		{ state[1] = state[1] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_3:		{ state[2] = state[2] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_4:		{ state[3] = state[3] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_5:		{ state[4] = state[4] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_6:		{ state[5] = state[5] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_7:		{ state[6] = state[6] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_8:		{ state[7] = state[7] | 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_1:		{ state[0] = state[0] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_2:		{ state[1] = state[1] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_3:		{ state[2] = state[2] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_4:		{ state[3] = state[3] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_5:		{ state[4] = state[4] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_6:		{ state[5] = state[5] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_7:		{ state[6] = state[6] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_8:		{ state[7] = state[7] | 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_1:		{ state[0] = state[0] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_2:		{ state[1] = state[1] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_3:		{ state[2] = state[2] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_4:		{ state[3] = state[3] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_5:		{ state[4] = state[4] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_6:		{ state[5] = state[5] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_7:		{ state[6] = state[6] | 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_8:		{ state[7] = state[7] | 0x4; ShowNoRelease(); break; }
 				default:
 					return FALSE;
 				}
@@ -1669,46 +1674,30 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (((LPNMHDR)lParam)->idFrom)
 				{
-				case IDC_MAPPING_ACTION_1:			{ state[0] = state[0] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_2:			{ state[1] = state[1] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_3:			{ state[2] = state[2] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_4:			{ state[3] = state[3] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_5:			{ state[4] = state[4] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_6:			{ state[5] = state[5] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_7:			{ state[6] = state[6] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_ACTION_8:			{ state[7] = state[7] ^ 0x1; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_1:		{ state[0] = state[0] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_2:		{ state[1] = state[1] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_3:		{ state[2] = state[2] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_4:		{ state[3] = state[3] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_5:		{ state[4] = state[4] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_6:		{ state[5] = state[5] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_7:		{ state[6] = state[6] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_OVERCONTROL_8:		{ state[7] = state[7] ^ 0x2; ShowOverControll(); break; }
-				case IDC_MAPPING_ONRELEASE_1:		{ state[8] = state[8] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_2:		{ state[9] = state[9] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_3:		{ state[10] = state[10] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_4:		{ state[11] = state[11] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_5:		{ state[12] = state[12] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_6:		{ state[13] = state[13] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_7:		{ state[14] = state[14] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_ONRELEASE_8:		{ state[15] = state[15] ^ 0x1; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_1:		{ state[8] = state[8] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_2:		{ state[9] = state[9] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_3:		{ state[10] = state[10] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_4:		{ state[11] = state[11] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_5:		{ state[12] = state[12] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_6:		{ state[13] = state[13] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_7:		{ state[14] = state[14] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NORELEASE_8:		{ state[15] = state[15] ^ 0x2; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_1:		{ state[8] = state[8] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_2:		{ state[9] = state[9] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_3:		{ state[10] = state[10] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_4:		{ state[11] = state[11] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_5:		{ state[12] = state[12] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_6:		{ state[13] = state[13] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_7:		{ state[14] = state[14] ^ 0x4; ShowNoRelease(); break; }
-				case IDC_MAPPING_NLRELEASE_8:		{ state[15] = state[15] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_1:		{ state[0] = state[0] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_2:		{ state[1] = state[1] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_3:		{ state[2] = state[2] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_4:		{ state[3] = state[3] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_5:		{ state[4] = state[4] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_6:		{ state[5] = state[5] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_7:		{ state[6] = state[6] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_ONRELEASE_8:		{ state[7] = state[7] ^ 0x1; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_1:		{ state[0] = state[0] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_2:		{ state[1] = state[1] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_3:		{ state[2] = state[2] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_4:		{ state[3] = state[3] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_5:		{ state[4] = state[4] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_6:		{ state[5] = state[5] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_7:		{ state[6] = state[6] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NORELEASE_8:		{ state[7] = state[7] ^ 0x2; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_1:		{ state[0] = state[0] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_2:		{ state[1] = state[1] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_3:		{ state[2] = state[2] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_4:		{ state[3] = state[3] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_5:		{ state[4] = state[4] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_6:		{ state[5] = state[5] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_7:		{ state[6] = state[6] ^ 0x4; ShowNoRelease(); break; }
+				case IDC_MAPPING_NLRELEASE_8:		{ state[7] = state[7] ^ 0x4; ShowNoRelease(); break; }
 				default:
 					return FALSE;
 				}
@@ -1755,14 +1744,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case IDC_MAPPING_NLRELEASE_6:
 			case IDC_MAPPING_NLRELEASE_7:
 			case IDC_MAPPING_NLRELEASE_8:
-			case IDC_MAPPING_OVERCONTROL_1:
-			case IDC_MAPPING_OVERCONTROL_2:
-			case IDC_MAPPING_OVERCONTROL_3:
-			case IDC_MAPPING_OVERCONTROL_4:
-			case IDC_MAPPING_OVERCONTROL_5:
-			case IDC_MAPPING_OVERCONTROL_6:
-			case IDC_MAPPING_OVERCONTROL_7:
-			case IDC_MAPPING_OVERCONTROL_8:
 			{
 				if (DrawMenuCustom->dwDrawStage == CDDS_PREPAINT)
 				{
@@ -3426,7 +3407,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[0] = (mappingData.ActionType[0] + 1) % 4;
+				mappingData.ActionType[0] = (mappingData.ActionType[0] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[0] == 1)
 				{
@@ -3461,6 +3442,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[0] == 4)
+				{
+					mappingData.vjID[0] = Mapping::modules_none;
+					mappingData.vjDisable[0] = false;
+					Modified[Mofified_vjDisable1] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[0] = vJoyButtonID::none;
@@ -3488,7 +3480,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[1] = (mappingData.ActionType[1] + 1) % 4;
+				mappingData.ActionType[1] = (mappingData.ActionType[1] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[1] == 1)
 				{
@@ -3523,6 +3515,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[1] == 4)
+				{
+					mappingData.vjID[1] = Mapping::modules_none;
+					mappingData.vjDisable[1] = false;
+					Modified[Mofified_vjDisable2] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[1] = vJoyButtonID::none;
@@ -3550,7 +3553,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[2] = (mappingData.ActionType[2] + 1) % 4;
+				mappingData.ActionType[2] = (mappingData.ActionType[2] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[2] == 1)
 				{
@@ -3585,6 +3588,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[2] == 4)
+				{
+					mappingData.vjID[2] = Mapping::modules_none;
+					mappingData.vjDisable[2] = false;
+					Modified[Mofified_vjDisable3] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[2] = vJoyButtonID::none;
@@ -3612,7 +3626,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[3] = (mappingData.ActionType[3] + 1) % 4;
+				mappingData.ActionType[3] = (mappingData.ActionType[3] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[3] == 1)
 				{
@@ -3647,6 +3661,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[3] == 4)
+				{
+					mappingData.vjID[3] = Mapping::modules_none;
+					mappingData.vjDisable[3] = false;
+					Modified[Mofified_vjDisable4] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[3] = vJoyButtonID::none;
@@ -3674,7 +3699,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[4] = (mappingData.ActionType[4] + 1) % 4;
+				mappingData.ActionType[4] = (mappingData.ActionType[4] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[4] == 1)
 				{
@@ -3709,6 +3734,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[4] == 4)
+				{
+					mappingData.vjID[4] = Mapping::modules_none;
+					mappingData.vjDisable[4] = false;
+					Modified[Mofified_vjDisable5] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[4] = vJoyButtonID::none;
@@ -3736,7 +3772,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[5] = (mappingData.ActionType[5] + 1) % 4;
+				mappingData.ActionType[5] = (mappingData.ActionType[5] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[5] == 1)
 				{
@@ -3771,6 +3807,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[5] == 4)
+				{
+					mappingData.vjID[5] = Mapping::modules_none;
+					mappingData.vjDisable[5] = false;
+					Modified[Mofified_vjDisable6] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[5] = vJoyButtonID::none;
@@ -3798,7 +3845,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[6] = (mappingData.ActionType[6] + 1) % 4;
+				mappingData.ActionType[6] = (mappingData.ActionType[6] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[6] == 1)
 				{
@@ -3833,6 +3880,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
+				else if (mappingData.ActionType[6] == 4)
+				{
+					mappingData.vjID[6] = Mapping::modules_none;
+					mappingData.vjDisable[6] = false;
+					Modified[Mofified_vjDisable7] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
 				else
 				{
 					mappingData.vjID[6] = vJoyButtonID::none;
@@ -3860,7 +3918,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[7] = (mappingData.ActionType[7] + 1) % 4;
+				mappingData.ActionType[7] = (mappingData.ActionType[7] + 1) % 5;
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[7] == 1)
 				{
@@ -3892,6 +3950,17 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
 					{
 						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[7] == 4)
+				{
+					mappingData.vjID[7] = Mapping::modules_none;
+					mappingData.vjDisable[7] = false;
+					Modified[Mofified_vjDisable8] = true;
+					for (int i = 0; i < Mapping::modules_Count; i++)
+					{
+						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
 						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
@@ -4951,21 +5020,6 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	return TRUE;
 }
 
-void MappingDataDlg::ShowOverControll()
-{
-	bool oc[8];
-	for (int i = 0; i < 8; i++)
-		oc[i] = mappingData.Overcontrol[i];
-	if (oc[0] || state[0]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_1)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_1));
-	if (oc[1] || state[1]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_2)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_2));
-	if (oc[2] || state[2]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_3)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_3));
-	if (oc[3] || state[3]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_4)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_4));
-	if (oc[4] || state[4]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_5)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_5));
-	if (oc[5] || state[5]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_6)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_6));
-	if (oc[6] || state[6]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_7)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_7));
-	if (oc[7] || state[7]) Show(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_8)); else Hide(GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_8));
-}
-
 void MappingDataDlg::ShowNoRelease()
 {
 	bool no[8];
@@ -4975,14 +5029,14 @@ void MappingDataDlg::ShowNoRelease()
 		nl[i] = !mappingData.NlRelease[i];
 		no[i] = nl[i] && !mappingData.NoRelease[i];
 	}
-	if (state[8]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_1)); } else { if (no[0]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1)); if (nl[0]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_1)); }
-	if (state[9]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_2)); } else { if (no[1]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2)); if (nl[1]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_2)); }
-	if (state[10]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_3)); } else { if (no[2]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3)); if (nl[2]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_3)); }
-	if (state[11]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_4)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_4)); } else { if (no[3]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_4)); if (nl[3]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_4)); }
-	if (state[12]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_5)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_5)); } else { if (no[4]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_5)); if (nl[4]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_5)); }
-	if (state[13]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_6)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_6)); } else { if (no[5]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_6)); if (nl[5]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_6)); }
-	if (state[14]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_7)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_7)); } else { if (no[6]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_7)); if (nl[6]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_7)); }
-	if (state[15]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_8)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8)); } else { if (no[7]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_8)); if (nl[7]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8)); }
+	if (state[0]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_1)); } else { if (no[0]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1)); if (nl[0]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_1)); }
+	if (state[1]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_2)); } else { if (no[1]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2)); if (nl[1]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_2)); }
+	if (state[2]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_3)); } else { if (no[2]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3)); if (nl[2]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_3)); }
+	if (state[3]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_4)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_4)); } else { if (no[3]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_4)); if (nl[3]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_4)); }
+	if (state[4]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_5)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_5)); } else { if (no[4]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_5)); if (nl[4]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_5)); }
+	if (state[5]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_6)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_6)); } else { if (no[5]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_6)); if (nl[5]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_6)); }
+	if (state[6]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_7)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_7)); } else { if (no[6]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_7)); if (nl[6]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_7)); }
+	if (state[7]) { Show(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_8)); Show(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8)); } else { if (no[7]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_8)); if (nl[7]) Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8)); }
 }
 
 void MappingDataDlg::Show(HWND hWnd)

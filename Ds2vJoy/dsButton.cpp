@@ -260,17 +260,17 @@ BOOL dsButton::isPushed()
 		}
 	}
 
-	if (tape.MouseActive)
+	if (tape.KeyboardActive || tape.KeyboardActivetmp)
+		switch (m_type)
+		{
+		case Type_Keyboard: return (*m_data & m_mask);
+		}
+
+	if (tape.MouseActive || tape.MouseActivetmp)
 		switch (m_type)
 		{
 		case Type_MouseTrigger: return *m_data > tape.Threshold;
 		case Type_MouseAxis: return ((*m_data - 127) * (*m_data - 127)) > (tape.Threshold * tape.Threshold);
-		}
-
-	if (tape.KeyboardActive)
-		switch (m_type)
-		{
-		case Type_Keyboard: return (*m_data & m_mask);
 		}
 
 	return FALSE;
@@ -347,18 +347,18 @@ BYTE dsButton::GetVal()
 		}
 	}
 
-	if (tape.MouseActive)
+	if (tape.KeyboardActive || tape.KeyboardActivetmp)
+		switch (m_type)
+		{
+		case Type_Keyboard: return (*m_data & m_mask) ? 0xFF : 0;
+		}
+
+	if (tape.MouseActive || tape.MouseActivetmp)
 		switch (m_type)
 		{
 		case Type_MouseTrigger: return (*m_data * (255 + m_thrz) / 255) - m_thrz;
 		case Type_MouseAxis: return (*m_data > 127 + tape.Threshold) ? (127 + (((*m_data - 127 - tape.Threshold) * 128) / (128 - tape.Threshold))) :
 									((*m_data < 128 - tape.Threshold) ? ((*m_data * 128) / (128 - tape.Threshold)) : 127);
-		}
-
-	if (tape.KeyboardActive)
-		switch (m_type)
-		{
-		case Type_Keyboard: return (*m_data & m_mask) ? 0xFF : 0;
 		}
 
 	return GetReleasedVal();
@@ -425,17 +425,17 @@ int dsButton::GetScrollVal()
 		}
 	}
 
-	if (tape.MouseActive)
+	if (tape.KeyboardActive || tape.KeyboardActivetmp)
+		switch (m_type)
+		{
+		case Type_Keyboard: return -1;
+		}
+
+	if (tape.MouseActive || tape.MouseActivetmp)
 		switch (m_type)
 		{
 		case Type_MouseTrigger: return 120 - (114 * ((*m_data * (255 - m_thrz) / 255) + m_thrz)) / 255;
 		case Type_MouseAxis: return (*m_data - 133 > 0) ? (120 - (114 * max(0, (*m_data - 133))) / 122) : 0;
-		}
-
-	if (tape.KeyboardActive)
-		switch (m_type)
-		{
-		case Type_Keyboard: return -1;
 		}
 
 	return 0;
@@ -451,7 +451,7 @@ WCHAR* dsButton::String(ButtonID id)
 {
 	switch (id)
 	{
-	case none: return L"";
+	case none: return WCHARI(L"");
 	case LX: return I18N.Button_LX;
 	case LY: return I18N.Button_LY;
 	case RX: return I18N.Button_RX;
@@ -529,118 +529,118 @@ WCHAR* dsButton::String(ButtonID id)
 	case L1R1: return I18N.Button_L1R1;
 	case L2R2: return I18N.Button_L2R2;
 	case BATTERY: return I18N.Button_BATTERY;
-	case MOUSE_AXEX: return L"MOUSEAXEX";
-	case MOUSE_AXEY: return L"MOUSEAXEY";
-	case MOUSE_LEFT: return L"MOUSELEFT";
-	case MOUSE_RIGHT: return L"MOUSERIGHT";
-	case MOUSE_UP: return L"MOUSEUP";
-	case MOUSE_DOWN: return L"MOUSEDOWN";
-	case KID_LBUTTON: return L"LBUTTON";
-	case KID_MBUTTON: return L"MBUTTON";
-	case KID_RBUTTON: return L"RBUTTON";
-	case KID_XBUTTON1: return L"XBUTTON1";
-	case KID_XBUTTON2: return L"XBUTTON2";
-	case KID_F1: return L"F1";
-	case KID_F2: return L"F2";
-	case KID_F3: return L"F3";
-	case KID_F4: return L"F4";
-	case KID_F5: return L"F5";
-	case KID_F6: return L"F6";
-	case KID_F7: return L"F7";
-	case KID_F8: return L"F8";
-	case KID_F9: return L"F9";
-	case KID_F10: return L"F10";
-	case KID_F11: return L"F11";
-	case KID_F12: return L"F12";
-	case KID_0: return L"0";
-	case KID_1: return L"1";
-	case KID_2: return L"2";
-	case KID_3: return L"3";
-	case KID_4: return L"4";
-	case KID_5: return L"5";
-	case KID_6: return L"6";
-	case KID_7: return L"7";
-	case KID_8: return L"8";
-	case KID_9: return L"9";
-	case KID_OEM_MINUS: return L"OEM_MINUS";
-	case KID_OEM_PLUS: return L"OEM_PLUS";
-	case KID_OEM_1: return L"OEM_1";
-	case KID_OEM_2: return L"OEM_2";
-	case KID_OEM_3: return L"OEM_3";
-	case KID_OEM_4: return L"OEM_4";
-	case KID_OEM_5: return L"OEM_5";
-	case KID_OEM_6: return L"OEM_6";
-	case KID_OEM_7: return L"OEM_7";
-	case KID_OEM_8: return L"OEM_8";
-	case KID_OEM_102: return L"OEM_102";
-	case KID_OEM_COMMA: return L"OEM_COMMA";
-	case KID_OEM_PERIOD: return L"OEM_PERIOD";
-	case KID_A: return L"A";
-	case KID_B: return L"B";
-	case KID_C: return L"C";
-	case KID_D: return L"D";
-	case KID_E: return L"E";
-	case KID_F: return L"F";
-	case KID_G: return L"G";
-	case KID_H: return L"H";
-	case KID_I: return L"I";
-	case KID_J: return L"J";
-	case KID_K: return L"K";
-	case KID_L: return L"L";
-	case KID_M: return L"M";
-	case KID_N: return L"N";
-	case KID_O: return L"O";
-	case KID_P: return L"P";
-	case KID_Q: return L"Q";
-	case KID_R: return L"R";
-	case KID_S: return L"S";
-	case KID_T: return L"T";
-	case KID_U: return L"U";
-	case KID_V: return L"V";
-	case KID_W: return L"W";
-	case KID_X: return L"X";
-	case KID_Y: return L"Y";
-	case KID_Z: return L"Z";
-	case KID_ESCAPE: return L"ESCAPE";
-	case KID_TAB: return L"TAB";
-	case KID_RETURN: return L"RETURN";
-	case KID_SPACE: return L"SPACE";
-	case KID_BACK: return L"BACK";
-	case KID_DELETE: return L"DELETE";
-	case KID_INSERT: return L"INSERT";
-	case KID_NUMLOCK: return L"NUMLOCK";
-	case KID_LSHIFT: return L"LSHIFT";
-	case KID_RSHIFT: return L"RSHIFT";
-	case KID_LCONTROL: return L"LCONTROL";
-	case KID_RCONTROL: return L"RCONTROL";
-	case KID_LWIN: return L"LWIN";
-	case KID_RWIN: return L"RWIN";
-	case KID_LMENU: return L"LMENU";
-	case KID_RMENU: return L"RMENU";
-	case KID_LEFT: return L"LEFT";
-	case KID_UP: return L"UP";
-	case KID_RIGHT: return L"RIGHT";
-	case KID_DOWN: return L"DOWN";
-	case KID_PRIOR: return L"PRIOR";
-	case KID_NEXT: return L"NEXT";
-	case KID_END: return L"END";
-	case KID_HOME: return L"HOME";
-	case KID_NUMPAD0: return L"NUMPAD0";
-	case KID_NUMPAD1: return L"NUMPAD1";
-	case KID_NUMPAD2: return L"NUMPAD2";
-	case KID_NUMPAD3: return L"NUMPAD3";
-	case KID_NUMPAD4: return L"NUMPAD4";
-	case KID_NUMPAD5: return L"NUMPAD5";
-	case KID_NUMPAD6: return L"NUMPAD6";
-	case KID_NUMPAD7: return L"NUMPAD7";
-	case KID_NUMPAD8: return L"NUMPAD8";
-	case KID_NUMPAD9: return L"NUMPAD9";
-	case KID_DIVIDE: return L"DIVIDE";
-	case KID_MULTIPLY: return L"MULTIPLY";
-	case KID_SUBTRACT: return L"SUBTRACT";
-	case KID_ADD: return L"ADD";
-	case KID_SEPARATOR: return L"SEPARATOR";
-	case KID_DECIMAL: return L"DECIMAL";
-	default: return L"???";
+	case MOUSE_AXEX: return WCHARI(L"MOUSEAXEX");
+	case MOUSE_AXEY: return WCHARI(L"MOUSEAXEY");
+	case MOUSE_LEFT: return WCHARI(L"MOUSELEFT");
+	case MOUSE_RIGHT: return WCHARI(L"MOUSERIGHT");
+	case MOUSE_UP: return WCHARI(L"MOUSEUP");
+	case MOUSE_DOWN: return WCHARI(L"MOUSEDOWN");
+	case KID_LBUTTON: return WCHARI(L"LBUTTON");
+	case KID_MBUTTON: return WCHARI(L"MBUTTON");
+	case KID_RBUTTON: return WCHARI(L"RBUTTON");
+	case KID_XBUTTON1: return WCHARI(L"XBUTTON1");
+	case KID_XBUTTON2: return WCHARI(L"XBUTTON2");
+	case KID_F1: return WCHARI(L"F1");
+	case KID_F2: return WCHARI(L"F2");
+	case KID_F3: return WCHARI(L"F3");
+	case KID_F4: return WCHARI(L"F4");
+	case KID_F5: return WCHARI(L"F5");
+	case KID_F6: return WCHARI(L"F6");
+	case KID_F7: return WCHARI(L"F7");
+	case KID_F8: return WCHARI(L"F8");
+	case KID_F9: return WCHARI(L"F9");
+	case KID_F10: return WCHARI(L"F10");
+	case KID_F11: return WCHARI(L"F11");
+	case KID_F12: return WCHARI(L"F12");
+	case KID_0: return WCHARI(L"0");
+	case KID_1: return WCHARI(L"1");
+	case KID_2: return WCHARI(L"2");
+	case KID_3: return WCHARI(L"3");
+	case KID_4: return WCHARI(L"4");
+	case KID_5: return WCHARI(L"5");
+	case KID_6: return WCHARI(L"6");
+	case KID_7: return WCHARI(L"7");
+	case KID_8: return WCHARI(L"8");
+	case KID_9: return WCHARI(L"9");
+	case KID_OEM_MINUS: return WCHARI(L"OEM_MINUS");
+	case KID_OEM_PLUS: return WCHARI(L"OEM_PLUS");
+	case KID_OEM_1: return WCHARI(L"OEM_1");
+	case KID_OEM_2: return WCHARI(L"OEM_2");
+	case KID_OEM_3: return WCHARI(L"OEM_3");
+	case KID_OEM_4: return WCHARI(L"OEM_4");
+	case KID_OEM_5: return WCHARI(L"OEM_5");
+	case KID_OEM_6: return WCHARI(L"OEM_6");
+	case KID_OEM_7: return WCHARI(L"OEM_7");
+	case KID_OEM_8: return WCHARI(L"OEM_8");
+	case KID_OEM_102: return WCHARI(L"OEM_102");
+	case KID_OEM_COMMA: return WCHARI(L"OEM_COMMA");
+	case KID_OEM_PERIOD: return WCHARI(L"OEM_PERIOD");
+	case KID_A: return WCHARI(L"A");
+	case KID_B: return WCHARI(L"B");
+	case KID_C: return WCHARI(L"C");
+	case KID_D: return WCHARI(L"D");
+	case KID_E: return WCHARI(L"E");
+	case KID_F: return WCHARI(L"F");
+	case KID_G: return WCHARI(L"G");
+	case KID_H: return WCHARI(L"H");
+	case KID_I: return WCHARI(L"I");
+	case KID_J: return WCHARI(L"J");
+	case KID_K: return WCHARI(L"K");
+	case KID_L: return WCHARI(L"L");
+	case KID_M: return WCHARI(L"M");
+	case KID_N: return WCHARI(L"N");
+	case KID_O: return WCHARI(L"O");
+	case KID_P: return WCHARI(L"P");
+	case KID_Q: return WCHARI(L"Q");
+	case KID_R: return WCHARI(L"R");
+	case KID_S: return WCHARI(L"S");
+	case KID_T: return WCHARI(L"T");
+	case KID_U: return WCHARI(L"U");
+	case KID_V: return WCHARI(L"V");
+	case KID_W: return WCHARI(L"W");
+	case KID_X: return WCHARI(L"X");
+	case KID_Y: return WCHARI(L"Y");
+	case KID_Z: return WCHARI(L"Z");
+	case KID_ESCAPE: return WCHARI(L"ESCAPE");
+	case KID_TAB: return WCHARI(L"TAB");
+	case KID_RETURN: return WCHARI(L"RETURN");
+	case KID_SPACE: return WCHARI(L"SPACE");
+	case KID_BACK: return WCHARI(L"BACK");
+	case KID_DELETE: return WCHARI(L"DELETE");
+	case KID_INSERT: return WCHARI(L"INSERT");
+	case KID_NUMLOCK: return WCHARI(L"NUMLOCK");
+	case KID_LSHIFT: return WCHARI(L"LSHIFT");
+	case KID_RSHIFT: return WCHARI(L"RSHIFT");
+	case KID_LCONTROL: return WCHARI(L"LCONTROL");
+	case KID_RCONTROL: return WCHARI(L"RCONTROL");
+	case KID_LWIN: return WCHARI(L"LWIN");
+	case KID_RWIN: return WCHARI(L"RWIN");
+	case KID_LMENU: return WCHARI(L"LMENU");
+	case KID_RMENU: return WCHARI(L"RMENU");
+	case KID_LEFT: return WCHARI(L"LEFT");
+	case KID_UP: return WCHARI(L"UP");
+	case KID_RIGHT: return WCHARI(L"RIGHT");
+	case KID_DOWN: return WCHARI(L"DOWN");
+	case KID_PRIOR: return WCHARI(L"PRIOR");
+	case KID_NEXT: return WCHARI(L"NEXT");
+	case KID_END: return WCHARI(L"END");
+	case KID_HOME: return WCHARI(L"HOME");
+	case KID_NUMPAD0: return WCHARI(L"NUMPAD0");
+	case KID_NUMPAD1: return WCHARI(L"NUMPAD1");
+	case KID_NUMPAD2: return WCHARI(L"NUMPAD2");
+	case KID_NUMPAD3: return WCHARI(L"NUMPAD3");
+	case KID_NUMPAD4: return WCHARI(L"NUMPAD4");
+	case KID_NUMPAD5: return WCHARI(L"NUMPAD5");
+	case KID_NUMPAD6: return WCHARI(L"NUMPAD6");
+	case KID_NUMPAD7: return WCHARI(L"NUMPAD7");
+	case KID_NUMPAD8: return WCHARI(L"NUMPAD8");
+	case KID_NUMPAD9: return WCHARI(L"NUMPAD9");
+	case KID_DIVIDE: return WCHARI(L"DIVIDE");
+	case KID_MULTIPLY: return WCHARI(L"MULTIPLY");
+	case KID_SUBTRACT: return WCHARI(L"SUBTRACT");
+	case KID_ADD: return WCHARI(L"ADD");
+	case KID_SEPARATOR: return WCHARI(L"SEPARATOR");
+	case KID_DECIMAL: return WCHARI(L"DECIMAL");
+	default: return WCHARI(L"???");
 	}
 }

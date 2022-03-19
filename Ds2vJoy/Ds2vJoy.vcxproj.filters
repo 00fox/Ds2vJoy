@@ -176,6 +176,9 @@
     <ClInclude Include="NotepadDlg.h">
       <Filter>10_Notepad</Filter>
     </ClInclude>
+    <ClInclude Include="ExplorerDlg.h">
+      <Filter>8_Explorer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Guardian.cpp">
@@ -268,6 +271,9 @@
     <ClCompile Include="NotepadDlg.cpp">
       <Filter>10_Notepad</Filter>
     </ClCompile>
+    <ClCompile Include="ExplorerDlg.cpp">
+      <Filter>8_Explorer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Ds2vJoy.bmp">
@@ -291,6 +297,7 @@
     <None Include="ViGEm\ViGEmBus.zip" />
     <None Include="HidGuardian\HidGuardian.zip" />
     <None Include="HidGuardian\HidCerberus.zip" />
+    <None Include="WebView2\WebView2Loader.dll" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -298,6 +305,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Fonts\NotepadFont_full.ttf" />
+    <Font Include="Fonts\NotepadFont.ttf" />
   </ItemGroup>
 </Project>

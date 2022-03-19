@@ -140,7 +140,6 @@ public:
 	void				Hide(HWND hWnd = NULL);
 	BOOL				MoveWindow(int, int, int, int, BOOL);
 	void				SetTransparency(bool transparencyon);
-	void				ShowOverControll();
 	void				ShowNoRelease();
 
 	HWND				m_hDlg = NULL;
@@ -182,7 +181,7 @@ private:
 	bool				m_moveLock = false;
 	bool				m_drawLock = false;
 
-	byte				state[16] = { 0 };
+	byte				state[8] = { 0 };
 	std::vector<unsigned int>	mouseoverCB = { };
 
 	HBRUSH				hbrush_z01 = NULL;

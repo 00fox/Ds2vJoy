@@ -25,7 +25,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		m_isClonedList = true;
 		m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_CLONE), hWnd, (DLGPROC)Proc, LPARAM(this));
 
-		for (int i = 0; i < 32; i++) m_Randcolor[i] = rand() % 4;
+		for (int i = 0; i < 32; i++) { m_Randcolor[i] = rand() % 4; }
 
 		long lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
 		lStyle = lStyle & ~WS_CAPTION;
@@ -123,12 +123,25 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		{
 			ZeroMemory(&info, sizeof(info));
 			info.cbSize = sizeof(info);
-			info.fMask = MIIM_FTYPE | MIIM_STATE;
+			info.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_STRING;
 			GetMenuItemInfo(hMenu_Tabs_2, m_TabsID[i], FALSE, &info);
 			if (i == 0)
 				GetMenuItemInfo(hMenu_Tabs, m_TabsID[i], FALSE, &info);
 			info.fType = MFT_OWNERDRAW;
-			info.fState = 0;
+			info.fState = MFS_UNCHECKED;
+			switch (i)
+			{
+			case 0: info.dwTypeData = I18N.MENU_SEE_VIEW2; break;
+			case 1: info.dwTypeData = I18N.MENU_TO_MODE_0; break;
+			case 2: info.dwTypeData = I18N.MENU_TO_MODE_1; break;
+			case 3: info.dwTypeData = I18N.MENU_TO_MODE_2; break;
+			case 4: info.dwTypeData = I18N.MENU_TO_MODE_3; break;
+			case 5: info.dwTypeData = I18N.MENU_TO_MODE_4; break;
+			case 6: info.dwTypeData = I18N.MENU_TO_MODE_5; break;
+			case 7: info.dwTypeData = I18N.MENU_TO_MODE_6; break;
+			case 8: info.dwTypeData = I18N.MENU_TO_MODE_7; break;
+			case 9: info.dwTypeData = I18N.MENU_TO_MODE_8; break;
+			}
 			SetMenuItemInfo(hMenu_Tabs_2, m_TabsID[i], FALSE, &info);
 			if (i == 0)
 				SetMenuItemInfo(hMenu_Tabs, m_TabsID[i], FALSE, &info);
@@ -157,15 +170,15 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 
 		if (isClone)
 		{
-			m_TabsID[0] = IDM_MENU_TO_MODE_0;
-			m_TabsID[1] = IDM_MENU_TO_MODE_1;
-			m_TabsID[2] = IDM_MENU_TO_MODE_2;
-			m_TabsID[3] = IDM_MENU_TO_MODE_3;
-			m_TabsID[4] = IDM_MENU_TO_MODE_4;
-			m_TabsID[5] = IDM_MENU_TO_MODE_5;
-			m_TabsID[6] = IDM_MENU_TO_MODE_6;
-			m_TabsID[7] = IDM_MENU_TO_MODE_7;
-			m_TabsID[8] = IDM_MENU_TO_MODE_8;
+			m_TabsID[0] = IDM_CLONE_TO_MODE_0;
+			m_TabsID[1] = IDM_CLONE_TO_MODE_1;
+			m_TabsID[2] = IDM_CLONE_TO_MODE_2;
+			m_TabsID[3] = IDM_CLONE_TO_MODE_3;
+			m_TabsID[4] = IDM_CLONE_TO_MODE_4;
+			m_TabsID[5] = IDM_CLONE_TO_MODE_5;
+			m_TabsID[6] = IDM_CLONE_TO_MODE_6;
+			m_TabsID[7] = IDM_CLONE_TO_MODE_7;
+			m_TabsID[8] = IDM_CLONE_TO_MODE_8;
 			m_hMenu2 = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_CLONE));
 			redrawMenu(9, true);
 		}
@@ -188,16 +201,16 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		col.pszText = I18N.dsButton;
 		col.cx = 53;
 		ListView_InsertColumn(m_hList, 0, &col);
-		col.pszText = L"";
+		col.pszText = WCHARI(L"");
 		col.cx = 58;
 		ListView_InsertColumn(m_hList, 1, &col);
-		col.pszText = L"";
+		col.pszText = WCHARI(L"");
 		col.cx = 58;
 		ListView_InsertColumn(m_hList, 2, &col);
-		col.pszText = L"";
+		col.pszText = WCHARI(L"");
 		col.cx = 58;
 		ListView_InsertColumn(m_hList, 3, &col);
-		col.pszText = L"";
+		col.pszText = WCHARI(L"");
 		col.cx = 58;
 		ListView_InsertColumn(m_hList, 4, &col);
 		col.pszText = (tape.MappingViewMode) ? I18N.Notice : I18N.vJoyButton;
@@ -223,9 +236,14 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 	{
 		m_hTab = GetDlgItem(m_hDlg, IDC_MAPPING_TAB);
 		SendMessage(m_hTab, WM_SETFONT, WPARAM(tape.hTab2), TRUE);
-		SendMessage(m_hTab, TCM_SETITEMSIZE, 0, MAKELPARAM(43, 17));	//Remove if TCS_RIGHTJUSTIFY
-		SendMessage(m_hTab, TCM_SETPADDING, 0, MAKELPARAM(0, 2));
+		TabCtrl_SetItemSize(m_hTab, 43, 17);
+		TabCtrl_SetPadding(m_hTab, 0, 2);
 		redrawTabs(tape.TabMapping);
+	}
+	else
+	{
+		Hide();
+		Show();
 	}
 
 	Hide();
@@ -298,13 +316,25 @@ void MappingDlg::redrawMenu(int ntabs, bool isclonemenu)
 		{
 			ZeroMemory(&info, sizeof(info));
 			info.cbSize = sizeof(info);
-			info.fMask = MIIM_FTYPE | MIIM_STATE;
+			info.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_STRING;
 			GetMenuItemInfo(m_hMenu2, m_TabsID[i], FALSE, &info);
 			info.fType = MFT_RADIOCHECK | MFT_OWNERDRAW;
 			if (i == m_Tab && m_isClonedList)
 				info.fState = MFS_DISABLED | MFS_DEFAULT | MFS_HILITE;
 			else
-				info.fState = 0;
+				info.fState = MFS_UNCHECKED;
+			switch (i)
+			{
+			case 0: info.dwTypeData = I18N.CLONE_TO_MODE_0; break;
+			case 1: info.dwTypeData = I18N.CLONE_TO_MODE_1; break;
+			case 2: info.dwTypeData = I18N.CLONE_TO_MODE_2; break;
+			case 3: info.dwTypeData = I18N.CLONE_TO_MODE_3; break;
+			case 4: info.dwTypeData = I18N.CLONE_TO_MODE_4; break;
+			case 5: info.dwTypeData = I18N.CLONE_TO_MODE_5; break;
+			case 6: info.dwTypeData = I18N.CLONE_TO_MODE_6; break;
+			case 7: info.dwTypeData = I18N.CLONE_TO_MODE_7; break;
+			case 8: info.dwTypeData = I18N.CLONE_TO_MODE_8; break;
+			}
 			SetMenuItemInfo(m_hMenu2, m_TabsID[i], FALSE, &info);
 		}
 	else
@@ -312,10 +342,29 @@ void MappingDlg::redrawMenu(int ntabs, bool isclonemenu)
 		{
 			ZeroMemory(&info, sizeof(info));
 			info.cbSize = sizeof(info);
-			info.fMask = MIIM_FTYPE | MIIM_STATE;
+			info.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_STRING;
 			GetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 			info.fType = MFT_OWNERDRAW;
-			info.fState = 0;
+			info.fState = MFS_UNCHECKED;
+			switch (i)
+			{
+			case 0: info.dwTypeData = I18N.MENU_ADD; break;
+			case 1: info.dwTypeData = I18N.MENU_EDIT; break;
+			case 2: info.dwTypeData = I18N.MENU_DEL; break;
+			case 3: info.dwTypeData = I18N.MENU_COPY; break;
+			case 4: info.dwTypeData = I18N.MENU_SEPARATOR; break;
+			case 5: info.dwTypeData = I18N.MENU_MOVE_TO_0; break;
+			case 6: info.dwTypeData = I18N.MENU_MOVE_TO_1; break;
+			case 7: info.dwTypeData = I18N.MENU_MOVE_TO_2; break;
+			case 8: info.dwTypeData = I18N.MENU_MOVE_TO_3; break;
+			case 9: info.dwTypeData = I18N.MENU_MOVE_TO_4; break;
+			case 10: info.dwTypeData = I18N.MENU_MOVE_TO_5; break;
+			case 11: info.dwTypeData = I18N.MENU_MOVE_TO_6; break;
+			case 12: info.dwTypeData = I18N.MENU_MOVE_TO_7; break;
+			case 13: info.dwTypeData = I18N.MENU_MOVE_TO_8; break;
+			case 14: info.dwTypeData = I18N.MENU_SWAP_VIEW; break;
+			case 15: info.dwTypeData = I18N.MENU_ADD_NOTICE; break;
+			}
 			SetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 		}
 }
@@ -364,38 +413,38 @@ void MappingDlg::_InitDialog(HWND hWnd)
 {
 	if (m_isClonedList)
 	{
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_1), L"1");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_2), L"2");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_3), L"3");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_4), L"4");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_5), L"5");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_6), L"6");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_7), L"7");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_8), L"8");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_9), L"9");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_10), L"10");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_11), L"11");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_12), L"12");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_13), L"13");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_14), L"14");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_15), L"15");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_16), L"16");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_17), L"17");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_18), L"18");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_19), L"19");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_20), L"20");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_21), L"21");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_22), L"22");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_23), L"23");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_24), L"24");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_25), L"25");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_26), L"26");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_27), L"27");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_28), L"28");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_29), L"29");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_30), L"30");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_31), L"31");
-		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_32), L"32");
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_1), WCHARI(L"1"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_2), WCHARI(L"2"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_3), WCHARI(L"3"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_4), WCHARI(L"4"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_5), WCHARI(L"5"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_6), WCHARI(L"6"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_7), WCHARI(L"7"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_8), WCHARI(L"8"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_9), WCHARI(L"9"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_10), WCHARI(L"10"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_11), WCHARI(L"11"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_12), WCHARI(L"12"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_13), WCHARI(L"13"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_14), WCHARI(L"14"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_15), WCHARI(L"15"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_16), WCHARI(L"16"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_17), WCHARI(L"17"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_18), WCHARI(L"18"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_19), WCHARI(L"19"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_20), WCHARI(L"20"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_21), WCHARI(L"21"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_22), WCHARI(L"22"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_23), WCHARI(L"23"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_24), WCHARI(L"24"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_25), WCHARI(L"25"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_26), WCHARI(L"26"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_27), WCHARI(L"27"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_28), WCHARI(L"28"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_29), WCHARI(L"29"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_30), WCHARI(L"30"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_31), WCHARI(L"31"));
+		CreateToolTip(hWnd, GetDlgItem(hWnd, IDC_POST_ITS_32), WCHARI(L"32"));
 	}
 
 	if (IsWindowVisible(hWnd))
@@ -446,24 +495,24 @@ void MappingDlg::_ShowWindow(HWND hWnd)
 	::SetFocus(NULL);
 }
 
-INT_PTR CALLBACK MappingDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK MappingDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	MappingDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<MappingDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<MappingDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<MappingDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<MappingDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -658,18 +707,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		LPMEASUREITEMSTRUCT DrawMenuSize = (LPMEASUREITEMSTRUCT)lParam;
 
 		if (DrawMenuSize->CtlType == ODT_LISTVIEW)
+			DrawMenuSize->itemHeight = 14;
+		else if (DrawMenuSize->CtlType == ODT_MENU)
 		{
 			DrawMenuSize->itemHeight = 14;
-		}
-		if (DrawMenuSize->CtlType == ODT_MENU)
-		{
-			DrawMenuSize->itemHeight = 14;
-			switch (DrawMenuSize->itemID)
-			{
-			case IDM_MENU_ADD:
-			case IDM_MENU_TO_MODE_0: { DrawMenuSize->itemWidth = 75; break; }
-			default: { DrawMenuSize->itemWidth = 75; break; }
-			}
+			DrawMenuSize->itemWidth = 75;
 		}
 		break;
 	}
@@ -837,15 +879,15 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int itemnumber = -1;
 			switch (DrawMenuStructure->itemID)
 			{
-			case IDM_MENU_TO_MODE_0: { itemnumber = 0; break; }
-			case IDM_MENU_TO_MODE_1: { itemnumber = 1; break; }
-			case IDM_MENU_TO_MODE_2: { itemnumber = 2; break; }
-			case IDM_MENU_TO_MODE_3: { itemnumber = 3; break; }
-			case IDM_MENU_TO_MODE_4: { itemnumber = 4; break; }
-			case IDM_MENU_TO_MODE_5: { itemnumber = 5; break; }
-			case IDM_MENU_TO_MODE_6: { itemnumber = 6; break; }
-			case IDM_MENU_TO_MODE_7: { itemnumber = 7; break; }
-			case IDM_MENU_TO_MODE_8: { itemnumber = 8; break; }
+			case IDM_CLONE_TO_MODE_0: { itemnumber = 0; break; }
+			case IDM_CLONE_TO_MODE_1: { itemnumber = 1; break; }
+			case IDM_CLONE_TO_MODE_2: { itemnumber = 2; break; }
+			case IDM_CLONE_TO_MODE_3: { itemnumber = 3; break; }
+			case IDM_CLONE_TO_MODE_4: { itemnumber = 4; break; }
+			case IDM_CLONE_TO_MODE_5: { itemnumber = 5; break; }
+			case IDM_CLONE_TO_MODE_6: { itemnumber = 6; break; }
+			case IDM_CLONE_TO_MODE_7: { itemnumber = 7; break; }
+			case IDM_CLONE_TO_MODE_8: { itemnumber = 8; break; }
 			case IDM_MENU_DEL: { itemnumber = 9; break; }
 			case IDM_MENU_SEE_VIEW2: { itemnumber = 10; break; }
 			}
@@ -1323,20 +1365,21 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 				case BN_CLICKED:
 				{
-					m_isCloned = false; Hide();
+					m_isCloned = false;
+					Hide();
 				}
 				}
 				break;
 			}
-			case IDM_MENU_TO_MODE_0: { SetTab(0); return FALSE; }
-			case IDM_MENU_TO_MODE_1: { SetTab(1); return FALSE; }
-			case IDM_MENU_TO_MODE_2: { SetTab(2); return FALSE; }
-			case IDM_MENU_TO_MODE_3: { SetTab(3); return FALSE; }
-			case IDM_MENU_TO_MODE_4: { SetTab(4); return FALSE; }
-			case IDM_MENU_TO_MODE_5: { SetTab(5); return FALSE; }
-			case IDM_MENU_TO_MODE_6: { SetTab(6); return FALSE; }
-			case IDM_MENU_TO_MODE_7: { SetTab(7); return FALSE; }
-			case IDM_MENU_TO_MODE_8: { SetTab(8); return FALSE; }
+			case IDM_CLONE_TO_MODE_0: { SetTab(0); return FALSE; }
+			case IDM_CLONE_TO_MODE_1: { SetTab(1); return FALSE; }
+			case IDM_CLONE_TO_MODE_2: { SetTab(2); return FALSE; }
+			case IDM_CLONE_TO_MODE_3: { SetTab(3); return FALSE; }
+			case IDM_CLONE_TO_MODE_4: { SetTab(4); return FALSE; }
+			case IDM_CLONE_TO_MODE_5: { SetTab(5); return FALSE; }
+			case IDM_CLONE_TO_MODE_6: { SetTab(6); return FALSE; }
+			case IDM_CLONE_TO_MODE_7: { SetTab(7); return FALSE; }
+			case IDM_CLONE_TO_MODE_8: { SetTab(8); return FALSE; }
 			case IDC_CLONE_CLEAR:
 			{
 				switch (HIWORD(wParam))
@@ -2718,7 +2761,7 @@ BOOL MappingDlg::MoveWindow2(int x, int y, int w, int h, BOOL r)
 void MappingDlg::SetTransparency(bool transparencyon)
 {
 	if (transparencyon)
-		SetWindowTransparent(m_hDlg, true, 60);
+		SetWindowTransparent(m_hDlg, true, tape.Opacity);
 	else
 		SetWindowTransparent(m_hDlg, false, NULL);
 }

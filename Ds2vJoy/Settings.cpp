@@ -39,6 +39,7 @@ Settings::~Settings()
 	DeleteObject(hB_CHECKBOX_UNCHECKED);
 	DeleteObject(hB_CHECKBOX_CHECKED);
 	DeleteObject(hB_CHECKBOX_INDETERMINATE);
+	DeleteObject(hB_WEB_BackGround);
 	DeleteObject(hB_neutral);
 	DeleteObject(hB_black);
 	DeleteObject(hB_white);
@@ -86,6 +87,7 @@ Settings::~Settings()
 	DeleteObject(hTopMost);
 	DeleteObject(hAbout);
 	DeleteObject(hTooltip);
+	DeleteObject(hDelete);
 }
 
 void Settings::Init(HINSTANCE hInst, HWND hWnd)
@@ -208,8 +210,8 @@ void Settings::Load(int category)
 		[[fallthrough]];
 	case Setting_Category_Profile:
 	{
-		Transparency = (GetPrivateProfileInt(TEXT("Profile"), TEXT("Transparency"), 0, m_file) == 1) ? true : false;
 		TopMost = (GetPrivateProfileInt(TEXT("Profile"), TEXT("TopMost"), 0, m_file) == 1) ? true : false;
+		Transparency = (GetPrivateProfileInt(TEXT("Profile"), TEXT("Transparency"), 0, m_file) == 1) ? true : false;
 		Tasktray = (GetPrivateProfileInt(TEXT("Profile"), TEXT("Tasktray"), 0, m_file) == 1) ? true : false;
 		CloseMinimize = (GetPrivateProfileInt(TEXT("Profile"), TEXT("CloseMinimize"), 0, m_file) == 1) ? true : false;
 		DisconnectBT = (GetPrivateProfileInt(TEXT("Profile"), TEXT("DisconnectBT"), 0, m_file) == 1) ? true : false;
@@ -247,6 +249,7 @@ void Settings::Load(int category)
 	}
 	case Setting_Category_Settings:
 	{
+		setOpacity(GetPrivateProfileInt(Settingstxt, TEXT("Opacity"), 60, m_file));
 		setPreferredDS(GetPrivateProfileInt(Settingstxt, TEXT("PreferredDS"), 0, m_file));
 		MouseActive = (GetPrivateProfileInt(Settingstxt, TEXT("MouseActive"), 0, m_file) == 1) ? true : false;
 		KeyboardActive = (GetPrivateProfileInt(Settingstxt, TEXT("KeyboardActive"), 0, m_file) == 1) ? true : false;
@@ -363,11 +366,13 @@ void Settings::Load(int category)
 							case Mapping_dsID: { for (int i = 0; i < 5; i++) { btn.dsID[i] = max(0, min((btn.Target[i]) ? vJoyButtonID::button_Count : dsButtonID::button_Count, dsIDString(key, i))); } break; }
 							case Mapping_OrXorNot: { for (int i = 0; i < 4; i++) { btn.OrXorNot[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_dsDisable: { for (int i = 0; i < 5; i++) { btn.dsDisable[i] = max(0, min(2, CheckboxString(key, i))); } break; }
-							case Mapping_MouseAction:
+							case Mapping_ActionType:
 							{
 								for (int i = 0; i < 8; i++)
 								{
-									if (VersionDateCheck >= 202112201)
+									if (VersionDateCheck >= 202203131)
+										btn.ActionType[i] = max(0, min(4, CheckboxString(key, i, true)));
+									else if (VersionDateCheck >= 202112201)
 										btn.ActionType[i] = max(0, min(3, CheckboxString(key, i)));
 									else
 										btn.ActionType[i] = (CheckboxString(key, i) == 2) ? 3 : max(0, min(1, CheckboxString(key, i)));
@@ -384,7 +389,11 @@ void Settings::Load(int category)
 										btn.vjID[i] = max(0, min(Mapping::special_Count, (vjIDString(key, i) - 34)));
 									}
 									else
-										btn.vjID[i] = max(0, min((btn.ActionType[i]) ? ((btn.ActionType[i] == 1) ? Mapping::mouse_Count : ((btn.ActionType[i] == 2) ? Mapping::special_Count : vJoyAxisMoveID::axismove_Count)) : vJoyButtonID::button_Count, vjIDString(key, i)));
+									{
+										btn.vjID[i] = max(0, min((btn.ActionType[i]) ? ((btn.ActionType[i] == 1) ? Mapping::mouse_Count : ((btn.ActionType[i] == 2) ? Mapping::special_Count : ((btn.ActionType[i] == 3) ? vJoyAxisMoveID::axismove_Count : Mapping::modules_Count))) : vJoyButtonID::button_Count, vjIDString(key, i)));
+										if (VersionDateCheck < 202203131 && btn.ActionType[i] == 2 && vjIDString(key, i) > Mapping::ADDSTAT8)
+											btn.vjID[i] += 5;
+									}
 								}
 								break;
 							}
@@ -537,7 +546,6 @@ void Settings::Load(int category)
 						if (value == 0)
 							break;
 						*value++ = 0;
-						/////////////std::wstring header = SubString(key, L"=", 0, 0);
 						Keymap keymap;
 						int btnid = _wtoi(key);
 						if (btnid < vJoyButtonID::none || btnid >= vJoyButtonID::button_Count)
@@ -870,7 +878,7 @@ void Settings::Load(int category)
 		GetPrivateProfileString(L"Web", L"WebURL3", L"", WebURL[2], sizeof(WebURL[2]) / sizeof(WebURL[2][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL4", L"", WebURL[3], sizeof(WebURL[3]) / sizeof(WebURL[3][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL5", L"", WebURL[4], sizeof(WebURL[4]) / sizeof(WebURL[4][0]), m_file);
-		GetPrivateProfileString(L"Web", L"WebURL6", L"", WebURL[5], sizeof(WebURL[5]) / sizeof(WebURL[5][0]), m_file);
+		GetPrivateProfileString(L"Web", L"WebURL6", LR"(file:///C:/Windows/Web/Wallpaper/Windows/img0.jpg)", WebURL[5], sizeof(WebURL[5]) / sizeof(WebURL[5][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL7", L"", WebURL[6], sizeof(WebURL[6]) / sizeof(WebURL[6][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL8", L"", WebURL[7], sizeof(WebURL[7]) / sizeof(WebURL[7][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL9", L"", WebURL[8], sizeof(WebURL[8]) / sizeof(WebURL[8][0]), m_file);
@@ -1032,16 +1040,16 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Transparency:
+	case Setting_TopMost:
 	{
-		WritePrivateProfileString(TEXT("Profile"), TEXT("Transparency"), (Transparency) ? L"1" : L"0", m_file);
+		WritePrivateProfileString(TEXT("Profile"), TEXT("TopMost"), (TopMost) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_TopMost:
+	case Setting_Transparency:
 	{
-		WritePrivateProfileString(TEXT("Profile"), TEXT("TopMost"), (TopMost) ? L"1" : L"0", m_file);
+		WritePrivateProfileString(TEXT("Profile"), TEXT("Transparency"), (Transparency) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1494,6 +1502,14 @@ void Settings::Save(int item)
 		}
 		[[fallthrough]];
 	}
+	case Setting_Opacity:
+	{
+		swprintf_s(buffer, MAX_PATH, L"%d", Opacity);
+		WritePrivateProfileString(Settingstxt, TEXT("Opacity"), buffer, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
 	case Setting_PreferredDS:
 	{
 		swprintf_s(buffer, MAX_PATH, L"%d", PreferredDS);
@@ -1691,7 +1707,7 @@ void Settings::Save(int item)
 					case Mapping_dsID:head += swprintf_s(head, MAX_PATH, L"%s,", dsIDToString(btn->dsID[0], btn->dsID[1], btn->dsID[2], btn->dsID[3], btn->dsID[4])); break;
 					case Mapping_OrXorNot:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->OrXorNot[0], btn->OrXorNot[1], btn->OrXorNot[2], btn->OrXorNot[3], 0, 0, 0, 0)); break;
 					case Mapping_dsDisable:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->dsDisable[0], btn->dsDisable[1], btn->dsDisable[2], btn->dsDisable[3], btn->dsDisable[4], 0, 0, 0)); break;
-					case Mapping_MouseAction:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->ActionType[0], btn->ActionType[1], btn->ActionType[2], btn->ActionType[3], btn->ActionType[4], btn->ActionType[5], btn->ActionType[6], btn->ActionType[7])); break;
+					case Mapping_ActionType:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->ActionType[0], btn->ActionType[1], btn->ActionType[2], btn->ActionType[3], btn->ActionType[4], btn->ActionType[5], btn->ActionType[6], btn->ActionType[7], true)); break;
 					case Mapping_Overcontrol:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Overcontrol[0], btn->Overcontrol[1], btn->Overcontrol[2], btn->Overcontrol[3], btn->Overcontrol[4], btn->Overcontrol[5], btn->Overcontrol[6], btn->Overcontrol[7])); break;
 					case Mapping_Switch:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Switch[0], btn->Switch[1], btn->Switch[2], btn->Switch[3], btn->Switch[4], btn->Switch[5], btn->Switch[6], btn->Switch[7])); break;
 					case Mapping_vjID:head += swprintf_s(head, MAX_PATH, L"%s,", vjIDToString(btn->vjID[0], btn->vjID[1], btn->vjID[2], btn->vjID[3], btn->vjID[4], btn->vjID[5], btn->vjID[6], btn->vjID[7])); break;
@@ -2057,6 +2073,14 @@ void Settings::setProfile(int i)
 		Profile = 1;
 }
 
+void Settings::setOpacity(int i)
+{
+	if (i > 19 && i < 101)
+		Opacity = i;
+	else
+		Opacity = 60;
+}
+
 void Settings::setTabMapping(int i)
 {
 	if (i >= 0 && i < 9)
@@ -2301,17 +2325,33 @@ void Settings::setAppLocation(const WCHAR* buf, int app)
 	}
 }
 
-WCHAR* Settings::CheckboxToString(byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8)
+WCHAR* Settings::CheckboxToString(byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, bool eightCases)
 {
-	unsigned short packit = 0;
-	packit |= v8;
-	packit |= (v7 << 2);
-	packit |= (v6 << 4);
-	packit |= (v5 << 6);
-	packit |= (v4 << 8);
-	packit |= (v3 << 10);
-	packit |= (v2 << 12);
-	packit |= (v1 << 14);
+	int packit = 0;
+	int packit2 = 0;
+
+	if (eightCases)
+	{
+		packit2 |= v8;
+		packit2 |= (v7 << 3);
+		packit2 |= (v6 << 6);
+		packit2 |= (v5 << 9);
+		packit |= v4;
+		packit |= (v3 << 3);
+		packit |= (v2 << 6);
+		packit |= (v1 << 9);
+	}
+	else
+	{
+		packit |= v8;
+		packit |= (v7 << 2);
+		packit |= (v6 << 4);
+		packit |= (v5 << 6);
+		packit |= (v4 << 8);
+		packit |= (v3 << 10);
+		packit |= (v2 << 12);
+		packit |= (v1 << 14);
+	}
 
 //	std::stringstream sstream;
 //	sstream << std::hex << packit;
@@ -2321,7 +2361,10 @@ WCHAR* Settings::CheckboxToString(byte v1, byte v2, byte v3, byte v4, byte v5, b
 	buf[0] = 0;
 	WCHAR* head = buf;
 
-	head += swprintf_s(head, MAX_PATH, L"%04hX", packit);
+	if (eightCases)
+		head += swprintf_s(head, MAX_PATH, L"%03hX%03hX", packit, packit2);
+	else
+		head += swprintf_s(head, MAX_PATH, L"%04hX", packit);
 
 	return buf;
 }
@@ -2368,7 +2411,7 @@ WCHAR* Settings::MouseToString(byte v1, byte v2, byte v3, byte v4, byte v5, byte
 	return buf;
 }
 
-WCHAR* Settings::GridToString(unsigned short v1,unsigned short v2, unsigned  short v3, unsigned  short v4, unsigned  short v5, unsigned  short v6)
+WCHAR* Settings::GridToString(unsigned short v1,unsigned short v2, unsigned short v3, unsigned short v4, unsigned short v5, unsigned short v6)
 {
 	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
@@ -2382,7 +2425,7 @@ WCHAR* Settings::GridToString(unsigned short v1,unsigned short v2, unsigned  sho
 WCHAR* Settings::KeymapToString(std::vector<BYTE> vk)
 {
 	if (!vk.size())
-		return L"";
+		return WCHARI(L"");
 
 	static WCHAR buf[1024];
 	buf[0] = 0;
@@ -2396,26 +2439,44 @@ WCHAR* Settings::KeymapToString(std::vector<BYTE> vk)
 	return buf;
 }
 
-unsigned short Settings::CheckboxString(std::wstring checkboxesstring, unsigned char idx)
+unsigned short Settings::CheckboxString(std::wstring checkboxesstring, unsigned char idx, bool eightCases)
 {
 	if (checkboxesstring == L"")
 		return 0;
-	if (checkboxesstring.length() < 4)
+	if (checkboxesstring.length() < 4 || (eightCases && checkboxesstring.length() < 6))
 		return 0;
 
-	unsigned short pakitstoi = std::stoi(checkboxesstring, nullptr, 16);
+	int pakitstoi = std::stoi(checkboxesstring, nullptr, 16);
 
-	switch (idx)
+	if (eightCases)
 	{
-	case 7: return (pakitstoi & 0x0003);
-	case 6: return (pakitstoi & 0x000C) >> 2;
-	case 5: return (pakitstoi & 0x0030) >> 4;
-	case 4: return (pakitstoi & 0x00C0) >> 6;
-	case 3: return (pakitstoi & 0x0300) >> 8;
-	case 2: return (pakitstoi & 0x0C00) >> 10;
-	case 1: return (pakitstoi & 0x3000) >> 12;
-	case 0: return (pakitstoi & 0xC000) >> 14;
-	default: return 0;
+		switch (idx)
+		{
+		case 7: return (pakitstoi & 0x000007);
+		case 6: return (pakitstoi & 0x000038) >> 3;
+		case 5: return (pakitstoi & 0x0001C0) >> 6;
+		case 4: return (pakitstoi & 0x000E00) >> 9;
+		case 3: return (pakitstoi & 0x007000) >> 12;
+		case 2: return (pakitstoi & 0x038000) >> 15;
+		case 1: return (pakitstoi & 0x1C0000) >> 18;
+		case 0: return (pakitstoi & 0xE00000) >> 21;
+		default: return 0;
+		}
+	}
+	else
+	{
+		switch (idx)
+		{
+		case 7: return (pakitstoi & 0x0003);
+		case 6: return (pakitstoi & 0x000C) >> 2;
+		case 5: return (pakitstoi & 0x0030) >> 4;
+		case 4: return (pakitstoi & 0x00C0) >> 6;
+		case 3: return (pakitstoi & 0x0300) >> 8;
+		case 2: return (pakitstoi & 0x0C00) >> 10;
+		case 1: return (pakitstoi & 0x3000) >> 12;
+		case 0: return (pakitstoi & 0xC000) >> 14;
+		default: return 0;
+		}
 	}
 }
 
@@ -2486,7 +2547,7 @@ unsigned short Settings::MouseString(std::wstring mousestring, unsigned char idx
 	}
 }
 
-short Settings::GridString(std::wstring gridstring, unsigned char idx)
+unsigned short Settings::GridString(std::wstring gridstring, unsigned char idx)
 {
 	if (gridstring == L"")
 		return 0;
@@ -2499,12 +2560,12 @@ short Settings::GridString(std::wstring gridstring, unsigned char idx)
 	
 	switch (idx)
 	{
-	case 5: return (short)(pakitstoi3 & 0x0000FFFF);
-	case 4: return (short)((pakitstoi3 & 0xFFFF0000) >> 16);
-	case 3: return (short)(pakitstoi2 & 0x0000FFFF);
-	case 2: return (short)((pakitstoi2 & 0xFFFF0000) >> 16);
-	case 1: return (short)(pakitstoi1 & 0x0000FFFF);
-	case 0: return (short)((pakitstoi1 & 0xFFFF0000) >> 16);
+	case 5: return (unsigned short)(pakitstoi3 & 0x0000FFFF);
+	case 4: return (unsigned short)((pakitstoi3 & 0xFFFF0000) >> 16);
+	case 3: return (unsigned short)(pakitstoi2 & 0x0000FFFF);
+	case 2: return (unsigned short)((pakitstoi2 & 0xFFFF0000) >> 16);
+	case 1: return (unsigned short)(pakitstoi1 & 0x0000FFFF);
+	case 0: return (unsigned short)((pakitstoi1 & 0xFFFF0000) >> 16);
 	default: return 0;
 	}
 }

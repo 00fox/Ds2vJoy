@@ -35,9 +35,6 @@ private:
 	vJoyButton			m_axis[vJoyAxisMoveID::axismove_Count];
 	JOYSTICK_POSITION_V2 m_iReportDefault;
 	JOYSTICK_POSITION_V2 m_iReport;
-
-//////////////////////////	, DpadExists(false)
-////////////////////////////////	bool DpadExists;
 	byte				Dpad[32] = { 0 };
 
 	bool				firsttime = true;

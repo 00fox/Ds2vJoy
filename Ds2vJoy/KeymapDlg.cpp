@@ -70,10 +70,18 @@ void KeymapDlg::redrawMenu(int ntabs)
 	{
 		ZeroMemory(&info, sizeof(info));
 		info.cbSize = sizeof(info);
-		info.fMask = MIIM_FTYPE | MIIM_STATE;
+		info.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_STRING;
 		GetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 		info.fType = MFT_OWNERDRAW;
-		info.fState = 0;
+		info.fState = MFS_UNCHECKED;
+		switch (i)
+		{
+		case 0: info.dwTypeData = I18N.MENU_ADD; break;
+		case 1: info.dwTypeData = I18N.MENU_EDIT; break;
+		case 2: info.dwTypeData = I18N.MENU_DEL; break;
+		case 3: info.dwTypeData = I18N.MENU_COPY; break;
+		case 4: info.dwTypeData = I18N.MENU_SEPARATOR; break;
+		}
 		SetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 	}
 }
@@ -94,24 +102,24 @@ void KeymapDlg::_ShowWindow(HWND hWnd)
 	m_active = true;
 }
 
-INT_PTR CALLBACK KeymapDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK KeymapDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	KeymapDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<KeymapDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<KeymapDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<KeymapDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<KeymapDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR KeymapDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

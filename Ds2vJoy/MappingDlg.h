@@ -9,6 +9,7 @@ public:
 
 	void				Init(HINSTANCE hInst, HWND hWnd, bool isClone = false);
 	void				SetTab(int tab, bool activate = true);
+	void				redrawTabs(int tab);
 	void				addMappingDlgBack();
 	void				editMappingDlgBack();
 	void				editMappingDlgBackMulti();
@@ -32,7 +33,6 @@ private:
 
 	void				_InitDialog(HWND hWnd);
 	void				_ShowWindow(HWND hWnd);
-	void				redrawTabs(int tab);
 	void				redrawMenu(int ntabs, bool isclonemenu = false);
 	void				redrawListReminder();
 	void				load();

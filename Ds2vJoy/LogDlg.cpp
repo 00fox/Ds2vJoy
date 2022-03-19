@@ -147,24 +147,24 @@ void LogDlg::ColorRand(HWND hWnd, HWND hEdit)
 	_log.Update();
 }
 
-INT_PTR CALLBACK LogDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK LogDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LogDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<LogDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<LogDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<LogDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<LogDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -344,8 +344,15 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		}
 		break;
 	}
+	case WM_CLOSE:
+	{
+		if (GetKeyState(VK_ESCAPE) < 0 || GetKeyState(VK_CANCEL) < 0)
+			return 0;
+		else
+			return DefWindowProc(hWnd, message, wParam, lParam);
+	}
 	default:
-		return DefWindowProcW(hWnd, message, wParam, lParam);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
 }

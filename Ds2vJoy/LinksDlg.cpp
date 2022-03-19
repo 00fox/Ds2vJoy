@@ -118,24 +118,24 @@ void LinksDlg::_ShowWindow(HWND hWnd)
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP5LOC), tape.App5Location);
 }
 
-INT_PTR CALLBACK LinksDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK LinksDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LinksDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<LinksDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<LinksDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<LinksDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<LinksDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -232,7 +232,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 0);
 					tape.Save(tape.Setting_WebURL0);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -249,7 +248,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 1);
 					tape.Save(tape.Setting_WebURL1);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -266,7 +264,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 2);
 					tape.Save(tape.Setting_WebURL2);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -283,7 +280,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 3);
 					tape.Save(tape.Setting_WebURL3);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -300,7 +296,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 4);
 					tape.Save(tape.Setting_WebURL4);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -317,7 +312,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 5);
 					tape.Save(tape.Setting_WebURL5);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -334,7 +328,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 6);
 					tape.Save(tape.Setting_WebURL6);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -351,7 +344,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 7);
 					tape.Save(tape.Setting_WebURL7);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -368,7 +360,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 8);
 					tape.Save(tape.Setting_WebURL8);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -385,7 +376,6 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setWebURL(buf, 9);
 					tape.Save(tape.Setting_WebURL9);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}

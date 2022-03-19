@@ -168,12 +168,12 @@ void KeymapDataDlg::_ShowWindow(HWND hWnd)
 		col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 		col.fmt = LVCFMT_LEFT;
 		col.cx = 100;
-		col.pszText = L"Class";
+		col.pszText = WCHARI(L"Class");
 		ListView_InsertColumn(m_hList, 0, &col);
-		col.pszText = L"Title";
+		col.pszText = WCHARI(L"Title");
 		col.cx = 200;
 		ListView_InsertColumn(m_hList, 1, &col);
-		col.pszText = L"Idx";
+		col.pszText = WCHARI(L"Idx");
 		col.cx = 100;
 		ListView_InsertColumn(m_hList, 2, &col);
 	}
@@ -184,24 +184,24 @@ void KeymapDataDlg::_ShowWindow(HWND hWnd)
 	EnableWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT), true);
 }
 
-INT_PTR CALLBACK KeymapDataDlg::Proc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK KeymapDataDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	KeymapDataDlg* dlg;
 
 	if (message == WM_INITDIALOG)
 	{
-		dlg = reinterpret_cast<KeymapDataDlg*>(lparam);
-		SetWindowLongPtrW(hWnd, DWLP_USER, lparam);
+		dlg = reinterpret_cast<KeymapDataDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, lParam);
 	}
 	else
-		dlg = reinterpret_cast<KeymapDataDlg*>(GetWindowLongPtrW(hWnd, DWLP_USER));
+		dlg = reinterpret_cast<KeymapDataDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
 	if (dlg)
 	{
 		INT_PTR result;
-		result = dlg->_proc(hWnd, message, wparam, lparam);
+		result = dlg->_proc(hWnd, message, wParam, lParam);
 		return result;
 	}
-	return DefWindowProcW(hWnd, message, wparam, lparam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -548,8 +548,8 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				int key2 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2), CB_GETCURSEL, 0, 0);
 				int key3 = (int)SendMessage(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3), CB_GETCURSEL, 0, 0);
 				if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key1)); }
-				if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
-				if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
+				if (key2) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
+				if (key3) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
 				PostMessage(m_hWnd, WM_ADDKEYMAP, m_mode, 1);
 				m_mode = 0;
 				break;

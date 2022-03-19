@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int			VersionDate = 202202241;
+	const int			VersionDate = 202203191;
 	const std::wstring	ProgramFilesDirName = L"Ds2vJoy";
 	bool				BreakAndExit = false;
 
@@ -41,8 +41,8 @@ public:
 		Setting_All,				//All
 		Setting_Version,
 		Setting_Profile,			//Profile
-		Setting_Transparency,
 		Setting_TopMost,
+		Setting_Transparency,
 		Setting_Tasktray,
 		Setting_CloseMinimize,
 		Setting_DisconnectBT,
@@ -94,7 +94,8 @@ public:
 		Setting_App4Location,
 		Setting_App5Location,
 		Setting_Notepad,			//Notepad
-		Setting_PreferredDS,		//Settings	//Start of Profile dependant
+		Setting_Opacity,			//Settings	//Start of Profile dependant
+		Setting_PreferredDS,
 		Setting_MouseActive,
 		Setting_KeyboardActive,
 		Setting_vJoyDeviceID,
@@ -163,15 +164,23 @@ public:
 
 	HWND				Ds2hWnd;
 	HINSTANCE			Ds2hInst;
+	WCHAR				szTitle[100];
+	WCHAR				szWindowClass[100];
+	int					Ds2vJoyPID;
 
 	POINT				mousepoint;
-	short				W;
+	short				W;							//Logical (scaling)
 	short				H;
-	short				w;
+	short				Wp;							//Physical
+	short				Hp;
+	short				w;							//Logical / 2
 	short				h;
-	long				proportianality;
-	bool				Transparency;
-	bool				TopMost;
+	double				Hscale;						//Scaling
+	double				Vscale;
+	long				proportianality;			//(W > H) ? (W / H) : (H / W);
+	bool				Transparency = false;
+	byte				Opacity = 60;
+	bool				TopMost = true;
 
 	HBRUSH				hB_BackGround =				CreateSolidBrush(RGB(210, 210, 215));
 	HBRUSH				hB_CLONE_BackGround =		CreateSolidBrush(RGB(240, 240, 240));
@@ -202,10 +211,10 @@ public:
 	HBRUSH				hB_MENU_CLONE =				CreateSolidBrush(RGB(200, 200, 205));
 	HBRUSH				hB_MENU_SELECTED =			CreateSolidBrush(RGB(153, 160, 157));
 	HBRUSH				hB_MENU_HIGHLIGHT =			CreateSolidBrush(RGB(0, 120, 215));
-
 	HBRUSH				hB_CHECKBOX_UNCHECKED =		CreateSolidBrush(RGB(225, 225, 230));
 	HBRUSH				hB_CHECKBOX_CHECKED =		CreateSolidBrush(RGB(251, 241, 214));
 	HBRUSH				hB_CHECKBOX_INDETERMINATE =	CreateSolidBrush(RGB(226, 235, 249));
+	HBRUSH				hB_WEB_BackGround =			CreateSolidBrush(RGB(10, 12, 13));
 
 	HBRUSH				hB_neutral =				CreateSolidBrush(RGB(128, 128, 128));
 	HBRUSH				hB_black =					CreateSolidBrush(RGB(0, 0, 0));
@@ -229,7 +238,6 @@ public:
 	HBRUSH				hB_bright_blue =			CreateSolidBrush(RGB(226, 235, 249));
 	HBRUSH				hB_bright_purple =			CreateSolidBrush(RGB(245, 231, 248));
 
-	HBRUSH				hB_WEB_BackGround =			CreateSolidBrush(RGB(10, 12, 13));
 
 	COLORREF			ink_DLG =					RGB(10, 10, 10);
 	COLORREF			ink_MSGBOX =				RGB(10, 10, 10);
@@ -329,13 +337,19 @@ public:
 	HFONT hTopMost = CreateFont(16, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
 	HFONT hAbout = CreateFont(18, 0, 0, 10, FW_REGULAR, TRUE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe Script");
 	HFONT hTooltip = CreateFont(15, 7, 0, 30, FW_REGULAR, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Bahnschrift SemiLight SemiConde");
+	HFONT hDelete = CreateFont(22, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
+
 	#define hCancel = hLegend2
 	#define hCheck hStatic
 	#define hSlider hButton
 	#define hTab2 hLinks
+	#define hWeb hTopMost
+	#define hWebX hLegend
+	#define hExplorer hTab1
 
 	
 	unsigned char		Profile;
+	bool				DsvJoyAddedToGuardian = false;
 	
 	bool				cansavemappings = true;
 	bool				cansaverapidfires = true;
@@ -347,8 +361,10 @@ public:
 
 	unsigned char		ActualDS = 0;	//0 Unknown
 	unsigned char		PreferredDS;	//0 None, 1 DS4, 2 DS5
-	bool				MouseActive;
 	bool				KeyboardActive;
+	bool				MouseActive;
+	bool				KeyboardActivetmp = false;
+	bool				MouseActivetmp = false;
 	unsigned char		vJoyDeviceID;
 
 	bool				Tasktray;
@@ -380,6 +396,9 @@ public:
 	bool				KeymapPaused;
 	bool				RapidFirePaused;
 	bool				GuardianPaused;
+	bool				isExplorerLoaded;
+	bool				isWebView2Installing;
+
 
 	Mappings			Mappingdata;
 	Keymaps				Keymapdata;
@@ -447,6 +466,7 @@ public:
 	unsigned short		NotepadFontH = 14;
 	unsigned short		NotepadFontW = 0;
 	bool				NotepadUnsaved = false;
+	size_t				web_actualtab = 0;
 
 private:
 	enum MappingName {
@@ -466,7 +486,7 @@ private:
 		Mapping_dsID,
 		Mapping_OrXorNot,			//1-4(2,2,2,2,0,0,0,0)
 		Mapping_dsDisable,			//1-5(2,2,2,2,2,0,0,0)
-		Mapping_MouseAction,		//1-8(2,2,2,2,2,2,2,2)
+		Mapping_ActionType,			//1-8(2,2,2,2,2,2,2,2)
 		Mapping_vjID,
 		Mapping_Overcontrol,		//1-8(2,2,2,2,2,2,2,2)
 		Mapping_Switch,				//1-8(2,2,2,2,2,2,2,2)
@@ -508,6 +528,7 @@ private:
 
 	BOOL				Open(WCHAR* file);
 	void				setProfile(int i);
+	void				setOpacity(int i);
 	void				setTabMapping(int i);
 	void				setPreferredDS(int i);
 	void				setTabMode(int i, int mode);
@@ -525,17 +546,17 @@ private:
 	void				setDefaultZoomValue(int i);
 	void				setDarkMode(int i);
 
-	WCHAR*				CheckboxToString(byte, byte, byte, byte, byte, byte, byte, byte);
+	WCHAR*				CheckboxToString(byte, byte, byte, byte, byte, byte, byte, byte, bool eightCases = false);
 	WCHAR*				dsIDToString(byte, byte, byte, byte, byte);
 	WCHAR*				vjIDToString(byte, byte, byte, byte, byte, byte, byte, byte);
 	WCHAR*				MouseToString(byte, byte, byte, byte, byte, byte, byte);
 	WCHAR*				GridToString(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short);
 	WCHAR*				KeymapToString(std::vector<BYTE>);
-	unsigned short		CheckboxString(std::wstring, unsigned char);
+	unsigned short		CheckboxString(std::wstring, unsigned char, bool eightCases = false);
 	byte				dsIDString(std::wstring, unsigned char);
 	byte				vjIDString(std::wstring, unsigned char);
 	unsigned short		MouseString(std::wstring, unsigned char);
-	short				GridString(std::wstring, unsigned char);
+	unsigned short		GridString(std::wstring, unsigned char);
 	std::vector<BYTE>	KeymapString(std::wstring);
 
 	WCHAR				m_file[MAX_PATH + 1] = { 0 };
