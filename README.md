@@ -634,7 +634,7 @@ Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/star
 ## Links
 ![Links](Doc/17_Ds2vJoy_Webbrowser.png)
 
-Web brother use Microsoft Edge WebView2 runtime
+Web browser use Microsoft Edge WebView2 runtime
 On first activating of web module, program will prompt you to automatically and silently install it
 But you can install it manually by visiting this page: (shortcut can be found in Links tab)
 * https://developer.microsoft.com/en-us/microsoft-edge/webview2/
@@ -652,7 +652,7 @@ There are some right click actions:
 - on zoom minus, you reset zoom to its default value
 - on zoom plus, you set actual zoom as default (saved for next time you use the program)
 
-There is a menu at the left, with a bunch of actions
+There is a menu at the left, with a bunch of actions:
 - Print to PDF Portrait, Print to PDF Landscape, Print to PDF asking where to save the file
 - Save Screenshot, Screenshot of actual web page asking where to save the file
 
