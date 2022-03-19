@@ -17,11 +17,12 @@ Content:
 - Several logical operations, like Toggle, Switch, Transitivity, Sustain, Pause
 - Control complex mouse operations, Sniper, Navigate in a grid when needed...
 - Control axis movements, 170 different movements can be done, fused, protected (OverControl)
-- Special actions, mouse, sound, modes, window, stats and time actions
+- Special actions, mouse, sound, modes, window, stats, time
+- Modules actions, web and Notepad
+  - Microsoft Edge WebView2 for internet, local files, with automation, stay overgame
+  - Simple notepad, rapid access
 - HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
 - Multiple efficiency, like docking, insight, transparency, automatic full height, minimize & restore
-- Microsoft Edge WebView2 for internet, with automation, stay overgame (soon)
-- Simple notepad, rapid access
 
 **Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests**
 
@@ -69,6 +70,7 @@ Satus is separated in 4 colums which are:
   - threshold value for axis accept a number between 0 and 128, default 8
   - values of the axis are proportional to the threshold, so the grip remains soft rather than starting abruptly, even with high threshold values
   - Simultaneous is R1L1 or R2L2 the same time (with this 40ms as default delta)
+- You can set the opacity percent while transparency is activated (right click on caption bar)
 - Multiple touchpad divide in multiple buttons,
   - But for more simple uses, there is a lot of special buttons (see vJoy)
 - Led is calm wave fluctuating, you can modify the frequency, and color can be stopped on exit
@@ -387,7 +389,10 @@ Double, you'll find sound, modes, window, stats and time actions
 - BEEP1/BEEP2/BEEP3: Different beep sounds
 - RESET_STATS: Reset All stats (see Efficiency)
 - ADDSTAT1-8: Add a counter on a stat of your choice (1 to 8) (see Efficiency)
-- MINIMIZE/RESTORE: Put main window minimized or restore it
+- KBD_INPUT_ON, KBD_INPUT_OFF: Temporary overpass setting for keyboard input
+- MSE_INPUT_ON, MSE_INPUT_OFF: Temporary overpass setting for mouse input
+- SCREENSHOT: Take a screenshot delimited by two points (x,y),(w,h), leave them null for whole screen
+- MINIMIZE/RESTORE/TRANSPARENCY: Put main window minimized, restore it or activate/deactivate opacity (% defined insettings)
 
 ______________________________________________________________________________________ Example
 
@@ -453,6 +458,24 @@ All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revoluti
 - Four sides, eight moves, of the two triangles (upside and downside base, identical to the square)
 - Four sides, eight moves, of the square
 - Four sides, eight moves, of the lozange (diamond)
+
+______________________________________________________________________________________ Modules actions
+
+Quadruple, you'll find web, and notepad actions
+
+- NOTEPAD: Show/Hide Notepad
+- NOTEPAD_DOWN, NOTEPAD_UP: Scroll Notepad
+- WEB_DOWN, WEB_UP, WEB_LEFT, WEB_RIGHT: Scroll Web page
+- WEB_PREVIOUSTAB, WEB_NEXTTAB, WEB_CLOSETAB: Change or close web tab
+- WEB_FULLSCREEN: Go/Exit fullscreen
+- WEB_HOME: Navigate Home page (Set in Web (by right click on favorites menu) or Links modules)
+- WEB_FAVORITE1-9: Navigate Favorite 1to9 (Set in Web (by right click on favorites menu) or Links modules)
+- WEB_BACK, WEB_NEXT, WEB_REFRESH, WEB_CANCEL: Navigate in history or cancel loading actual page
+- WEB_AUTOREFRESH: Activate/Deactivate autorefresh for actual web page (after x seconds defined in settings)
+- WEB_ZOOMMINUS, WEB_ZOOMPLUS, WEB_ZOOMRESET, WEB_ZOOMSET: Control zoom, memorize and reset it to memorized
+- WEB_VISIBILITY: Show/Hide actual web page without quiting module or minimizing program
+- WEB_SCREENSHOT: Take a screenshot of actual selected tab's web page
+- WEB_DARKMODE, WEB_DARKMODE2: Activate/Deactivate dark mode (colors are changed), mode2 is less intrusive for controls
 
 ______________________________________________________________________________________ Overcontrol
 
@@ -587,7 +610,7 @@ You can now enter up to 64 characters per keymap
 You will find.
 
 ## ViGEm
-![ViGEm](15_Ds2vJoy_ViGEm.png)
+![ViGEm](Doc/15_Ds2vJoy_ViGEm.png)
 
 Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
@@ -599,7 +622,7 @@ If you plan to use ViGEm X360 with vJoy as source, remember to change in the vJo
 - AXISR Y: RZ > RZINV
 
 ## Guardian
-![Guardian](16_Ds2vJoy_Guardian.png)
+![Guardian](Doc/16_Ds2vJoy_Guardian.png)
 
 Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/start this service)
 - A restart may be necessary after installing Guardian to have it properly running
@@ -609,11 +632,70 @@ Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/star
 - Whitelist section, bypass the guardian for programs you need to achieve this
 
 ## Links
+![Links](Doc/17_Ds2vJoy_Webbrowser.png)
+
+Web brother use Microsoft Edge WebView2 runtime
+On first activating of web module, program will prompt you to automatically and silently install it
+But you can install it manually by visiting this page: (shortcut can be found in Links tab)
+* https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+You still can use the program without installing it
+
+You can found usual functions,
+Tabs, close tabs, favorites, home page, back, next, refresh, adress bar, go, autorefresh, zoom minus, zoom plus
+- most of them can be automatized in mappings
+- autorefresh time can be set in settings
+
+There are some right click actions:
+- on a tab, you'll close this tab
+- on close tab (right button), you quit web module
+- on menu favorites, you will set favorite to actual web page instead of navigating to this favorite
+- on zoom minus, you reset zoom to its default value
+- on zoom plus, you set actual zoom as default (saved for next time you use the program)
+
+There is a menu at the left, with a bunch of actions
+- Print to PDF Portrait, Print to PDF Landscape, Print to PDF asking where to save the file
+- Save Screenshot, Screenshot of actual web page asking where to save the file
+
+- Toggle TopMost, same as button in log tab, since you can't find it in this module, switch between topmost and non topmost
+- Toggle Visibility, quicly switch to blank screen (actually black) (can be automatized in mappings)
+- Dark mode, set a more darker theme and colors to web page, script is internal, no risk for your datas exchange (can be automatized in mappings)
+- Dark mode 2, the same but less intrusive for controls (avoid unusuable play bar for ex.) (can be automatized in mappings)
+- Raw/Scale Pixels, change the way of scaling pixels
+- Toggle Block Images, block most of pictures
+
+- Close WebView, close the actual process of this tab, other tabs are unaffected
+- Create WebView, create a new process
+- Create New Window, create new window in same thread 8new window becomes independant and can be close without exiting program
+- Create New Thread, create new window in another thread
+- Clear cache
+- Clear cookies
+- Delete UserData Folder
+
+- Inject Script, run a script by injecting it in actual page
+- Add Initialize Script, put a script to be loaded everytime a page is loaded
+- JavaScript Deferred, activate a wait for run this scipt, if you want to run it, youy need to push 'JavaScript Complete' (but script is memorized and avoid to use 'Inject Script' each time)
+- JavaScript Complete, to exectute scipt memorized in 'Add Initialize Script' while 'JavaScript Deferred' is active
+- Post Message String, send a message to actual web page as post system
+- Post Message JSON, the same but it use JSON protocol to send message
+- Subscribe CDP event, subscibe to an CDP event (Customer Data Platform)
+- Call CDP method, method name to call, and parameters in JSON format
+- Add COM object, enter CLSID or ProgID of a com object
+
+- Flags, navigate to WebView2 intern parameters
+- Language, set the default language
+- User Agent, set the User agent, if you want to be assimilated to another navigator
+- Blacklist, set a list of unwanted navigate to, there won't be any message (you need a reload of runtime to be effective)
+- Task Manager, internal WebView2 task manager
+
+## Links
 ![Links](Doc/18_Ds2vJoy_Links.png)
 
 You'll find source of inspiration for this project
 
-And you can enter from 1 to 5 programs name and location which can be launched after that through systray menu
+And you can enter
+- home page and 1 to 9 favorites for web browser (can be local files)(favorites can be directly set in web module)
+- from 1 to 5 programs name and location which can be launched after that through systray menu
+
 
 ## Notepad
 
@@ -632,18 +714,18 @@ Picture talk by itself
 ## Efficiency
 ![Efficiency](Doc/20_Ds2vJoy_Efficiency.png)
 
-There is no resize but some other stuff
-
-- Two digits in the lower right corner are the mouse coordinates, to make it easier to enter special mouse actions
+- Two digits in the lower right corner of mapping editing are the mouse coordinates, to make it easier to enter special mouse actions
   - click on the left number to start capture, the color changes for 3s, and after 3s it come back to its normal state with the mouse point you were at captured
   - click on the right number, while you already selected an element of the grid, insert the coordinates into this column (x,y or w,h or nw,nh)
-- Stats is a group of eight number digits
+- Stats in clone window of mapping is a group of eight number digits
   - They can be reseted individually by clicking on it, or all the same time, with RESET_STATS special action
   - You incremente them by adding ADDSTAT1-8 special actions to your script to add a counter on a stat of your choice (1 to 8)
-- On bottom right, you can see a Reminder to remember dispatch of attributed buttons
+- On bottom right of the same window, you can see a Reminder to remember dispatch of attributed buttons
   - You can use it as you wish, it is saved as soon as you change a state, and you get it back next session 
   - Corner indicator automatically indicates all vJoy buttons (1-32) used in all mappings
-- Right click on window caption, or the background of a child to alternate plain or transparency
+- Right click on any window caption, or the background of a child to alternate plain or transparency (Opacity may be modified in settings)
+- Double click on Caption when in web module to switch to full screen, press ESC to exit and come back to normal size with menus
+- Web and Notepad modules can be resized and window becomes borderless, without any menu when mouse is out
 
 ## Related links and source
 * https://github.com/090 (merci pour la structure de départ)
@@ -675,3 +757,8 @@ There is no resize but some other stuff
 - Win11 64bit + Visual Studio 2022 Community
 - Sony® DualShock™ and DualSense™
 - Intel® Wireless Bluetooth from Asus ROG
+
+NuGet Packages:
+- Microsoft.Web.WebView2
+- Microsoft.Windows.CppWinRT
+- Microsoft.Windows.ImplementationLibrary
