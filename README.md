@@ -631,7 +631,7 @@ Install, remove and use @nefarius &co HidGuardian and HidCerberus (and stop/star
 - Then you can hide your DS4/DS5 and let see only the remapped DS4/X360 or vJoy to the system
 - Whitelist section, bypass the guardian for programs you need to achieve this
 
-## Links
+## Web
 ![Links](Doc/17_Ds2vJoy_Webbrowser.png)
 
 Web browser use Microsoft Edge WebView2 runtime
@@ -726,6 +726,7 @@ Picture talk by itself
 - Right click on any window caption, or the background of a child to alternate plain or transparency (Opacity may be modified in settings)
 - Double click on Caption when in web module to switch to full screen, press ESC to exit and come back to normal size with menus
 - Web and Notepad modules can be resized and window becomes borderless, without any menu when mouse is out
+- While webbrowser fullscreen, you can adjuste zoom, by slifing mouse on the top of the screen, and exit fullscreen, ny clicking at bottom left corner 
 
 ## Related links and source
 * https://github.com/090 (merci pour la structure de départ)
