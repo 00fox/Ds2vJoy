@@ -139,17 +139,17 @@ vJoy Button:
 Tags:
 | Tag | Description
 |:--- |:------------------------------------------------------------------------------
-|  I  | IfMouse condition is in use (see below)
-|  F  | Force condition is in use (see below)
+|  I  | IfMouse condition is in use (see If mouse/Force)
+|  F  | Force condition is in use (see If mouse/Force)
 |  S  | Short press
-|  D  | Double press (can be mixed, see below)
+|  D  | Double press (can be mixed, see Input method)
 |  L  | Long press
-|  C  | Interrupt condition is in use (see below)
-|  P  | Pause condition is in use (see below)
-|  Y  | Transitivity condition is in use (see below)
-|  T  | Toggle condition is in use (see below)
-| RZW | An OnRelease (/+NoRelease/+NlRelease) condition is in use (see below, under time stamps)
-|  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
+|  C  | Interrupt condition is in use (see Controls)
+| 12B | Pause condition is in use (see Controls)
+| ►YR | Transitivity condition is in use (see Controls and Transitivity)
+|  T  | Toggle condition is in use (see Controls)
+| RZW | An OnRelease (/+NoRelease/+NlRelease) condition is in use (see OnRelease)
+|  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see If Mouse actions and Grid)
 - a lowercase indicates that the checkbox is double checked for this condition
 
 ## vJoy editing
@@ -306,13 +306,13 @@ Under central led, you'll find 4 checkboxes
   - double, No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
     - second source too if first is not pushed and OrXor1
     - third source too if first is not pushed, second isn't in used and OrXor1 + OrXor2
-- Pause: pause this mapping while a 'not' condition
+- Pause: pause this mapping while a 'not1' condition
+  - double: pause this mapping while a 'not2' condition
+  - triple: pause this mapping while a 'not' condition
   - otherwise:
     - if 'not' is a simple, and 'not' button is pressed, the mapping is interrupted
      - if 'not' is a double, and 'not' button is pressed, the mapping still continue
-  - double: One time, used in Transitivity (see table of transitivity below)
-- Transitivity: Principal way of transitivity which brings different behaviors and transition possibilities while mode changed
-  - double, Come back, another way of transitivity which brings its owns (see table of transitivity below)
+- Transitivity: Brings different behaviors and transition possibilities while mode changed (see table of transitivity below)
 - Toggle: Satisfy mapping condition once to start, once again one to stop
   - double, destinations states begin activated at program launch
   - can be used to time based mouse actions too,
@@ -321,19 +321,14 @@ Under central led, you'll find 4 checkboxes
 ______________________________________________________________________________________ Transitivity
 
 Table of Transitivity:
-| Transitivity | Pause    | Type          | Result
-|:------------ |:-------- |:------------- |:------------------------------------------
-|              | One time | Conduct       | If the source is already pushed when entering the new mode,
-|              |          |               |the mapping is triggered
-| Transitivity |          | Complete      | You can release and trigger again in new mode
-|              |          |               |if it was already active before changing mode
-| Transitivity | One time | Limited       | Action continue while changing mode,
-|              |          |               |but you can't trigger again if release
-| Come back    |          | Retroactive   | Instead of continuation, button is released,
-|              |          |               |but triggered again if still pushed when initial mode is back
-| Come back    | One time | One time back | The same as Retroactive, but while pushed,
-|              |          |               |you can change mode and get it triggered again only one time
-|              |          |               |After, you have to release and trigger it again in its own mode
+| Transitivity  | Result
+|:------------- |:--------------------------------------------------------------------
+| Conduct       | If the source is already pushed when entering the new mode, the mapping is triggered
+| Complete      | You can release and trigger again in new mode if it was already active before changing mode
+| Limited       | Action continue while changing mode, but you can't trigger again if release
+| Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
+| One time back | The same as Retroactive, but while pushed, you can change mode and get it triggered again only one time
+|               | After, you have to release and trigger it again in its own mode
 * in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
@@ -344,7 +339,7 @@ You can find this help directly in Ds2vJoy by pressing help below grid entries
 
 At the left of destinations, you'll find destination actions type choice:
 
-______________________________________________________________________________________ Mouse actions
+______________________________________________________________________________________ Mouse actions, Magnifier
 
 Simple, you'll find mouse actions
 
@@ -364,6 +359,15 @@ Simple, you'll find mouse actions
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
   - or fixed scroll adjusted for games that don't support the number of wheel ticks signal
+- MAGNIFY: Set maginifation on according to values specified in the grid
+  - if x=y=0,		magnification is set on center of the screen
+  - if x=1 y=0,	magnification is set on actual cursor position
+  - if x=0 y=1,	magnification is set on actual point (last memorized)
+  - if x=y=1,		magnification is set on the given point (w,h)
+  - if nw == 0, factor is actual factor, else it will be nw.nh (nh is the frational part of zoom level)
+- MAGNIFY_PLUS, MAGNIFY_MINUS: control the factor of magnification
+- MAGNIFY_RESET: temporary return to full screen, values are not modified then you can go back to actual zoom just after
+- MAGNIFY_UP, MAGNIFY_DOWN, MAGNIFY_LEFT, MAGNIFY_RIGHT: move up, down, left or right while magnification factor > 1
 
 ______________________________________________________________________________________ Special actions
 
@@ -476,6 +480,8 @@ Quadruple, you'll find web, and notepad actions
 - WEB_VISIBILITY: Show/Hide actual web page without quiting module or minimizing program
 - WEB_SCREENSHOT: Take a screenshot of actual selected tab's web page
 - WEB_DARKMODE, WEB_DARKMODE2: Activate/Deactivate dark mode (colors are changed), mode2 is less intrusive for controls
+- MAGNIFY_ALWAYS_ACTIVE_ON: Magnification stay always Initialized, then first zoom is achieved more quickly
+- MAGNIFY_ALWAYS_ACTIVE_OFF: Magnification is uninitialized as soon as zom factor is <= 1 (default)
 
 ______________________________________________________________________________________ Overcontrol
 
