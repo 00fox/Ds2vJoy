@@ -335,7 +335,7 @@ Table of Transitivity:
 
 ![vJoy Help](Doc/7_Ds2vJoy_Mapping_Help.png)
 
-You can find this help directly in Ds2vJoy by pressing help below grid entries
+You can find this help directly in Ds2vJoy by pressing help below grid entries or in tooltips
 
 At the left of destinations, you'll find destination actions type choice:
 
