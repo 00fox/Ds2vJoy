@@ -742,6 +742,7 @@ Picture talk by itself
 * https://developer.microsoft.com/en-us/microsoft-edge/webview2
 * https://github.com/MicrosoftEdge/WebView2Samples
 * https://github.com/microsoft/Windows-driver-samples/tree/master/setup/devcon
+* https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Magnification
 
 * https://github.com/ViGEm/ViGEmBus
 * https://github.com/ViGEm/ViGEmClient
