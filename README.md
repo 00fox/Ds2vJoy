@@ -359,12 +359,12 @@ Simple, you'll find mouse actions
 - SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
   - if on trigger, variable speed following the pressure force, otherwise exponential
   - or fixed scroll adjusted for games that don't support the number of wheel ticks signal
-- MAGNIFY: Set maginifation on according to values specified in the grid
-  - if x=y=0,		magnification is set on center of the screen
-  - if x=1 y=0,	magnification is set on actual cursor position
-  - if x=0 y=1,	magnification is set on actual point (last memorized)
-  - if x=y=1,		magnification is set on the given point (w,h)
-  - if nw == 0, factor is actual factor, else it will be nw.nh (nh is the frational part of zoom level)
+- MAGNIFY: Set magnification on according to values specified in the grid
+  - if x=y=0, magnification is set on center of the screen
+  - if x=1 y=0, magnification is set on actual cursor position
+  - if x=0 y=1, magnification is set on actual point (last memorized)
+  - if x=y=1, magnification is set on the given point (w,h)
+  - if nw == 0, factor is actual factor, else it will be nw.nh (nh is the fractional part of zoom level)
 - MAGNIFY_PLUS, MAGNIFY_MINUS: control the factor of magnification
 - MAGNIFY_RESET: temporary return to full screen, values are not modified then you can go back to actual zoom just after
 - MAGNIFY_UP, MAGNIFY_DOWN, MAGNIFY_LEFT, MAGNIFY_RIGHT: move up, down, left or right while magnification factor > 1
