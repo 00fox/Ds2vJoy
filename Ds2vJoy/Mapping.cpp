@@ -188,16 +188,24 @@ const WCHAR* Mapping::TagsString()
 		head += swprintf_s(head, MAX_PATH, L"  ");
 
 	if (Pause == 1)
-		head += swprintf_s(head, MAX_PATH, L"P");
+		head += swprintf_s(head, MAX_PATH, L"1");
+	else if (Pause == 2)
+		head += swprintf_s(head, MAX_PATH, L"2");
 	else if (Pause)
-		head += swprintf_s(head, MAX_PATH, L"p");
+		head += swprintf_s(head, MAX_PATH, L"B");
 	else
 		head += swprintf_s(head, MAX_PATH, L"  ");
 
 	if (Transitivity == 1)
+		head += swprintf_s(head, MAX_PATH, L"►");
+	else if (Transitivity == 2)
 		head += swprintf_s(head, MAX_PATH, L"Y");
-	else if (Transitivity)
+	else if (Transitivity == 3)
 		head += swprintf_s(head, MAX_PATH, L"y");
+	else if (Transitivity == 4)
+		head += swprintf_s(head, MAX_PATH, L"R");
+	else if (Transitivity)
+		head += swprintf_s(head, MAX_PATH, L"r");
 	else
 		head += swprintf_s(head, MAX_PATH, L"  ");
 
@@ -417,7 +425,6 @@ BOOL Mapping::LoadDevice(HWND hWnd, dsDevice* ds, vJoyDevice* vjoy)
 		releasedVal[i] = (byte)((exists[i]) ? ((Target[i]) ? (m_vj[i] ? m_vj[i]->GetReleasedVal() : 0) : (m_ds[i] ? m_ds[i]->GetReleasedVal() : 0)) : 0);
 	}
 
-
 	GridCanbeUsed =
 		vjID[0] != MOVE_TO_XY && vjID[0] != SAVE_AND_MOVE_TO_XY &&
 		vjID[0] != MOVE_TO_WH && vjID[0] != SAVE_AND_MOVE_TO_WH &&
@@ -567,7 +574,7 @@ void Mapping::Run(double average)
 	{
 		if (modechangedto != mode)
 		{
-			if (Transitivity == 2 && Pause == 2)
+			if (Transitivity == 5)
 			{
 				if (!(modechangedto != tape.Mode[Tab] && modechangedto != mode && mode != tape.Mode[Tab]))
 					modechanged = min(3, modechanged++);
@@ -580,7 +587,7 @@ void Mapping::Run(double average)
 //	else if (isRunning && tape.Mode[Tab] && tape.Mode[Tab] != mode && tomode != mode)
 	else if (tape.Mode[Tab] && tape.Mode[Tab] != mode && tomode != mode)
 	{
-		if (isRunning || (!isRunning && !Transitivity && Pause == 2))
+		if (isRunning || (!isRunning && Transitivity == 1))
 		{
 			modechanged = 1;
 			modechangedto = mode;
@@ -601,7 +608,7 @@ void Mapping::Run(double average)
 			(modedest[i]) = (modedest[i] && released && tomode != mode) ? 2 :
 				((modechanged && !(NlRelease[i] == 1 && tape.Mode[Tab] == mode) && !(NlRelease[i] == 2 && tape.Mode[Tab] != mode)) ? ((NoRelease[i] == 2) ? 1 : 2) : 0);
 		}
-		if (OnRelease[i] && locked == 1 && tape.Mode[Tab] == mode && !Transitivity && Pause == 2)
+		if (OnRelease[i] && locked == 1 && tape.Mode[Tab] == mode && Transitivity == 1)
 			modedest[i] = 0;
 	}
 
@@ -659,23 +666,20 @@ void Mapping::Run(double average)
 		locked = 2;
 	if (locked == 2 && mode != tomode && legit)
 		locked = 3;
-	bool lasttest = (legit && Transitivity == 1 && Pause != 2 && modechanged);
-//	if (((tape.Mode[Tab] == mode) && (!legit || (!Transitivity && Pause == 2))) || lasttest)
+	bool lasttest = (legit && Transitivity == 2 && modechanged);
 	if ((tape.Mode[Tab] == mode && !legit) || lasttest)
 	{
 		locked = 0;
 		tomode = -1;
 		if (lasttest)
 			modechanged = 1;
-//		else if (Transitivity || Pause != 2)
 		else
 			modechanged = 0;
 	}
 	else if (!lasttest)
 		if (tape.Mode[Tab] && tape.Mode[Tab] != mode)
 		{
-			//if (legit && isRunning && !Transitivity && Pause == 2 && modechanged)
-			if (!Transitivity && Pause == 2)
+			if (Transitivity == 1)
 			{
 				locked = 0;
 				tomode = -1;
@@ -684,7 +688,7 @@ void Mapping::Run(double average)
 				for (int i = 0; i < 8; i++)
 					modedest[i] = 0;
 			}
-			else if (!(isRunning && Transitivity == 1 && Pause == 2))
+			else if (!(isRunning && Transitivity == 3))
 				legit = false;
 		}
 	if (locked == 3)
@@ -924,6 +928,7 @@ void Mapping::Run(double average)
 			activated = false;
 			isRunning = true;
 			released = false;
+			MagFactor = Grid[4];
 			for (int i = 0; i < 8; i++)
 			{
 				ran[i] = false;
@@ -999,11 +1004,22 @@ void Mapping::Run(double average)
 			if (modechanged == 3 && OnRelease[i])
 				done[i] = true;
 
-			if ((OrXorNot[2] && legits[3]) || (OrXorNot[3] && legits[4]))
+			if (OrXorNot[2] && legits[3])
 			{
-				if (Pause == 1 || Pausetmp)
+				if (Pause == 1 || Pause == 3 || Pausetmp)
 					started[i] = false;
-				else if ((OrXorNot[2] == 1 && legits[3]) || (OrXorNot[3] == 1 && legits[4]))
+				else if (OrXorNot[2] == 1 && legits[3])
+				{
+					started[i] = false;
+					done[i] = true;
+				}
+			}
+
+			if (OrXorNot[3] && legits[4])
+			{
+				if (Pause >= 2 || Pausetmp)
+					started[i] = false;
+				else if (OrXorNot[3] == 1 && legits[4])
 				{
 					started[i] = false;
 					done[i] = true;
@@ -1014,6 +1030,9 @@ void Mapping::Run(double average)
 			{
 				if (started[i] && !done[i] && (!ran[i] ||
 					vjID[i] == SCROLL_UP_VARIABLE || vjID[i] == SCROLL_DOWN_VARIABLE ||
+					vjID[i] == MAGNIFY_PLUS || vjID[i] == MAGNIFY_MINUS ||
+					vjID[i] == MAGNIFY_UP || vjID[i] == MAGNIFY_DOWN ||
+					vjID[i] == MAGNIFY_LEFT || vjID[i] == MAGNIFY_RIGHT ||
 					(Stop[i] && (
 						vjID[i] == MOVE_TO_XY || vjID[i] == SAVE_AND_MOVE_TO_XY ||
 						vjID[i] == MOVE_TO_WH || vjID[i] == SAVE_AND_MOVE_TO_WH ||
@@ -1138,6 +1157,123 @@ void Mapping::Run(double average)
 							{
 								if (!(cycle % 18))
 									std::thread(MouseActions, (MouseActionID)vjID[i], 600 - (modulo * 5)).detach();
+							}
+						break;
+					}
+					case MAGNIFY:
+					{
+						float Level = 0;
+						int xOffset = 0;
+						int	yOffset = 0;
+						unsigned char Method = ((Grid[0]) ? 1 : 0) + ((Grid[1]) ? 2 : 0);
+						if (Method == 3)
+						{
+							xOffset = Grid[2];
+							yOffset = Grid[3];
+						}
+						if (MagFactor > 0)
+						{
+							//Level = min(4096, Grid[4] + ((Grid[5]) ? (float(Grid[5]) / float(pow(10, floor(log10(Grid[5])) + 1))) : 0));
+							PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_SET, 0), MAKELPARAM(Grid[4], Grid[5]));
+							MagFactor = 0;
+						}
+						PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(Method, 0), MAKELPARAM(xOffset, yOffset));
+						break;
+					}
+					case MAGNIFY_PLUS:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(1, 0)); break; }
+							}
+							else
+							{
+								if (!(cycle % modulo))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(1, 0)); break; }
+							}
+						break;
+					}
+					case MAGNIFY_MINUS:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(0, 1)); break; }
+							}
+							else
+							{
+								if (!(cycle % modulo))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(0, 1)); break; }
+							}
+						break;
+					}
+					case MAGNIFY_RESET: { PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_RESET, 0), MAKELPARAM(0, 0)); break; }
+					case MAGNIFY_UP:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 3), MAKELPARAM(0, 10)); break; }
+							}
+							else
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 3), MAKELPARAM(0, unsigned short(100 / modulo))); break; }
+							}
+						break;
+					}
+					case MAGNIFY_DOWN:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(0, 10)); break; }
+							}
+							else
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(0, (100 / modulo))); break; }
+							}
+						break;
+					}
+					case MAGNIFY_LEFT:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 1), MAKELPARAM(10, 0)); break; }
+							}
+							else
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 1), MAKELPARAM(unsigned short(100 / modulo), 0)); break; }
+							}
+						break;
+					}
+					case MAGNIFY_RIGHT:
+					{
+						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						if (modulo)
+							if (modulo == -1)
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(10, 0)); break; }
+							}
+							else
+							{
+								if (!(cycle % 5))
+									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM((100 / modulo), 0)); break; }
 							}
 						break;
 					}
@@ -1445,7 +1581,7 @@ void Mapping::Run(double average)
 			if (Led)
 				Ledactive[Led] = false;
 
-			if (modechanged && Transitivity != 2 && tomode != mode)
+			if (modechanged && Transitivity < 4 && tomode != mode)
 				locked = 3;
 
 			if (released)
@@ -1713,6 +1849,14 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 	case X2_DOWN: return I18N.MouseAction_X2_DOWN;
 	case SCROLL_UP_VARIABLE: return I18N.MouseAction_SCROLL_UP_VARIABLE;
 	case SCROLL_DOWN_VARIABLE: return I18N.MouseAction_SCROLL_DOWN_VARIABLE;
+	case MAGNIFY: return I18N.MouseAction_MAGNIFY;
+	case MAGNIFY_PLUS: return I18N.MouseAction_MAGNIFY_PLUS;
+	case MAGNIFY_MINUS: return I18N.MouseAction_MAGNIFY_MINUS;
+	case MAGNIFY_RESET: return I18N.MouseAction_MAGNIFY_RESET;
+	case MAGNIFY_UP: return I18N.MouseAction_MAGNIFY_UP;
+	case MAGNIFY_DOWN: return I18N.MouseAction_MAGNIFY_DOWN;
+	case MAGNIFY_LEFT: return I18N.MouseAction_MAGNIFY_LEFT;
+	case MAGNIFY_RIGHT: return I18N.MouseAction_MAGNIFY_RIGHT;
 	default: return WCHARI(L"???");
 	}
 }

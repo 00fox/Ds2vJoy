@@ -28,6 +28,7 @@ struct LANGSTRS
 	WCHAR* FirmwareFail;
 	WCHAR* Log_Wait_ds;
 	WCHAR* Log_Wait_vJoy;
+	WCHAR* Magnification_Active;
 	WCHAR* Registry_Added;
 	WCHAR* Registry_Removed;
 	WCHAR* SkipController;
@@ -311,6 +312,14 @@ struct LANGSTRS
 	WCHAR* MouseAction_X2_DOWN;
 	WCHAR* MouseAction_SCROLL_UP_VARIABLE;
 	WCHAR* MouseAction_SCROLL_DOWN_VARIABLE;
+	WCHAR* MouseAction_MAGNIFY;
+	WCHAR* MouseAction_MAGNIFY_PLUS;
+	WCHAR* MouseAction_MAGNIFY_MINUS;
+	WCHAR* MouseAction_MAGNIFY_RESET;
+	WCHAR* MouseAction_MAGNIFY_UP;
+	WCHAR* MouseAction_MAGNIFY_DOWN;
+	WCHAR* MouseAction_MAGNIFY_LEFT;
+	WCHAR* MouseAction_MAGNIFY_RIGHT;
 
 	WCHAR* SpecialAction_MUTE_SOUND;
 	WCHAR* SpecialAction_VOLUME_UP;

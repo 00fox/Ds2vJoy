@@ -135,7 +135,6 @@ public:
 
 	void				Init(HINSTANCE hInst, HWND hWnd);
 	void				Open(HWND parent, int mode, int tab);
-	void				_Grid(HWND hWnd);
 	void				Show(HWND hWnd = NULL);
 	void				Hide(HWND hWnd = NULL);
 	BOOL				MoveWindow(int, int, int, int, BOOL);

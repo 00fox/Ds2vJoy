@@ -359,8 +359,25 @@ void Settings::Load(int category)
 							case Mapping_Long: { btn.Long = _wtoi(key) == 1; break; }
 							case Mapping_Led: { btn.Led = max(0, min(6, _wtoi(key))); break; }
 							case Mapping_Macro: { btn.Macro = max(0, min(2, _wtoi(key))); break; }
-							case Mapping_Pause: { btn.Pause = max(0, min(2, _wtoi(key))); break; }
-							case Mapping_Transitivity: { btn.Transitivity = max(0, min(2, _wtoi(key))); break; }
+							case Mapping_Pause:
+							{
+								btn.Pause = max(0, min(3, _wtoi(key)));
+								if (VersionDateCheck < 202203251)
+									if (btn.Pause == 1)
+										btn.Pause = 3;
+								break;
+							}
+							case Mapping_Transitivity:
+							{
+								btn.Transitivity = max(0, min(2, _wtoi(key)));
+								if (VersionDateCheck < 202203251)
+								{
+									btn.Transitivity = (btn.Transitivity * 2) + ((btn.Pause == 2) ? 1 : 0);
+									if (btn.Pause == 2)
+										btn.Pause = 0;
+								}
+								break;
+							}
 							case Mapping_Toggle: { btn.Toggle = max(0, min(2, _wtoi(key))); break; }
 							case Mapping_Target: { for (int i = 0; i < 5; i++) { btn.Target[i] = CheckboxString(key, i) == 1; } break; }
 							case Mapping_dsID: { for (int i = 0; i < 5; i++) { btn.dsID[i] = max(0, min((btn.Target[i]) ? vJoyButtonID::button_Count : dsButtonID::button_Count, dsIDString(key, i))); } break; }

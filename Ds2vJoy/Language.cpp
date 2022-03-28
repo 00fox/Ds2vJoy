@@ -32,6 +32,7 @@ void LoadLanguage()
 	I18N.FirmwareFail										= WCHARI(L"Cannot get firmware version");
 	I18N.Log_Wait_ds										= WCHARI(L"Waiting for a valid DS device.");
 	I18N.Log_Wait_vJoy										= WCHARI(L"Waiting for a valid vJoy device.");
+	I18N.Magnification_Active								= WCHARI(L"Magnification activated");
 	I18N.Registry_Added										= WCHARI(L"Startup value successfully added in Registry");
 	I18N.Registry_Removed									= WCHARI(L"Startup value successfully removed from Registry");
 	I18N.SkipController										= WCHARI(L"Skip %s Serial %s");
@@ -301,6 +302,14 @@ void LoadLanguage()
 	I18N.MouseAction_X2_DOWN								= WCHARI(L"X2 Down");
 	I18N.MouseAction_SCROLL_UP_VARIABLE						= WCHARI(L"Scroll ↑ incr");
 	I18N.MouseAction_SCROLL_DOWN_VARIABLE					= WCHARI(L"Scroll ↓ incr");
+	I18N.MouseAction_MAGNIFY								= WCHARI(L"Magnify");
+	I18N.MouseAction_MAGNIFY_PLUS							= WCHARI(L"Magnify+");
+	I18N.MouseAction_MAGNIFY_MINUS							= WCHARI(L"Magnify-");
+	I18N.MouseAction_MAGNIFY_RESET							= WCHARI(L"Magnify Reset");
+	I18N.MouseAction_MAGNIFY_UP								= WCHARI(L"Magnify ↑");
+	I18N.MouseAction_MAGNIFY_DOWN							= WCHARI(L"Magnify ↓");
+	I18N.MouseAction_MAGNIFY_LEFT							= WCHARI(L"Magnify ←");
+	I18N.MouseAction_MAGNIFY_RIGHT							= WCHARI(L"Magnify →");
 
 	I18N.SpecialAction_MUTE_SOUND							= WCHARI(L"Mute/Unmute");
 	I18N.SpecialAction_VOLUME_UP							= WCHARI(L"Volume up");
@@ -860,10 +869,11 @@ See 'Pause' for more informations about not condition");
 	I18N.HELP_SOURCE										= WCHARI(L"Source selection:\n\
 swap between DS or vJoy (V)");
 	I18N.HELP_DESTINATION									= WCHARI(L"Destination selection:\n\
-Swap between vJoy\n\
-Simple, Mouse actions (M)\n\
+None, vJoy\n\
+Simple, Mouse actions, Magnifier (M)\n\
 Double, Sound, modes, window, stats and time actions (S)\n\
-Triple, Axis movements (A)");
+Triple, Axis movements (A)\n\
+quadruple, Modules actions, Web, Notepad, etc. (W)");
 	I18N.HELP_DISABLING_S									= WCHARI(L"Disabling post action:\n\
 This button will be disabled for next mappings\n\
 	if this mapping is running (except with Force)\n\
@@ -885,30 +895,30 @@ double, No sustain :\n\
 	second source too if first is not pushed and OrXor1\n\
 	third source too if first is not pushed, second isn't in used and OrXor1 + OrXor2");
 	I18N.HELP_PAUSE											= WCHARI(L"Pause modificator:\n\
-simple, Pause:\n\
+simple, Pause1:\n\
+	Pause this mapping while a 'not1' condition\n\
+double, Pause2:\n\
+	Pause this mapping while a 'not2' condition\n\
+triple, Pause:\n\
 	Pause this mapping while a 'not' condition\n\
 otherwise :\n\
 	if 'not' is a simple, and 'not' button is pressed, the mapping is interrupted\n\
-	if 'not' is a double, and 'not' button is pressed, the mapping still continue\n\
-double : One time, used in Transitivity as a modificator or action (see Transitivity)");
+	if 'not' is a double, and 'not' button is pressed, the mapping still continue");
 	I18N.HELP_TRANSITIVITY									= WCHARI(L"Transitivity modificator:\n\
-	simple, Transitivity:\n\
-		bring different transitions while mode changed\n\
-	double, Come back:\n\
-		another way of transitivity which brings its owns\n\
-	One time : Conduct\n\
-		If the source is already pushed when entering the new mode,\n\
-		the mapping is triggered\n\
-Transitivity : Complete\n\
+Brings different behaviors and transition possibilities while mode changed\n\
+simple : Conduct\n\
+	If the source is already pushed when entering the new mode,\n\
+	the mapping is triggered\n\
+double : Complete\n\
 	You can release and trigger again in new mode\n\
 	if it was already active before changing mode\n\
-Transitivity + One time : Limited\n\
+triple : Limited\n\
 	Action continue while changing mode,\n\
 	but you can't trigger again if release\n\
-Come back : Retroactive\n\
+quadruple : Retroactive\n\
 	Instead of continuation, button is released,\n\
 	but triggered again if still pushed when initial mode is back\n\
-Come back + One time : One time back\n\
+quintuple : One time back\n\
 	The same as Retroactive, but while pushed,\n\
 	you can change modeand get it triggered again only one time.\n\
 	After, you have to releaseand trigger it again in its own mode\n\
@@ -1068,23 +1078,53 @@ unchecked: Raid / Grid is not the default one\n\
 simple: Raid/Grid is the default one\n\
 double: Remove previous (not the default again)");
 	I18N.HELP_GRID_X										= WCHARI(L"x:\n\
-Abscissa of first point (Move to x,y etc) or\n\
-Abscissa of upper-left point of the Raid/Grid");
+Mouse action\n\
+	Abscissa of first point\n\
+Raid/Grid\n\
+	Abscissa of upper-left point\n\
+Magnifier\n\
+	x=y=0	at center\n\
+	x=1 y=0	at cursor position\n\
+	x=0 y=1	at actual point\n\
+	x=y=1	at given point (w,h)");
 	I18N.HELP_GRID_Y										= WCHARI(L"y:\n\
-Ordinate of first point (Move to x,y etc) or\n\
-Ordinate of upper - left point of the Raid / Grid");
+Mouse action\n\
+	Ordinate of first point\n\
+Raid/Grid\n\
+	Ordinate of upper-left point\n\
+Magnifier\n\
+	x=y=0	at center\n\
+	x=1 y=0	at cursor position\n\
+	x=0 y=1	at actual point\n\
+	x=y=1	at given point (w,h)");
 	I18N.HELP_GRID_W										= WCHARI(L"w:\n\
-Abscissa of second point (Move to w,h etc) or\n\
-Width of the Raid / Grid");
+Mouse action\n\
+	Abscissa of second point\n\
+Raid/Grid\n\
+	Width of the grid\n\
+Magnifier\n\
+	if x=y=1, Abscissa to zoom at");
 	I18N.HELP_GRID_H										= WCHARI(L"h:\n\
-Ordinate of second point (Move to w,h etc) or\n\
-Height of the Raid / Grid");
+Mouse action\n\
+	Ordinate of second point\n\
+Raid/Grid\n\
+	Height of the grid\n\
+Magnifier\n\
+	if x=y=1, Ordinate to zoom at");
 	I18N.HELP_GRID_NW										= WCHARI(L"nw:\n\
-Abscissa of third point (Move to nw,nh etc) or\n\
-Number of horizontal subdivisions");
+Mouse action\n\
+	Abscissa of third point\n\
+Raid/Grid\n\
+	Number of horizontal subdivisions\n\
+Magnifier\n\
+	Zoom factor (1-4096)");
 	I18N.HELP_GRID_NH										= WCHARI(L"nh:\n\
-Ordinate of third point (Move to nw,nh etc) or\n\
-Number of horizontal subdivisions");
+Mouse action\n\
+	Ordinate of third point\n\
+Raid/Grid\n\
+	Number of horizontal subdivisions\n\
+Magnifier\n\
+	frational part of zoom level");
 	I18N.HELP_DIGITS										= WCHARI(L"Digits:\n\
 mouse coordinates,\n\
 	to make it easier to enter special mouse actions\n\
@@ -1138,6 +1178,7 @@ void FreeLanguage()
 	delete[] I18N.FirmwareFail;
 	delete[] I18N.Log_Wait_ds;
 	delete[] I18N.Log_Wait_vJoy;
+	delete[] I18N.Magnification_Active;
 	delete[] I18N.Registry_Added;
 	delete[] I18N.Registry_Removed;
 	delete[] I18N.SkipController;
@@ -1396,6 +1437,14 @@ void FreeLanguage()
 	delete[] I18N.MouseAction_X2_DOWN;
 	delete[] I18N.MouseAction_SCROLL_UP_VARIABLE;
 	delete[] I18N.MouseAction_SCROLL_DOWN_VARIABLE;
+	delete[] I18N.MouseAction_MAGNIFY;
+	delete[] I18N.MouseAction_MAGNIFY_PLUS;
+	delete[] I18N.MouseAction_MAGNIFY_MINUS;
+	delete[] I18N.MouseAction_MAGNIFY_RESET;
+	delete[] I18N.MouseAction_MAGNIFY_UP;
+	delete[] I18N.MouseAction_MAGNIFY_DOWN;
+	delete[] I18N.MouseAction_MAGNIFY_LEFT;
+	delete[] I18N.MouseAction_MAGNIFY_RIGHT;
 
 	delete[] I18N.SpecialAction_MUTE_SOUND;
 	delete[] I18N.SpecialAction_VOLUME_UP;

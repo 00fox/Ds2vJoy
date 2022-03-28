@@ -177,6 +177,9 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
+	//if (MagInitialize())
+	//	tape.MagInitialized = true;
+
 	DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX/* | WS_THICKFRAME*/;
 	tape.Ds2hWnd = CreateWindowExW(WS_EX_CONTROLPARENT, tape.szWindowClass, tape.szTitle, dwStyle, CW_USEDEFAULT, 0, 492, 327, nullptr, nullptr, hInstance, nullptr);
 
@@ -1188,6 +1191,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (tape.DsvJoyAddedToGuardian)
 			echo(I18N.HidGuardian_Added_to_Guardian, I18N.APP_TITLE, tape.Ds2vJoyPID);
 		hid.Init(hWnd);
+		if (tape.MagInitialized)
+		{
+			echo(I18N.Magnification_Active);
+			HMODULE hMagnification = LoadLibrary(L"Magnification.dll");
+			if (hMagnification != NULL)
+			{
+				typedef bool(WINAPI* hMagSetSmoothing)(bool);
+				hMagSetSmoothing hMagnificationSmoothing = (hMagSetSmoothing)GetProcAddress(hMagnification, "MagSetFullscreenUseBitmapSmoothing");
+				auto isSmoothingActive = hMagnificationSmoothing(true);
+				FreeLibrary(hMagnification);
+			}
+		}
 
 		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
 
@@ -1198,9 +1213,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		SetTimer(hWnd, 1, 10000, NULL);	//Check for vJoy or DS interruptions
 		SetTimer(hWnd, 2, 100, NULL);	//Set Ondulating LED
-		SetTimer(hWnd, 3, 1000, NULL);	//Battery
+		SetTimer(hWnd, 3, 1000, NULL);	//Battery & Latency
 		SetTimer(hWnd, 4, 5000, NULL);	//HidGuardian Whitelist Check
-		SetTimer(hWnd, 5, 10, NULL);	//When moving windows
+		SetTimer(hWnd, 5, 10, NULL);	//When moving windows & Zoom
 		SetTimer(hWnd, 6, 100, NULL);	//Print Profile, mode, mouse and vJoy Buttons when editing
 		SetTimer(hWnd, 7, 65, NULL);	//Set and focus explorer tab under cursor & Change window form when mouseover
 
@@ -1306,7 +1321,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (!IsIconic(hWnd))
 				{
 					SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(buf), SMTO_BLOCK, 1000, NULL);
-					swprintf_s(buf, TEXT("%0.5f ms"), average);
+					if (tape.MagInitialized)
+						swprintf_s(buf, TEXT("%0.5f ms*"), average);
+					else
+						swprintf_s(buf, TEXT("%0.5f ms"), average);
 					SendMessageTimeout(hStatus, SB_SETTEXT, 1, LPARAM(buf), SMTO_BLOCK, 1000, NULL);
 				}
 			}
@@ -1327,12 +1345,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			if (m_flag_drag)
 			{
+				/*
+				Not needed because window flag is WS_CAPTION and can naturally receive WM_NCLBUTTONUP message
 				if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
 				{
 					if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
 						PostMessage(hWnd, WM_NCLBUTTONUP, 0, 0);
 				}
 				else
+				*/
 				{
 					m_flag_drag++;
 					if (m_flag_drag == 4)
@@ -2089,6 +2110,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_NOTEPAD_SCROLL:
 	{
 		nDlg.Scroll(lParam == 1);
+		break;
+	}
+	case WM_SET_MAGNIFY:
+	{
+		SetMagnifyZoom(LOWORD(wParam), HIWORD(wParam), LOWORD(lParam), HIWORD(lParam));
 		break;
 	}
 	case WM_CREATE_MENU:
@@ -2938,6 +2964,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_DESTROY:
 	{
+		if (tape.MagInitialized)
+		{
+			SetMagnifyZoom(1, 0);
+			MagUninitialize();
+		}
 		if (tape.NotepadUnsaved)
 			nDlg.Save();
 		if (!tape.BreakAndExit)

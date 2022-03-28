@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int			VersionDate = 202203191;
+	const int			VersionDate = 202203281;
 	const std::wstring	ProgramFilesDirName = L"Ds2vJoy";
 	bool				BreakAndExit = false;
 
@@ -399,7 +399,6 @@ public:
 	bool				isExplorerLoaded;
 	bool				isWebView2Installing;
 
-
 	Mappings			Mappingdata;
 	Keymaps				Keymapdata;
 	RapidFires			RapidFiredata;
@@ -467,6 +466,9 @@ public:
 	unsigned short		NotepadFontW = 0;
 	bool				NotepadUnsaved = false;
 	size_t				web_actualtab = 0;
+
+	bool				MagInitialized = false;
+	float				MagLevel = 1;
 
 private:
 	enum MappingName {

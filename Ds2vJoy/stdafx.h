@@ -43,8 +43,8 @@
 #include <mmeapi.h>						//Sound control
 #pragma comment (lib, "winmm.lib")
 //////////////////////////////////////////////////////////////////////
-//#include "magnification.h"			//Magnification
-//#pragma comment(lib, "Magnification.lib")
+#include "magnification.h"				//Magnification
+#pragma comment(lib, "Magnification.lib")
 //////////////////////////////////////////////////////////////////////
 #include "Zip Utils/unzip.h"			//Zip Utils
 #include "CPULimiter/CPULimiter.h"

@@ -58,6 +58,14 @@ public:
 		X2_DOWN,
 		SCROLL_UP_VARIABLE,
 		SCROLL_DOWN_VARIABLE,
+		MAGNIFY,
+		MAGNIFY_PLUS,
+		MAGNIFY_MINUS,
+		MAGNIFY_RESET,
+		MAGNIFY_UP,
+		MAGNIFY_DOWN,
+		MAGNIFY_LEFT,
+		MAGNIFY_RIGHT,
 		mouse_Count
 	};
 
@@ -243,25 +251,25 @@ public:
 	//1 Macro: Interrupt macros on release (even if timestamp not finished),
 	//2 No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
 	unsigned char		Pause = 0;
-	//1 pause this mapping while a not condition
+	//1 pause this mapping while a not1 condition
+	//2 pause this mapping while a not2 condition
+	//3 pause this mapping while a not condition
 	//	otherwise	if not is a simple, and not button is pressed, the mapping is interrupted
 	//				if not is a double, and not button is pressed, the mapping still continue
-	//2 One time, used in Transitivity
 	unsigned char		Transitivity = 0;
-	//1 Transitivity: Principal way of transitivity which brings different behaviors and transition possibilities while mode changed
-	//2 Come back, another way of transitivity which brings its owns (see table of transitivity below)
+	//Brings different behaviors and transition possibilities while mode changed (see table of transitivity below)
 	//
-	//| Transitivity | Pause    | Type          | Result
-	//|:------------ |:-------- |:------------- |: ------------------------------------------
-	//| Transitivity |          | Complete      | You can release and trigger again in new mode
-	//|              |          |               |if it was already active before changing mode
-	//| Transitivity | One time | Limited       | Action continue while changing mode, but you can't trigger again if release
-	//| Come back    |          | Retroactive   | Instead of continuation, button is released,
-	//|              |          |               |but triggered again if still pushed when initial mode is back
-	//| Come back    | One time | One time back | The same as Retroactive,
-	//|              |          |               |but while pushed, you can change modeand get it triggered again only one time
-	//|              |          |               |After, you have to releaseand trigger it again in its own mode
-	//in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
+	//Table of Transitivity:
+	//| Transitivity    | Result
+	//|:--------------- |:--------------------------------------------------------------------
+	//| 1 Conduct       | If the source is already pushed when entering the new mode, the mapping is triggered
+	//| 2 Complete      | You can release and trigger again in new mode if it was already active before changing mode
+	//| 3 Limited       | Action continue while changing mode, but you can't trigger again if release
+	//| 4 Retroactive   | Instead of continuation, button is released, but triggered again if still pushed when initial mode is back
+	//| 5 One time back | The same as Retroactive, but while pushed, you can change mode and get it triggered again only one time
+	//|                 | After, you have to release and trigger it again in its own mode
+	//* in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
+	//  - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 	unsigned char		Toggle = 0;
 	//1 satisfy mapping conditions one time to start, second one to stop
 	//2 destinations states begin activated at program launch
@@ -335,6 +343,7 @@ public:
 	//| 4     | Sniper   | Accuracy | extreme precision
 	//| 5     | Raid     | Grid     | move inside a zone whom coordinates are entered in numbers group at the right
 	unsigned short		Grid[6] = { 0 };
+	unsigned short		MagFactor = 1;
 	//0 x, 1 y, 2 w, 3 h, 4 nw, 5 nh
 	//x and y define the starting point of the grid in which the mouse stay if you have activated grid mouse
 	//w and h are the width and height of the grid

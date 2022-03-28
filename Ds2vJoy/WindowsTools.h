@@ -52,6 +52,8 @@ void			CreateToolTip(HWND hWndParent, HWND hControlItem, PTSTR tooltipText)
 void			SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency)
 unsigned long	GetCursorType()
 HRESULT			ScreenCapturePart(int x, int y, int z, int t, std::wstring filename, bool scaling = true)
+BOOL			SetMagnifyZoom(float magnificationFactor, bool mouse = true)
+BOOL			MagSetColor(char magnifyColor)
 
 ////////////////////////////////////////////////////////////////////// Process
 BOOL			IsWow64()
@@ -1287,6 +1289,173 @@ inline HRESULT ScreenCapturePart(int x, int y, int z, int t, std::wstring filena
 	DeleteDC(hdcMemory);
 
 	return SaveBitmap(filename, hBitmap, format);
+}
+
+#define MAG_METHOD_CENTER	0	//Center of the screen
+#define MAG_METHOD_MOUSE	1	//Actual Cusor position
+#define MAG_METHOD_ACTUAL	2	//Actual Point
+#define MAG_METHOD_POINT	3	//Given Point
+#define MAG_METHOD_MOVE		4	//Move +(negative if factor = 1 or 2)pointx , +(negative if factor = 2 or 3)pointy
+#define MAG_METHOD_ZOOM		5	//Zoom: pointx = 1 Zoom+, pointy = 1 Zoom-, else +magnificationFactor
+#define MAG_METHOD_SET		7	//Set magnification factor (when you can send only two unsigned short)
+#define MAG_METHOD_RESET	6	//Temporary reset
+
+//-----------------------------------------------------------------------------
+inline BOOL SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, int pointy = 0)
+{
+	static float	MagLevel = 1;				//1 to 4096
+	static int		MagxOffset = tape.W / 2;
+	static int		MagyOffset = tape.H / 2;
+	static bool		MagnifyLock = false;
+
+	if (method == MAG_METHOD_RESET)
+		MagnifyLock = !MagnifyLock;
+
+	if (MagnifyLock)
+	{
+		if (method != MAG_METHOD_RESET)
+			return FALSE;
+		else if (MagLevel == 1)
+			return TRUE;
+	}
+
+	switch (method)
+	{
+	case MAG_METHOD_CENTER:
+	{
+		if (factor >= 1 && factor <= 4096)
+			MagLevel = factor;
+		MagxOffset = tape.W / 2;
+		MagyOffset = tape.H / 2;
+		break;
+	}
+	case MAG_METHOD_MOUSE:
+	{
+		if (factor >= 1 && factor <= 4096)
+			MagLevel = factor;
+		GetCursorPos(&tape.mousepoint);
+		MagxOffset = max(0, min(tape.W, tape.mousepoint.x));
+		MagyOffset = max(0, min(tape.H, tape.mousepoint.y));
+		break;
+	}
+	case MAG_METHOD_ACTUAL:
+	{
+		if (factor >= 1 && factor <= 4096)
+			MagLevel = factor;
+		if (MagLevel <= 1)
+		{
+			MagxOffset = tape.W / 2;
+			MagyOffset = tape.H / 2;
+		}
+		break;
+	}
+	case MAG_METHOD_POINT:
+	{
+		if (factor >= 1 && factor <= 4096)
+			MagLevel = factor;
+		MagxOffset = pointx;
+		MagyOffset = pointy;
+		break;
+	}
+	case MAG_METHOD_MOVE:
+	{
+		if (factor > 0)
+		{
+			pointx = (factor < 3) ? -pointx : pointx;
+			pointy = (factor > 1) ? -pointy : pointy;
+		}
+		MagxOffset = max(0, min(tape.W, MagxOffset + pointx));
+		MagyOffset = max(0, min(tape.H, MagyOffset + pointy));
+		break;
+	}
+	case MAG_METHOD_ZOOM:
+	{
+		if (pointx == 1)
+			MagLevel = min(4096, MagLevel * 1.06);
+		else if (pointy == 1)
+			MagLevel = max(1, MagLevel * 0.94);
+		else
+			MagLevel = max(1, min(4096, MagLevel + factor));
+		break;
+	}
+	case MAG_METHOD_SET:
+	{
+		MagLevel = max(1, min(4096, pointx + ((pointy) ? (float(pointy) / float(pow(10, floor(log10(pointy)) + 1))) : 0)));
+		break;
+	}
+	case MAG_METHOD_RESET:
+	{
+		if (MagnifyLock)
+		{
+			if (MagLevel > 1)
+				return MagSetFullscreenTransform(1, 0, 0);
+			else
+				return TRUE;
+		}
+		break;
+	}
+	}
+
+	if (MagLevel <= 1 || MagLevel > 4096)
+	{
+		if (tape.MagInitialized)
+		{
+			MagLevel = 1;
+			MagxOffset = tape.W / 2;
+			MagyOffset = tape.H / 2;
+			MagSetFullscreenTransform(1, 0, 0);
+			if (MagUninitialize())
+				tape.MagInitialized = false;
+		}
+		return FALSE;
+	}
+	else
+	{
+		if (!tape.MagInitialized)
+		{
+			if (MagInitialize())
+				tape.MagInitialized = true;
+			else
+				return FALSE;
+		}
+	}
+
+	pointx = int(2 * MagxOffset * (1.0 - 1.0 / MagLevel));
+	pointy = int(2 * MagyOffset * (1.0 - 1.0 / MagLevel));
+	return MagSetFullscreenTransform(MagLevel, pointx, pointy);
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL MagSetColor(char magnifyColor = 0)
+{
+	static char MagnifyColor = 0;
+	MagnifyColor = (MagnifyColor == magnifyColor) ? 0 : magnifyColor;
+
+	MAGCOLOREFFECT g_MagEffectIdentity =  { 1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+											0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+											0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+											0.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+											0.0f,  0.0f,  0.0f,  0.0f,  1.0f  };
+
+	MAGCOLOREFFECT g_MagEffectGrayscale = { 0.3f,  0.3f,  0.3f,  0.0f,  0.0f,
+											0.6f,  0.6f,  0.6f,  0.0f,  0.0f,
+											0.1f,  0.1f,  0.1f,  0.0f,  0.0f,
+											0.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+											0.0f,  0.0f,  0.0f,  0.0f,  1.0f  };
+
+	MAGCOLOREFFECT g_MagEffectInvert =   { -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+											0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+											0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+											0.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+											1.0f,  1.0f,  1.0f,  0.0f,  1.0f  };
+
+	switch (MagnifyColor)
+	{
+	case 0: { return MagSetFullscreenColorEffect(&g_MagEffectIdentity); break; }
+	case 1: { return MagSetFullscreenColorEffect(&g_MagEffectGrayscale); break; }
+	case 2: { return MagSetFullscreenColorEffect(&g_MagEffectInvert); break; }
+	}
+	return FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////// Process

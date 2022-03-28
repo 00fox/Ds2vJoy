@@ -764,8 +764,9 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (mappingData.Pause)
 				{
-				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"P"); break; }
-				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"O"); break; }
+				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"1"); break; }
+				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"2"); break; }
+				case 3: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"B"); break; }
 				}
 				break;
 			}
@@ -773,8 +774,11 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (mappingData.Transitivity)
 				{
-				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"T"); break; }
+				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"►"); break; }
 				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"C"); break; }
+				case 3: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"L"); break; }
+				case 4: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"R"); break; }
+				case 5: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"O"); break; }
 				}
 				break;
 			}
@@ -1354,6 +1358,15 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					}
 					if (mappingData.vjID[i] == mappingData.MOVE_TO_NN || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_NN)
 					{
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH));
+					}
+					if (mappingData.vjID[i] == mappingData.MAGNIFY)
+					{
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_X));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_W));
+						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_H));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH));
 					}
@@ -2773,7 +2786,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Pause = (mappingData.Pause + 1) % 3;
+				mappingData.Pause = (mappingData.Pause + 1) % 4;
 				Modified[Mofified_Pause] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam))); Show(GetDlgItem(hWnd, LOWORD(wParam)));
 				break;
@@ -2787,7 +2800,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Transitivity = (mappingData.Transitivity + 1) % 3;
+				mappingData.Transitivity = (mappingData.Transitivity + 1) % 6;
 				Modified[Mofified_Transitivity] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam))); Show(GetDlgItem(hWnd, LOWORD(wParam)));
 				break;
@@ -4728,7 +4741,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				WCHAR buf[MAX_PATH];
 				GetWindowText((HWND)lParam, buf, MAX_PATH);
-				mappingData.Grid[2] = max(-32768, min(32767, _wtoi(buf)));
+				mappingData.Grid[2] = max(0, min(65535, _wtoi(buf)));
 				if (canprint) Modified[Mofified_Grid3] = true;
 				break;
 			}
@@ -4753,7 +4766,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				WCHAR buf[MAX_PATH];
 				GetWindowText((HWND)lParam, buf, MAX_PATH);
-				mappingData.Grid[3] = max(-32768, min(32767, _wtoi(buf)));
+				mappingData.Grid[3] = max(0, min(65535, _wtoi(buf)));
 				if (canprint) Modified[Mofified_Grid4] = true;
 				break;
 			}
@@ -4778,7 +4791,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				WCHAR buf[MAX_PATH];
 				GetWindowText((HWND)lParam, buf, MAX_PATH);
-				mappingData.Grid[4] = max(-32768, min(32767, _wtoi(buf)));
+				mappingData.Grid[4] = max(0, min(65535, _wtoi(buf)));
 				if (canprint) Modified[Mofified_Grid5] = true;
 				break;
 			}
@@ -4803,7 +4816,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				WCHAR buf[MAX_PATH];
 				GetWindowText((HWND)lParam, buf, MAX_PATH);
-				mappingData.Grid[5] = max(-32768, min(32767, _wtoi(buf)));
+				mappingData.Grid[5] = max(0, min(65535, _wtoi(buf)));
 				if (canprint) Modified[Mofified_Grid6] = true;
 				break;
 			}
