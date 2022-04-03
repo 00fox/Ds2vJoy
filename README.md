@@ -27,7 +27,7 @@ Content:
 **Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests**
 
 ## How to use
-1. Install vJoy (https://sourceforge.net/projects/vjoystick/)
+1. Install vJoy (https://github.com/jshafer817/vJoy/releases)
    * or not if you plan to use ViGEm
 2. Open 'Configure vJoy' and select Axis, up to 128 Buttons and up to 4 continuous POV and effects
    * It may result in a PC restart.
@@ -41,7 +41,6 @@ Content:
 - When you change a setting, Ds2vJoy.ini is automatically and instantly saved
 - Ds2vJoy is portable, you can use multiple copy in different directories with different parameters
 - Install for ViGEm, HidGuardian and HidCerberus are included, they will use subdirectories of C:\Program Files\Ds2vJoy removed as soon as you chose to uninstall them from Ds2vJoy menu tabs, the same for C:\Program Files\Ds2vJoy itself when no required anymore
-- You can see which button is pressed by launching Monitor vJoy but when under vJoy and ViGEm tabs, you can see them directly in status bar to easily test quick configurations
 
 ## Log
 ![Log](Doc/1_Ds2vJoy_Log.png)
@@ -49,7 +48,7 @@ Content:
 Satus is separated in 4 colums which are:
 - Battery
 - Delay
-- Buttons pressed (in vJoy and ViGEm tabs)
+- Diverse informations (see Efficiency)
 - Mode (1-8) and Profile (1-3)
 
 ## Settings
@@ -732,12 +731,55 @@ Picture talk by itself
 - Right click on any window caption, or the background of a child to alternate plain or transparency (Opacity may be modified in settings)
 - Double click on Caption when in web module to switch to full screen, press ESC to exit and come back to normal size with menus
 - Web and Notepad modules can be resized and window becomes borderless, without any menu when mouse is out
-- While webbrowser fullscreen, you can adjuste zoom, by slifing mouse on the top of the screen, and exit fullscreen, ny clicking at bottom left corner 
+- While webbrowser fullscreen, you can adjuste zoom, by slifing mouse on the top of the screen, and exit fullscreen, ny clicking at bottom left corner
+
+The Diverse informations part of status bar change with the module page:
+- Log: Date Time UTC Day Week
+- Settings: Show color under cursor
+- Mappings: You can see which button is pressed
+- RapidFire: Source button if one is in use
+- ViGEm: Remapped buttons actually activated
+- Keymap: Source button if one is launched
+- Guardian: PIDs allowed to see hidden joysticks
+- Links: Version of Ds2vJoy
+
+Some settings are profile dependant, some other no.
+- Non profile dependant:
+
+| >Settings         | >Tasktray         | >Guardian         | >Web              | >Links           
+|:----------------- |:----------------- |:----------------- |:----------------- |:-----------------
+| Profile           | MappingPaused     | vJoyShutDown      | WebRefreshTime    | App1Name         
+| TopMost           | RapidFirePaused   | RemoveBlacklist   | DefaultZoomValue  | App2Name         
+| Transparency      | KeymapPaused      | PurgeWhitelist    | DarkMode          | App3Name         
+| Tasktray          | vJoyPaused        | dsHID1            | RawBounds         | App4Name         
+| CloseMinimize     | ViGEmPaused       | dsHID2            | WebLanguage       | App5Name         
+| DisconnectBT      | GuardianPaused    | dsHID3            | UserAgent         |                  
+| LowBattAlert      |                   | Exe1Name          | BlockedSites      | App1Location     
+| dsSerial          | NotepadFont       | Exe2Name          |                   | App2Location     
+| BlackLedOnExit    | Notepad           | Exe3Name          | WebURL0 to 9      | App3Location     
+| MappingViewMode   |                   | Exe4Name          |                   | App4Location     
+| CloneViewMode     | Version           | Exe5Name          | InitialScript     | App5Location     
+
+- Profile dependant:
+
+| >Settings1        | >Settings2        | >Guardian         | >Datas            | >ViGEm           
+|:----------------- |:----------------- |:----------------- |:----------------- |:-----------------
+| Opacity           | MouseCanBypass    | GuardianActive    | Mappingdata       | ViGEmActive      
+| PreferredDS       | TriggersMode      |                   | RapidFiredata     | vJoyActive       
+| MouseActive       | DarkTheme         | dsHID1Enable      | Keymapdata        |                  
+| KeyboardActive    |                   | dsHID2Enable      |                   | DesiredVirtualPad
+| vJoyDeviceID      | TouchPadButton    | dsHID3Enable      | Stats             | target_X360      
+|                   | TouchCol          | Exe1NameEnable    | Reminder          | dstarget_X360    
+| Threshold         | TouchRow          | Exe2NameEnable    |                   | vjtarget_X360    
+| Simultaneous      |                   | Exe3NameEnable    | TabMapping        | target_DS4       
+| LongPress         | LED_Color         | Exe4NameEnable    | TabToMode         | dstarget_DS4     
+| VeryLongPress     | Wave_Speed        | Exe5NameEnable    |                   | vjtarget_DS4     
 
 ## Related links and source
 * https://github.com/090 (merci pour la structure de départ)
 
-* https://sourceforge.net/projects/vjoystick
+* https://github.com/shauleiz/vJoy
+* https://github.com/jshafer817/vJoy
 
 * https://developer.microsoft.com/en-us/microsoft-edge/webview2
 * https://github.com/MicrosoftEdge/WebView2Samples
@@ -754,12 +796,13 @@ Picture talk by itself
 * https://github.com/elnormous/HTTPRequest
 * http://www.wischik.com/lu/programmer/zip_utils.html
 
-* https://notepad-plus-plus.org
-* http://www.planetpointy.co.uk/joystick-test-application
-
 * https://www.autohotkey.com/
+* http://www.planetpointy.co.uk/joystick-test-application
 * https://github.com/Jays2Kings/DS4Windows
 * https://www.inputmapper.com
+
+* https://notepad-plus-plus.org
+* http://astrogrep.sourceforge.net/
 
 ## Development environment
 - Win11 64bit + Visual Studio 2022 Community
