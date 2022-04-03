@@ -743,7 +743,7 @@ The Diverse informations part of status bar change with the module page:
 - Guardian: PIDs allowed to see hidden joysticks
 - Links: Version of Ds2vJoy
 
-Some settings are profile dependant, some other no.
+Some settings are profile dependant, some are no.
 - Non profile dependant:
 
 | >Settings         | >Tasktray         | >Guardian         | >Web              | >Links           
