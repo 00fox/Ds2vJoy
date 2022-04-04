@@ -1036,7 +1036,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			WriteToFile(L"WebView2Loader.dll", data, resourceSize, true, true);
 		if (LoadEmbeddedResource(IDR_DEVCON_EXE, &data, &resourceSize))
 			WriteToFile(L"Devcon.exe", data, resourceSize, true, true);
-		if (isFileExists("vJoyInterface.dll") && isFileExists("ViGEmClient.dll") && isFileExists("WebView2Loader.dll"))
+		if (isFileExists("vJoyInterface.dll") && isFileExists("ViGEmClient.dll") && isFileExists("vJoyInstall.dll") && isFileExists("WebView2Loader.dll"))
 			load_dll = true;
 
 		_log.Init(tape.Ds2hInst, hWnd, load_dll);

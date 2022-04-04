@@ -12,6 +12,7 @@ void LoadLanguage()
 	I18N.APP_TITLE											= WCHARI(IDS_APP_TITLE, L"Ds2vJoy");
 	I18N.Fatal_Error1										= WCHARI(L"!!!! ERROR !!!!");
 	I18N.Fatal_Error2										= WCHARI(L"     vJoyInterface.dll\r\n\
+         or   vJoyInstall.dll\r\n\
          or   ViGEmClient.dll\r\n\
          or   WebView2Loader.dll\r\n\
               cannot be uncompressed from memory,\r\n\
