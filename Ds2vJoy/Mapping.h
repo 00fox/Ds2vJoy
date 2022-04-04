@@ -199,7 +199,7 @@ public:
 	//| RZW | An OnRelease (/+NoRelease/+NlRelease) condition is in use (see below, under time stamps)
 	//|  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
 	//a lowercase indicates that the checkbox is double checked for this condition
-	const WCHAR*		vJoyButtons();
+	const WCHAR*		MappingButtons();
 	void				PreLoad();
 	BOOL				LoadDevice(HWND hWnd, dsDevice*, vJoyDevice*);
 	void				RunFirst(vJoyDevice*);
@@ -468,8 +468,8 @@ private:
 	//memorized mouse point, to move back in, in a futur possible action
 	static bool			Ledactive[Mapping::Led_Action_Count] = { false };
 	//State of each individual Led
-	static WCHAR		vJoyButtonsString[80] = L"";
-	//String of vJoy buttons in use, to show in status bar
+	static WCHAR		MappingButtonsString[80] = L"";
+	//String of Mapping buttons in use, to show in status bar
 	static bool			mouseactivated = false;
 	//mouse is running, used to determine legit if we use Ifmouse condition
 	static std::vector<byte> dsDisabled = { };

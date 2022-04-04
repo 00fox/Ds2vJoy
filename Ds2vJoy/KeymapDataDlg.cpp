@@ -99,7 +99,7 @@ void KeymapDataDlg::_InitDialog(HWND hWnd)
 	}
 	for (int i = 0; i < keymapData.keyboard_Count; i++)
 	{
-		WCHAR* str = keymapData.String((KeyboardID)i);
+		const WCHAR* str = keymapData.String((KeyboardID)i);
 		SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT1, CB_ADDSTRING, 0, LPARAM(str));
 		SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT2, CB_ADDSTRING, 0, LPARAM(str));
 		SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT3, CB_ADDSTRING, 0, LPARAM(str));

@@ -252,12 +252,14 @@ public:
 	//| P     | It will use Postmessage to send keys to specified process
 	//| PA    | It will activate window of the specified process before
 	//|  A    | Act like if nothing were checked, the keys will be sent to your actual focus
+	const WCHAR*		KeymapButtons();
 	BOOL				LoadDevice(vJoyDevice* vjoy);
 	void				GetState();
+	void				RunFirst();
 	void				Run();
 	KeyboardID			BytetoKeyboardID(byte id);
 	BYTE				KeyboardIDtoByte(KeyboardID id);
-	WCHAR*				String(KeyboardID id);
+	const WCHAR*				String(KeyboardID id);
 
 	unsigned char		Enable = 0;
 	byte				ButtonID = vJoyButtonID::none;
@@ -300,5 +302,7 @@ private:
 	std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
 };
 
+	//String of Keymap buttons in use, to show in status bar
+	static std::wstring			KeymapButtonsString = L"";
 	typedef std::vector<Keymap>	Keymaps;
 	typedef Keymap::KeyboardID	KeyboardID;

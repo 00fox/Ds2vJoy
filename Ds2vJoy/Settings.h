@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int			VersionDate = 202203281;
+	const int			VersionDate = 202204041;
 	const std::wstring	ProgramFilesDirName = L"Ds2vJoy";
 	bool				BreakAndExit = false;
 
@@ -52,12 +52,16 @@ public:
 		Setting_MappingViewMode,
 		Setting_CloneViewMode,
 		Setting_NotepadFont,
-		Setting_vJoyPaused,			//Tasktray
+		Setting_MappingPaused,		//Tasktray
 		Setting_RapidFirePaused,
 		Setting_KeymapPaused,
+		Setting_vJoyPaused,
 		Setting_ViGEmPaused,
 		Setting_GuardianPaused,
-		Setting_dsHID1,				//Guardian
+		Setting_vJoyShutDown,		//Guardian
+		Setting_RemoveBlacklist,
+		Setting_PurgeWhitelist,
+		Setting_dsHID1,
 		Setting_dsHID2,
 		Setting_dsHID3,
 		Setting_Exe1Name,
@@ -119,6 +123,7 @@ public:
 		Setting_RapidFiredata,		//RapidFire
 		Setting_Keymapdata,			//Keymap
 		Setting_ViGEmActive,		//ViGEm
+		Setting_vJoyActive,
 		Setting_DesiredVirtualPad,
 		Setting_target_X360,
 		Setting_dstarget_X360,
@@ -127,8 +132,6 @@ public:
 		Setting_dstarget_DS4,
 		Setting_vjtarget_DS4,
 		Setting_GuardianActive,		//Guardian
-		Setting_RemoveBlacklist,
-		Setting_PurgeWhitelist,
 		Setting_dsHID1Enable,
 		Setting_dsHID2Enable,
 		Setting_dsHID3Enable,
@@ -391,10 +394,12 @@ public:
 	unsigned short		VeryLongPress;	//3287 ms
 	unsigned short		WebRefreshTime;	//20 s
 
+	bool				CallbackPaused;
+	bool				MappingPaused;
+	bool				RapidFirePaused;
+	bool				KeymapPaused;
 	bool				vJoyPaused;
 	bool				ViGEmPaused;
-	bool				KeymapPaused;
-	bool				RapidFirePaused;
 	bool				GuardianPaused;
 	bool				isExplorerLoaded;
 	bool				isWebView2Installing;
@@ -412,6 +417,7 @@ public:
 	bool				vJoyUsed[32];
 
 	bool				ViGEmActive;
+	bool				vJoyActive;
 	unsigned char		DesiredVirtualPad;	//1 Xbox360, 2 DS4
 	bool				target_X360[24];
 	byte				dstarget_X360[24];
@@ -421,6 +427,7 @@ public:
 	byte				vjtarget_DS4[24];
 
 	bool				GuardianActive;
+	bool				vJoyShutDown;
 	bool				RemoveBlacklist;
 	bool				PurgeWhitelist;
 	WCHAR				dsHID1[MAX_PATH] = { 0 };
@@ -467,6 +474,9 @@ public:
 	bool				NotepadUnsaved = false;
 	size_t				web_actualtab = 0;
 
+	HMODULE				hMagnification = nullptr;
+	typedef				bool(WINAPI* hMagSetSmoothing)(bool);
+	hMagSetSmoothing	MagnificationSmoothing;
 	bool				MagInitialized = false;
 	float				MagLevel = 1;
 

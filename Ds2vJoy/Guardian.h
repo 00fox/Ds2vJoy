@@ -7,14 +7,16 @@ public:
 	~Guardian();
 
 	void				Init(HWND);
+	const				WCHAR* GuardianButtons();
+	void				GuardianButtonsComputString();
 	void				AllDevicesRestart();
 	void				BlacklistInit(int hid = 0);
 	void				WhitelistInit();
 	void				WhitelistCheck(int pid = 0);
 	BOOL				WhitelistDs2vJoy();
 	void				HidStates();
-	int					GetHidGState();
-	int					GetHidCState();
+	char				GetHidGState();
+	char				GetHidCState();
 	BOOL				GuardianInstall(bool verbose = false);
 	BOOL				GuardianUninstall(bool verbose = false);
 	BOOL				GuardianEnable(bool verbose = false);
@@ -26,8 +28,8 @@ public:
 	BOOL				RestartDevices(bool verbose = false);
 
 private:
-	int					GuardianState(bool verbose = false);
-	int					HidCerberusState(bool verbose = false);
+	char				GuardianState(bool verbose = false);
+	char				HidCerberusState(bool verbose = false);
 	BOOL				WhitelistByPID(int pid = 0);
 	BOOL				RemoveWhitelistByPID(int pid = 0);
 	BOOL				PurgeWhitelist();
@@ -53,4 +55,6 @@ private:
 	int					HidCState = 0;
 };
 
+	//String of Keymap buttons in use, to show in status bar
+	static std::wstring	GuardianButtonsString = L"";
 	extern Guardian		hid;

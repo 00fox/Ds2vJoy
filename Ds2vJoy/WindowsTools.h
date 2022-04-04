@@ -43,7 +43,7 @@ std::wstring	WinPath()
 std::wstring	ExePath()
 std::wstring	TmpPath()
 std::wstring	PrfPath()
-BOOL			LaunchProcess(LPWSTR lpCommandLine, bool wait = false)
+BOOL			LaunchProcess(LPCWSTR lpCommandLine, bool wait = false)
 std::wstring	LaunchCmd(const wchar_t* cmd)
 BOOL			ClientArea(RECT* rect, bool points = false)	//x, y, w, h, true x, y, x', y'
 int				MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, int x, int y, int wrap = 0)
@@ -52,8 +52,8 @@ void			CreateToolTip(HWND hWndParent, HWND hControlItem, PTSTR tooltipText)
 void			SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency)
 unsigned long	GetCursorType()
 HRESULT			ScreenCapturePart(int x, int y, int z, int t, std::wstring filename, bool scaling = true)
-BOOL			SetMagnifyZoom(float magnificationFactor, bool mouse = true)
-BOOL			MagSetColor(char magnifyColor)
+BOOL			SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, int pointy = 0)
+BOOL			MagSetColor(char magnifyColor = 0)
 
 ////////////////////////////////////////////////////////////////////// Process
 BOOL			IsWow64()
@@ -67,22 +67,35 @@ std::wstring	GUID2String(GUID guid)
 std::wstring	GUID2ServerString(GUID guid)
 
 ////////////////////////////////////////////////////////////////////// Services
-BOOL			IsServiceInstalled(LPWSTR ServiceName)
-int				GetServiceState(LPWSTR ServiceName)
-BOOL			ServiceInstall(LPWSTR ServiceName, LPWSTR installpath, DWORD servicetype, bool verbose = false)
-BOOL			ServiceStart(LPWSTR ServiceName, bool verbose = false)
+BOOL			IsServiceInstalled(LPCWSTR ServiceName)
+int				GetServiceState(LPCWSTR ServiceName)
+BOOL			ServiceInstall(LPCWSTR ServiceName, LPCWSTR installpath, DWORD servicetype, bool verbose = false)
+BOOL			ServiceStart(LPCWSTR ServiceName, bool verbose = false)
 BOOL			StopDependentServices(SC_HANDLE scm_handle, SC_HANDLE service_handle)
-BOOL			ServiceStop(LPWSTR ServiceName, bool verbose = false)
-BOOL			ServiceDelete(LPWSTR ServiceName, bool verbose = false)
+BOOL			ServiceStop(LPCWSTR ServiceName, bool verbose = false)
+BOOL			ServiceDelete(LPCWSTR ServiceName, bool verbose = false)
 
 ////////////////////////////////////////////////////////////////////// Devices
 std::vector<std::wstring> ListofDriversByFile(bool verbose = false)
-BOOL			CheckForDriverByFile(LPWSTR DriverName, bool verbose = false)
-BOOL			CheckForDriverById(LPWSTR DriverID, bool verbose = false)
-BOOL			DeviceRestart(std::wstring DriverID)
+BOOL			CheckForDriverByFile(LPCWSTR DriverName, bool verbose = false)
+BOOL			CheckForDriverByGUID(std::wstring enumerator, GUID guid, bool verbose = false)
+BOOL			CheckForDriverById(std::wstring enumerator, std::wstring MfgName, std::wstring Description, bool verbose = false)
+BOOL			CheckForDriverByHwId(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+std::wstring	GetDriverHwIdByGUID(std::wstring enumerator, GUID guid, bool verbose = false)
+std::wstring	GetDriverHwIdById(std::wstring enumerator, std::wstring MfgName, std::wstring Description, bool verbose = false)
+std::vector<int>	GetDeviceError(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+char			GetDeviceState(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+BOOL			SetDeviceState(std::wstring enumerator, std::wstring hwid, DWORD dwState, bool verbose = false)
+BOOL			RemoveDriverById(std::wstring enumerator, std::wstring MfgName, std::wstring Description, bool verbose = false)
+BOOL			RemoveDriverByHwId(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+BOOL			DeviceRestart(std::wstring enumerator, std::wstring hwid, bool tohide = true, bool verbose = false)
+BOOL			DeviceUpdate(std::wstring lpFileName, std::wstring hwid)
+BOOL			InstallDriverByHwId(std::wstring lpFileName, std::wstring hwid)
 */
 
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////// Utilisation
+// GetCursorType
+#define OCR_HELP 32651
 static HANDLE Cur_NORMAL = LoadImage(NULL, MAKEINTRESOURCE(OCR_NORMAL), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
 static HANDLE Cur_IBEAM = LoadImage(NULL, MAKEINTRESOURCE(OCR_IBEAM), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
 static HANDLE Cur_WAIT = LoadImage(NULL, MAKEINTRESOURCE(OCR_WAIT), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
@@ -97,6 +110,138 @@ static HANDLE Cur_NO = LoadImage(NULL, MAKEINTRESOURCE(OCR_NO), IMAGE_CURSOR, 0,
 static HANDLE Cur_HAND = LoadImage(NULL, MAKEINTRESOURCE(OCR_HAND), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
 static HANDLE Cur_APPSTARTING = LoadImage(NULL, MAKEINTRESOURCE(OCR_APPSTARTING), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
 static HANDLE Cur_HELP = LoadImage(NULL, MAKEINTRESOURCE(OCR_HELP), IMAGE_CURSOR, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED);
+
+// MessageBoxPos
+// To indicate the buttons displayed in the message box, specify one of the following values.
+// MB_OK					OK								This is the default
+// MB_OKCANCEL				OK		Cancel
+// MB_ABORTRETRYIGNORE		Abort	Retry		Ignore
+// MB_RETRYCANCEL			Retry	Cancel
+// MB_YESNO					Yes		No
+// MB_YESNOCANCEL			Yes		No			Cancel
+// MB_CANCELTRYCONTINUE		Cancel	Try Again	Continue
+// MB_HELP													Adds Help, When clicks or presses F1, WM_HELP message is sent to the owner
+//  
+// To display an icon in the message box, specify one of the following values
+// MB_ICONEXCLAMATION		Exclamation-point icon appears in the message box
+// MB_ICONWARNING			Exclamation-point icon appears in the message box
+// MB_ICONINFORMATION		Icon consisting of a lowercase letter i in a circle appears in the message box
+// MB_ICONASTERISK			Icon consisting of a lowercase letter i in a circle appears in the message box
+// MB_ICONQUESTION			Question-mark icon appears in the message box
+// MB_ICONSTOP				Stop-sign icon appears in the message box
+// MB_ICONERROR				Stop-sign icon appears in the message box
+// MB_ICONHAND				Stop-sign icon appears in the message box
+//  
+// To indicate the default button, specify one of the following values
+// MB_DEFBUTTON1			The first button is the default button.	MB_DEFBUTTON1 is the default unless MB_DEFBUTTON2, MB_DEFBUTTON3, or MB_DEFBUTTON4 is specified.
+// MB_DEFBUTTON2			The second button is the default button.
+// MB_DEFBUTTON3			The third button is the default button.
+// MB_DEFBUTTON4			The fourth button is the default button.
+//  
+// To indicate the modality of the dialog box, specify one of the following values
+// MB_APPLMODAL				The user must respond to the message box before continuing work in the window identified by the hWnd parameter.
+// 								However, the user can move to the windows of other threads and work in those windows.
+// 								Depending on the hierarchy of windows in the application, the user may be able to move to other windows within the thread.
+// 								All child windows of the parent of the message box are automatically disabled, but pop-up windows are not.
+// 								is the default if neither MB_SYSTEMMODAL nor MB_TASKMODAL is specified.
+// MB_SYSTEMMODAL			Same as MB_APPLMODAL except that the message box has the WS_EX_TOPMOST style.
+// 								Use system-modal message boxes to notify the user of serious, potentially damaging errors that require immediate attention (for example, running out of memory).
+// 								This flag has no effect on the user's ability to interact with windows other than those associated with hWnd.
+// MB_TASKMODAL				Same as MB_APPLMODAL except that all the top-level windows belonging to the current thread are disabled if the hWnd parameter is NULL.
+// 								Use this flag when the calling application or library does not have a window handle available but still needs to prevent input to other windows in the calling thread without suspending other threads.
+//  
+// To specify other options, use one or more of the following values.
+// MB_DEFAULT_DESKTOP_ONLY	Same as desktop of the interactive window station. For more information, see Window Stations.
+// 								If the current input desktop is not the default desktop, MessageBox does not return until the user switches to the default desktop.
+// MB_RIGHT					The text is right-justified.
+// MB_RTLREADING			Displays message and caption text using right-to-left reading order on Hebrew and Arabic systems.
+// MB_SETFOREGROUND			The message box becomes the foreground window. Internally, the system calls the SetForegroundWindow function for the message box.
+// MB_TOPMOST				The message box is created with the WS_EX_TOPMOST window style.
+// MB_SERVICE_NOTIFICATION	The caller is a service notifying the user of an event. The function displays a message box on the current active desktop, even if there is no user logged on to the computer.
+// 								Terminal Services: If the calling thread has an impersonation token, the function directs the message box to the session specified in the impersonation token.
+// 								If this flag is set, the hWnd parameter must be NULL. This is so that the message box can appear on a desktop other than the desktop corresponding to the hWnd.
+// 								For information on security considerations in regard to using this flag, see Interactive Services.
+// 								DescriptionIn particular, be aware that this flag can produce interactive content on a locked desktop and should therefore be used for only a very limited set of scenarios, such as resource exhaustion.
+//
+// Return code/Value/Description
+// IDOK			1	OK
+// IDCANCEL		2	Cancel
+// IDABORT		3	Abort
+// IDRETRY		4	Retry
+// IDIGNORE		5	Ignore
+// IDYES		6	Yes
+// IDNO			7	No
+// IDTRYAGAIN	10	Try Again
+// IDCONTINUE	11	Continue
+
+// SetMagnifyZoom
+#define MAG_METHOD_CENTER	0	//Center of the screen
+#define MAG_METHOD_MOUSE	1	//Actual Cusor position
+#define MAG_METHOD_ACTUAL	2	//Actual Point
+#define MAG_METHOD_POINT	3	//Given Point
+#define MAG_METHOD_MOVE		4	//Move +(negative if factor = 1 or 2)pointx , +(negative if factor = 2 or 3)pointy
+#define MAG_METHOD_ZOOM		5	//Zoom: pointx = 1 Zoom+, pointy = 1 Zoom-, else +magnificationFactor
+#define MAG_METHOD_SET		7	//Set magnification factor (when you can send only two unsigned short)
+#define MAG_METHOD_RESET	6	//Temporary reset
+
+// CheckForDriverByGUID
+// guid = { 0x745a17a0, 0x74d3, 0x11d0, {0xb6, 0xfe, 0x00, 0xa0, 0xc9, 0x0f, 0x57, 0xda} };
+
+// GetDeviceError
+#define CM_PROB_DRIVER_NOT_THERE		0
+//CM_PROB_NOT_CONFIGURED				1		
+//CM_PROB_OUT_OF_MEMORY					3
+//CM_PROB_INVALID_DATA					9
+//CM_PROB_FAILED_START					10
+//CM_PROB_NORMAL_CONFLICT				12
+//CM_PROB_NEED_RESTART					14
+//CM_PROB_PARTIAL_LOG_CONF				16
+//CM_PROB_REINSTALL						18
+//CM_PROB_REGISTRY						19
+//CM_PROB_WILL_BE_REMOVED				21
+//CM_PROB_DISABLED						22
+//CM_PROB_DEVICE_NOT_THERE				24
+//CM_PROB_FAILED_INSTALL				28
+//CM_PROB_HARDWARE_DISABLED				29
+//CM_PROB_FAILED_ADD					31
+//CM_PROB_DISABLED_SERVICE				32
+//CM_PROB_TRANSLATION_FAILED			33
+//CM_PROB_NO_SOFTCONFIG					34
+//CM_PROB_BIOS_TABLE					35
+//CM_PROB_IRQ_TRANSLATION_FAILED		36
+//CM_PROB_FAILED_DRIVER_ENTRY			37
+//CM_PROB_DRIVER_FAILED_PRIOR_UNLOAD	38
+//CM_PROB_DRIVER_FAILED_LOAD			39
+//CM_PROB_DRIVER_SERVICE_KEY_INVALID	40
+//CM_PROB_LEGACY_SERVICE_NO_DEVICES		41
+//CM_PROB_DUPLICATE_DEVICE				42
+//CM_PROB_FAILED_POST_START				43
+//CM_PROB_HALTED						44
+//CM_PROB_PHANTOM						45
+//CM_PROB_SYSTEM_SHUTDOWN				46
+//CM_PROB_HELD_FOR_EJECT				47
+//CM_PROB_DRIVER_BLOCKED				48
+//CM_PROB_REGISTRY_TOO_LARGE			49
+//CM_PROB_SETPROPERTIES_FAILED			50
+//CM_PROB_WAITING_ON_DEPENDENCY			51
+//CM_PROB_UNSIGNED_DRIVER				52
+//CM_PROB_USED_BY_DEBUGGER				53
+//CM_PROB_DEVICE_RESET					54
+//CM_PROB_CONSOLE_LOCKED				55
+//CM_PROB_NEED_CLASS_CONFIG				56
+//CM_PROB_GUEST_ASSIGNMENT_FAILED		57
+
+// GetDeviceState
+#define DRIVER_INVALID_STRING   -3
+#define DRIVER_INVALID_BUFFER   -2
+#define DRIVER_INVALID_HANDLE   -1
+#define DRIVER_STATE_NOTPRESENT  0
+#define DRIVER_STATE_ACTIVE      1
+#define DRIVER_STATE_DISABLED    2
+
+//SetDeviceState
+//DICS_DISABLE
+//DICS_ENABLE
 
 ////////////////////////////////////////////////////////////////////// Convert
 // 
@@ -607,15 +752,15 @@ inline BOOL LoadEmbeddedResource(WORD resourceID, std::vector<char>* output, DWO
 	std::vector<char> outputtmp;
 
 	// If you need to retrieve resources embedded in a binary that is not the current running program, modify this function to pass in a HMODULE value.
-	HMODULE module = nullptr;
-	HRSRC resourceHandle = ::FindResource(module, MAKEINTRESOURCE(resourceID), RT_RCDATA);
+	HMODULE hMod = nullptr;
+	HRSRC resourceHandle = ::FindResource(hMod, MAKEINTRESOURCE(resourceID), RT_RCDATA);
 
 	if (resourceHandle != nullptr)
 	{
-		HGLOBAL dataHandle = ::LoadResource(module, resourceHandle);
+		HGLOBAL dataHandle = ::LoadResource(hMod, resourceHandle);
 		if (dataHandle != nullptr)
 		{
-			auto resourceSizetmp = ::SizeofResource(module, resourceHandle);
+			auto resourceSizetmp = ::SizeofResource(hMod, resourceHandle);
 			*resourceSize = resourceSizetmp;
 
 			if (resourceSizetmp != 0)
@@ -718,9 +863,9 @@ inline BOOL ExtractEmbededResource(std::wstring location, WORD resourceID, bool 
 //-----------------------------------------------------------------------------
 inline void ForceRemoveModule(LPCTSTR ModuleName, bool deletedll = false)
 {
-	HMODULE hMod;
+	HMODULE hMod = nullptr;
 	hMod = ::GetModuleHandle(ModuleName);
-	if (hMod == 0)
+	if (hMod == nullptr)
 		return;
 	/* DISCLAIMER potentially infinite loop
 	 * not advisable in production code,
@@ -971,68 +1116,6 @@ inline LRESULT CALLBACK MsgBox_Proc(int message, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(NULL, message, wParam, lParam);
 }
 
-// To indicate the buttons displayed in the message box, specify one of the following values.
-// MB_OK					OK								This is the default
-// MB_OKCANCEL				OK		Cancel
-// MB_ABORTRETRYIGNORE		Abort	Retry		Ignore
-// MB_RETRYCANCEL			Retry	Cancel
-// MB_YESNO					Yes		No
-// MB_YESNOCANCEL			Yes		No			Cancel
-// MB_CANCELTRYCONTINUE		Cancel	Try Again	Continue
-// MB_HELP													Adds Help, When clicks or presses F1, WM_HELP message is sent to the owner
-//  
-// To display an icon in the message box, specify one of the following values
-// MB_ICONEXCLAMATION		Exclamation-point icon appears in the message box
-// MB_ICONWARNING			Exclamation-point icon appears in the message box
-// MB_ICONINFORMATION		Icon consisting of a lowercase letter i in a circle appears in the message box
-// MB_ICONASTERISK			Icon consisting of a lowercase letter i in a circle appears in the message box
-// MB_ICONQUESTION			Question-mark icon appears in the message box
-// MB_ICONSTOP				Stop-sign icon appears in the message box
-// MB_ICONERROR				Stop-sign icon appears in the message box
-// MB_ICONHAND				Stop-sign icon appears in the message box
-//  
-// To indicate the default button, specify one of the following values
-// MB_DEFBUTTON1			The first button is the default button.	MB_DEFBUTTON1 is the default unless MB_DEFBUTTON2, MB_DEFBUTTON3, or MB_DEFBUTTON4 is specified.
-// MB_DEFBUTTON2			The second button is the default button.
-// MB_DEFBUTTON3			The third button is the default button.
-// MB_DEFBUTTON4			The fourth button is the default button.
-//  
-// To indicate the modality of the dialog box, specify one of the following values
-// MB_APPLMODAL				The user must respond to the message box before continuing work in the window identified by the hWnd parameter.
-// 								However, the user can move to the windows of other threads and work in those windows.
-// 								Depending on the hierarchy of windows in the application, the user may be able to move to other windows within the thread.
-// 								All child windows of the parent of the message box are automatically disabled, but pop-up windows are not.
-// 								is the default if neither MB_SYSTEMMODAL nor MB_TASKMODAL is specified.
-// MB_SYSTEMMODAL			Same as MB_APPLMODAL except that the message box has the WS_EX_TOPMOST style.
-// 								Use system-modal message boxes to notify the user of serious, potentially damaging errors that require immediate attention (for example, running out of memory).
-// 								This flag has no effect on the user's ability to interact with windows other than those associated with hWnd.
-// MB_TASKMODAL				Same as MB_APPLMODAL except that all the top-level windows belonging to the current thread are disabled if the hWnd parameter is NULL.
-// 								Use this flag when the calling application or library does not have a window handle available but still needs to prevent input to other windows in the calling thread without suspending other threads.
-//  
-// To specify other options, use one or more of the following values.
-// MB_DEFAULT_DESKTOP_ONLY	Same as desktop of the interactive window station. For more information, see Window Stations.
-// 								If the current input desktop is not the default desktop, MessageBox does not return until the user switches to the default desktop.
-// MB_RIGHT					The text is right-justified.
-// MB_RTLREADING			Displays message and caption text using right-to-left reading order on Hebrew and Arabic systems.
-// MB_SETFOREGROUND			The message box becomes the foreground window. Internally, the system calls the SetForegroundWindow function for the message box.
-// MB_TOPMOST				The message box is created with the WS_EX_TOPMOST window style.
-// MB_SERVICE_NOTIFICATION	The caller is a service notifying the user of an event. The function displays a message box on the current active desktop, even if there is no user logged on to the computer.
-// 								Terminal Services: If the calling thread has an impersonation token, the function directs the message box to the session specified in the impersonation token.
-// 								If this flag is set, the hWnd parameter must be NULL. This is so that the message box can appear on a desktop other than the desktop corresponding to the hWnd.
-// 								For information on security considerations in regard to using this flag, see Interactive Services.
-// 								DescriptionIn particular, be aware that this flag can produce interactive content on a locked desktop and should therefore be used for only a very limited set of scenarios, such as resource exhaustion.
-//
-// Return code/Value/Description
-// IDOK			1	OK
-// IDCANCEL		2	Cancel
-// IDABORT		3	Abort
-// IDRETRY		4	Retry
-// IDIGNORE		5	Ignore
-// IDYES		6	Yes
-// IDNO			7	No
-// IDTRYAGAIN	10	Try Again
-// IDCONTINUE	11	Continue
-
 inline int MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, int x, int y, int wrap = 0)
 {
 	MsgBox_start = 0;
@@ -1220,7 +1303,7 @@ inline void SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency
 	if (bTransparent)
 	{
 		HMODULE hMod = LoadLibrary(_T("User32"));
-		if (hMod)
+		if (hMod != nullptr)
 		{
 			typedef BOOL(WINAPI* pSetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
 			pSetLayeredWindowAttributes p = (pSetLayeredWindowAttributes)GetProcAddress(hMod, "SetLayeredWindowAttributes");
@@ -1290,15 +1373,6 @@ inline HRESULT ScreenCapturePart(int x, int y, int z, int t, std::wstring filena
 
 	return SaveBitmap(filename, hBitmap, format);
 }
-
-#define MAG_METHOD_CENTER	0	//Center of the screen
-#define MAG_METHOD_MOUSE	1	//Actual Cusor position
-#define MAG_METHOD_ACTUAL	2	//Actual Point
-#define MAG_METHOD_POINT	3	//Given Point
-#define MAG_METHOD_MOVE		4	//Move +(negative if factor = 1 or 2)pointx , +(negative if factor = 2 or 3)pointy
-#define MAG_METHOD_ZOOM		5	//Zoom: pointx = 1 Zoom+, pointy = 1 Zoom-, else +magnificationFactor
-#define MAG_METHOD_SET		7	//Set magnification factor (when you can send only two unsigned short)
-#define MAG_METHOD_RESET	6	//Temporary reset
 
 //-----------------------------------------------------------------------------
 inline BOOL SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, int pointy = 0)
@@ -1414,7 +1488,25 @@ inline BOOL SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, i
 		if (!tape.MagInitialized)
 		{
 			if (MagInitialize())
+			{
 				tape.MagInitialized = true;
+				//echo(I18N.Magnification_Active);
+
+				switch (method)
+				{
+				case MAG_METHOD_CENTER:
+				case MAG_METHOD_MOUSE:
+				{
+					tape.MagnificationSmoothing(true);
+					break;
+				}
+				case MAG_METHOD_POINT:
+				{
+					tape.MagnificationSmoothing(false);
+					break;
+				}
+				}
+			}
 			else
 				return FALSE;
 		}
@@ -1517,12 +1609,15 @@ inline WCHAR* GetExeNameByPID(DWORD ProcessID)
 
 	if (hProcess)
 	{
-		HMODULE hMod;
-		DWORD cbNeeded;
+		HMODULE hMod = nullptr;
+		DWORD cbNeeded = 0;
 
 		if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded))
-			GetModuleBaseName(hProcess, hMod, ProcessNametmp, sizeof(ProcessNametmp) / sizeof(WCHAR));
-
+			if (hMod != nullptr)
+			{
+				GetModuleBaseName(hProcess, hMod, ProcessNametmp, sizeof(ProcessNametmp) / sizeof(WCHAR));
+				::FreeLibrary(hMod);
+			}
 		CloseHandle(hProcess);
 	}
 
@@ -1598,7 +1693,7 @@ inline std::wstring GUID2ServerString(GUID guid)
 //
 
 //-----------------------------------------------------------------------------
-inline BOOL IsServiceInstalled(LPWSTR ServiceName, bool verbose = false)
+inline BOOL IsServiceInstalled(LPCWSTR ServiceName, bool verbose = false)
 {
 	SC_HANDLE scm_handle = OpenSCManager(0, 0, SC_MANAGER_CONNECT);
 
@@ -1627,7 +1722,7 @@ inline BOOL IsServiceInstalled(LPWSTR ServiceName, bool verbose = false)
 }
 
 //-----------------------------------------------------------------------------
-inline int GetServiceState(LPWSTR ServiceName, bool verbose = false)
+inline int GetServiceState(LPCWSTR ServiceName, bool verbose = false)
 {
 	SC_HANDLE scm_handle = OpenSCManager(NULL, NULL, SC_MANAGER_ENUMERATE_SERVICE);
 	SERVICE_STATUS_PROCESS ssStatus;
@@ -1664,7 +1759,7 @@ inline int GetServiceState(LPWSTR ServiceName, bool verbose = false)
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL ServiceInstall(LPWSTR ServiceName, LPWSTR installpath, DWORD servicetype, bool verbose = false)
+inline BOOL ServiceInstall(LPCWSTR ServiceName, LPCWSTR installpath, DWORD servicetype, bool verbose = false)
 {
 	/*
 		ServiceType
@@ -1679,7 +1774,7 @@ inline BOOL ServiceInstall(LPWSTR ServiceName, LPWSTR installpath, DWORD service
 
 		if SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS can add:
 		0x00000100	SERVICE_INTERACTIVE_PROCESS	The service can interact with the desktop.
-		*/
+	*/
 
 	bool ServiceCreated = FALSE;
 	int ServiceState = GetServiceState(ServiceName);
@@ -1792,7 +1887,7 @@ inline BOOL ServiceInstall(LPWSTR ServiceName, LPWSTR installpath, DWORD service
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL ServiceStart(LPWSTR ServiceName, bool verbose = false)
+inline BOOL ServiceStart(LPCWSTR ServiceName, bool verbose = false)
 {
 	SERVICE_STATUS_PROCESS ssp = { };
 	int ServiceState = GetServiceState(ServiceName);
@@ -2001,7 +2096,7 @@ inline BOOL StopDependentServices(SC_HANDLE scm_handle, SC_HANDLE service_handle
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL ServiceStop(LPWSTR ServiceName, bool verbose = false)
+inline BOOL ServiceStop(LPCWSTR ServiceName, bool verbose = false)
 {
 	SERVICE_STATUS_PROCESS ssp;
 	int ServiceState = GetServiceState(ServiceName);
@@ -2088,7 +2183,7 @@ inline BOOL ServiceStop(LPWSTR ServiceName, bool verbose = false)
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL ServiceDelete(LPWSTR ServiceName, bool verbose = false)
+inline BOOL ServiceDelete(LPCWSTR ServiceName, bool verbose = false)
 {
 	int ServiceState = GetServiceState(ServiceName);
 
@@ -2199,14 +2294,14 @@ inline std::vector<std::wstring> ListofDriversByFile(bool verbose = false)
 		WCHAR szDriver[1024];
 
 		cDrivers = cbNeeded / sizeof(drivers[0]);
+		if (verbose)
+			echo(L"There are %d drivers", cDrivers);
 
-		_tprintf(TEXT("There are %d drivers:\n"), cDrivers);
 		for (i = 0; i < cDrivers; i++)
 		{
 			if (GetDeviceDriverBaseName(drivers[i], szDriver, sizeof(szDriver) / sizeof(szDriver[0])))
 			{
 				ListofDrivers.push_back(szDriver);
-
 				if (verbose)
 					echo(L"%d: %s", i + 1, szDriver);
 			}
@@ -2217,8 +2312,11 @@ inline std::vector<std::wstring> ListofDriversByFile(bool verbose = false)
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL CheckForDriverByFile(LPWSTR DriverName, bool verbose = false)
+inline BOOL CheckForDriverByFile(LPCWSTR DriverName, bool verbose = false)
 {
+	if (!wcslen(DriverName))
+		return FALSE;
+
 	BOOL driverInstalled = FALSE;
 	int i;
 	std::vector<std::wstring> DriversList = ListofDriversByFile();
@@ -2227,30 +2325,34 @@ inline BOOL CheckForDriverByFile(LPWSTR DriverName, bool verbose = false)
 	{
 		if (DriverName == DriversList[i])
 		{
-			driverInstalled = TRUE;
 			if (verbose)
-				echo(L"%s is installed", DriversList[i].c_str());
+				echo(L"Driver %s found", DriversList[i].c_str());
+			return TRUE;
 		}
 	}
 
-	return driverInstalled;
+	if (verbose)
+		echo(L"Device not found");
+	return FALSE;
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL CheckForDriverById(LPWSTR DriverID, bool verbose = false)
+inline BOOL CheckForDriverByGUID(std::wstring enumerator, GUID guid, bool verbose = false)
 {
-	bool driverInstalled = FALSE;
+	//	guid = { 0x745a17a0, 0x74d3, 0x11d0, {0xb6, 0xfe, 0x00, 0xa0, 0xc9, 0x0f, 0x57, 0xda} };
+	if (guid == GUID_NULL)
+		return FALSE;
 
-	//	GUID dsGUID = { 0x745a17a0, 0x74d3, 0x11d0, {0xb6, 0xfe, 0x00, 0xa0, 0xc9, 0x0f, 0x57, 0xda} };
-	//	PCWSTR DriverID = LR"(USB\VID_05E3&PID_0610)";
-	//	PCWSTR DriverID = L"USB\\VID_05E3\&PID_0610";
-	HDEVINFO hdevinfo = SetupDiGetClassDevsW(NULL, DriverID, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
-
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(&guid, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(&guid, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
 	if (hdevinfo == INVALID_HANDLE_VALUE)
 	{
 		if (verbose)
 			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
-		return driverInstalled;
+		return FALSE;
 	}
 
 	SP_DEVINFO_DATA devinfo;
@@ -2277,44 +2379,1070 @@ inline BOOL CheckForDriverById(LPWSTR DriverID, bool verbose = false)
 					echo(L"   MfgName: %ws", drvdata.MfgName);
 					echo(L"   ProviderName: %ws", drvdata.ProviderName);
 				}
-				driverInstalled = TRUE;
+				SetupDiDestroyDeviceInfoList(hdevinfo);
+				return TRUE;
 			}
 		}
 	}
 
-	if (!driverInstalled)
-	{
-		if (verbose)
-			echo(L"Device information not retreived: %u", GetLastError());
-	}
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
 	SetupDiDestroyDeviceInfoList(hdevinfo);
-
-	return driverInstalled;
+	return FALSE;
 }
 
 //-----------------------------------------------------------------------------
-inline BOOL DeviceRestart(std::wstring DriverID)
+inline BOOL CheckForDriverById(std::wstring enumerator, std::wstring MfgName, std::wstring Description, bool verbose = false)
 {
-	BOOL deviceRestarted = FALSE;
+	if (!MfgName.length() || !Description.length())
+		return FALSE;
 
-	HDEVINFO hdevinfo = SetupDiGetClassDevsW(NULL, DriverID.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
-
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
 	if (hdevinfo == INVALID_HANDLE_VALUE)
-		return deviceRestarted;
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return FALSE;
+	}
 
 	SP_DEVINFO_DATA devinfo;
 	devinfo.cbSize = sizeof(devinfo);
 
+	SP_DRVINFO_DATA_W drvdata;
+	drvdata.cbSize = sizeof(SP_DRVINFO_DATA_W);
+
+	DWORD DeviceIndex = 0;
+	DWORD DeviceDataIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+		if (SetupDiBuildDriverInfoList(hdevinfo, &devinfo, SPDIT_COMPATDRIVER))
+		{
+			DeviceDataIndex = 0;
+			while (SetupDiEnumDriverInfoW(hdevinfo, &devinfo, SPDIT_COMPATDRIVER, DeviceDataIndex, &drvdata))
+			{
+				DeviceDataIndex++;
+				if (!wcscmp(drvdata.MfgName, WCHARI(MfgName)))
+					if (!wcscmp(drvdata.Description, WCHARI(Description)))
+					{
+						if (verbose)
+						{
+							echo(L"Driver %d/%d found:", DeviceIndex, DeviceDataIndex);
+							echo(L"   description: %ws", drvdata.Description);
+							echo(L"   MfgName: %ws", drvdata.MfgName);
+							echo(L"   ProviderName: %ws", drvdata.ProviderName);
+						}
+						SetupDiDestroyDeviceInfoList(hdevinfo);
+						return TRUE;
+					}
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return FALSE;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL CheckForDriverByHwId(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+{
+	if (!hwid.length())
+		return FALSE;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return FALSE;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	SP_DRVINFO_DATA_W drvdata;
+	drvdata.cbSize = sizeof(SP_DRVINFO_DATA_W);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	DWORD DeviceDataIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+
+		DWORD PropertyRegDataType;
+		DWORD buffersize = 0;
+		while (!SetupDiGetDeviceRegistryProperty(
+			hdevinfo,
+			&devinfo,
+			SPDRP_HARDWAREID,
+			&PropertyRegDataType,
+			(PBYTE)buffer,
+			buffersize,
+			&buffersize))
+		{
+			if (GetLastError() == ERROR_INVALID_DATA)
+				break;
+			else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				if (buffer)
+					LocalFree(buffer);
+				buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+			}
+			else
+				return FALSE;
+		}
+
+		if (PropertyRegDataType != REG_MULTI_SZ)
+			continue;
+
+		if (!buffer)
+			continue;
+
+		LPTSTR p = NULL;
+		for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+		{
+			if (!wcscmp(hwid.c_str(), p))
+			{
+				if (SetupDiBuildDriverInfoList(hdevinfo, &devinfo, SPDIT_COMPATDRIVER))
+				{
+					DeviceDataIndex = 0;
+					while (SetupDiEnumDriverInfoW(hdevinfo, &devinfo, SPDIT_COMPATDRIVER, DeviceDataIndex, &drvdata))
+					{
+						DeviceDataIndex++;
+						if (verbose)
+						{
+							echo(L"Driver %d/%d found:", DeviceIndex, DeviceDataIndex);
+							echo(L"   description: %ws", drvdata.Description);
+							echo(L"   MfgName: %ws", drvdata.MfgName);
+							echo(L"   ProviderName: %ws", drvdata.ProviderName);
+						}
+					}
+				}
+				LocalFree(buffer);
+				SetupDiDestroyDeviceInfoList(hdevinfo);
+				return TRUE;
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	if (buffer)
+		LocalFree(buffer);
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return FALSE;
+}
+
+//-----------------------------------------------------------------------------
+inline std::wstring GetDriverHwIdByGUID(std::wstring enumerator, GUID guid, bool verbose = false)
+{
+	if (guid == GUID_NULL)
+		return L"";
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(&guid, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(&guid, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return L"";
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	SP_DRVINFO_DATA_W drvdata;
+	drvdata.cbSize = sizeof(SP_DRVINFO_DATA_W);
+
+	LPTSTR buffer = NULL;
 	DWORD DeviceIndex = 0;
 	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
 	{
-		if (SetupDiBuildDriverInfoList(hdevinfo, &devinfo, SPDIT_COMPATDRIVER))
-			if (SetupDiRestartDevices(hdevinfo, &devinfo))
-				deviceRestarted = TRUE;
 		DeviceIndex++;
+		if (SetupDiBuildDriverInfoList(hdevinfo, &devinfo, SPDIT_COMPATDRIVER))
+		{
+			if (SetupDiEnumDriverInfoW(hdevinfo, &devinfo, SPDIT_COMPATDRIVER, 0, &drvdata))
+			{
+				DWORD PropertyRegDataType;
+				DWORD buffersize = 0;
+				while (!SetupDiGetDeviceRegistryProperty(
+					hdevinfo,
+					&devinfo,
+					SPDRP_HARDWAREID,
+					&PropertyRegDataType,
+					(PBYTE)buffer,
+					buffersize,
+					&buffersize))
+				{
+					if (GetLastError() == ERROR_INVALID_DATA)
+						break;
+					else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+					{
+						if (buffer)
+							LocalFree(buffer);
+						buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+					}
+					else
+						return L"";
+				}
+
+				if (PropertyRegDataType != REG_MULTI_SZ)
+					continue;
+
+				if (!buffer)
+					continue;
+
+				LPTSTR p = NULL;
+				for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+				{
+					if (verbose)
+					{
+						echo(L"Driver %d found:", DeviceIndex);
+						echo(L"   description: %ws", drvdata.Description);
+						echo(L"   MfgName: %ws", drvdata.MfgName);
+						echo(L"   ProviderName: %ws", drvdata.ProviderName);
+					}
+					LocalFree(buffer);
+					SetupDiDestroyDeviceInfoList(hdevinfo);
+					return p;
+				}
+			}
+		}
 	}
 
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
 	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return L"";
+}
 
-	return deviceRestarted;
+//-----------------------------------------------------------------------------
+inline std::wstring GetDriverHwIdById(std::wstring enumerator, std::wstring MfgName, std::wstring Description, bool verbose = false)
+{
+	if (!MfgName.length() || !Description.length())
+		return L"";
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return L"";
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	SP_DRVINFO_DATA_W drvdata;
+	drvdata.cbSize = sizeof(SP_DRVINFO_DATA_W);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+		if (SetupDiBuildDriverInfoList(hdevinfo, &devinfo, SPDIT_COMPATDRIVER))
+		{
+			if (SetupDiEnumDriverInfoW(hdevinfo, &devinfo, SPDIT_COMPATDRIVER, 0, &drvdata))
+			{
+				if (!wcscmp(drvdata.MfgName, WCHARI(MfgName)))
+					if (!wcscmp(drvdata.Description, WCHARI(Description)))
+					{
+						DWORD PropertyRegDataType;
+						DWORD buffersize = 0;
+						while (!SetupDiGetDeviceRegistryProperty(
+							hdevinfo,
+							&devinfo,
+							SPDRP_HARDWAREID,
+							&PropertyRegDataType,
+							(PBYTE)buffer,
+							buffersize,
+							&buffersize))
+						{
+							if (GetLastError() == ERROR_INVALID_DATA)
+								break;
+							else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+							{
+								if (buffer)
+									LocalFree(buffer);
+								buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+							}
+							else
+								return L"";
+						}
+
+						if (PropertyRegDataType != REG_MULTI_SZ)
+							continue;
+
+						if (!buffer)
+							continue;
+
+						LPTSTR p = NULL;
+						for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+						{
+							if (verbose)
+							{
+								echo(L"Driver %d found:", DeviceIndex);
+								echo(L"   description: %ws", drvdata.Description);
+								echo(L"   MfgName: %ws", drvdata.MfgName);
+								echo(L"   ProviderName: %ws", drvdata.ProviderName);
+							}
+							LocalFree(buffer);
+							SetupDiDestroyDeviceInfoList(hdevinfo);
+							return p;
+						}
+					}
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return L"";
+}
+
+//-----------------------------------------------------------------------------
+inline std::vector<int> GetDeviceError(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+{
+	std::vector<int> result = { };
+
+	if (!hwid.length())
+		return result;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return result;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+
+		DWORD PropertyRegDataType;
+		DWORD buffersize = 0;
+		while (!SetupDiGetDeviceRegistryProperty(
+			hdevinfo,
+			&devinfo,
+			SPDRP_HARDWAREID,
+			&PropertyRegDataType,
+			(PBYTE)buffer,
+			buffersize,
+			&buffersize))
+		{
+			if (GetLastError() == ERROR_INVALID_DATA)
+				break;
+			else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				if (buffer)
+					LocalFree(buffer);
+				buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+			}
+			else
+				return result;
+		}
+
+		if (PropertyRegDataType != REG_MULTI_SZ)
+			continue;
+
+		if (!buffer)
+			continue;
+
+		LPTSTR p = NULL;
+		for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+		{
+			if (!wcscmp(hwid.c_str(), p))
+			{
+				DEVPROPTYPE propertyType;
+				BYTE propertyBuffer[100] = { 0 };
+				DWORD requiredSize = 0;
+
+				if (SetupDiGetDeviceProperty(hdevinfo, &devinfo, &DEVPKEY_Device_ProblemCode, &propertyType, propertyBuffer, 100, &requiredSize, 0))
+				{
+					unsigned long deviceProblemCode = *((unsigned long*)propertyBuffer);
+					for (int i = 0; i < 100; i++)
+					{
+						result.push_back(propertyBuffer[i]);
+						if (verbose)
+							switch (propertyBuffer[i])
+							{
+							case 1: { echo(L"1:  CM_PROB_NOT_CONFIGURED"); break; }
+							case 3: { echo(L"3:  CM_PROB_OUT_OF_MEMORY"); break; }
+							case 9: { echo(L"9:  CM_PROB_INVALID_DATA"); break; }
+							case 10: { echo(L"10: CM_PROB_FAILED_START"); break; }
+							case 12: { echo(L"12: CM_PROB_NORMAL_CONFLICT"); break; }
+							case 14: { echo(L"14: CM_PROB_NEED_RESTART"); break; }
+							case 16: { echo(L"16: CM_PROB_PARTIAL_LOG_CONF"); break; }
+							case 18: { echo(L"18: CM_PROB_REINSTALL"); break; }
+							case 19: { echo(L"19: CM_PROB_REGISTRY"); break; }
+							case 21: { echo(L"21: CM_PROB_WILL_BE_REMOVED"); break; }
+							case 22: { echo(L"22: CM_PROB_DISABLED"); break; }
+							case 24: { echo(L"24: CM_PROB_DEVICE_NOT_THERE"); break; }
+							case 28: { echo(L"28: CM_PROB_FAILED_INSTALL"); break; }
+							case 29: { echo(L"29: CM_PROB_HARDWARE_DISABLED"); break; }
+							case 31: { echo(L"31: CM_PROB_FAILED_ADD"); break; }
+							case 32: { echo(L"32: CM_PROB_DISABLED_SERVICE"); break; }
+							case 33: { echo(L"33: CM_PROB_TRANSLATION_FAILED"); break; }
+							case 34: { echo(L"34: CM_PROB_NO_SOFTCONFIG"); break; }
+							case 35: { echo(L"35: CM_PROB_BIOS_TABLE"); break; }
+							case 36: { echo(L"36: CM_PROB_IRQ_TRANSLATION_FAILED"); break; }
+							case 37: { echo(L"37: CM_PROB_FAILED_DRIVER_ENTRY"); break; }
+							case 38: { echo(L"38: CM_PROB_DRIVER_FAILED_PRIOR_UNLOAD"); break; }
+							case 39: { echo(L"39: CM_PROB_DRIVER_FAILED_LOAD"); break; }
+							case 40: { echo(L"40: CM_PROB_DRIVER_SERVICE_KEY_INVALID"); break; }
+							case 41: { echo(L"41: CM_PROB_LEGACY_SERVICE_NO_DEVICES"); break; }
+							case 42: { echo(L"42: CM_PROB_DUPLICATE_DEVICE"); break; }
+							case 43: { echo(L"43: CM_PROB_FAILED_POST_START"); break; }
+							case 44: { echo(L"44: CM_PROB_HALTED"); break; }
+							case 45: { echo(L"45: CM_PROB_PHANTOM"); break; }
+							case 46: { echo(L"46: CM_PROB_SYSTEM_SHUTDOWN"); break; }
+							case 47: { echo(L"47: CM_PROB_HELD_FOR_EJECT"); break; }
+							case 48: { echo(L"48: CM_PROB_DRIVER_BLOCKED"); break; }
+							case 49: { echo(L"49: CM_PROB_REGISTRY_TOO_LARGE"); break; }
+							case 50: { echo(L"50: CM_PROB_SETPROPERTIES_FAILED"); break; }
+							case 51: { echo(L"51: CM_PROB_WAITING_ON_DEPENDENCY"); break; }
+							case 52: { echo(L"52: CM_PROB_UNSIGNED_DRIVER"); break; }
+							case 53: { echo(L"53: CM_PROB_USED_BY_DEBUGGER"); break; }
+							case 54: { echo(L"54: CM_PROB_DEVICE_RESET"); break; }
+							case 55: { echo(L"55: CM_PROB_CONSOLE_LOCKED"); break; }
+							case 56: { echo(L"56: CM_PROB_NEED_CLASS_CONFIG"); break; }
+							case 57: { echo(L"57: CM_PROB_GUEST_ASSIGNMENT_FAILED"); break; }
+							}
+					}
+				}
+				LocalFree(buffer);
+				SetupDiDestroyDeviceInfoList(hdevinfo);
+				return result;
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"0:  CM_PROB_DRIVER_NOT_THERE");
+	result.push_back(0);
+	if (buffer)
+		LocalFree(buffer);
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return result;
+}
+
+//-----------------------------------------------------------------------------
+inline char GetDeviceState(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+{
+	if (!hwid.length())
+		return DRIVER_INVALID_STRING;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return DRIVER_INVALID_HANDLE;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+
+		DWORD PropertyRegDataType;
+		DWORD buffersize = 0;
+		while (!SetupDiGetDeviceRegistryProperty(
+			hdevinfo,
+			&devinfo,
+			SPDRP_HARDWAREID,
+			&PropertyRegDataType,
+			(PBYTE)buffer,
+			buffersize,
+			&buffersize))
+		{
+			if (GetLastError() == ERROR_INVALID_DATA)
+				break;
+			else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				if (buffer)
+					LocalFree(buffer);
+				buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+			}
+			else
+				return DRIVER_INVALID_BUFFER;
+		}
+
+		if (PropertyRegDataType != REG_MULTI_SZ)
+			continue;
+
+		if (!buffer)
+			continue;
+
+		LPTSTR p = NULL;
+		for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+		{
+			if (!wcscmp(hwid.c_str(), p))
+			{
+				DEVPROPTYPE propertyType;
+				BYTE propertyBuffer[100] = { 0 };
+				DWORD requiredSize = 0;
+
+				if (SetupDiGetDeviceProperty(hdevinfo, &devinfo, &DEVPKEY_Device_ProblemCode, &propertyType, propertyBuffer, 100, &requiredSize, 0))
+				{
+					unsigned long deviceProblemCode = *((unsigned long*)propertyBuffer);
+					for (int i = 0; i < 100; i++)
+					{
+						if (propertyBuffer[i] == CM_PROB_DISABLED)
+						{
+							LocalFree(buffer);
+							SetupDiDestroyDeviceInfoList(hdevinfo);
+							return DRIVER_STATE_DISABLED;
+						}
+					}
+				}
+				LocalFree(buffer);
+				SetupDiDestroyDeviceInfoList(hdevinfo);
+				return DRIVER_STATE_ACTIVE;
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	if (buffer)
+		LocalFree(buffer);
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return DRIVER_STATE_NOTPRESENT;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL SetDeviceState(std::wstring enumerator, std::wstring hwid, DWORD dwState, bool verbose = false)
+{
+	if (!hwid.length())
+		return FALSE;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return FALSE;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+
+		DWORD PropertyRegDataType;
+		DWORD buffersize = 0;
+		while (!SetupDiGetDeviceRegistryProperty(
+			hdevinfo,
+			&devinfo,
+			SPDRP_HARDWAREID,
+			&PropertyRegDataType,
+			(PBYTE)buffer,
+			buffersize,
+			&buffersize))
+		{
+			if (GetLastError() == ERROR_INVALID_DATA)
+				break;
+			else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				if (buffer)
+					LocalFree(buffer);
+				buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+			}
+			else
+				return FALSE;
+		}
+
+		if (PropertyRegDataType != REG_MULTI_SZ)
+			continue;
+
+		if (!buffer)
+			continue;
+
+		LPTSTR p = NULL;
+		for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+		{
+			if (!wcscmp(hwid.c_str(), p))
+			{
+				SP_PROPCHANGE_PARAMS params;
+				params.ClassInstallHeader.cbSize = sizeof(SP_CLASSINSTALL_HEADER);
+				params.ClassInstallHeader.InstallFunction = DIF_PROPERTYCHANGE;
+				params.StateChange = dwState;
+				params.Scope = DICS_FLAG_GLOBAL;
+
+				if (SetupDiSetClassInstallParams(hdevinfo, &devinfo, &params.ClassInstallHeader, sizeof(params)))
+					if (SetupDiCallClassInstaller(DIF_PROPERTYCHANGE, hdevinfo, &devinfo))
+					{
+						if (verbose)
+							echo(L"Device state changed");
+						if (buffer)
+							LocalFree(buffer);
+						SetupDiDestroyDeviceInfoList(hdevinfo);
+						return TRUE;
+					}
+
+				if (verbose)
+					echo(L"Device state not changed: %u", GetLastError());
+				if (buffer)
+					LocalFree(buffer);
+				SetupDiDestroyDeviceInfoList(hdevinfo);
+				return FALSE;
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	if (buffer)
+		LocalFree(buffer);
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return FALSE;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL RemoveDriverById(std::wstring enumerator, std::wstring MfgName, std::wstring Description, bool verbose = false)
+{
+	if (!MfgName.length() || !Description.length())
+		return FALSE;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return FALSE;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	SP_DRVINFO_DATA_W drvdata;
+	drvdata.cbSize = sizeof(SP_DRVINFO_DATA_W);
+
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+		if (SetupDiBuildDriverInfoList(hdevinfo, &devinfo, SPDIT_COMPATDRIVER))
+		{
+			if (SetupDiEnumDriverInfoW(hdevinfo, &devinfo, SPDIT_COMPATDRIVER, 0, &drvdata))
+			{
+				if (!wcscmp(drvdata.MfgName, WCHARI(MfgName)))
+					if (!wcscmp(drvdata.Description, WCHARI(Description)))
+					{
+						if (SetupDiRemoveDevice(hdevinfo, &devinfo))
+						{
+							if (verbose)
+							{
+								echo(L"Driver %d removed:", DeviceIndex);
+								echo(L"   description: %ws", drvdata.Description);
+								echo(L"   MfgName: %ws", drvdata.MfgName);
+								echo(L"   ProviderName: %ws", drvdata.ProviderName);
+							}
+							SetupDiDestroyDeviceInfoList(hdevinfo);
+							return TRUE;
+						}
+						else
+						{
+							SetupDiDestroyDeviceInfoList(hdevinfo);
+							if (verbose)
+								echo(L"Device not unistalled: %u", GetLastError());
+							return FALSE;
+						}
+					}
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return FALSE;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL RemoveDriverByHwId(std::wstring enumerator, std::wstring hwid, bool verbose = false)
+{
+	if (!hwid.length())
+		return FALSE;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return FALSE;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	SP_DRVINFO_DATA_W drvdata;
+	drvdata.cbSize = sizeof(SP_DRVINFO_DATA_W);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+
+		DWORD PropertyRegDataType;
+		DWORD buffersize = 0;
+		while (!SetupDiGetDeviceRegistryProperty(
+			hdevinfo,
+			&devinfo,
+			SPDRP_HARDWAREID,
+			&PropertyRegDataType,
+			(PBYTE)buffer,
+			buffersize,
+			&buffersize))
+		{
+			if (GetLastError() == ERROR_INVALID_DATA)
+				break;
+			else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				if (buffer)
+					LocalFree(buffer);
+				buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+			}
+			else
+				return FALSE;
+		}
+
+		if (PropertyRegDataType != REG_MULTI_SZ)
+			continue;
+
+		if (!buffer)
+			continue;
+
+		LPTSTR p = NULL;
+		for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+		{
+			if (!wcscmp(hwid.c_str(), p))
+			{
+				if (SetupDiRemoveDevice(hdevinfo, &devinfo))
+				{
+					if (verbose)
+					{
+						echo(L"Driver %d removed:", DeviceIndex);
+						echo(L"   description: %ws", drvdata.Description);
+						echo(L"   MfgName: %ws", drvdata.MfgName);
+						echo(L"   ProviderName: %ws", drvdata.ProviderName);
+					}
+					SetupDiDestroyDeviceInfoList(hdevinfo);
+					return TRUE;
+				}
+				else
+				{
+					SetupDiDestroyDeviceInfoList(hdevinfo);
+					if (verbose)
+						echo(L"Device not unistalled: %u", GetLastError());
+					return FALSE;
+				}
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	if (buffer)
+		LocalFree(buffer);
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return FALSE;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL DeviceRestart(std::wstring enumerator, std::wstring hwid, bool tohide = true, bool verbose = false)
+{
+	if (!hwid.length())
+		return FALSE;
+
+	HDEVINFO hdevinfo;
+	if (enumerator.length())
+		hdevinfo = SetupDiGetClassDevsW(NULL, enumerator.c_str(), NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	else
+		hdevinfo = SetupDiGetClassDevsW(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT);
+	if (hdevinfo == INVALID_HANDLE_VALUE)
+	{
+		if (verbose)
+			echo(L"Device information handle failed : INVALID_HANDLE_VALUE");
+		return FALSE;
+	}
+
+	SP_DEVINFO_DATA devinfo;
+	devinfo.cbSize = sizeof(devinfo);
+
+	LPTSTR buffer = NULL;
+	DWORD DeviceIndex = 0;
+	while (SetupDiEnumDeviceInfo(hdevinfo, DeviceIndex, &devinfo))
+	{
+		DeviceIndex++;
+
+		DWORD PropertyRegDataType;
+		DWORD buffersize = 0;
+		while (!SetupDiGetDeviceRegistryProperty(
+			hdevinfo,
+			&devinfo,
+			SPDRP_HARDWAREID,
+			&PropertyRegDataType,
+			(PBYTE)buffer,
+			buffersize,
+			&buffersize))
+		{
+			if (GetLastError() == ERROR_INVALID_DATA)
+				break;
+			else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+			{
+				if (buffer)
+					LocalFree(buffer);
+				buffer = (wchar_t*)LocalAlloc(LPTR, buffersize);
+			}
+			else
+				return FALSE;
+		}
+
+		if (PropertyRegDataType != REG_MULTI_SZ)
+			continue;
+
+		if (!buffer)
+			continue;
+
+		LPTSTR p = NULL;
+		for (p = buffer; *p && (p < &buffer[buffersize]); p += lstrlen(p) + 1)
+		{
+			if (!wcscmp(hwid.c_str(), p))
+			{
+				if (tohide)
+				{
+					if (SetupDiRestartDevices(hdevinfo, &devinfo))
+					{
+						if (verbose)
+							echo(L"Device restarted");
+						if (buffer)
+							LocalFree(buffer);
+						SetupDiDestroyDeviceInfoList(hdevinfo);
+						return TRUE;
+					}
+					else
+					{
+						if (verbose)
+							echo(L"Device not restarted: %u", GetLastError());
+						if (buffer)
+							LocalFree(buffer);
+						SetupDiDestroyDeviceInfoList(hdevinfo);
+						return FALSE;
+					}
+				}
+				else
+				{
+					SP_PROPCHANGE_PARAMS params;
+					params.ClassInstallHeader.cbSize = sizeof(SP_CLASSINSTALL_HEADER);
+					params.ClassInstallHeader.InstallFunction = DIF_PROPERTYCHANGE;
+					params.StateChange = DICS_PROPCHANGE;
+					params.Scope = DICS_FLAG_GLOBAL;
+
+					if (SetupDiSetClassInstallParams(hdevinfo, &devinfo, &params.ClassInstallHeader, sizeof(params)))
+					{
+						if (SetupDiCallClassInstaller(DIF_PROPERTYCHANGE, hdevinfo, &devinfo))
+						{
+							if (verbose)
+								echo(L"Device restarted");
+							if (buffer)
+								LocalFree(buffer);
+							SetupDiDestroyDeviceInfoList(hdevinfo);
+							return TRUE;
+						}
+						else
+						{
+							if (verbose)
+								echo(L"Device not restarted: %u", GetLastError());
+							if (buffer)
+								LocalFree(buffer);
+							SetupDiDestroyDeviceInfoList(hdevinfo);
+							return FALSE;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (verbose)
+		echo(L"Device not found: %u", GetLastError());
+	if (buffer)
+		LocalFree(buffer);
+	SetupDiDestroyDeviceInfoList(hdevinfo);
+	return FALSE;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL DeviceUpdate(std::wstring lpFileName, std::wstring hwid)
+{
+	BOOL result = FALSE;
+
+	typedef BOOL(WINAPI* UpdateDriverForPlugAndPlayDevicesProto)(
+		_In_opt_ HWND hwndParent,
+		__in LPCTSTR HardwareId,
+		__in LPCTSTR FullInfPath,
+		__in DWORD InstallFlags,
+		__out_opt PBOOL bRebootRequired);
+
+	UpdateDriverForPlugAndPlayDevicesProto UpdateFn;
+	HMODULE newdevMod = NULL;
+	DWORD flags = 0;
+	DWORD res;
+	WCHAR InfPath[MAX_PATH];
+	CONFIGRET ret;
+
+	// Inf must be a full pathname
+	res = GetFullPathName(lpFileName.c_str(), MAX_PATH, InfPath, NULL);
+	if ((res >= MAX_PATH) || (res == 0))
+		return FALSE;
+
+	if (GetFileAttributes(InfPath) == (DWORD)(-1))
+		return FALSE;
+
+	// make use of UpdateDriverForPlugAndPlayDevices
+	newdevMod = LoadLibrary(TEXT("newdev.dll"));
+	if (!newdevMod)
+		return FALSE;
+
+	//Get UPDATEDRIVERFORPLUGANDPLAYDEVICES
+	UpdateFn = (UpdateDriverForPlugAndPlayDevicesProto)GetProcAddress(newdevMod, "UpdateDriverForPlugAndPlayDevicesW");
+	if (!UpdateFn)
+	{
+		FreeLibrary(newdevMod);
+		return FALSE;
+	}
+
+	// Update Driver
+	ret = CMP_WaitNoPendingInstallEvents(30000);
+	if (ret != WAIT_OBJECT_0 && ret != WAIT_TIMEOUT)
+	{
+		FreeLibrary(newdevMod);
+		return FALSE;
+	}
+
+	//UPDATEDRIVERFORPLUGANDPLAYDEVICES
+	if (!UpdateFn(NULL, hwid.c_str(), InfPath, INSTALLFLAG_FORCE, FALSE))
+	{
+		FreeLibrary(newdevMod);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+//-----------------------------------------------------------------------------
+inline BOOL InstallDriverByHwId(std::wstring lpFileName, std::wstring hwid)
+{
+	HDEVINFO DeviceInfoSet = INVALID_HANDLE_VALUE;
+	SP_DEVINFO_DATA DeviceInfoData;
+	GUID ClassGUID;
+	WCHAR ClassName[MAX_CLASS_NAME_LEN];
+	WCHAR hwIdList[LINE_LEN + 4];
+	WCHAR InfPath[MAX_PATH];
+
+	if (!lpFileName.length() || !hwid.length())
+		return FALSE;
+
+	if (GetFullPathName(lpFileName.c_str(), MAX_PATH, InfPath, NULL) >= MAX_PATH)
+	{
+		echo(L"Install: InfPath too long");
+		return FALSE;
+	}
+
+	// List of hardware ID's must be double zero-terminated
+	ZeroMemory(hwIdList, sizeof(hwIdList));
+	wcscpy_s(hwIdList, hwid.length() + 1, hwid.c_str());
+
+	// Use the INF File to extract the Class GUID
+	if (!SetupDiGetINFClass(InfPath, &ClassGUID, ClassName, sizeof(ClassName) / sizeof(ClassName[0]), 0))
+		return FALSE;
+
+	// Create the container for the to-be-created Device Information Element.
+	DeviceInfoSet = SetupDiCreateDeviceInfoList(&ClassGUID, 0);
+	if (DeviceInfoSet == INVALID_HANDLE_VALUE)
+		return FALSE;
+
+	// Use the Class GUID and Name from the INF file.
+	DeviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+	if (!SetupDiCreateDeviceInfo(DeviceInfoSet, ClassName, &ClassGUID, NULL, 0, DICD_GENERATE_ID, &DeviceInfoData))
+	{
+		SetupDiDestroyDeviceInfoList(DeviceInfoSet);
+		return FALSE;
+	}
+	// Add the HardwareID to the Device's HardwareID property
+	if (!SetupDiSetDeviceRegistryProperty(DeviceInfoSet, &DeviceInfoData, SPDRP_HARDWAREID, (LPBYTE)hwIdList, (lstrlen(hwIdList) + 1 + 1) * sizeof(WCHAR)))
+	{
+		SetupDiDestroyDeviceInfoList(DeviceInfoSet);
+		return FALSE;
+	}
+
+	// Transform the registry element into an actual devnode in the PnP HW tree.
+	if (!SetupDiCallClassInstaller(DIF_REGISTERDEVICE, DeviceInfoSet, &DeviceInfoData))
+	{
+		SetupDiDestroyDeviceInfoList(DeviceInfoSet);
+		return FALSE;
+	}
+
+	// update the driver for the device we just created
+	DeviceUpdate(lpFileName, hwid);
+
+	SetupDiDestroyDeviceInfoList(DeviceInfoSet);
+	return TRUE;
 }

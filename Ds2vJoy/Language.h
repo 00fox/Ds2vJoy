@@ -6,6 +6,7 @@
 struct LANGSTRS
 {
 	WCHAR* EMPTY;
+	WCHAR* WHICH;
 	WCHAR* DS2VJOY;
 	WCHAR* APP_TITLE;
 	WCHAR* Fatal_Error1;
@@ -42,24 +43,52 @@ struct LANGSTRS
 	WCHAR* vJoy_failed_update;
 	WCHAR* vJoy_version;
 
-	WCHAR* HidGuardian_driver_installed;
-	WCHAR* HidGuardian_driver_instalation_failed;
-	WCHAR* HidGuardian_driver_uninstalled;
-	WCHAR* HidGuardian_driver_uninstalation_failed;
-	WCHAR* HidCerberus_service_installed;
-	WCHAR* HidCerberus_service_instalation_failed;
-	WCHAR* HidCerberus_service_uninstalled;
-	WCHAR* HidCerberus_service_uninstalation_failed;
-	WCHAR* HidGuardian_Added_to_Guardian;
-	WCHAR* HidGuardian_Removed_from_Guardian;
+	WCHAR* Profile_1;
+	WCHAR* Profile_2;
+	WCHAR* Profile_3;
+	WCHAR* MappingPaused_On;
+	WCHAR* MappingPaused_Off;
+	WCHAR* RapidFirePaused_On;
+	WCHAR* RapidFirePaused_Off;
+	WCHAR* KeymapPaused_On;
+	WCHAR* KeymapPaused_Off;
+	WCHAR* vJoyPaused_On;
+	WCHAR* vJoyPaused_Off;
+	WCHAR* ViGEmPaused_On;
+	WCHAR* ViGEmPaused_Off;
+	WCHAR* GuardianPaused_On;
+	WCHAR* GuardianPaused_Off;
 
 	WCHAR* ViGEm_Memory_allocating_error;
 	WCHAR* ViGEm_Bus_connection_failed;
 	WCHAR* ViGEm_Target_plugin_failed;
+	WCHAR* ViGEm_client_connected;
+	WCHAR* ViGEm_client_removed;
+	WCHAR* ViGEm_pad_added;
+	WCHAR* ViGEm_pad_removed;
+	WCHAR* ViGEm_vJoy_Install_tittle;
+	WCHAR* ViGEm_vJoy_Install_text;
+	WCHAR* ViGEm_vJoy_Uninstall_tittle;
+	WCHAR* ViGEm_vJoy_Uninstall_text;
 	WCHAR* ViGEm_driver_installed;
 	WCHAR* ViGEm_driver_instalation_failed;
 	WCHAR* ViGEm_driver_uninstalled;
 	WCHAR* ViGEm_driver_uninstalation_failed;
+	WCHAR* vJoy_driver_installed;
+	WCHAR* vJoy_driver_instalation_failed;
+	WCHAR* vJoy_driver_uninstalled;
+	WCHAR* vJoy_driver_uninstalation_failed;
+
+	WCHAR* Guardian_driver_installed;
+	WCHAR* Guardian_driver_instalation_failed;
+	WCHAR* Guardian_driver_uninstalled;
+	WCHAR* Guardian_driver_uninstalation_failed;
+	WCHAR* Cerberus_service_installed;
+	WCHAR* Cerberus_service_instalation_failed;
+	WCHAR* Cerberus_service_uninstalled;
+	WCHAR* Cerberus_service_uninstalation_failed;
+	WCHAR* Guardian_Added_to_Guardian;
+	WCHAR* Guardian_Removed_from_Guardian;
 
 	WCHAR* WebView2_Not_Installed_tittle;
 	WCHAR* WebView2_Not_Installed_text;
@@ -326,9 +355,23 @@ struct LANGSTRS
 	WCHAR* SpecialAction_VOLUME_DOWN;
 	WCHAR* SpecialAction_MEMORIZE_MODE;
 	WCHAR* SpecialAction_TO_MEM_MODE;
-	WCHAR* SpecialAction_TO_MODE;
+	WCHAR* SpecialAction_TO_MODE1;
+	WCHAR* SpecialAction_TO_MODE2;
+	WCHAR* SpecialAction_TO_MODE3;
+	WCHAR* SpecialAction_TO_MODE4;
+	WCHAR* SpecialAction_TO_MODE5;
+	WCHAR* SpecialAction_TO_MODE6;
+	WCHAR* SpecialAction_TO_MODE7;
+	WCHAR* SpecialAction_TO_MODE8;
 	WCHAR* SpecialAction_TO_LAST_MODE;
-	WCHAR* SpecialAction_BASE_TO_MODE;
+	WCHAR* SpecialAction_BASE_TO_MODE1;
+	WCHAR* SpecialAction_BASE_TO_MODE2;
+	WCHAR* SpecialAction_BASE_TO_MODE3;
+	WCHAR* SpecialAction_BASE_TO_MODE4;
+	WCHAR* SpecialAction_BASE_TO_MODE5;
+	WCHAR* SpecialAction_BASE_TO_MODE6;
+	WCHAR* SpecialAction_BASE_TO_MODE7;
+	WCHAR* SpecialAction_BASE_TO_MODE8;
 	WCHAR* SpecialAction_TO_BASE_MODE;
 	WCHAR* SpecialAction_FORGOT_RELEASED;
 	WCHAR* SpecialAction_IF_RELEASED_GOTO;
@@ -676,12 +719,16 @@ struct LANGSTRS
 	WCHAR* KEYMAP_OK2;
 	WCHAR* KEYMAP_CANCEL2;
 	WCHAR* VIGEM_ACTIVE;
+	WCHAR* VIGEM_VJOY_ACTIVE;
 	WCHAR* VIGEM_PAD;
 	WCHAR* VIGEM_X360;
 	WCHAR* VIGEM_DS4;
 	WCHAR* VIGEM_INSTALL;
+	WCHAR* VIGEM_INSTALL_VJOY;
 	WCHAR* VIGEM_STATUS;
 	WCHAR* HID_ACTIVE;
+	WCHAR* HID_VJOY_SHUTDOWN;
+	WCHAR* HID_WHEN_EXITING;
 	WCHAR* HID_BLACKLIST;
 	WCHAR* HID_REMOVE;
 	WCHAR* HID_WHITELIST;
@@ -736,14 +783,14 @@ struct LANGSTRS
 	WCHAR* LINKS_TEXT2;
 	WCHAR* LINKS_TEXT3;
 	WCHAR* LINKS_TEXT4;
-	WCHAR* LINKS_DS4VJOY;
+	WCHAR* LINKS_DS2VJOY;
 	WCHAR* LINKS_VJOY;
 	WCHAR* LINKS_WEBVIEW2;
 	WCHAR* LINKS_VIGEMBUS;
 	WCHAR* LINKS_VIGEMCLIENT;
 	WCHAR* LINKS_HIDGUARDIAN;
 	WCHAR* LINKS_HIDCERBERUS;
-	WCHAR* LINKS_URL_DS4VJOY;
+	WCHAR* LINKS_URL_DS2VJOY;
 	WCHAR* LINKS_URL_VJOY;
 	WCHAR* LINKS_URL_WEBVIEW2;
 	WCHAR* LINKS_URL_VIGEMBUS;
@@ -754,10 +801,13 @@ struct LANGSTRS
 
 	WCHAR* STATE_INSTALL;
 	WCHAR* STATE_UNINSTALL;
+	WCHAR* STATE_VJOY_INSTALL;
+	WCHAR* STATE_VJOY_UNINSTALL;
 	WCHAR* STATE_START;
 	WCHAR* STATE_STOP;
 	WCHAR* STATE_RESTART;
 	WCHAR* STATE_ENABLE;
+	WCHAR* STATE_VJOY_ENABLE;
 	WCHAR* STATE_DISABLE;
 	WCHAR* STATE_WAITING;
 

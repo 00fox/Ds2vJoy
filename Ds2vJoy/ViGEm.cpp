@@ -17,6 +17,11 @@ const WCHAR* ViGEm::ViGEmButtons()
 void ViGEm::Init(HWND hWnd)
 {
 	m_hWnd = hWnd;
+
+	if (tape.vJoyActive)
+		enable(GetvJoyVersion());
+	else
+		disable(GetvJoyVersion());
 }
 
 void ViGEm::InitClient(bool verbose)
@@ -41,7 +46,7 @@ void ViGEm::InitClient(bool verbose)
 		vigem_connected = true;
 
 	if (verbose)
-		echo(L"ViGEm: client connected");
+		echo(I18N.ViGEm_client_connected);
 
 	InitPad(verbose);
 }
@@ -83,7 +88,7 @@ void ViGEm::InitPad(bool verbose)
 	}
 	}
 	if (verbose)
-		echo(L"ViGEm: Pad added");
+		echo(I18N.ViGEm_pad_added);
 }
 
 void ViGEm::CloseClient(bool verbose)
@@ -91,13 +96,12 @@ void ViGEm::CloseClient(bool verbose)
 	if (vigem_connected)
 	{
 		vigem_connected = false;
-		tape.ViGEmActive = false;
 		ClosePad();
 		vigem_disconnect(client);
 		vigem_free(client);
 	}
 	if (verbose)
-		echo(L"ViGEm: client removed");
+		echo(I18N.ViGEm_client_removed);
 }
 
 void ViGEm::ClosePad(bool verbose)
@@ -105,7 +109,7 @@ void ViGEm::ClosePad(bool verbose)
 	vigem_target_remove(client, pad);
 	vigem_target_free(pad);
 	if (verbose)
-		echo(L"ViGEm: Pad removed");
+		echo(I18N.ViGEm_pad_removed);
 }
 
 void ViGEm::LoadDevice(dsDevice* ds, vJoyDevice* vjoy)
@@ -142,6 +146,7 @@ void ViGEm::Run()
 
 	ViGEmButtonsString[0] = 0;
 	WCHAR* head = ViGEmButtonsString;
+	head += swprintf_s(head, MAX_PATH, L"%s", L"ViGEm:");
 
 	switch (tape.DesiredVirtualPad)
 	{
@@ -149,21 +154,21 @@ void ViGEm::Run()
 	{
 	    unsigned short wButtons = 0x0;
 
-		if ((tape.target_X360[0]) ? ((m_vj[0]) ? (m_vj[0]->isPushed()) : false) : (m_ds[0]) ? (m_ds[0]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_LEFT_THUMB; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_THUMB)); }				//9
-		if ((tape.target_X360[1]) ? ((m_vj[1]) ? (m_vj[1]->isPushed()) : false) : (m_ds[1]) ? (m_ds[1]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_LEFT; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_DPAD_LEFT)); }					//<
-		if ((tape.target_X360[2]) ? ((m_vj[2]) ? (m_vj[2]->isPushed()) : false) : (m_ds[2]) ? (m_ds[2]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_UP; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_DPAD_UP)); }						//^
-		if ((tape.target_X360[3]) ? ((m_vj[3]) ? (m_vj[3]->isPushed()) : false) : (m_ds[3]) ? (m_ds[3]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_RIGHT; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_DPAD_RIGHT)); }				//>
-		if ((tape.target_X360[4]) ? ((m_vj[4]) ? (m_vj[4]->isPushed()) : false) : (m_ds[4]) ? (m_ds[4]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_DOWN; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_DPAD_DOWN)); }					//v
-		if ((tape.target_X360[5]) ? ((m_vj[5]) ? (m_vj[5]->isPushed()) : false) : (m_ds[5]) ? (m_ds[5]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_BACK; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_BACK)); }							//7
-		if ((tape.target_X360[6]) ? ((m_vj[6]) ? (m_vj[6]->isPushed()) : false) : (m_ds[6]) ? (m_ds[6]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_START; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_START)); }							//8
-		if ((tape.target_X360[7]) ? ((m_vj[7]) ? (m_vj[7]->isPushed()) : false) : (m_ds[7]) ? (m_ds[7]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_X; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_X)); }									//3
-		if ((tape.target_X360[8]) ? ((m_vj[8]) ? (m_vj[8]->isPushed()) : false) : (m_ds[8]) ? (m_ds[8]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_Y; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_Y)); }									//4
-		if ((tape.target_X360[9]) ? ((m_vj[9]) ? (m_vj[9]->isPushed()) : false) : (m_ds[9]) ? (m_ds[9]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_B; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_B)); }									//2
-		if ((tape.target_X360[10]) ? ((m_vj[10]) ? (m_vj[10]->isPushed()) : false) : (m_ds[10]) ? (m_ds[10]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_A; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_A)); }							//1
-		if ((tape.target_X360[11]) ? ((m_vj[11]) ? (m_vj[11]->isPushed()) : false) : (m_ds[11]) ? (m_ds[11]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_RIGHT_THUMB; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_RIGHT_THUMB)); }		//10
-		if ((tape.target_X360[12]) ? ((m_vj[12]) ? (m_vj[12]->isPushed()) : false) : (m_ds[12]) ? (m_ds[12]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_GUIDE; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_GUIDE)); }					//No
-		if ((tape.target_X360[14]) ? ((m_vj[14]) ? (m_vj[14]->isPushed()) : false) : (m_ds[14]) ? (m_ds[14]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_LEFT_SHOULDER; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_SHOULDER)); }	//5
-		if ((tape.target_X360[15]) ? ((m_vj[15]) ? (m_vj[15]->isPushed()) : false) : (m_ds[15]) ? (m_ds[15]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_RIGHT_SHOULDER; head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_RIGHT_SHOULDER)); }	//6
+		if ((tape.target_X360[0]) ? ((m_vj[0]) ? (m_vj[0]->isPushed()) : false) : (m_ds[0]) ? (m_ds[0]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_LEFT_THUMB; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_LEFT_THUMB)); }				//9
+		if ((tape.target_X360[1]) ? ((m_vj[1]) ? (m_vj[1]->isPushed()) : false) : (m_ds[1]) ? (m_ds[1]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_LEFT; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_DPAD_LEFT)); }					//<
+		if ((tape.target_X360[2]) ? ((m_vj[2]) ? (m_vj[2]->isPushed()) : false) : (m_ds[2]) ? (m_ds[2]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_UP; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_DPAD_UP)); }						//^
+		if ((tape.target_X360[3]) ? ((m_vj[3]) ? (m_vj[3]->isPushed()) : false) : (m_ds[3]) ? (m_ds[3]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_RIGHT; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_DPAD_RIGHT)); }				//>
+		if ((tape.target_X360[4]) ? ((m_vj[4]) ? (m_vj[4]->isPushed()) : false) : (m_ds[4]) ? (m_ds[4]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_DPAD_DOWN; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_DPAD_DOWN)); }					//v
+		if ((tape.target_X360[5]) ? ((m_vj[5]) ? (m_vj[5]->isPushed()) : false) : (m_ds[5]) ? (m_ds[5]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_BACK; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_BACK)); }							//7
+		if ((tape.target_X360[6]) ? ((m_vj[6]) ? (m_vj[6]->isPushed()) : false) : (m_ds[6]) ? (m_ds[6]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_START; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_START)); }							//8
+		if ((tape.target_X360[7]) ? ((m_vj[7]) ? (m_vj[7]->isPushed()) : false) : (m_ds[7]) ? (m_ds[7]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_X; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_X)); }									//3
+		if ((tape.target_X360[8]) ? ((m_vj[8]) ? (m_vj[8]->isPushed()) : false) : (m_ds[8]) ? (m_ds[8]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_Y; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_Y)); }									//4
+		if ((tape.target_X360[9]) ? ((m_vj[9]) ? (m_vj[9]->isPushed()) : false) : (m_ds[9]) ? (m_ds[9]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_B; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_B)); }									//2
+		if ((tape.target_X360[10]) ? ((m_vj[10]) ? (m_vj[10]->isPushed()) : false) : (m_ds[10]) ? (m_ds[10]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_A; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_A)); }							//1
+		if ((tape.target_X360[11]) ? ((m_vj[11]) ? (m_vj[11]->isPushed()) : false) : (m_ds[11]) ? (m_ds[11]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_RIGHT_THUMB; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_RIGHT_THUMB)); }		//10
+		if ((tape.target_X360[12]) ? ((m_vj[12]) ? (m_vj[12]->isPushed()) : false) : (m_ds[12]) ? (m_ds[12]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_GUIDE; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_GUIDE)); }					//No
+		if ((tape.target_X360[14]) ? ((m_vj[14]) ? (m_vj[14]->isPushed()) : false) : (m_ds[14]) ? (m_ds[14]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_LEFT_SHOULDER; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_LEFT_SHOULDER)); }	//5
+		if ((tape.target_X360[15]) ? ((m_vj[15]) ? (m_vj[15]->isPushed()) : false) : (m_ds[15]) ? (m_ds[15]->isPushed()) : false) { wButtons = wButtons | XUSB_GAMEPAD_RIGHT_SHOULDER; head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_RIGHT_SHOULDER)); }	//6
 
 		report_X360.wButtons = wButtons;
 
@@ -180,12 +185,12 @@ void ViGEm::Run()
 		if (tape.target_X360[23]) { if (m_vj[23]) { report_X360.sThumbRY = (m_vj[23]->isPushed()) ? (((m_vj[23]->GetValByte() + 1) * 256) - 32769) : 0; } }	//RY
 		else { if (m_ds[23]) { report_X360.sThumbRY = (m_ds[23]->isPushed()) ? (((m_ds[23]->GetVal() + 1) * 256) - 32769) : 0; } }
 
-		if (report_X360.bLeftTrigger) { head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_TRIGGER)); }
-		if (report_X360.bRightTrigger) { head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_RIGHT_TRIGGER)); }
-		if (report_X360.sThumbLX) { head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_X)); }
-		if (report_X360.sThumbLY) { head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_LEFT_Y)); }
-		if (report_X360.sThumbRX) { head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_RIGHT_X)); }
-		if (report_X360.sThumbRY) { head += swprintf_s(head, MAX_PATH, L"%s ", X360_String(XUSB_GAMEPAD_RIGHT_Y)); }
+		if (report_X360.bLeftTrigger) { head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_LEFT_TRIGGER)); }
+		if (report_X360.bRightTrigger) { head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_RIGHT_TRIGGER)); }
+		if (report_X360.sThumbLX) { head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_LEFT_X)); }
+		if (report_X360.sThumbLY) { head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_LEFT_Y)); }
+		if (report_X360.sThumbRX) { head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_RIGHT_X)); }
+		if (report_X360.sThumbRY) { head += swprintf_s(head, MAX_PATH, L" %s", X360_String(XUSB_GAMEPAD_RIGHT_Y)); }
 
 		vigem_target_x360_update(client, pad, report_X360);
 		break;
@@ -196,24 +201,24 @@ void ViGEm::Run()
 		unsigned long dButtons = 0x0;
 		byte sButtons = 0x0;
 
-		if ((tape.target_DS4[0]) ? ((m_vj[0]) ? (m_vj[0]->isPushed()) : false) : (m_ds[0]) ? (m_ds[0]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_THUMB_LEFT; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_THUMB_LEFT)); }						//11
-		if ((tape.target_DS4[1]) ? ((m_vj[1]) ? (m_vj[1]->isPushed()) : false) : (m_ds[1]) ? (m_ds[1]->isPushed()) : false) { dButtons = dButtons | 0x01; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_WEST)); }											//<
-		if ((tape.target_DS4[2]) ? ((m_vj[2]) ? (m_vj[2]->isPushed()) : false) : (m_ds[2]) ? (m_ds[2]->isPushed()) : false) { dButtons = dButtons | 0x02; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_NORTH)); }											//^
-		if ((tape.target_DS4[3]) ? ((m_vj[3]) ? (m_vj[3]->isPushed()) : false) : (m_ds[3]) ? (m_ds[3]->isPushed()) : false) { dButtons = dButtons | 0x04; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_EAST)); }											//>
-		if ((tape.target_DS4[4]) ? ((m_vj[4]) ? (m_vj[4]->isPushed()) : false) : (m_ds[4]) ? (m_ds[4]->isPushed()) : false) { dButtons = dButtons | 0x08; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_SOUTH)); }											//v
-		if ((tape.target_DS4[5]) ? ((m_vj[5]) ? (m_vj[5]->isPushed()) : false) : (m_ds[5]) ? (m_ds[5]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SHARE; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_SHARE)); }								//9
-		if ((tape.target_DS4[6]) ? ((m_vj[6]) ? (m_vj[6]->isPushed()) : false) : (m_ds[6]) ? (m_ds[6]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_OPTIONS; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_OPTIONS)); }							//10
-		if ((tape.target_DS4[7]) ? ((m_vj[7]) ? (m_vj[7]->isPushed()) : false) : (m_ds[7]) ? (m_ds[7]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SQUARE; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_SQUARE)); }								//1
-		if ((tape.target_DS4[8]) ? ((m_vj[8]) ? (m_vj[8]->isPushed()) : false) : (m_ds[8]) ? (m_ds[8]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_TRIANGLE; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_TRIANGLE)); }							//4
-		if ((tape.target_DS4[9]) ? ((m_vj[9]) ? (m_vj[9]->isPushed()) : false) : (m_ds[9]) ? (m_ds[9]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_CIRCLE; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_CIRCLE)); }								//3
-		if ((tape.target_DS4[10]) ? ((m_vj[10]) ? (m_vj[10]->isPushed()) : false) : (m_ds[10]) ? (m_ds[10]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_CROSS; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_CROSS)); }							//2
-		if ((tape.target_DS4[11]) ? ((m_vj[11]) ? (m_vj[11]->isPushed()) : false) : (m_ds[11]) ? (m_ds[11]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_THUMB_RIGHT; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_THUMB_RIGHT)); }				//12
-		if ((tape.target_DS4[12]) ? ((m_vj[12]) ? (m_vj[12]->isPushed()) : false) : (m_ds[12]) ? (m_ds[12]->isPushed()) : false) { sButtons = sButtons | DS4_SPECIAL_BUTTON_PS; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_SPECIAL_BUTTON_PS)); }				//13
-		if ((tape.target_DS4[13]) ? ((m_vj[13]) ? (m_vj[13]->isPushed()) : false) : (m_ds[13]) ? (m_ds[13]->isPushed()) : false) { sButtons = sButtons | DS4_SPECIAL_BUTTON_TOUCHPAD; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_SPECIAL_BUTTON_TOUCHPAD)); }	//14
-		if ((tape.target_DS4[14]) ? ((m_vj[14]) ? (m_vj[14]->isPushed()) : false) : (m_ds[14]) ? (m_ds[14]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SHOULDER_LEFT; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_SHOULDER_LEFT)); }			//5
-		if ((tape.target_DS4[15]) ? ((m_vj[15]) ? (m_vj[15]->isPushed()) : false) : (m_ds[15]) ? (m_ds[15]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SHOULDER_RIGHT; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_SHOULDER_RIGHT)); }		//6
-		if ((tape.target_DS4[16]) ? ((m_vj[16]) ? (m_vj[16]->isPushed()) : false) : (m_ds[16]) ? (m_ds[16]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_TRIGGER_LEFT; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_TRIGGER_LEFT)); }			//7
-		if ((tape.target_DS4[17]) ? ((m_vj[17]) ? (m_vj[17]->isPushed()) : false) : (m_ds[17]) ? (m_ds[17]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_TRIGGER_RIGHT; head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_TRIGGER_RIGHT)); }			//8
+		if ((tape.target_DS4[0]) ? ((m_vj[0]) ? (m_vj[0]->isPushed()) : false) : (m_ds[0]) ? (m_ds[0]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_THUMB_LEFT; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_THUMB_LEFT)); }						//11
+		if ((tape.target_DS4[1]) ? ((m_vj[1]) ? (m_vj[1]->isPushed()) : false) : (m_ds[1]) ? (m_ds[1]->isPushed()) : false) { dButtons = dButtons | 0x01; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_WEST)); }											//<
+		if ((tape.target_DS4[2]) ? ((m_vj[2]) ? (m_vj[2]->isPushed()) : false) : (m_ds[2]) ? (m_ds[2]->isPushed()) : false) { dButtons = dButtons | 0x02; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_NORTH)); }											//^
+		if ((tape.target_DS4[3]) ? ((m_vj[3]) ? (m_vj[3]->isPushed()) : false) : (m_ds[3]) ? (m_ds[3]->isPushed()) : false) { dButtons = dButtons | 0x04; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_EAST)); }											//>
+		if ((tape.target_DS4[4]) ? ((m_vj[4]) ? (m_vj[4]->isPushed()) : false) : (m_ds[4]) ? (m_ds[4]->isPushed()) : false) { dButtons = dButtons | 0x08; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_SOUTH)); }											//v
+		if ((tape.target_DS4[5]) ? ((m_vj[5]) ? (m_vj[5]->isPushed()) : false) : (m_ds[5]) ? (m_ds[5]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SHARE; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_SHARE)); }								//9
+		if ((tape.target_DS4[6]) ? ((m_vj[6]) ? (m_vj[6]->isPushed()) : false) : (m_ds[6]) ? (m_ds[6]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_OPTIONS; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_OPTIONS)); }							//10
+		if ((tape.target_DS4[7]) ? ((m_vj[7]) ? (m_vj[7]->isPushed()) : false) : (m_ds[7]) ? (m_ds[7]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SQUARE; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_SQUARE)); }								//1
+		if ((tape.target_DS4[8]) ? ((m_vj[8]) ? (m_vj[8]->isPushed()) : false) : (m_ds[8]) ? (m_ds[8]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_TRIANGLE; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_TRIANGLE)); }							//4
+		if ((tape.target_DS4[9]) ? ((m_vj[9]) ? (m_vj[9]->isPushed()) : false) : (m_ds[9]) ? (m_ds[9]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_CIRCLE; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_CIRCLE)); }								//3
+		if ((tape.target_DS4[10]) ? ((m_vj[10]) ? (m_vj[10]->isPushed()) : false) : (m_ds[10]) ? (m_ds[10]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_CROSS; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_CROSS)); }							//2
+		if ((tape.target_DS4[11]) ? ((m_vj[11]) ? (m_vj[11]->isPushed()) : false) : (m_ds[11]) ? (m_ds[11]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_THUMB_RIGHT; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_THUMB_RIGHT)); }				//12
+		if ((tape.target_DS4[12]) ? ((m_vj[12]) ? (m_vj[12]->isPushed()) : false) : (m_ds[12]) ? (m_ds[12]->isPushed()) : false) { sButtons = sButtons | DS4_SPECIAL_BUTTON_PS; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_SPECIAL_BUTTON_PS)); }				//13
+		if ((tape.target_DS4[13]) ? ((m_vj[13]) ? (m_vj[13]->isPushed()) : false) : (m_ds[13]) ? (m_ds[13]->isPushed()) : false) { sButtons = sButtons | DS4_SPECIAL_BUTTON_TOUCHPAD; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_SPECIAL_BUTTON_TOUCHPAD)); }	//14
+		if ((tape.target_DS4[14]) ? ((m_vj[14]) ? (m_vj[14]->isPushed()) : false) : (m_ds[14]) ? (m_ds[14]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SHOULDER_LEFT; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_SHOULDER_LEFT)); }			//5
+		if ((tape.target_DS4[15]) ? ((m_vj[15]) ? (m_vj[15]->isPushed()) : false) : (m_ds[15]) ? (m_ds[15]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_SHOULDER_RIGHT; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_SHOULDER_RIGHT)); }		//6
+		if ((tape.target_DS4[16]) ? ((m_vj[16]) ? (m_vj[16]->isPushed()) : false) : (m_ds[16]) ? (m_ds[16]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_TRIGGER_LEFT; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_TRIGGER_LEFT)); }			//7
+		if ((tape.target_DS4[17]) ? ((m_vj[17]) ? (m_vj[17]->isPushed()) : false) : (m_ds[17]) ? (m_ds[17]->isPushed()) : false) { wButtons = wButtons | DS4_BUTTON_TRIGGER_RIGHT; head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_TRIGGER_RIGHT)); }			//8
 
 		report_DS4.wButtons = wButtons;
 		report_DS4.bSpecial = sButtons;
@@ -246,12 +251,12 @@ void ViGEm::Run()
 		if (tape.target_DS4[23]) { if (m_vj[23]) { report_DS4.bThumbRY = (m_vj[23]->isPushed()) ? m_vj[23]->GetValByte() : 127; } }	//RZ
 		else { if (m_ds[23]) { report_DS4.bThumbRY = (m_ds[23]->isPushed()) ? m_ds[23]->GetVal() : 127; } }
 
-		if (report_DS4.bTriggerL) { head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_LEFT_TR)); }
-		if (report_DS4.bTriggerR) { head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_BUTTON_RIGHT_TR)); }
-		if (report_DS4.bThumbLX != 127) { head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_THUMB_LEFT_X)); }
-		if (report_DS4.bThumbLY != 127) { head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_THUMB_LEFT_Y)); }
-		if (report_DS4.bThumbRX != 127) { head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_THUMB_RIGHT_X)); }
-		if (report_DS4.bThumbRY != 127) { head += swprintf_s(head, MAX_PATH, L"%s ", DS4_String(DS4_THUMB_RIGHT_Y)); }
+		if (report_DS4.bTriggerL) { head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_LEFT_TR)); }
+		if (report_DS4.bTriggerR) { head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_BUTTON_RIGHT_TR)); }
+		if (report_DS4.bThumbLX != 127) { head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_THUMB_LEFT_X)); }
+		if (report_DS4.bThumbLY != 127) { head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_THUMB_LEFT_Y)); }
+		if (report_DS4.bThumbRX != 127) { head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_THUMB_RIGHT_X)); }
+		if (report_DS4.bThumbRY != 127) { head += swprintf_s(head, MAX_PATH, L" %s", DS4_String(DS4_THUMB_RIGHT_Y)); }
 
 		vigem_target_ds4_update(client, pad, report_DS4);
 		break;
@@ -266,35 +271,14 @@ void ViGEm::ViGEmStates()
 	vgState = ViGEmState();
 }
 
-int ViGEm::GetViGEmState()
+char ViGEm::GetViGEmState()
 {
 	return vgState;
 }
 
-int ViGEm::ViGEmState(bool verbose)
+char ViGEm::ViGEmState(bool verbose)
 {
-	char ViGEmState = -1;
-	
-	std::wstring devconpath = L"Devcon.exe status Nefarius\\ViGEmBus\\Gen1";
-	std::wstring devconcmd = LaunchCmd(devconpath.c_str());
-
-	if (FindInString(devconcmd, L"No matching devices found"))
-		ViGEmState = 0;
-	if (FindInString(devconcmd, L"Driver is running"))
-		ViGEmState = 1;
-	if (FindInString(devconcmd, L"Device is disabled"))
-		ViGEmState = 2;
-
-	if (verbose)
-		switch (ViGEmState)
-		{
-		case 0: { echo(L"ViGEm driver is uninstalled"); break; }
-		case 1: { echo(L"ViGEm driver is runing"); break; }
-		case 2: { echo(L"ViGEm driver is disabled"); break; }
-		default: { echo(L"ViGEm state unknown"); }
-		}
-
-	return ViGEmState;
+	return GetDeviceState(L"ROOT\\SYSTEM", L"Nefarius\\ViGEmBus\\Gen1", verbose);
 }
 
 BOOL ViGEm::ViGEmInstall(bool verbose)
@@ -310,13 +294,25 @@ BOOL ViGEm::ViGEmInstall(bool verbose)
 
 	if (ExtractEmbededResource(installpath, IDR_VIGEMBUS_ZIP, true))
 	{
-		std::wstring devconpath = L"Devcon.exe install \"" + PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\ViGEmBus\\ViGEmBus.inf\" Nefarius\\ViGEmBus\\Gen1";
-		LaunchCmd(devconpath.c_str());
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+		std::wstring infpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\ViGEmBus\\ViGEmBus.inf";
+		InstallDriverByHwId(infpath, L"Nefarius\\ViGEmBus\\Gen1");
+		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 
-		if (ViGEmState() == 1)
+		switch (ViGEmState())
+		{
+		case DRIVER_STATE_ACTIVE:
 		{
 			echo(I18N.ViGEm_driver_installed);
+			PostMessage(m_hWnd, WM_CHANGE_PAD, 1, 0);
 			return TRUE;
+		}
+		case DRIVER_STATE_DISABLED:
+		{
+			echo(I18N.ViGEm_driver_installed);
+			PostMessage(m_hWnd, WM_CHANGE_PAD, 0, 0);
+			return TRUE;
+		}
 		}
 	}
 	echo(I18N.ViGEm_driver_instalation_failed);
@@ -326,104 +322,181 @@ BOOL ViGEm::ViGEmInstall(bool verbose)
 
 BOOL ViGEm::ViGEmUninstall(bool verbose)
 {
-	BOOL ViGEmUninstall = FALSE;
-
-	if (ViGEmState() > 0)
+	switch (ViGEmState())
 	{
-		{
-			std::wstring devconpath = L"Devcon.exe remove Nefarius\\ViGEmBus\\Gen1";
-			LaunchCmd(devconpath.c_str());
-		}
-
-		if (ViGEmState() < 1)
-		{
-			echo(I18N.ViGEm_driver_uninstalled);
-			ViGEmUninstall = TRUE;
-		}
-		else
-			echo(I18N.ViGEm_driver_uninstalation_failed);
-	}
-	else
+	case DRIVER_STATE_NOTPRESENT:
 	{
 		if (verbose)
 			echo(L"ViGEm driver is already uninstalled");
-		ViGEmUninstall = TRUE;
+		return TRUE;
 	}
+	case DRIVER_STATE_ACTIVE:
+	case DRIVER_STATE_DISABLED:
+	{
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+		RemoveDriverByHwId(L"ROOT\\SYSTEM", L"Nefarius\\ViGEmBus\\Gen1", verbose);
+		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 
-	std::wstring installpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\ViGEmBus\0\0";
-	std::filesystem::remove_all(installpath);
+		if (ViGEmState() == DRIVER_STATE_NOTPRESENT)
+		{
+			std::wstring installpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\ViGEmBus\0\0";
+			std::filesystem::remove_all(installpath);
 
-	std::wstring prfdirpath = PrfPath() + L"/" + tape.ProgramFilesDirName;
-	prfdirpath = ReplaceInString(prfdirpath, L"\\", '/');
-	RemoveDirectoryW(prfdirpath.c_str());
+			std::wstring prfdirpath = PrfPath() + L"/" + tape.ProgramFilesDirName;
+			prfdirpath = ReplaceInString(prfdirpath, L"\\", '/');
+			RemoveDirectoryW(prfdirpath.c_str());
 
-	return ViGEmUninstall;
+			SendMessage(m_hWnd, WM_CHANGE_PAD, 0, 0);
+			echo(I18N.ViGEm_driver_uninstalled);
+			return TRUE;
+		}
+		else
+		{
+			if (verbose)
+				echo(I18N.ViGEm_driver_uninstalation_failed);
+			return FALSE;
+		}
+	}
+	default:
+	{
+		if (verbose)
+		{
+			echo(L"ViGEm driver has a problem");
+			GetDeviceError(L"ROOT\\SYSTEM", L"Nefarius\\ViGEmBus\\Gen1", true);
+		}
+		return FALSE;
+	}
+	}
 }
 
 BOOL ViGEm::ViGEmEnable(bool verbose)
 {
-	int hdState = ViGEmState();
-
-	if (hdState == 0)
-	{
-		if (verbose)
-			echo(L"ViGEm driver is not installed");
-		return FALSE;
-	}
-	else if (hdState == 1)
-	{
-		if (verbose)
-			echo(L"ViGEm driver is already running");
-		return TRUE;
-	}
-
-	std::wstring devconpath = L"Devcon.exe enable Nefarius\\ViGEmBus\\Gen1";
-	LaunchCmd(devconpath.c_str());
-
-	if (ViGEmState() == 1)
-	{
-		if (verbose)
-			echo(L"ViGEm driver enabled");
-		return TRUE;
-	}
-
-	if (verbose)
-		echo(L"ViGEm driver enabling failed");
-
-	return FALSE;
+	return SetDeviceState(L"ROOT\\SYSTEM", L"Nefarius\\ViGEmBus\\Gen1", DICS_ENABLE, verbose);
 }
 
 BOOL ViGEm::ViGEmDisable(bool verbose)
 {
-	int hdState = ViGEmState();
+	return SetDeviceState(L"ROOT\\SYSTEM", L"Nefarius\\ViGEmBus\\Gen1", DICS_DISABLE, verbose);
+}
 
-	if (hdState == 0)
+void ViGEm::vJoyStates()
+{
+	vjState = vJoyState();
+}
+
+char ViGEm::GetvJoyState()
+{
+	return vjState;
+}
+
+char ViGEm::vJoyState(bool verbose)
+{
+	return GetDeviceState(L"ROOT\\HIDCLASS", L"root\\VID_1234&PID_BEAD&REV_0219", verbose);
+}
+
+BOOL ViGEm::vJoyInstall(bool verbose)
+{
+	if (vJoyState() > 0)
 	{
 		if (verbose)
-			echo(L"ViGEm driver is not installed");
-		return FALSE;
-	}
-	else if (hdState == 2)
-	{
-		if (verbose)
-			echo(L"ViGEm driver is already disabled");
+			echo(L"vJoy driver is already installed");
 		return TRUE;
 	}
 
-	std::wstring devconpath = L"Devcon.exe disable Nefarius\\ViGEmBus\\Gen1";
-	LaunchCmd(devconpath.c_str());
+	std::wstring installpath = PrfPath() + L"\\" + tape.ProgramFilesDirName;
 
-	if (ViGEmState() == 2)
+	if (ExtractEmbededResource(installpath, IDR_VJOYDEVICE_ZIP, true))
 	{
-		if (verbose)
-			echo(L"ViGEm driver disabled");
-		return TRUE;
-	}
+		//std::wstring regpath = L"regedit.exe /s \"" + PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\vJoyDevice\\vJoy.reg";
+		//LaunchCmd(regpath.c_str());
 
-	if (verbose)
-		echo(L"ViGEm driver disabling failed");
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+		std::wstring infpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\vJoyDevice\\vJoy.inf";
+		InstallDriverByHwId(infpath, L"root\\VID_1234&PID_BEAD&REV_0219");
+		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
+
+		switch (vJoyState())
+		{
+		case DRIVER_STATE_ACTIVE:
+		{
+			echo(I18N.vJoy_driver_installed);
+			if (!tape.vJoyActive)
+				disable(GetvJoyVersion());
+			else
+			return TRUE;
+		}
+		case DRIVER_STATE_DISABLED:
+		{
+			echo(I18N.vJoy_driver_installed);
+			if (tape.vJoyActive)
+				enable(GetvJoyVersion());
+			return TRUE;
+		}
+		}
+	}
+	echo(I18N.vJoy_driver_instalation_failed);
 
 	return FALSE;
+}
+
+BOOL ViGEm::vJoyUninstall(bool verbose)
+{
+	switch (vJoyState())
+	{
+	case DRIVER_STATE_NOTPRESENT:
+	{
+		if (verbose)
+			echo(L"vJoy driver is already uninstalled");
+		return TRUE;
+	}
+	case DRIVER_STATE_ACTIVE:
+	case DRIVER_STATE_DISABLED:
+	{
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+		RemoveDriverByHwId(L"ROOT\\HIDCLASS", L"root\\VID_1234&PID_BEAD&REV_0219", verbose);
+		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
+
+		if (vJoyState() == DRIVER_STATE_NOTPRESENT)
+		{
+			std::wstring installpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\vJoyDevice\0\0";
+			std::filesystem::remove_all(installpath);
+
+			std::wstring prfdirpath = PrfPath() + L"/" + tape.ProgramFilesDirName;
+			prfdirpath = ReplaceInString(prfdirpath, L"\\", '/');
+			RemoveDirectoryW(prfdirpath.c_str());
+
+			echo(I18N.vJoy_driver_uninstalled);
+			return TRUE;
+		}
+		else
+		{
+			if (verbose)
+				echo(I18N.vJoy_driver_uninstalation_failed);
+			return FALSE;
+		}
+	}
+	default:
+	{
+		if (verbose)
+		{
+			echo(L"vJoy driver has a problem");
+			GetDeviceError(L"ROOT\\HIDCLASS", L"root\\VID_1234&PID_BEAD&REV_0219", true);
+		}
+		return FALSE;
+	}
+	}
+}
+
+BOOL ViGEm::vJoyEnable(bool verbose)
+{
+	enable(GetvJoyVersion());
+	return SetDeviceState(L"ROOT\\HIDCLASS", L"root\\VID_1234&PID_BEAD&REV_0219", DICS_ENABLE, verbose);
+}
+
+BOOL ViGEm::vJoyDisable(bool verbose)
+{
+	disable(GetvJoyVersion());
+	return SetDeviceState(L"ROOT\\HIDCLASS", L"root\\VID_1234&PID_BEAD&REV_0219", DICS_DISABLE, verbose);
 }
 
 std::wstring ViGEm::ViGEmError(VIGEM_ERROR err)
@@ -474,7 +547,7 @@ WCHAR* ViGEm::X360_String(int id)
 	case XUSB_GAMEPAD_RIGHT_SHOULDER: return I18N.Gamepad_RIGHT_BUMPER;
 	case XUSB_GAMEPAD_LEFT_TRIGGER: return I18N.Gamepad_LEFT_TRIGGER;
 	case XUSB_GAMEPAD_RIGHT_TRIGGER: return I18N.Gamepad_RIGHT_TRIGGER;
-	default: return WCHARI(L"???");
+	default: return I18N.WHICH;
 	}
 }
 
@@ -506,6 +579,6 @@ WCHAR* ViGEm::DS4_String(int id)
 	case DS4_BUTTON_TRIGGER_RIGHT: return I18N.Button_R2;
 	case DS4_BUTTON_LEFT_TR: return I18N.Button_L2TRIGGER;
 	case DS4_BUTTON_RIGHT_TR: return I18N.Button_R2TRIGGER;
-	default: return WCHARI(L"???");
+	default: return I18N.WHICH;
 	}
 }

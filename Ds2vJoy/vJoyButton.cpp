@@ -477,7 +477,7 @@ WCHAR* vJoyButton::String(ButtonID id)
 {
 	switch (id)
 	{
-	case none: return WCHARI(L"");
+	case none: return I18N.EMPTY;
 	case X: return I18N.vJoy_X;
 	case Y: return I18N.vJoy_Y;
 	case Z: return I18N.vJoy_Z;
@@ -541,14 +541,14 @@ WCHAR* vJoyButton::String(ButtonID id)
 		swprintf_s(buf, 10, L"%d", id - Button1 + 1);
 		return buf;
 	}
-	return WCHARI(L"???");
+	return I18N.WHICH;
 }
 
 WCHAR* vJoyButton::StringAxis(AxisMoveID id)
 {
 	switch (id)
 	{
-	case axismove_none: return WCHARI(L"");
+	case axismove_none: return I18N.EMPTY;
 	case XY_CW: return I18N.Axis_XY_CW;
 	case XY_CN: return I18N.Axis_XY_CN;
 	case ZRZ_CW: return I18N.Axis_ZRZ_CW;
@@ -719,6 +719,6 @@ WCHAR* vJoyButton::StringAxis(AxisMoveID id)
 	case ZRZ_L_DR_CN: return I18N.Axis_ZRZ_L_DR_CN;
 	case ZRZ_L_DL_CW: return I18N.Axis_ZRZ_L_DL_CW;
 	case ZRZ_L_DL_CN: return I18N.Axis_ZRZ_L_DL_CN;
+	default: return I18N.WHICH;
 	}
-	return WCHARI(L"???");
 }

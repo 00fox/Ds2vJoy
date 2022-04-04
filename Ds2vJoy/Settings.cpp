@@ -3,6 +3,9 @@
 
 Settings::Settings()
 {
+	hMagnification = LoadLibrary(L"Magnification.dll");
+	if (hMagnification != nullptr)
+		MagnificationSmoothing = (hMagSetSmoothing)GetProcAddress(tape.hMagnification, "MagSetFullscreenUseBitmapSmoothing");
 }
 
 Settings::~Settings()
@@ -88,6 +91,9 @@ Settings::~Settings()
 	DeleteObject(hAbout);
 	DeleteObject(hTooltip);
 	DeleteObject(hDelete);
+
+	if (hMagnification != nullptr)
+		FreeLibrary(hMagnification);
 }
 
 void Settings::Init(HINSTANCE hInst, HWND hWnd)
@@ -160,11 +166,20 @@ void Settings::Load(int category)
 	swprintf_s(Webtxt, 20, L"%dWeb", Profile);
 
 	int VersionDateCheck = max(0, GetPrivateProfileInt(TEXT("Profile"), TEXT("VersionDate"), 0, m_file));
+
 	if (VersionDateCheck && VersionDateCheck < 202112101)
 	{
 		RECT win;
 		GetWindowRect(Ds2hWnd, &win);
 		MessageBoxPos(Ds2hWnd, L"Your .ini file is too old\nto be updated with this version,\nuse 20211210-1 before this one", I18N.MBOX_ErrTitle, MB_ICONERROR, win.left, win.top + 30);
+		BreakAndExit = true;
+		return;
+	}
+	if (VersionDateCheck && VersionDateCheck < 202203281)
+	{
+		RECT win;
+		GetWindowRect(Ds2hWnd, &win);
+		MessageBoxPos(Ds2hWnd, L"Your .ini file is too old\nto be updated with this version,\nuse 20220328-1 before this one", I18N.MBOX_ErrTitle, MB_ICONERROR, win.left, win.top + 30);
 		BreakAndExit = true;
 		return;
 	}
@@ -238,9 +253,10 @@ void Settings::Load(int category)
 	}
 	case Setting_Category_Tray:
 	{
-		vJoyPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("vJoyPaused"), 0, m_file) == 1) ? true : false;
+		MappingPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("MappingPaused"), 0, m_file) == 1) ? true : false;
 		RapidFirePaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("RapidFirePaused"), 0, m_file) == 1) ? true : false;
 		KeymapPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("KeymapPaused"), 0, m_file) == 1) ? true : false;
+		vJoyPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("vJoyPaused"), 0, m_file) == 1) ? true : false;
 		ViGEmPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("ViGEmPaused"), 0, m_file) == 1) ? true : false;
 		GuardianPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("GuardianPaused"), 0, m_file) == 1) ? true : false;
 		if (category != Setting_Category_All)
@@ -359,61 +375,15 @@ void Settings::Load(int category)
 							case Mapping_Long: { btn.Long = _wtoi(key) == 1; break; }
 							case Mapping_Led: { btn.Led = max(0, min(6, _wtoi(key))); break; }
 							case Mapping_Macro: { btn.Macro = max(0, min(2, _wtoi(key))); break; }
-							case Mapping_Pause:
-							{
-								btn.Pause = max(0, min(3, _wtoi(key)));
-								if (VersionDateCheck < 202203251)
-									if (btn.Pause == 1)
-										btn.Pause = 3;
-								break;
-							}
-							case Mapping_Transitivity:
-							{
-								btn.Transitivity = max(0, min(2, _wtoi(key)));
-								if (VersionDateCheck < 202203251)
-								{
-									btn.Transitivity = (btn.Transitivity * 2) + ((btn.Pause == 2) ? 1 : 0);
-									if (btn.Pause == 2)
-										btn.Pause = 0;
-								}
-								break;
-							}
+							case Mapping_Pause: { btn.Pause = max(0, min(3, _wtoi(key))); break; }
+							case Mapping_Transitivity: { btn.Transitivity = max(0, min(2, _wtoi(key))); break; }
 							case Mapping_Toggle: { btn.Toggle = max(0, min(2, _wtoi(key))); break; }
 							case Mapping_Target: { for (int i = 0; i < 5; i++) { btn.Target[i] = CheckboxString(key, i) == 1; } break; }
 							case Mapping_dsID: { for (int i = 0; i < 5; i++) { btn.dsID[i] = max(0, min((btn.Target[i]) ? vJoyButtonID::button_Count : dsButtonID::button_Count, dsIDString(key, i))); } break; }
 							case Mapping_OrXorNot: { for (int i = 0; i < 4; i++) { btn.OrXorNot[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_dsDisable: { for (int i = 0; i < 5; i++) { btn.dsDisable[i] = max(0, min(2, CheckboxString(key, i))); } break; }
-							case Mapping_ActionType:
-							{
-								for (int i = 0; i < 8; i++)
-								{
-									if (VersionDateCheck >= 202203131)
-										btn.ActionType[i] = max(0, min(4, CheckboxString(key, i, true)));
-									else if (VersionDateCheck >= 202112201)
-										btn.ActionType[i] = max(0, min(3, CheckboxString(key, i)));
-									else
-										btn.ActionType[i] = (CheckboxString(key, i) == 2) ? 3 : max(0, min(1, CheckboxString(key, i)));
-								}
-								break;
-							}
-							case Mapping_vjID:
-							{
-								for (int i = 0; i < 8; i++)
-								{
-									if (VersionDateCheck < 202112201 && btn.ActionType[i] == 1 && vjIDString(key, i) > Mapping::SCROLL_DOWN_VARIABLE)
-									{
-										btn.ActionType[i] = 2;
-										btn.vjID[i] = max(0, min(Mapping::special_Count, (vjIDString(key, i) - 34)));
-									}
-									else
-									{
-										btn.vjID[i] = max(0, min((btn.ActionType[i]) ? ((btn.ActionType[i] == 1) ? Mapping::mouse_Count : ((btn.ActionType[i] == 2) ? Mapping::special_Count : ((btn.ActionType[i] == 3) ? vJoyAxisMoveID::axismove_Count : Mapping::modules_Count))) : vJoyButtonID::button_Count, vjIDString(key, i)));
-										if (VersionDateCheck < 202203131 && btn.ActionType[i] == 2 && vjIDString(key, i) > Mapping::ADDSTAT8)
-											btn.vjID[i] += 5;
-									}
-								}
-								break;
-							}
+							case Mapping_ActionType: { for (int i = 0; i < 8; i++) { btn.ActionType[i] = max(0, min(4, CheckboxString(key, i, true))); } break; }
+							case Mapping_vjID: { for (int i = 0; i < 8; i++) { btn.vjID[i] = max(0, min((btn.ActionType[i]) ? ((btn.ActionType[i] == 1) ? Mapping::mouse_Count : ((btn.ActionType[i] == 2) ? Mapping::special_Count : ((btn.ActionType[i] == 3) ? vJoyAxisMoveID::axismove_Count : Mapping::modules_Count))) : vJoyButtonID::button_Count, vjIDString(key, i))); } break; }
 							case Mapping_Overcontrol: { for (int i = 0; i < 8; i++) { btn.Overcontrol[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_Switch: { for (int i = 0; i < 8; i++) { btn.Switch[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_OnRelease: { for (int i = 0; i < 8; i++) { btn.OnRelease[i] = max(0, min(2, CheckboxString(key, i))); } break; }
@@ -466,8 +436,8 @@ void Settings::Load(int category)
 						key = head;
 					}
 				}
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		if (category != Setting_Category_All)
 			break;
@@ -531,8 +501,8 @@ void Settings::Load(int category)
 						key = head;
 					}
 				}
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		if (category != Setting_Category_All)
 			break;
@@ -643,8 +613,8 @@ void Settings::Load(int category)
 						key = head;
 					}
 				}
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		if (category != Setting_Category_All)
 			break;
@@ -653,6 +623,7 @@ void Settings::Load(int category)
 	case Setting_Category_ViGEm:
 	{
 		ViGEmActive = (GetPrivateProfileInt(ViGEmtxt, TEXT("ViGEmActive"), 0, m_file) == 1) ? true : false;
+		vJoyActive = (GetPrivateProfileInt(ViGEmtxt, TEXT("vJoyActive"), 0, m_file) == 1) ? true : false;
 		setDesiredVirtualPad(GetPrivateProfileInt(ViGEmtxt, TEXT("DesiredVirtualPad"), 1, m_file));
 
 		{
@@ -826,8 +797,8 @@ void Settings::Load(int category)
 					vjtarget_DS4[22] = vJoyButtonID::Z;
 					vjtarget_DS4[23] = vJoyButtonID::RZ;
 				}
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		if (category != Setting_Category_All)
 			break;
@@ -835,6 +806,9 @@ void Settings::Load(int category)
 	}
 	case Setting_Category_Guardian:
 	{
+		vJoyShutDown = (GetPrivateProfileInt(L"Guardian", TEXT("vJoyShutDown"), 0, m_file) == 1) ? true : false;
+		RemoveBlacklist = (GetPrivateProfileInt(L"Guardian", TEXT("RemoveBlacklist"), 1, m_file) == 1) ? true : false;
+		PurgeWhitelist = (GetPrivateProfileInt(L"Guardian", TEXT("PurgeWhitelist"), 1, m_file) == 1) ? true : false;
 		GetPrivateProfileString(L"Guardian", L"dsHID1", LR"(HID\VID_054C&PID_0BA0&MI_03)", dsHID1, sizeof(dsHID1) / sizeof(dsHID1[0]), m_file);
 		GetPrivateProfileString(L"Guardian", L"dsHID2", LR"(HID\VID_054C&PID_0CE6&MI_03)", dsHID2, sizeof(dsHID2) / sizeof(dsHID2[0]), m_file);
 		GetPrivateProfileString(L"Guardian", L"dsHID3", L"", dsHID3, sizeof(dsHID3) / sizeof(dsHID3[0]), m_file);
@@ -845,8 +819,6 @@ void Settings::Load(int category)
 		GetPrivateProfileString(L"Guardian", L"Exe5Name", L"", Exe5Name, sizeof(Exe5Name) / sizeof(Exe5Name[0]), m_file);
 
 		GuardianActive = (GetPrivateProfileInt(Guardiantxt, TEXT("GuardianActive"), 0, m_file) == 1) ? true : false;
-		RemoveBlacklist = (GetPrivateProfileInt(Guardiantxt, TEXT("RemoveBlacklist"), 1, m_file) == 1) ? true : false;
-		PurgeWhitelist = (GetPrivateProfileInt(Guardiantxt, TEXT("PurgeWhitelist"), 1, m_file) == 1) ? true : false;
 		dsHID1Enable = (GetPrivateProfileInt(Guardiantxt, TEXT("dsHID1Enable"), 0, m_file) == 1) ? true : false;
 		dsHID2Enable = (GetPrivateProfileInt(Guardiantxt, TEXT("dsHID2Enable"), 0, m_file) == 1) ? true : false;
 		dsHID3Enable = (GetPrivateProfileInt(Guardiantxt, TEXT("dsHID3Enable"), 0, m_file) == 1) ? true : false;
@@ -887,8 +859,8 @@ void Settings::Load(int category)
 			{
 				GetPrivateProfileString(L"Web", L"BlockedSites", L"", buf, n, m_file);
 				BlockedSites = buf;
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		GetPrivateProfileString(L"Web", L"WebURL1", LR"(https://www.google.com)", WebURL[0], sizeof(WebURL[0]) / sizeof(WebURL[0][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL2", L"", WebURL[1], sizeof(WebURL[1]) / sizeof(WebURL[1][0]), m_file);
@@ -943,8 +915,8 @@ void Settings::Load(int category)
 						key = head;
 					}
 				}
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		if (category != Setting_Category_All)
 			break;
@@ -1007,8 +979,8 @@ void Settings::Load(int category)
 						key = head;
 					}
 				}
+				delete[] buf;
 			}
-			delete[] buf;
 		}
 		if (category != Setting_Category_All)
 			break;
@@ -1135,9 +1107,9 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_vJoyPaused:
+	case Setting_MappingPaused:
 	{
-		WritePrivateProfileString(TEXT("Tray"), TEXT("vJoyPaused"), (vJoyPaused) ? L"1" : L"0", m_file);
+		WritePrivateProfileString(TEXT("Tray"), TEXT("MappingPaused"), (MappingPaused) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1156,6 +1128,13 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
+	case Setting_vJoyPaused:
+	{
+		WritePrivateProfileString(TEXT("Tray"), TEXT("vJoyPaused"), (vJoyPaused) ? L"1" : L"0", m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
 	case Setting_ViGEmPaused:
 	{
 		WritePrivateProfileString(TEXT("Tray"), TEXT("ViGEmPaused"), (ViGEmPaused) ? L"1" : L"0", m_file);
@@ -1166,6 +1145,27 @@ void Settings::Save(int item)
 	case Setting_GuardianPaused:
 	{
 		WritePrivateProfileString(TEXT("Tray"), TEXT("GuardianPaused"), (GuardianPaused) ? L"1" : L"0", m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_vJoyShutDown:
+	{
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("vJoyShutDown"), (vJoyShutDown) ? L"1" : L"0", m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_RemoveBlacklist:
+	{
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("RemoveBlacklist"), (RemoveBlacklist) ? L"1" : L"0", m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_PurgeWhitelist:
+	{
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("PurgeWhitelist"), (PurgeWhitelist) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1393,8 +1393,8 @@ void Settings::Save(int item)
 				}
 			}
 			WritePrivateProfileSection(TEXT("WebScript"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1512,8 +1512,8 @@ void Settings::Save(int item)
 					}
 				}
 				WritePrivateProfileSection(TEXT("Notepad"), buf, m_file);
+				delete[] buf;
 			}
-			delete[] buf;
 			NotepadUnsaved = false;
 			break;
 		}
@@ -1755,8 +1755,8 @@ void Settings::Save(int item)
 				head++;
 			}
 			WritePrivateProfileSection(Mappingtxt, buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1789,8 +1789,8 @@ void Settings::Save(int item)
 				head++;
 			}
 			WritePrivateProfileSection(RapidFiretxt, buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1825,8 +1825,8 @@ void Settings::Save(int item)
 				head++;
 			}
 			WritePrivateProfileSection(Keymaptxt, buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1834,6 +1834,13 @@ void Settings::Save(int item)
 	case Setting_ViGEmActive:
 	{
 		WritePrivateProfileString(ViGEmtxt, TEXT("ViGEmActive"), (ViGEmActive) ? L"1" : L"0", m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_vJoyActive:
+	{
+		WritePrivateProfileString(ViGEmtxt, TEXT("vJoyActive"), (vJoyActive) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1859,8 +1866,8 @@ void Settings::Save(int item)
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", target_X360[i]);
 			WritePrivateProfileString(ViGEmtxt, TEXT("1"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1878,8 +1885,8 @@ void Settings::Save(int item)
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", dstarget_X360[i]);
 			WritePrivateProfileString(ViGEmtxt, TEXT("2"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1897,8 +1904,8 @@ void Settings::Save(int item)
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", vjtarget_X360[i]);
 			WritePrivateProfileString(ViGEmtxt, TEXT("3"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1916,8 +1923,8 @@ void Settings::Save(int item)
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", target_DS4[i]);
 			WritePrivateProfileString(ViGEmtxt, TEXT("4"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1935,8 +1942,8 @@ void Settings::Save(int item)
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", dstarget_DS4[i]);
 			WritePrivateProfileString(ViGEmtxt, TEXT("5"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1954,8 +1961,8 @@ void Settings::Save(int item)
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", vjtarget_DS4[i]);
 			WritePrivateProfileString(ViGEmtxt, TEXT("6"), buf, m_file);
+			delete[] buf;
 		}
-		delete[] buf;
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1963,20 +1970,6 @@ void Settings::Save(int item)
 	case Setting_GuardianActive:
 	{
 		WritePrivateProfileString(Guardiantxt, TEXT("GuardianActive"), (GuardianActive) ? L"1" : L"0", m_file);
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_RemoveBlacklist:
-	{
-		WritePrivateProfileString(Guardiantxt, TEXT("RemoveBlacklist"), (RemoveBlacklist) ? L"1" : L"0", m_file);
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_PurgeWhitelist:
-	{
-		WritePrivateProfileString(Guardiantxt, TEXT("PurgeWhitelist"), (PurgeWhitelist) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -2442,7 +2435,7 @@ WCHAR* Settings::GridToString(unsigned short v1,unsigned short v2, unsigned shor
 WCHAR* Settings::KeymapToString(std::vector<BYTE> vk)
 {
 	if (!vk.size())
-		return WCHARI(L"");
+		return I18N.EMPTY;
 
 	static WCHAR buf[1024];
 	buf[0] = 0;

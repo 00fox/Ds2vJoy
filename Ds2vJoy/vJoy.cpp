@@ -139,9 +139,9 @@ vJoyDevice::vJoyDevice()
 	GetButton(vJoyButton::DPAD4_DOWN)->Release();
 	GetButton(vJoyButton::DPAD4_DOWN_LEFT)->Release();
 }
+
 vJoyDevice::~vJoyDevice()
 {
-	Close();
 }
 
 void vJoyDevice::Init(HWND hWnd, bool verbose)

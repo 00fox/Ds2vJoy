@@ -6,6 +6,8 @@ struct LANGSTRS I18N = { 0 };
 void LoadLanguage()
 {
 	//setlocale(LC_ALL, ".UTF8");
+	I18N.EMPTY												= WCHARI(L"");
+	I18N.WHICH												= WCHARI(L"???");
 	I18N.DS2VJOY											= WCHARI(IDS_DS2VJOY, L"DS2VJOY");
 	I18N.APP_TITLE											= WCHARI(IDS_APP_TITLE, L"Ds2vJoy");
 	I18N.Fatal_Error1										= WCHARI(L"!!!! ERROR !!!!");
@@ -46,29 +48,63 @@ void LoadLanguage()
 	I18N.vJoy_failed_update									= WCHARI(L"Failed to update vJoy (ID:%d)");
 	I18N.vJoy_version										= WCHARI(L"vJoy version: DLL(%d.%d.%d), Driver(%d.%d.%d)");
 
-	I18N.HidGuardian_driver_installed						= WCHARI(L"HidGuardian driver is installed");
-	I18N.HidGuardian_driver_instalation_failed				= WCHARI(L"ERROR: HidGuardian driver instalation failed");
-	I18N.HidGuardian_driver_uninstalled						= WCHARI(L"HidGuardian driver is uninstalled");
-	I18N.HidGuardian_driver_uninstalation_failed			= WCHARI(L"ERROR: HidGuardian driver uninstalation failed");
-	I18N.HidCerberus_service_installed						= WCHARI(L"HidCerberus service installed");
-	I18N.HidCerberus_service_instalation_failed				= WCHARI(L"ERROR: HidCerberus service instalation failed");
-	I18N.HidCerberus_service_uninstalled					= WCHARI(L"HidCerberus service is uninstalled");
-	I18N.HidCerberus_service_uninstalation_failed			= WCHARI(L"ERROR: HidCerberus service uninstalation failed");
-	I18N.HidGuardian_Added_to_Guardian						= WCHARI(L"Added to Guardian: %s (%u)");
-	I18N.HidGuardian_Removed_from_Guardian					= WCHARI(L"Removed from Guardian: %s (%u)");
+	I18N.Profile_1											= WCHARI(L"Profile 1");
+	I18N.Profile_2											= WCHARI(L"Profile 2");
+	I18N.Profile_3											= WCHARI(L"Profile 3");
+	I18N.MappingPaused_On									= WCHARI(L"Pause Mapping");
+	I18N.MappingPaused_Off									= WCHARI(L"Start Mapping");
+	I18N.RapidFirePaused_On									= WCHARI(L"Pause RapidFire");
+	I18N.RapidFirePaused_Off								= WCHARI(L"Start RapidFire");
+	I18N.vJoyPaused_On										= WCHARI(L"Pause vJoy");
+	I18N.vJoyPaused_Off										= WCHARI(L"Start vJoy");
+	I18N.ViGEmPaused_On										= WCHARI(L"Pause ViGEm");
+	I18N.ViGEmPaused_Off									= WCHARI(L"Start ViGEm");
+	I18N.KeymapPaused_On									= WCHARI(L"Pause Keymap");
+	I18N.KeymapPaused_Off									= WCHARI(L"Start Keymap");
+	I18N.GuardianPaused_On									= WCHARI(L"Pause Guardian");
+	I18N.GuardianPaused_Off									= WCHARI(L"Start Guardian");
 
-	I18N.ViGEm_Memory_allocating_error						= WCHARI(L"Error allocating memory to ViGEm");
+	I18N.ViGEm_Memory_allocating_error						= WCHARI(L"ERROR: allocating memory to ViGEm");
 	I18N.ViGEm_Bus_connection_failed						= WCHARI(L"ViGEm Bus connection failed with error: %s");
 	I18N.ViGEm_Target_plugin_failed							= WCHARI(L"Target ViGEm plugin failed with error: %s");
+	I18N.ViGEm_client_connected								= WCHARI(L"ViGEm: client connected");
+	I18N.ViGEm_client_removed								= WCHARI(L"ViGEm: client removed");
+	I18N.ViGEm_pad_added									= WCHARI(L"ViGEm: pad added");
+	I18N.ViGEm_pad_removed									= WCHARI(L"ViGEm: pad removed");
+	I18N.ViGEm_vJoy_Install_tittle = WCHARI(L"vJoy Installation");
+	I18N.ViGEm_vJoy_Install_text = WCHARI(L"I can't tell you what will happen\n\
+  If you have vJoy device driver\n\
+  Already installed by another software.\n\n\
+	Continue anyway?");
+	I18N.ViGEm_vJoy_Uninstall_tittle = WCHARI(L"vJoy Uninstallation");
+	I18N.ViGEm_vJoy_Uninstall_text = WCHARI(L"It is recommended\n\
+  To not uninstall vJoy device driver\n\
+  If it has been installed by another software.\n\n\
+	Are you sure to continue?");
 	I18N.ViGEm_driver_installed								= WCHARI(L"ViGEm driver is installed");
 	I18N.ViGEm_driver_instalation_failed					= WCHARI(L"ERROR: ViGEm driver instalation failed");
 	I18N.ViGEm_driver_uninstalled							= WCHARI(L"ViGEm driver is uninstalled");
 	I18N.ViGEm_driver_uninstalation_failed					= WCHARI(L"ERROR: ViGEm driver uninstalation failed");
+	I18N.vJoy_driver_installed								= WCHARI(L"vJoy driver is installed");
+	I18N.vJoy_driver_instalation_failed						= WCHARI(L"ERROR: vJoy driver instalation failed");
+	I18N.vJoy_driver_uninstalled							= WCHARI(L"vJoy driver is uninstalled");
+	I18N.vJoy_driver_uninstalation_failed					= WCHARI(L"ERROR: vJoy driver uninstalation failed");
+
+	I18N.Guardian_driver_installed						= WCHARI(L"HidGuardian driver is installed");
+	I18N.Guardian_driver_instalation_failed				= WCHARI(L"ERROR: HidGuardian driver instalation failed");
+	I18N.Guardian_driver_uninstalled						= WCHARI(L"HidGuardian driver is uninstalled");
+	I18N.Guardian_driver_uninstalation_failed			= WCHARI(L"ERROR: HidGuardian driver uninstalation failed");
+	I18N.Cerberus_service_installed						= WCHARI(L"HidCerberus service installed");
+	I18N.Cerberus_service_instalation_failed				= WCHARI(L"ERROR: HidCerberus service instalation failed");
+	I18N.Cerberus_service_uninstalled					= WCHARI(L"HidCerberus service is uninstalled");
+	I18N.Cerberus_service_uninstalation_failed			= WCHARI(L"ERROR: HidCerberus service uninstalation failed");
+	I18N.Guardian_Added_to_Guardian						= WCHARI(L"Added to Guardian: %s (%u)");
+	I18N.Guardian_Removed_from_Guardian					= WCHARI(L"Removed from Guardian: %s (%u)");
 
 	I18N.WebView2_Not_Installed_tittle						= WCHARI(L"WebView2 Runtime is not installed");
 	I18N.WebView2_Not_Installed_text						= WCHARI(L"Do you want to silently download and install it?\n\n\
 	You can manually install it,\n\
-	by following 'WebView2' link below the 'Links' tab");
+	  by following 'WebView2' link below the 'Links' tab");
 	I18N.WebView2_Installation_failed						= WCHARI(L"WebView2 installation failed");
 	I18N.WebView2_downloading_failed						= WCHARI(L"WebView2 dowloading failed");
 	I18N.WebView2_Permission								= L"Permission Request for:\n\n";
@@ -110,8 +146,8 @@ void LoadLanguage()
 	I18N.TabSettings										= WCHARI(L"Settings");
 	I18N.TabMapping											= WCHARI(L"Mapping");
 	I18N.TabRapidFire										= WCHARI(L"RapidFire");
-	I18N.TabKeymap											= WCHARI(L"Keymap");
 	I18N.TabViGEm											= WCHARI(L"ViGEm");
+	I18N.TabKeymap											= WCHARI(L"Keymap");
 	I18N.TabGuardian										= WCHARI(L"Guardian");
 	I18N.TabExplorer										= WCHARI(L"Web");
 	I18N.TabLinks											= WCHARI(L"Links");
@@ -316,9 +352,23 @@ void LoadLanguage()
 	I18N.SpecialAction_VOLUME_DOWN							= WCHARI(L"Volume down");
 	I18N.SpecialAction_MEMORIZE_MODE						= WCHARI(L"Memorize mode");
 	I18N.SpecialAction_TO_MEM_MODE							= WCHARI(L"To Last Mode");
-	I18N.SpecialAction_TO_MODE								= WCHARI(L"To Mode: ");
+	I18N.SpecialAction_TO_MODE1								= WCHARI(L"To Mode: 1");
+	I18N.SpecialAction_TO_MODE2								= WCHARI(L"To Mode: 2");
+	I18N.SpecialAction_TO_MODE3								= WCHARI(L"To Mode: 3");
+	I18N.SpecialAction_TO_MODE4								= WCHARI(L"To Mode: 4");
+	I18N.SpecialAction_TO_MODE5								= WCHARI(L"To Mode: 5");
+	I18N.SpecialAction_TO_MODE6								= WCHARI(L"To Mode: 6");
+	I18N.SpecialAction_TO_MODE7								= WCHARI(L"To Mode: 7");
+	I18N.SpecialAction_TO_MODE8								= WCHARI(L"To Mode: 8");
 	I18N.SpecialAction_TO_LAST_MODE							= WCHARI(L"To Last Mode");
-	I18N.SpecialAction_BASE_TO_MODE							= WCHARI(L"Base To: ");
+	I18N.SpecialAction_BASE_TO_MODE1						= WCHARI(L"Base To: 1");
+	I18N.SpecialAction_BASE_TO_MODE2						= WCHARI(L"Base To: 2");
+	I18N.SpecialAction_BASE_TO_MODE3						= WCHARI(L"Base To: 3");
+	I18N.SpecialAction_BASE_TO_MODE4						= WCHARI(L"Base To: 4");
+	I18N.SpecialAction_BASE_TO_MODE5						= WCHARI(L"Base To: 5");
+	I18N.SpecialAction_BASE_TO_MODE6						= WCHARI(L"Base To: 6");
+	I18N.SpecialAction_BASE_TO_MODE7						= WCHARI(L"Base To: 7");
+	I18N.SpecialAction_BASE_TO_MODE8						= WCHARI(L"Base To: 8");
 	I18N.SpecialAction_TO_BASE_MODE							= WCHARI(L"To Base Mode");
 	I18N.SpecialAction_FORGOT_RELEASED						= WCHARI(L"Forgot released");
 	I18N.SpecialAction_IF_RELEASED_GOTO						= WCHARI(L"If released goto");
@@ -570,7 +620,7 @@ void LoadLanguage()
 
 	I18N.ABOUT_1											= WCHARI(L"Ds2vJoy ,");
 	I18N.ABOUT_2											= WCHARI(L"Modified version");
-	I18N.ABOUT_3											= WCHARI(L"of Ds4vJoy");
+	I18N.ABOUT_3											= WCHARI(L"of 090/ Ds4vJoy");
 	I18N.ABOUT_OK											= WCHARI(L"OK");
 	I18N.SETTINGS_PREFERRED_DS								= WCHARI(L"Preferred DS:");
 	I18N.SETTINGS_DS4										= WCHARI(L"DS4");
@@ -632,7 +682,7 @@ void LoadLanguage()
 	I18N.MAPPING_Y											= WCHARI(L"88888");
 	I18N.MIND_OK											= WCHARI(L"✓");
 	I18N.MIND_CANCEL										= WCHARI(L"✗");
-	I18N.RAPIDFIRE_RAPIDFIRE								= WCHARI(L"RapidFire");
+	I18N.RAPIDFIRE_RAPIDFIRE								= WCHARI(L"Source");
 	I18N.RAPIDFIRE_MULTIPLE_PRESS							= WCHARI(L"Multiple press");
 	I18N.RAPIDFIRE_TEXT_FIRST								= WCHARI(L"First press time");
 	I18N.RAPIDFIRE_TEXT_RELEASE								= WCHARI(L"Release time");
@@ -643,6 +693,14 @@ void LoadLanguage()
 	I18N.RAPIDFIRE_NOTICE									= WCHARI(L"An odd number for Release or Press times add 0-19 ms, differents each turn / push");
 	I18N.RAPIDFIRE_OK										= WCHARI(L"OK");
 	I18N.RAPIDFIRE_CANCEL									= WCHARI(L"Cancel");
+	I18N.VIGEM_ACTIVE										= WCHARI(L"ViGEm Module Active");
+	I18N.VIGEM_VJOY_ACTIVE									= WCHARI(L"vJoy Driver Active");
+	I18N.VIGEM_PAD											= WCHARI(L"Desired Virtual Pad:");
+	I18N.VIGEM_X360											= WCHARI(L"X360");
+	I18N.VIGEM_DS4											= WCHARI(L"DS4");
+	I18N.VIGEM_INSTALL										= WCHARI(L"ViGEm status");
+	I18N.VIGEM_INSTALL_VJOY									= WCHARI(L"vJoy status");
+	I18N.VIGEM_STATUS										= WCHARI(L"ViGEm status");
 	I18N.KEYMAP_SOURCE										= WCHARI(L"Source");
 	I18N.KEYMAP_RESTORE										= WCHARI(L"Restore /Hide");
 	I18N.KEYMAP_MAXIMIZE									= WCHARI(L"Maximize /Minimize");
@@ -665,13 +723,9 @@ void LoadLanguage()
 	I18N.KEYMAP_DELETE										= WCHARI(L"Delete");
 	I18N.KEYMAP_OK2											= WCHARI(L"OK");
 	I18N.KEYMAP_CANCEL2										= WCHARI(L"Cancel");
-	I18N.VIGEM_ACTIVE										= WCHARI(L"ViGEm Module Active");
-	I18N.VIGEM_PAD											= WCHARI(L"Desired Virtual Pad:");
-	I18N.VIGEM_X360											= WCHARI(L"X360");
-	I18N.VIGEM_DS4											= WCHARI(L"DS4");
-	I18N.VIGEM_INSTALL										= WCHARI(L"ViGEm status");
-	I18N.VIGEM_STATUS										= WCHARI(L"ViGEm status");
-	I18N.HID_ACTIVE											= WCHARI(L"HidGuardian Module Active");
+	I18N.HID_ACTIVE											= WCHARI(L"Guardian Module Active");
+	I18N.HID_VJOY_SHUTDOWN									= WCHARI(L"ShutDown vJoy");
+	I18N.HID_WHEN_EXITING									= WCHARI(L"on exit");
 	I18N.HID_BLACKLIST										= WCHARI(L"Blacklist");
 	I18N.HID_REMOVE											= WCHARI(L" Add/Remove Blacklist on Enter/Exit");
 	I18N.HID_WHITELIST										= WCHARI(L"Whitelist");
@@ -695,7 +749,7 @@ void LoadLanguage()
 	I18N.WEB_INITIALIZE_SCRIPT_1							= WCHARI(L"Add Initialize Script");
 	I18N.WEB_INITIALIZE_SCRIPT_2							= WCHARI(L"nitialization Script:");
 	I18N.WEB_INITIALIZE_SCRIPT_3							= WCHARI(L"Enter the JavaScript code to run as the initialization script\r\n\
-that runs before any script in the HTML document.");
+  that runs before any script in the HTML document.");
 	I18N.WEB_POST_MESSAGE_STRING_1							= WCHARI(L"Post Web Message String");
 	I18N.WEB_POST_MESSAGE_STRING_2							= WCHARI(L"Web message string:");
 	I18N.WEB_POST_MESSAGE_STRING_3							= WCHARI(L"Enter the web message as a string");
@@ -705,17 +759,17 @@ that runs before any script in the HTML document.");
 	I18N.WEB_SUBSCRIBE_CDP_EVENT_1							= WCHARI(L"Subscribe to CDP Event");
 	I18N.WEB_SUBSCRIBE_CDP_EVENT_2							= WCHARI(L"CDP event name:");
 	I18N.WEB_SUBSCRIBE_CDP_EVENT_3							= WCHARI(L"Enter the name of the CDP event to subscribe to\r\n\
-You may also have to call the \"enable\" method of the\r\n\
-event's domain to receive events (for example \"Log.enable\")");
+  You may also have to call the \"enable\" method of the\r\n\
+  event's domain to receive events (for example \"Log.enable\")");
 	I18N.WEB_CALL_CDP_METHOD_1								= WCHARI(L"Call CDP Method");
 	I18N.WEB_CALL_CDP_METHOD_2								= WCHARI(L"CDP method name:");
 	I18N.WEB_CALL_CDP_METHOD_3								= WCHARI(L"Enter the CDP method name to call, followed by a space,\r\n\
-followed by the parameters in JSON format");
+  followed by the parameters in JSON format");
 	I18N.WEB_COM_OBJECT_1									= WCHARI(L"Add COM object");
 	I18N.WEB_COM_OBJECT_2									= WCHARI(L"CLSID or ProgID of COM object:");
 	I18N.WEB_COM_OBJECT_3									= WCHARI(L"Enter the CLSID (eg '{0002DF01-0000-0000-C000-000000000046}')\r\n\
-or ProgID (eg 'InternetExplorer.Application') of the COM object to create and\r\n\
-provide to the WebView as `window.chrome.remoteObjects.example`");
+  or ProgID (eg 'InternetExplorer.Application') of the COM object to create and\r\n\
+  provide to the WebView as `window.chrome.remoteObjects.example`");
 	I18N.WEB_LANGUAGE_1										= WCHARI(L"Language");
 	I18N.WEB_LANGUAGE_2										= WCHARI(L"Language:");
 	I18N.WEB_LANGUAGE_3										= WCHARI(L"Enter a language to use for WebView, or leave blank to restore default");
@@ -732,15 +786,15 @@ provide to the WebView as `window.chrome.remoteObjects.example`");
 	I18N.LINKS_TEXT2										= WCHARI(L"Add webbrowser Favorites 5-9");
 	I18N.LINKS_TEXT3										= WCHARI(L"Add the name …");
 	I18N.LINKS_TEXT4										= WCHARI(L"… and location of 1-5 executables to place in tray menu");
-	I18N.LINKS_DS4VJOY										= WCHARI(L"<a>Ds4vJoy</a>");
+	I18N.LINKS_DS2VJOY										= WCHARI(L"<a>Ds2vJoy</a>");
 	I18N.LINKS_VJOY											= WCHARI(L"<a>vJoy</a>");
 	I18N.LINKS_WEBVIEW2										= WCHARI(L"<a>WebView2</a>");
 	I18N.LINKS_VIGEMBUS										= WCHARI(L"<a>ViGEmBus</a>");
 	I18N.LINKS_VIGEMCLIENT									= WCHARI(L"<a>ViGEmClient</a>");
 	I18N.LINKS_HIDGUARDIAN									= WCHARI(L"<a>HidGuardian</a>");
 	I18N.LINKS_HIDCERBERUS									= WCHARI(L"<a>HidCerberus</a>");
-	I18N.LINKS_URL_DS4VJOY									= WCHARI(L"https://github.com/090/Ds4vJoy");
-	I18N.LINKS_URL_VJOY										= WCHARI(L"https://sourceforge.net/projects/vjoystick");
+	I18N.LINKS_URL_DS2VJOY									= WCHARI(L"https://github.com/ytyra/Ds2vJoy");
+	I18N.LINKS_URL_VJOY										= WCHARI(L"https://github.com/jshafer817/vJoy");
 	I18N.LINKS_URL_WEBVIEW2									= WCHARI(L"https://developer.microsoft.com/en-us/microsoft-edge/webview2");
 	I18N.LINKS_URL_VIGEMBUS									= WCHARI(L"https://github.com/ViGEm/ViGEmBus");
 	I18N.LINKS_URL_VIGEMCLIENT								= WCHARI(L"https://github.com/ViGEm/ViGEmClient");
@@ -750,17 +804,20 @@ provide to the WebView as `window.chrome.remoteObjects.example`");
 
 	I18N.STATE_INSTALL										= WCHARI(L"Install");
 	I18N.STATE_UNINSTALL									= WCHARI(L"Uninstall");
+	I18N.STATE_VJOY_INSTALL									= WCHARI(L"vJoy Inst");
+	I18N.STATE_VJOY_UNINSTALL								= WCHARI(L"vJoy Unin");
 	I18N.STATE_START										= WCHARI(L"Start");
 	I18N.STATE_STOP											= WCHARI(L"Stop");
 	I18N.STATE_RESTART										= WCHARI(L"Restart");
 	I18N.STATE_ENABLE										= WCHARI(L"Enable");
+	I18N.STATE_VJOY_ENABLE									= WCHARI(L"vJoy En.");
 	I18N.STATE_DISABLE										= WCHARI(L"Disable");
 	I18N.STATE_WAITING										= WCHARI(L"Waiting...");
 
 	I18N.FILE												= WCHARI(L"File(&F)");
-	I18N.EXIT												= WCHARI(L"Exit application(&X)");
+	I18N.EXIT												= WCHARI(L"Exit");
 	I18N.HELP												= WCHARI(L"Help(&H)");
-	I18N.ABOUT												= WCHARI(L"About(&A)...");
+	I18N.ABOUT												= WCHARI(L"About");
 
 	I18N.MENU_SEE_VIEW2										= WCHARI(L"Clone to view2");
 	I18N.MENU_TO_MODE_0										= WCHARI(L"Set to Always");
@@ -1138,7 +1195,7 @@ while you already selected an element of the grid\n\
 	it will insert the coordinates into this column");
 
 	I18N.HELP_WEB_MENU										= WCHARI(L"Web menu");
-	I18N.HELP_WEB_CLOSE										= WCHARI(L"Left click: close actual tab\nRight click: quit web module");
+	I18N.HELP_WEB_CLOSE										= WCHARI(L"Left click: quit web module\nRight click: close actual tab");
 	I18N.HELP_WEB_FAVORITES									= WCHARI(L"Left click: go to favorite\nRight click: set favorite");
 	I18N.HELP_WEB_HOME										= WCHARI(L"Home");
 	I18N.HELP_WEB_BACK										= WCHARI(L"Back");
@@ -1156,6 +1213,7 @@ void FreeLanguage()
 	if (I18N.SkipController== 0)
 		return;
 	delete[] I18N.EMPTY;
+	delete[] I18N.WHICH;
 	delete[] I18N.DS2VJOY;
 	delete[] I18N.APP_TITLE;
 	delete[] I18N.Fatal_Error1;
@@ -1192,25 +1250,52 @@ void FreeLanguage()
 	delete[] I18N.vJoy_failed_update;
 	delete[] I18N.vJoy_version;
 
-	delete[] I18N.HidGuardian_driver_installed;
-	delete[] I18N.HidGuardian_driver_instalation_failed;
-	delete[] I18N.HidGuardian_driver_uninstalled;
-	delete[] I18N.HidGuardian_driver_uninstalation_failed;
-	delete[] I18N.HidCerberus_service_installed;
-	delete[] I18N.HidCerberus_service_instalation_failed;
-	delete[] I18N.HidCerberus_service_uninstalled;
-	delete[] I18N.HidCerberus_service_uninstalation_failed;
-	delete[] I18N.HidGuardian_Added_to_Guardian;
-	delete[] I18N.HidGuardian_Removed_from_Guardian;
+	delete[] I18N.Profile_1;
+	delete[] I18N.Profile_2;
+	delete[] I18N.Profile_3;
+	delete[] I18N.MappingPaused_On;
+	delete[] I18N.MappingPaused_Off;
+	delete[] I18N.RapidFirePaused_On;
+	delete[] I18N.RapidFirePaused_Off;
+	delete[] I18N.KeymapPaused_On;
+	delete[] I18N.KeymapPaused_Off;
+	delete[] I18N.vJoyPaused_On;
+	delete[] I18N.vJoyPaused_Off;
+	delete[] I18N.ViGEmPaused_On;
+	delete[] I18N.ViGEmPaused_Off;
+	delete[] I18N.GuardianPaused_On;
+	delete[] I18N.GuardianPaused_Off;
 
 	delete[] I18N.ViGEm_Memory_allocating_error;
 	delete[] I18N.ViGEm_Bus_connection_failed;
 	delete[] I18N.ViGEm_Target_plugin_failed;
-	delete[] I18N.ViGEm_driver_installed;
+	delete[] I18N.ViGEm_client_connected;
+	delete[] I18N.ViGEm_client_removed;
+	delete[] I18N.ViGEm_pad_added;
+	delete[] I18N.ViGEm_pad_removed;
+	delete[] I18N.ViGEm_vJoy_Install_tittle;
+	delete[] I18N.ViGEm_vJoy_Install_text;
+	delete[] I18N.ViGEm_vJoy_Uninstall_tittle;
+	delete[] I18N.ViGEm_vJoy_Uninstall_text;
 	delete[] I18N.ViGEm_driver_instalation_failed;
 	delete[] I18N.ViGEm_driver_uninstalled;
 	delete[] I18N.ViGEm_driver_uninstalation_failed;
+	delete[] I18N.vJoy_driver_installed;
+	delete[] I18N.vJoy_driver_instalation_failed;
+	delete[] I18N.vJoy_driver_uninstalled;
+	delete[] I18N.vJoy_driver_uninstalation_failed;
 
+	delete[] I18N.Guardian_driver_installed;
+	delete[] I18N.Guardian_driver_instalation_failed;
+	delete[] I18N.Guardian_driver_uninstalled;
+	delete[] I18N.Guardian_driver_uninstalation_failed;
+	delete[] I18N.Cerberus_service_installed;
+	delete[] I18N.Cerberus_service_instalation_failed;
+	delete[] I18N.Cerberus_service_uninstalled;
+	delete[] I18N.Cerberus_service_uninstalation_failed;
+	delete[] I18N.Guardian_Added_to_Guardian;
+	delete[] I18N.Guardian_Removed_from_Guardian;
+	
 	delete[] I18N.WebView2_Not_Installed_tittle;
 	delete[] I18N.WebView2_Not_Installed_text;
 	delete[] I18N.WebView2_Installation_failed;
@@ -1451,9 +1536,23 @@ void FreeLanguage()
 	delete[] I18N.SpecialAction_VOLUME_DOWN;
 	delete[] I18N.SpecialAction_MEMORIZE_MODE;
 	delete[] I18N.SpecialAction_TO_MEM_MODE;
-	delete[] I18N.SpecialAction_TO_MODE;
+	delete[] I18N.SpecialAction_TO_MODE1;
+	delete[] I18N.SpecialAction_TO_MODE2;
+	delete[] I18N.SpecialAction_TO_MODE3;
+	delete[] I18N.SpecialAction_TO_MODE4;
+	delete[] I18N.SpecialAction_TO_MODE5;
+	delete[] I18N.SpecialAction_TO_MODE6;
+	delete[] I18N.SpecialAction_TO_MODE7;
+	delete[] I18N.SpecialAction_TO_MODE8;
 	delete[] I18N.SpecialAction_TO_LAST_MODE;
-	delete[] I18N.SpecialAction_BASE_TO_MODE;
+	delete[] I18N.SpecialAction_BASE_TO_MODE1;
+	delete[] I18N.SpecialAction_BASE_TO_MODE2;
+	delete[] I18N.SpecialAction_BASE_TO_MODE3;
+	delete[] I18N.SpecialAction_BASE_TO_MODE4;
+	delete[] I18N.SpecialAction_BASE_TO_MODE5;
+	delete[] I18N.SpecialAction_BASE_TO_MODE6;
+	delete[] I18N.SpecialAction_BASE_TO_MODE7;
+	delete[] I18N.SpecialAction_BASE_TO_MODE8;
 	delete[] I18N.SpecialAction_TO_BASE_MODE;
 	delete[] I18N.SpecialAction_IF_RELEASED_GOTO;
 	delete[] I18N.SpecialAction_IF_PUSHED_GOTO;
@@ -1799,12 +1898,16 @@ void FreeLanguage()
 	delete[] I18N.KEYMAP_OK2;
 	delete[] I18N.KEYMAP_CANCEL2;
 	delete[] I18N.VIGEM_ACTIVE;
+	delete[] I18N.VIGEM_VJOY_ACTIVE;
 	delete[] I18N.VIGEM_PAD;
 	delete[] I18N.VIGEM_X360;
 	delete[] I18N.VIGEM_DS4;
 	delete[] I18N.VIGEM_INSTALL;
+	delete[] I18N.VIGEM_INSTALL_VJOY;
 	delete[] I18N.VIGEM_STATUS;
 	delete[] I18N.HID_ACTIVE;
+	delete[] I18N.HID_VJOY_SHUTDOWN;
+	delete[] I18N.HID_WHEN_EXITING;
 	delete[] I18N.HID_BLACKLIST;
 	delete[] I18N.HID_REMOVE;
 	delete[] I18N.HID_WHITELIST;
@@ -1857,14 +1960,14 @@ void FreeLanguage()
 	delete[] I18N.LINKS_TEXT2;
 	delete[] I18N.LINKS_TEXT3;
 	delete[] I18N.LINKS_TEXT4;
-	delete[] I18N.LINKS_DS4VJOY;
+	delete[] I18N.LINKS_DS2VJOY;
 	delete[] I18N.LINKS_VJOY;
 	delete[] I18N.LINKS_WEBVIEW2;
 	delete[] I18N.LINKS_VIGEMBUS;
 	delete[] I18N.LINKS_VIGEMCLIENT;
 	delete[] I18N.LINKS_HIDGUARDIAN;
 	delete[] I18N.LINKS_HIDCERBERUS;
-	delete[] I18N.LINKS_URL_DS4VJOY;
+	delete[] I18N.LINKS_URL_DS2VJOY;
 	delete[] I18N.LINKS_URL_VJOY;
 	delete[] I18N.LINKS_URL_WEBVIEW2;
 	delete[] I18N.LINKS_URL_VIGEMBUS;
@@ -1875,10 +1978,13 @@ void FreeLanguage()
 
 	delete[] I18N.STATE_INSTALL;
 	delete[] I18N.STATE_UNINSTALL;
+	delete[] I18N.STATE_VJOY_INSTALL;
+	delete[] I18N.STATE_VJOY_UNINSTALL;
 	delete[] I18N.STATE_START;
 	delete[] I18N.STATE_STOP;
 	delete[] I18N.STATE_RESTART;
 	delete[] I18N.STATE_ENABLE;
+	delete[] I18N.STATE_VJOY_ENABLE;
 	delete[] I18N.STATE_DISABLE;
 	delete[] I18N.STATE_WAITING;
 

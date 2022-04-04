@@ -16,7 +16,7 @@ WCHAR* RapidFire::KeyString()
 	WCHAR* head = buf;
 
 	if (Enable == 2)
-		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒");
+		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
 	else if (ButtonID != 0)
 	{
 		head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::String((vJoyButtonID)ButtonID));
@@ -34,7 +34,7 @@ WCHAR* RapidFire::ValueString(int column)
 	static WCHAR buf[MAX_PATH];
 	WCHAR* head = buf;
 	if (Enable == 2)
-		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒▒");
+		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
 	else
 		switch (column)
 		{
@@ -44,6 +44,11 @@ WCHAR* RapidFire::ValueString(int column)
 		}
 
 	return buf;
+}
+
+const WCHAR* RapidFire::RapidFireButtons()
+{
+	return RapidFireButtonsString.c_str();
 }
 
 BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
@@ -74,6 +79,11 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 	return TRUE;
 }
 
+void RapidFire::RunFirst()
+{
+	RapidFireButtonsString = L"RapidFire source:";
+}
+
 BOOL RapidFire::Run(std::chrono::system_clock::time_point now)
 {
 	if (tape.RapidFirePaused)
@@ -82,6 +92,7 @@ BOOL RapidFire::Run(std::chrono::system_clock::time_point now)
 		((ButtonID == 0) && (m_button2->isPushed())) ||
 		((ButtonID2 == 0) && (m_button->isPushed())))
 	{
+		RapidFireButtonsString = RapidFireButtonsString + L" " + vJoyButton::String(vJoyButtonID((ButtonID == 0) ? ButtonID2 : ButtonID));
 		if (!m_pushed)
 		{
 			m_pushed = true;

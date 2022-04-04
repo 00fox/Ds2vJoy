@@ -30,11 +30,11 @@ void Tasktray::CreateMenu()
 	m_menu = CreatePopupMenu();
 	{
 		if (tape.Profile != 1)
-			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE1, _T("Profile 1"));
+			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE1, I18N.Profile_1);
 		if (tape.Profile != 2)
-			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE2, _T("Profile 2"));
+			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE2, I18N.Profile_2);
 		if (tape.Profile != 3)
-			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE3, _T("Profile 3"));
+			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE3, I18N.Profile_3);
 		AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
 	}
 	if (tape.App1Name != nullptr && *tape.App1Name != '\0')
@@ -67,16 +67,17 @@ void Tasktray::CreateMenu()
 		AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
 		MenuOffset++;
 	}
-	AppendMenu(m_menu, MF_GRAYED, IDM_MAPPING, _T("vJoy"));
+	AppendMenu(m_menu, MF_GRAYED, IDM_MAPPING, _T("Mapping"));
+	AppendMenu(m_menu, MF_GRAYED, IDM_RAPIDFIRE, _T("RapidFire"));
+	AppendMenu(m_menu, MF_GRAYED, IDM_VJOY, _T("vJoy"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_VIGEM, _T("ViGEm"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_KEYMAP, _T("Keymap"));
-	AppendMenu(m_menu, MF_GRAYED, IDM_RAPIDFIRE, _T("RapidFire"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_GUARDIAN, _T("Guardian"));
-	for (int i = 0; i < 5; i++) { SwapMenuitem(i); };
+	for (int i = 0; i < 6; i++) { SwapMenuitem(i); };
 	AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(m_menu, MF_POPUP, IDM_MENU_ABOUT, _T("About"));
+	AppendMenu(m_menu, MF_POPUP, IDM_MENU_ABOUT, I18N.ABOUT);
 	AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(m_menu, MF_POPUP, IDM_MENU_EXIT, _T("Exit"));
+	AppendMenu(m_menu, MF_POPUP, IDM_MENU_EXIT, I18N.EXIT);
 //	DeleteMenu(m_menu, 1, MF_BYPOSITION);
 //	InsertMenu(m_menu, 1, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL);
 //	AppendMenu(m_menu, MF_POPUP, IDM_EXIT, _T("Exit"));
@@ -86,44 +87,52 @@ void Tasktray::SwapMenuitem(int item)
 {
 	switch (item)
 	{
-	case 0:
+	case Tasktray_Item_MappingPaused:
 	{
-		if (tape.vJoyPaused)
-			ModifyMenu(m_menu, MenuOffset + 4, MF_BYPOSITION | MF_POPUP, IDM_MAPPING, _T("Start vJoy"));
+		if (tape.MappingPaused)
+			ModifyMenu(m_menu, MenuOffset, MF_BYPOSITION | MF_POPUP, IDM_MAPPING, I18N.MappingPaused_Off);
 		else
-			ModifyMenu(m_menu, MenuOffset + 4, MF_BYPOSITION | MF_POPUP, IDM_MAPPING, _T("Pause vJoy"));
+			ModifyMenu(m_menu, MenuOffset, MF_BYPOSITION | MF_POPUP, IDM_MAPPING, I18N.MappingPaused_On);
 		break;
 	}
-	case 1:
-	{
-		if (tape.ViGEmPaused)
-			ModifyMenu(m_menu, MenuOffset + 1, MF_BYPOSITION | MF_POPUP, IDM_VIGEM, _T("Start ViGEm"));
-		else
-			ModifyMenu(m_menu, MenuOffset + 1, MF_BYPOSITION | MF_POPUP, IDM_VIGEM, _T("Pause ViGEm"));
-		break;
-	}
-	case 2:
-	{
-		if (tape.KeymapPaused)
-			ModifyMenu(m_menu, MenuOffset + 2, MF_BYPOSITION | MF_POPUP, IDM_KEYMAP, _T("Start Keymap"));
-		else
-			ModifyMenu(m_menu, MenuOffset + 2, MF_BYPOSITION | MF_POPUP, IDM_KEYMAP, _T("Pause Keymap"));
-		break;
-	}
-	case 3:
+	case Tasktray_Item_RapidFirePaused:
 	{
 		if (tape.RapidFirePaused)
-			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_RAPIDFIRE, _T("Start RapidFire"));
+			ModifyMenu(m_menu, MenuOffset + 1, MF_BYPOSITION | MF_POPUP, IDM_RAPIDFIRE, I18N.RapidFirePaused_Off);
 		else
-			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_RAPIDFIRE, _T("Pause RapidFire"));
+			ModifyMenu(m_menu, MenuOffset + 1, MF_BYPOSITION | MF_POPUP, IDM_RAPIDFIRE, I18N.RapidFirePaused_On);
 		break;
 	}
-	case 4:
+	case Tasktray_Item_vJoyPaused:
+	{
+		if (tape.vJoyPaused)
+			ModifyMenu(m_menu, MenuOffset + 2, MF_BYPOSITION | MF_POPUP, IDM_VJOY, I18N.vJoyPaused_Off);
+		else
+			ModifyMenu(m_menu, MenuOffset + 2, MF_BYPOSITION | MF_POPUP, IDM_VJOY, I18N.vJoyPaused_On);
+		break;
+	}
+	case Tasktray_Item_ViGEmPaused:
+	{
+		if (tape.ViGEmPaused)
+			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_VIGEM, I18N.ViGEmPaused_Off);
+		else
+			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_VIGEM, I18N.ViGEmPaused_On);
+		break;
+	}
+	case Tasktray_Item_KeymapPaused:
+	{
+		if (tape.KeymapPaused)
+			ModifyMenu(m_menu, MenuOffset + 4, MF_BYPOSITION | MF_POPUP, IDM_KEYMAP, I18N.KeymapPaused_Off);
+		else
+			ModifyMenu(m_menu, MenuOffset + 4, MF_BYPOSITION | MF_POPUP, IDM_KEYMAP, I18N.KeymapPaused_On);
+		break;
+	}
+	case Tasktray_Item_GuardianPaused:
 	{
 		if (tape.GuardianPaused)
-			ModifyMenu(m_menu, MenuOffset, MF_BYPOSITION | MF_POPUP, IDM_GUARDIAN, _T("Start Guardian"));
+			ModifyMenu(m_menu, MenuOffset + 5, MF_BYPOSITION | MF_POPUP, IDM_GUARDIAN, I18N.GuardianPaused_Off);
 		else
-			ModifyMenu(m_menu, MenuOffset, MF_BYPOSITION | MF_POPUP, IDM_GUARDIAN, _T("Pause Guardian"));
+			ModifyMenu(m_menu, MenuOffset + 5, MF_BYPOSITION | MF_POPUP, IDM_GUARDIAN, I18N.GuardianPaused_On);
 		break;
 	}
 	}

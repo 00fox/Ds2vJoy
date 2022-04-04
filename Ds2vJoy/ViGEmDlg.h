@@ -27,6 +27,9 @@ private:
 	HWND				m_hDlg = NULL;
 
 	bool				m_initdiffered = false;
+	bool				vjoylock = false;
+	bool				vigemlock = false;
+	bool				statuslock = false;
 };
 
 	extern ViGEmDlg		vDlg;

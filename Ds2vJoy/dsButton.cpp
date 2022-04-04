@@ -447,11 +447,11 @@ void dsButton::SetThreshold(bool thr)
 		threshold[m_axis] = thr;
 }
 
-WCHAR* dsButton::String(ButtonID id)
+const WCHAR* dsButton::String(ButtonID id)
 {
 	switch (id)
 	{
-	case none: return WCHARI(L"");
+	case none: return I18N.EMPTY;
 	case LX: return I18N.Button_LX;
 	case LY: return I18N.Button_LY;
 	case RX: return I18N.Button_RX;
@@ -529,118 +529,124 @@ WCHAR* dsButton::String(ButtonID id)
 	case L1R1: return I18N.Button_L1R1;
 	case L2R2: return I18N.Button_L2R2;
 	case BATTERY: return I18N.Button_BATTERY;
-	case MOUSE_AXEX: return WCHARI(L"MOUSEAXEX");
-	case MOUSE_AXEY: return WCHARI(L"MOUSEAXEY");
-	case MOUSE_LEFT: return WCHARI(L"MOUSELEFT");
-	case MOUSE_RIGHT: return WCHARI(L"MOUSERIGHT");
-	case MOUSE_UP: return WCHARI(L"MOUSEUP");
-	case MOUSE_DOWN: return WCHARI(L"MOUSEDOWN");
-	case KID_LBUTTON: return WCHARI(L"LBUTTON");
-	case KID_MBUTTON: return WCHARI(L"MBUTTON");
-	case KID_RBUTTON: return WCHARI(L"RBUTTON");
-	case KID_XBUTTON1: return WCHARI(L"XBUTTON1");
-	case KID_XBUTTON2: return WCHARI(L"XBUTTON2");
-	case KID_F1: return WCHARI(L"F1");
-	case KID_F2: return WCHARI(L"F2");
-	case KID_F3: return WCHARI(L"F3");
-	case KID_F4: return WCHARI(L"F4");
-	case KID_F5: return WCHARI(L"F5");
-	case KID_F6: return WCHARI(L"F6");
-	case KID_F7: return WCHARI(L"F7");
-	case KID_F8: return WCHARI(L"F8");
-	case KID_F9: return WCHARI(L"F9");
-	case KID_F10: return WCHARI(L"F10");
-	case KID_F11: return WCHARI(L"F11");
-	case KID_F12: return WCHARI(L"F12");
-	case KID_0: return WCHARI(L"0");
-	case KID_1: return WCHARI(L"1");
-	case KID_2: return WCHARI(L"2");
-	case KID_3: return WCHARI(L"3");
-	case KID_4: return WCHARI(L"4");
-	case KID_5: return WCHARI(L"5");
-	case KID_6: return WCHARI(L"6");
-	case KID_7: return WCHARI(L"7");
-	case KID_8: return WCHARI(L"8");
-	case KID_9: return WCHARI(L"9");
-	case KID_OEM_MINUS: return WCHARI(L"OEM_MINUS");
-	case KID_OEM_PLUS: return WCHARI(L"OEM_PLUS");
-	case KID_OEM_1: return WCHARI(L"OEM_1");
-	case KID_OEM_2: return WCHARI(L"OEM_2");
-	case KID_OEM_3: return WCHARI(L"OEM_3");
-	case KID_OEM_4: return WCHARI(L"OEM_4");
-	case KID_OEM_5: return WCHARI(L"OEM_5");
-	case KID_OEM_6: return WCHARI(L"OEM_6");
-	case KID_OEM_7: return WCHARI(L"OEM_7");
-	case KID_OEM_8: return WCHARI(L"OEM_8");
-	case KID_OEM_102: return WCHARI(L"OEM_102");
-	case KID_OEM_COMMA: return WCHARI(L"OEM_COMMA");
-	case KID_OEM_PERIOD: return WCHARI(L"OEM_PERIOD");
-	case KID_A: return WCHARI(L"A");
-	case KID_B: return WCHARI(L"B");
-	case KID_C: return WCHARI(L"C");
-	case KID_D: return WCHARI(L"D");
-	case KID_E: return WCHARI(L"E");
-	case KID_F: return WCHARI(L"F");
-	case KID_G: return WCHARI(L"G");
-	case KID_H: return WCHARI(L"H");
-	case KID_I: return WCHARI(L"I");
-	case KID_J: return WCHARI(L"J");
-	case KID_K: return WCHARI(L"K");
-	case KID_L: return WCHARI(L"L");
-	case KID_M: return WCHARI(L"M");
-	case KID_N: return WCHARI(L"N");
-	case KID_O: return WCHARI(L"O");
-	case KID_P: return WCHARI(L"P");
-	case KID_Q: return WCHARI(L"Q");
-	case KID_R: return WCHARI(L"R");
-	case KID_S: return WCHARI(L"S");
-	case KID_T: return WCHARI(L"T");
-	case KID_U: return WCHARI(L"U");
-	case KID_V: return WCHARI(L"V");
-	case KID_W: return WCHARI(L"W");
-	case KID_X: return WCHARI(L"X");
-	case KID_Y: return WCHARI(L"Y");
-	case KID_Z: return WCHARI(L"Z");
-	case KID_ESCAPE: return WCHARI(L"ESCAPE");
-	case KID_TAB: return WCHARI(L"TAB");
-	case KID_RETURN: return WCHARI(L"RETURN");
-	case KID_SPACE: return WCHARI(L"SPACE");
-	case KID_BACK: return WCHARI(L"BACK");
-	case KID_DELETE: return WCHARI(L"DELETE");
-	case KID_INSERT: return WCHARI(L"INSERT");
-	case KID_NUMLOCK: return WCHARI(L"NUMLOCK");
-	case KID_LSHIFT: return WCHARI(L"LSHIFT");
-	case KID_RSHIFT: return WCHARI(L"RSHIFT");
-	case KID_LCONTROL: return WCHARI(L"LCONTROL");
-	case KID_RCONTROL: return WCHARI(L"RCONTROL");
-	case KID_LWIN: return WCHARI(L"LWIN");
-	case KID_RWIN: return WCHARI(L"RWIN");
-	case KID_LMENU: return WCHARI(L"LMENU");
-	case KID_RMENU: return WCHARI(L"RMENU");
-	case KID_LEFT: return WCHARI(L"LEFT");
-	case KID_UP: return WCHARI(L"UP");
-	case KID_RIGHT: return WCHARI(L"RIGHT");
-	case KID_DOWN: return WCHARI(L"DOWN");
-	case KID_PRIOR: return WCHARI(L"PRIOR");
-	case KID_NEXT: return WCHARI(L"NEXT");
-	case KID_END: return WCHARI(L"END");
-	case KID_HOME: return WCHARI(L"HOME");
-	case KID_NUMPAD0: return WCHARI(L"NUMPAD0");
-	case KID_NUMPAD1: return WCHARI(L"NUMPAD1");
-	case KID_NUMPAD2: return WCHARI(L"NUMPAD2");
-	case KID_NUMPAD3: return WCHARI(L"NUMPAD3");
-	case KID_NUMPAD4: return WCHARI(L"NUMPAD4");
-	case KID_NUMPAD5: return WCHARI(L"NUMPAD5");
-	case KID_NUMPAD6: return WCHARI(L"NUMPAD6");
-	case KID_NUMPAD7: return WCHARI(L"NUMPAD7");
-	case KID_NUMPAD8: return WCHARI(L"NUMPAD8");
-	case KID_NUMPAD9: return WCHARI(L"NUMPAD9");
-	case KID_DIVIDE: return WCHARI(L"DIVIDE");
-	case KID_MULTIPLY: return WCHARI(L"MULTIPLY");
-	case KID_SUBTRACT: return WCHARI(L"SUBTRACT");
-	case KID_ADD: return WCHARI(L"ADD");
-	case KID_SEPARATOR: return WCHARI(L"SEPARATOR");
-	case KID_DECIMAL: return WCHARI(L"DECIMAL");
-	default: return WCHARI(L"???");
 	}
+
+	static std::wstring dsButtonStringResult = L"";
+	switch (id)
+	{
+	case MOUSE_AXEX: { dsButtonStringResult = L"MOUSEAXEX"; break; }
+	case MOUSE_AXEY: { dsButtonStringResult = L"MOUSEAXEY"; break; }
+	case MOUSE_LEFT: { dsButtonStringResult = L"MOUSELEFT"; break; }
+	case MOUSE_RIGHT: { dsButtonStringResult = L"MOUSERIGHT"; break; }
+	case MOUSE_UP: { dsButtonStringResult = L"MOUSEUP"; break; }
+	case MOUSE_DOWN: { dsButtonStringResult = L"MOUSEDOWN"; break; }
+	case KID_LBUTTON: { dsButtonStringResult = L"LBUTTON"; break; }
+	case KID_MBUTTON: { dsButtonStringResult = L"MBUTTON"; break; }
+	case KID_RBUTTON: { dsButtonStringResult = L"RBUTTON"; break; }
+	case KID_XBUTTON1: { dsButtonStringResult = L"XBUTTON1"; break; }
+	case KID_XBUTTON2: { dsButtonStringResult = L"XBUTTON2"; break; }
+	case KID_F1: { dsButtonStringResult = L"F1"; break; }
+	case KID_F2: { dsButtonStringResult = L"F2"; break; }
+	case KID_F3: { dsButtonStringResult = L"F3"; break; }
+	case KID_F4: { dsButtonStringResult = L"F4"; break; }
+	case KID_F5: { dsButtonStringResult = L"F5"; break; }
+	case KID_F6: { dsButtonStringResult = L"F6"; break; }
+	case KID_F7: { dsButtonStringResult = L"F7"; break; }
+	case KID_F8: { dsButtonStringResult = L"F8"; break; }
+	case KID_F9: { dsButtonStringResult = L"F9"; break; }
+	case KID_F10: { dsButtonStringResult = L"F10"; break; }
+	case KID_F11: { dsButtonStringResult = L"F11"; break; }
+	case KID_F12: { dsButtonStringResult = L"F12"; break; }
+	case KID_0: { dsButtonStringResult = L"0"; break; }
+	case KID_1: { dsButtonStringResult = L"1"; break; }
+	case KID_2: { dsButtonStringResult = L"2"; break; }
+	case KID_3: { dsButtonStringResult = L"3"; break; }
+	case KID_4: { dsButtonStringResult = L"4"; break; }
+	case KID_5: { dsButtonStringResult = L"5"; break; }
+	case KID_6: { dsButtonStringResult = L"6"; break; }
+	case KID_7: { dsButtonStringResult = L"7"; break; }
+	case KID_8: { dsButtonStringResult = L"8"; break; }
+	case KID_9: { dsButtonStringResult = L"9"; break; }
+	case KID_OEM_MINUS: { dsButtonStringResult = L"OEM_MINUS"; break; }
+	case KID_OEM_PLUS: { dsButtonStringResult = L"OEM_PLUS"; break; }
+	case KID_OEM_1: { dsButtonStringResult = L"OEM_1"; break; }
+	case KID_OEM_2: { dsButtonStringResult = L"OEM_2"; break; }
+	case KID_OEM_3: { dsButtonStringResult = L"OEM_3"; break; }
+	case KID_OEM_4: { dsButtonStringResult = L"OEM_4"; break; }
+	case KID_OEM_5: { dsButtonStringResult = L"OEM_5"; break; }
+	case KID_OEM_6: { dsButtonStringResult = L"OEM_6"; break; }
+	case KID_OEM_7: { dsButtonStringResult = L"OEM_7"; break; }
+	case KID_OEM_8: { dsButtonStringResult = L"OEM_8"; break; }
+	case KID_OEM_102: { dsButtonStringResult = L"OEM_102"; break; }
+	case KID_OEM_COMMA: { dsButtonStringResult = L"OEM_COMMA"; break; }
+	case KID_OEM_PERIOD: { dsButtonStringResult = L"OEM_PERIOD"; break; }
+	case KID_A: { dsButtonStringResult = L"A"; break; }
+	case KID_B: { dsButtonStringResult = L"B"; break; }
+	case KID_C: { dsButtonStringResult = L"C"; break; }
+	case KID_D: { dsButtonStringResult = L"D"; break; }
+	case KID_E: { dsButtonStringResult = L"E"; break; }
+	case KID_F: { dsButtonStringResult = L"F"; break; }
+	case KID_G: { dsButtonStringResult = L"G"; break; }
+	case KID_H: { dsButtonStringResult = L"H"; break; }
+	case KID_I: { dsButtonStringResult = L"I"; break; }
+	case KID_J: { dsButtonStringResult = L"J"; break; }
+	case KID_K: { dsButtonStringResult = L"K"; break; }
+	case KID_L: { dsButtonStringResult = L"L"; break; }
+	case KID_M: { dsButtonStringResult = L"M"; break; }
+	case KID_N: { dsButtonStringResult = L"N"; break; }
+	case KID_O: { dsButtonStringResult = L"O"; break; }
+	case KID_P: { dsButtonStringResult = L"P"; break; }
+	case KID_Q: { dsButtonStringResult = L"Q"; break; }
+	case KID_R: { dsButtonStringResult = L"R"; break; }
+	case KID_S: { dsButtonStringResult = L"S"; break; }
+	case KID_T: { dsButtonStringResult = L"T"; break; }
+	case KID_U: { dsButtonStringResult = L"U"; break; }
+	case KID_V: { dsButtonStringResult = L"V"; break; }
+	case KID_W: { dsButtonStringResult = L"W"; break; }
+	case KID_X: { dsButtonStringResult = L"X"; break; }
+	case KID_Y: { dsButtonStringResult = L"Y"; break; }
+	case KID_Z: { dsButtonStringResult = L"Z"; break; }
+	case KID_ESCAPE: { dsButtonStringResult = L"ESCAPE"; break; }
+	case KID_TAB: { dsButtonStringResult = L"TAB"; break; }
+	case KID_RETURN: { dsButtonStringResult = L"RETURN"; break; }
+	case KID_SPACE: { dsButtonStringResult = L"SPACE"; break; }
+	case KID_BACK: { dsButtonStringResult = L"BACK"; break; }
+	case KID_DELETE: { dsButtonStringResult = L"DELETE"; break; }
+	case KID_INSERT: { dsButtonStringResult = L"INSERT"; break; }
+	case KID_NUMLOCK: { dsButtonStringResult = L"NUMLOCK"; break; }
+	case KID_LSHIFT: { dsButtonStringResult = L"LSHIFT"; break; }
+	case KID_RSHIFT: { dsButtonStringResult = L"RSHIFT"; break; }
+	case KID_LCONTROL: { dsButtonStringResult = L"LCONTROL"; break; }
+	case KID_RCONTROL: { dsButtonStringResult = L"RCONTROL"; break; }
+	case KID_LWIN: { dsButtonStringResult = L"LWIN"; break; }
+	case KID_RWIN: { dsButtonStringResult = L"RWIN"; break; }
+	case KID_LMENU: { dsButtonStringResult = L"LMENU"; break; }
+	case KID_RMENU: { dsButtonStringResult = L"RMENU"; break; }
+	case KID_LEFT: { dsButtonStringResult = L"LEFT"; break; }
+	case KID_UP: { dsButtonStringResult = L"UP"; break; }
+	case KID_RIGHT: { dsButtonStringResult = L"RIGHT"; break; }
+	case KID_DOWN: { dsButtonStringResult = L"DOWN"; break; }
+	case KID_PRIOR: { dsButtonStringResult = L"PRIOR"; break; }
+	case KID_NEXT: { dsButtonStringResult = L"NEXT"; break; }
+	case KID_END: { dsButtonStringResult = L"END"; break; }
+	case KID_HOME: { dsButtonStringResult = L"HOME"; break; }
+	case KID_NUMPAD0: { dsButtonStringResult = L"NUMPAD0"; break; }
+	case KID_NUMPAD1: { dsButtonStringResult = L"NUMPAD1"; break; }
+	case KID_NUMPAD2: { dsButtonStringResult = L"NUMPAD2"; break; }
+	case KID_NUMPAD3: { dsButtonStringResult = L"NUMPAD3"; break; }
+	case KID_NUMPAD4: { dsButtonStringResult = L"NUMPAD4"; break; }
+	case KID_NUMPAD5: { dsButtonStringResult = L"NUMPAD5"; break; }
+	case KID_NUMPAD6: { dsButtonStringResult = L"NUMPAD6"; break; }
+	case KID_NUMPAD7: { dsButtonStringResult = L"NUMPAD7"; break; }
+	case KID_NUMPAD8: { dsButtonStringResult = L"NUMPAD8"; break; }
+	case KID_NUMPAD9: { dsButtonStringResult = L"NUMPAD9"; break; }
+	case KID_DIVIDE: { dsButtonStringResult = L"DIVIDE"; break; }
+	case KID_MULTIPLY: { dsButtonStringResult = L"MULTIPLY"; break; }
+	case KID_SUBTRACT: { dsButtonStringResult = L"SUBTRACT"; break; }
+	case KID_ADD: { dsButtonStringResult = L"ADD"; break; }
+	case KID_SEPARATOR: { dsButtonStringResult = L"SEPARATOR"; break; }
+	case KID_DECIMAL: { dsButtonStringResult = L"DECIMAL"; break; }
+	default: return I18N.WHICH;
+	}
+	return dsButtonStringResult.c_str();
 }

@@ -36,16 +36,24 @@ public:
 	void				Run();
 
 	void				ViGEmStates();
-	int					GetViGEmState();
+	char				GetViGEmState();
 	BOOL				ViGEmInstall(bool verbose = false);
 	BOOL				ViGEmUninstall(bool verbose = false);
 	BOOL				ViGEmEnable(bool verbose = false);
 	BOOL				ViGEmDisable(bool verbose = false);
 
+	void				vJoyStates();
+	char				GetvJoyState();
+	BOOL				vJoyInstall(bool verbose = false);
+	BOOL				vJoyUninstall(bool verbose = false);
+	BOOL				vJoyEnable(bool verbose = false);
+	BOOL				vJoyDisable(bool verbose = false);
+
 	bool				vigem_connected = false;
 
 private:
-	int					ViGEmState(bool verbose = false);
+	char				ViGEmState(bool verbose = false);
+	char				vJoyState(bool verbose = false);
 	std::wstring		ViGEmError(VIGEM_ERROR err);
 	WCHAR*				X360_String(int id);
 	WCHAR*				DS4_String(int id);
@@ -64,6 +72,7 @@ private:
 	DS4_DPAD_DIRECTIONS	Dpad;
 
 	int					vgState = -1;
+	int					vjState = -1;
 };
 
 	static WCHAR		ViGEmButtonsString[80] = L"";

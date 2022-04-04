@@ -363,7 +363,7 @@ ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, double zoom
 		}
 		else
 		{
-			PostMessage(tape.Ds2hWnd, WM_COMMAND, ID_WEBCLOSE, -1);
+			PostMessage(tape.Ds2hWnd, WM_COMMAND, ID_WEBCLOSE, 0);
 			PostMessage(tape.Ds2hWnd, WM_CLOSE_ALL_TABS, 0, 0);
 		}
 	}
@@ -1365,7 +1365,7 @@ void ExplorerDlg::InitializeWebView()
 			this, &ExplorerDlg::OnCreateEnvironmentCompleted).Get());
 	if (!SUCCEEDED(hr))
 	{
-		PostMessage(tape.Ds2hWnd, WM_COMMAND, ID_WEBCLOSE, 1);
+		PostMessage(tape.Ds2hWnd, WM_COMMAND, ID_WEBCLOSE, -1);
 		GetWindowRect(m_hWnd, &m_explorer_win);
 		switch (hr)
 		{

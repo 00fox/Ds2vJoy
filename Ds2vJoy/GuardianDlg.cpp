@@ -16,6 +16,9 @@ void GuardianDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_GUARDIAN), hWnd, (DLGPROC)Proc, LPARAM(this));
 	SendDlgItemMessage(m_hDlg, IDC_HID_ACTIVE_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_HID_ACTIVE, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_HID_VJOY_SHUTDOWN_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_HID_VJOY_SHUTDOWN, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_HID_WHEN_EXITING, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_HID_BLACKLIST, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_HID_HID1, WM_SETFONT, WPARAM(tape.hEdit), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_HID_HID2, WM_SETFONT, WPARAM(tape.hEdit), MAKELPARAM(TRUE, 0));
@@ -47,6 +50,8 @@ void GuardianDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_HID_LEGEND4, WM_SETFONT, WPARAM(tape.hLegend4), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_HID_LEGEND5, WM_SETFONT, WPARAM(tape.hLegend4), MAKELPARAM(TRUE, 0));
 	SetWindowText(GetDlgItem(m_hDlg, IDC_HID_ACTIVE), I18N.HID_ACTIVE);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_HID_VJOY_SHUTDOWN), I18N.HID_VJOY_SHUTDOWN);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_HID_WHEN_EXITING), I18N.HID_WHEN_EXITING);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_HID_BLACKLIST), I18N.HID_BLACKLIST);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_HID_REMOVE), I18N.HID_REMOVE);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_HID_WHITELIST), I18N.HID_WHITELIST);
@@ -86,6 +91,7 @@ void GuardianDlg::_InitDialog(HWND hWnd)
 void GuardianDlg::_ShowWindow(HWND hWnd)
 {
 	CheckDlgButton(hWnd, IDC_HID_ACTIVE_CHK, tape.GuardianActive);
+	CheckDlgButton(hWnd, IDC_HID_VJOY_SHUTDOWN_CHK, tape.vJoyShutDown);
 	CheckDlgButton(hWnd, IDC_HID_REMOVE_CHK, tape.RemoveBlacklist);
 	CheckDlgButton(hWnd, IDC_HID_PURGE_CHK, tape.PurgeWhitelist);
 	SetWindowText(GetDlgItem(hWnd, IDC_HID_HID1), tape.dsHID1);
@@ -158,7 +164,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			if (CtrlID == IDC_HID_GUARDIAN_INSTALL) return (LRESULT)tape.hB_Running;
 			if (CtrlID == IDC_HID_GUARDIAN_STATUS)
 			{
-				if (tmpGstate)
+				if (status2lock)
 					return (LRESULT)tape.hB_Paused;
 				else
 					return (LRESULT)tape.hB_Running;
@@ -212,6 +218,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		switch (GetDlgCtrlID((HWND)lParam))
 		{
 		case IDC_HID_ACTIVE_CHK:
+		case IDC_HID_VJOY_SHUTDOWN_CHK:
 		case IDC_HID_HID2_ENABLE:
 		case IDC_HID_HID3_ENABLE:
 		case IDC_HID_REMOVE_CHK:
@@ -222,6 +229,8 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		case IDC_HID_EXE5_ENABLE:
 		case IDC_HID_PURGE_CHK: { SetTextColor(hdcStatic, tape.ink_STATIC_Checkbox2); break; }
 		case IDC_HID_ACTIVE:
+		case IDC_HID_VJOY_SHUTDOWN:
+		case IDC_HID_WHEN_EXITING:
 		case IDC_HID_REMOVE:
 		case IDC_HID_PURGE: { SetTextColor(hdcStatic, tape.ink_STATIC_Checkbox); break; }
 		default: { SetTextColor(hdcStatic, tape.ink_STATIC); break; }
@@ -388,6 +397,7 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			switch (((LPNMHDR)lParam)->idFrom)
 			{
 			case IDC_HID_ACTIVE_CHK:
+			case IDC_HID_VJOY_SHUTDOWN_CHK:
 			case IDC_HID_HID1_ENABLE:
 			case IDC_HID_HID2_ENABLE:
 			case IDC_HID_HID3_ENABLE:
@@ -446,6 +456,37 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	{
 		switch (LOWORD(wParam))
 		{
+		case IDC_HID_ACTIVE_CHK:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+			{
+				tape.GuardianActive = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				tape.Save(tape.Setting_GuardianActive);
+				PostMessage(m_hWnd, WM_CHANGE_HIDS, 0, 0);
+				Hide();
+				Show();
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_HID_VJOY_SHUTDOWN_CHK:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+			{
+				tape.vJoyShutDown = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				tape.Save(tape.Setting_vJoyShutDown);
+				Hide();
+				Show();
+				break;
+			}
+			}
+			break;
+		}
 		case IDC_HID_HID1:
 		{
 			switch (HIWORD(wParam))
@@ -598,21 +639,6 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			}
 			break;
 		}
-		case IDC_HID_ACTIVE_CHK:
-		{
-			switch (HIWORD(wParam))
-			{
-			case BN_CLICKED:
-			{
-				tape.GuardianActive = IsDlgButtonChecked(hWnd, LOWORD(wParam));
-				tape.Save(tape.Setting_GuardianActive);
-				PostMessage(m_hWnd, WM_DEVICE_DS_START, 0, 1);
-				PostMessage(m_hWnd, WM_CHANGE_HIDS, 0, 0);
-				break;
-			}
-			}
-			break;
-		}
 		case IDC_HID_REMOVE_CHK:
 		{
 			switch (HIWORD(wParam))
@@ -757,6 +783,10 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			{
 			case BN_CLICKED:
 			{
+				if (guardianlock)
+					break;
+
+				guardianlock = true;
 				int HidGState = hid.GetHidGState();
 				hid.HidStates();
 				if (HidGState == hid.GetHidGState())
@@ -765,18 +795,22 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 					{
 					case -1:
 					case 0:
+					{
 						hid.GuardianInstall();
 						break;
+					}
 					case 1:
 					case 2:
+					{
 						hid.GuardianUninstall();
 						break;
 					}
+					}
 				}
-				Sleep(500);
 				hid.HidStates();
 				Hide();
 				Show();
+				guardianlock = false;
 				break;
 			}
 			}
@@ -788,33 +822,28 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			{
 			case BN_CLICKED:
 			{
+				if (statuslock)
+					break;
+
+				statuslock = true;
 				int HidGState = hid.GetHidGState();
 				hid.HidStates();
 				if (HidGState == hid.GetHidGState())
 				{
 					switch (HidGState)
 					{
-					case -1:
-					case 0:
-						break;
 					case 1:
-						tmpGstate = true;
-						InvalidateRect(GetDlgItem(hWnd, IDC_HID_GUARDIAN_STATUS), NULL, TRUE);
-						UpdateWindow(hWnd);
 						hid.AllDevicesRestart();
-						tmpGstate = false;
-						InvalidateRect(GetDlgItem(hWnd, IDC_HID_GUARDIAN_STATUS), NULL, TRUE);
-						SendMessage(hWnd, WM_PAINT, 0, 0);
-						return TRUE;
+						break;
 					case 2:
 						hid.GuardianEnable();
 						break;
 					}
 				}
-				Sleep(500);
 				hid.HidStates();
 				Hide();
 				Show();
+				statuslock = false;
 				break;
 			}
 			}
@@ -826,6 +855,10 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			{
 			case BN_CLICKED:
 			{
+				if (cerberuslock)
+					break;
+
+				cerberuslock = true;
 				int HidCState = hid.GetHidCState();
 				hid.HidStates();
 				if (HidCState == hid.GetHidCState())
@@ -848,6 +881,9 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 					}
 				}
 				SendMessage(m_hWnd, WM_CHANGE_HIDS, -1, 6);
+				Hide();
+				Show();
+				cerberuslock = false;
 				break;
 			}
 			}
@@ -859,6 +895,10 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			{
 			case BN_CLICKED:
 			{
+				if (status2lock)
+					break;
+
+				status2lock = true;
 				int HidCState = hid.GetHidCState();
 				hid.HidStates();
 				if (HidCState == hid.GetHidCState())
@@ -882,6 +922,9 @@ INT_PTR GuardianDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 					}
 				}
 				SendMessage(m_hWnd, WM_CHANGE_HIDS, -1, 6);
+				Hide();
+				Show();
+				status2lock = false;
 				break;
 			}
 			}

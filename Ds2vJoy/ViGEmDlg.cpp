@@ -15,6 +15,7 @@ void ViGEmDlg::Init(HINSTANCE hInst, HWND hWnd)
 	m_hWnd = hWnd;
 	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_VIGEM), hWnd, (DLGPROC)Proc, LPARAM(this));
 	SendDlgItemMessage(m_hDlg, IDC_VIGEM_ACTIVE, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_VIGEM_VJOY_ACTIVE, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_VIGEM_PAD, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_VIGEM_X360, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_VIGEM_DS4, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
@@ -94,9 +95,11 @@ void ViGEmDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_VIGEM_VJOY_23, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_VIGEM_VJOY_24, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_ACTIVE), I18N.VIGEM_ACTIVE);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_VJOY_ACTIVE), I18N.VIGEM_VJOY_ACTIVE);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_PAD), I18N.VIGEM_PAD);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_X360), I18N.VIGEM_X360);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_DS4), I18N.VIGEM_DS4);
+	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_INSTALL_VJOY), I18N.VIGEM_INSTALL_VJOY);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_INSTALL), I18N.VIGEM_INSTALL);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_VIGEM_STATUS), I18N.VIGEM_STATUS);
 	Hide();
@@ -139,7 +142,7 @@ void ViGEmDlg::_ChangeComboBox(HWND hWnd)
 void ViGEmDlg::_InitDialog(HWND hWnd)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	WCHAR* str = WCHARI();
+	const WCHAR* str = WCHARI();
 	for (int i = 0; i < dsButtonID::button_Count; i++)
 	{
 		str = dsButton::String((dsButtonID)i);
@@ -251,6 +254,7 @@ void ViGEmDlg::_InitDialog(HWND hWnd)
 void ViGEmDlg::_ShowWindow(HWND hWnd)
 {
 	CheckDlgButton(hWnd, IDC_VIGEM_ACTIVE_CHK, tape.ViGEmActive);
+	CheckDlgButton(hWnd, IDC_VIGEM_VJOY_ACTIVE_CHK, tape.vJoyActive);
 	CheckDlgButton(hWnd, IDC_VIGEM_X360_CHK, (tape.DesiredVirtualPad) == 1 ? BST_CHECKED : BST_UNCHECKED);
 	CheckDlgButton(hWnd, IDC_VIGEM_DS4_CHK, (tape.DesiredVirtualPad) == 2 ? BST_CHECKED : BST_UNCHECKED);
 
@@ -418,25 +422,56 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HDC hdcStatic = (HDC)wParam;
 		DWORD CtrlID = GetDlgCtrlID((HWND)lParam);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		switch (vg.GetViGEmState())
+		switch (CtrlID)
 		{
-		case -1:
-		case 0:
+		case IDC_VIGEM_INSTALL:
+		case IDC_VIGEM_STATUS:
 		{
-			if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Not_Installed;
-			if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Not_Installed;
+			switch (vg.GetViGEmState())
+			{
+			case -1:
+			case 0:
+			{
+				if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Not_Installed;
+				if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Not_Installed;
+				break;
+			}
+			case 1:
+			{
+				if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Running;
+				if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Running;
+				break;
+			}
+			case 2:
+			{
+				if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Running;
+				if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Paused;
+				break;
+			}
+			}
 			break;
 		}
-		case 1:
+		case IDC_VIGEM_INSTALL_VJOY:
 		{
-			if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Running;
-			if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Running;
-			break;
-		}
-		case 2:
-		{
-			if (CtrlID == IDC_VIGEM_INSTALL) return (LRESULT)tape.hB_Running;
-			if (CtrlID == IDC_VIGEM_STATUS) return (LRESULT)tape.hB_Paused;
+			switch (vg.GetvJoyState())
+			{
+			case -1:
+			case 0:
+			{
+				return (LRESULT)tape.hB_Not_Installed;
+				break;
+			}
+			case 1:
+			{
+				return (LRESULT)tape.hB_Running;
+				break;
+			}
+			case 2:
+			{
+				return (LRESULT)tape.hB_Paused;
+				break;
+			}
+			}
 			break;
 		}
 		}
@@ -448,6 +483,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (GetDlgCtrlID((HWND)lParam))
 		{
 		case IDC_VIGEM_ACTIVE_CHK:
+		case IDC_VIGEM_VJOY_ACTIVE_CHK:
 		case IDC_VIGEM_X360_CHK:
 		case IDC_VIGEM_DS4_CHK:
 		case IDC_VIGEM_VJOY_1:
@@ -479,6 +515,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		case IDC_VIGEM_ACTIVE:
+		case IDC_VIGEM_VJOY_ACTIVE:
 		case IDC_VIGEM_X360:
 		case IDC_VIGEM_DS4:
 		{
@@ -520,9 +557,33 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetClientRect(hWnd, &rect);
 			FillRect(hDC, &rect, tape.hB_BackGround);
 
+			LPCWSTR b0Text = I18N.STATE_WAITING;
+			SetTextColor(hDC, tape.ink_BTN_Install);
+			switch (vg.GetvJoyState())
+			{
+			case -1:
+			case 0:
+			{
+				b0Text = I18N.STATE_VJOY_INSTALL;
+				break;
+			}
+			case 1:
+			case 2:
+			{
+				b0Text = I18N.STATE_VJOY_UNINSTALL;
+				break;
+			}
+			}
+
+			::ReleaseDC(hWnd, hDC);
+			hDC = BeginPaint(GetDlgItem(hWnd, IDC_VIGEM_INSTALL_VJOY), &ps);
+			GetClientRect(GetDlgItem(hWnd, IDC_VIGEM_INSTALL_VJOY), &rect);
+			SelectObject(hDC, tape.hButton2);
+			DrawText(hDC, b0Text, 9, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+			FrameRect(hDC, &rect, tape.hB_BTN_Border);
+
 			LPCWSTR b1Text = I18N.STATE_WAITING;
 			LPCWSTR b2Text = I18N.STATE_WAITING;
-			SetTextColor(hDC, tape.ink_BTN_Install);
 			switch (vg.GetViGEmState())
 			{
 			case -1:
@@ -568,7 +629,10 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SHOWWINDOW:
 	{
 		if (wParam == TRUE || lParam == 3)
+		{
 			vg.ViGEmStates();
+			vg.vJoyStates();
+		}
 		if (wParam == TRUE)
 			std::thread(&ViGEmDlg::_ShowWindow, this, hWnd).detach();
 		break;
@@ -597,6 +661,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (((LPNMHDR)lParam)->idFrom)
 			{
 			case IDC_VIGEM_ACTIVE_CHK:
+			case IDC_VIGEM_VJOY_ACTIVE_CHK:
 			case IDC_VIGEM_X360_CHK:
 			case IDC_VIGEM_DS4_CHK:
 			case IDC_VIGEM_VJOY_1:
@@ -665,10 +730,33 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case BN_CLICKED:
 			{
-				if (IsDlgButtonChecked(hWnd, LOWORD(wParam)))
+				tape.ViGEmActive = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				tape.Save(tape.Setting_ViGEmActive);
+				if (tape.ViGEmActive)
 					PostMessage(m_hWnd, WM_CHANGE_PAD, 1, 0);
 				else
 					PostMessage(m_hWnd, WM_CHANGE_PAD, 0, 0);
+				Hide();
+				Show();
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_VIGEM_VJOY_ACTIVE_CHK:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+			{
+				tape.vJoyActive = IsDlgButtonChecked(hWnd, LOWORD(wParam));
+				tape.Save(tape.Setting_vJoyActive);
+				if (tape.vJoyActive)
+					enable(GetvJoyVersion());
+				else
+					disable(GetvJoyVersion());
+				Hide();
+				Show();
 				break;
 			}
 			}
@@ -686,7 +774,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tape.DesiredVirtualPad = 1;
 				tape.Save(tape.Setting_DesiredVirtualPad);
 				std::thread(&ViGEmDlg::_ChangeComboBox, this, hWnd).detach();
-				SendMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
+				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
 			}
 			}
@@ -704,7 +792,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tape.DesiredVirtualPad = 2;
 				tape.Save(tape.Setting_DesiredVirtualPad);
 				std::thread(&ViGEmDlg::_ChangeComboBox, this, hWnd).detach();
-				SendMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
+				PostMessage(m_hWnd, WM_CHANGE_PAD, 2, 0);
 				break;
 			}
 			}
@@ -732,7 +820,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_1), CB_SETCURSEL, tape.dstarget_X360[0], 0);
@@ -766,7 +854,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_2), CB_SETCURSEL, tape.dstarget_X360[1], 0);
@@ -800,7 +888,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_3), CB_SETCURSEL, tape.dstarget_X360[2], 0);
@@ -834,7 +922,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_4), CB_SETCURSEL, tape.dstarget_X360[3], 0);
@@ -868,7 +956,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_5), CB_SETCURSEL, tape.dstarget_X360[4], 0);
@@ -902,7 +990,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_6), CB_SETCURSEL, tape.dstarget_X360[5], 0);
@@ -936,7 +1024,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_7), CB_SETCURSEL, tape.dstarget_X360[6], 0);
@@ -970,7 +1058,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_8), CB_SETCURSEL, tape.dstarget_X360[7], 0);
@@ -1004,7 +1092,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_9), CB_SETCURSEL, tape.dstarget_X360[8], 0);
@@ -1038,7 +1126,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_10), CB_SETCURSEL, tape.dstarget_X360[9], 0);
@@ -1072,7 +1160,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_11), CB_SETCURSEL, tape.dstarget_X360[10], 0);
@@ -1106,7 +1194,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_12), CB_SETCURSEL, tape.dstarget_X360[11], 0);
@@ -1140,7 +1228,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_13), CB_SETCURSEL, tape.dstarget_X360[12], 0);
@@ -1174,7 +1262,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_14), CB_SETCURSEL, tape.dstarget_X360[13], 0);
@@ -1208,7 +1296,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_15), CB_SETCURSEL, tape.dstarget_X360[14], 0);
@@ -1242,7 +1330,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_16), CB_SETCURSEL, tape.dstarget_X360[15], 0);
@@ -1276,7 +1364,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_17), CB_SETCURSEL, tape.dstarget_X360[16], 0);
@@ -1310,7 +1398,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_18), CB_SETCURSEL, tape.dstarget_X360[17], 0);
@@ -1344,7 +1432,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_19), CB_SETCURSEL, tape.dstarget_X360[18], 0);
@@ -1378,7 +1466,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_20), CB_SETCURSEL, tape.dstarget_X360[19], 0);
@@ -1412,7 +1500,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_21), CB_SETCURSEL, tape.dstarget_X360[20], 0);
@@ -1446,7 +1534,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_22), CB_SETCURSEL, tape.dstarget_X360[21], 0);
@@ -1480,7 +1568,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_23), CB_SETCURSEL, tape.dstarget_X360[22], 0);
@@ -1514,7 +1602,7 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_ADDSTRING, 0, LPARAM(str));
 					}
 					SendMessage(GetDlgItem(hWnd, IDC_VIGEM_DS_24), CB_SETCURSEL, tape.dstarget_X360[23], 0);
@@ -2054,45 +2142,85 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
+		case IDC_VIGEM_INSTALL_VJOY:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+			{
+				if (vjoylock)
+					break;
+
+				vjoylock = true;
+				char vJoyStates = vg.GetvJoyState();
+				vg.vJoyStates();
+				if (vJoyStates == vg.GetvJoyState())
+				{
+					RECT win;
+					GetWindowRect(m_hWnd, &win);
+					switch (vJoyStates)
+					{
+					case 0:
+					{
+						if (MessageBoxPos(m_hDlg, I18N.ViGEm_vJoy_Install_text, I18N.ViGEm_vJoy_Install_tittle, MB_YESNO, win.left + 100, win.top + 60) == IDYES)
+							vg.vJoyInstall();
+						break;
+					}
+					case 1:
+					case 2:
+					{
+						if (MessageBoxPos(m_hDlg, I18N.ViGEm_vJoy_Uninstall_text, I18N.ViGEm_vJoy_Uninstall_tittle, MB_YESNO, win.left + 100, win.top + 60) == IDYES)
+							vg.vJoyUninstall();
+						break;
+					}
+					}
+				}
+				vg.vJoyStates();
+				if (tape.vJoyActive)
+					PostMessage(hWnd, WM_DEVICE_DS_START, 0, 1);
+				Hide();
+				Show();
+				vjoylock = false;
+				break;
+			}
+			}
+			break;
+		}
 		case IDC_VIGEM_INSTALL:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				int ViGEmtate = vg.GetViGEmState();
+				if (vigemlock)
+					break;
+
+				vigemlock = true;
+				int ViGEmState = vg.GetViGEmState();
 				vg.ViGEmStates();
-				if (ViGEmtate == vg.GetViGEmState())
+				if (ViGEmState == vg.GetViGEmState())
 				{
-					switch (ViGEmtate)
+					switch (ViGEmState)
 					{
-					case -1:
 					case 0:
 					{
 						vg.ViGEmInstall();
-						Sleep(500);
-						vg.ViGEmStates();
-						if (vg.GetViGEmState() == 1)
-							SendMessage(m_hWnd, WM_CHANGE_PAD, 1, 0);
 						break;
 					}
 					case 1:
 					case 2:
 					{
-						SendMessage(m_hWnd, WM_CHANGE_PAD, 0, 0);
-						SendMessage(GetDlgItem(hWnd, IDC_VIGEM_ACTIVE_CHK), BM_SETCHECK, (tape.ViGEmActive) ? BST_CHECKED : BST_UNCHECKED, 0);
-						if (!tape.ViGEmActive)
-						{
-							Sleep(500);
-							vg.ViGEmUninstall();
-						}
+						vg.ViGEmUninstall();
+						break;
 					}
 					}
 				}
 				vg.ViGEmStates();
-				SendMessage(hWnd, WM_DEVICE_DS_START, 0, 1);
+				if (tape.ViGEmActive)
+					PostMessage(hWnd, WM_DEVICE_DS_START, 0, 1);
 				Hide();
 				Show();
+				vigemlock = false;
 				break;
 			}
 			}
@@ -2104,20 +2232,19 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case BN_CLICKED:
 			{
-				int ViGEmtate = vg.GetViGEmState();
+				if (statuslock)
+					break;
+
+				statuslock = true;
+				int ViGEmState = vg.GetViGEmState();
 				vg.ViGEmStates();
-				if (ViGEmtate == vg.GetViGEmState())
+				if (ViGEmState == vg.GetViGEmState())
 				{
-					switch (ViGEmtate)
+					switch (ViGEmState)
 					{
-					case -1:
-					case 0:
-						break;
 					case 1:
 						SendMessage(m_hWnd, WM_CHANGE_PAD, 0, 0);
 						SendMessage(m_hWnd, WM_CHANGE_PAD, 1, 0);
-						Hide();
-						Show();
 						break;
 					case 2:
 						vg.ViGEmEnable();
@@ -2125,8 +2252,11 @@ INT_PTR ViGEmDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				vg.ViGEmStates();
+				if (tape.ViGEmActive)
+					PostMessage(hWnd, WM_DEVICE_DS_START, 0, 1);
 				Hide();
 				Show();
+				statuslock = false;
 				break;
 			}
 			}

@@ -21,7 +21,10 @@ private:
 	HWND				m_hWnd = NULL;
 	HWND				m_hDlg = NULL;
 
-	bool				tmpGstate = false;
+	bool				guardianlock = false;
+	bool				cerberuslock = false;
+	bool				statuslock = false;
+	bool				status2lock = false;
 };
 
 	extern GuardianDlg	gDlg;

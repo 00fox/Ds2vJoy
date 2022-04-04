@@ -10,6 +10,16 @@ class Tasktray
 	};
 
 public:
+	enum LedActionID
+	{
+		Tasktray_Item_MappingPaused,
+		Tasktray_Item_RapidFirePaused,
+		Tasktray_Item_vJoyPaused,
+		Tasktray_Item_ViGEmPaused,
+		Tasktray_Item_KeymapPaused,
+		Tasktray_Item_GuardianPaused,
+	};
+
 	Tasktray();
 	~Tasktray();
 

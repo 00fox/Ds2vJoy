@@ -259,15 +259,15 @@ const WCHAR* Mapping::TagsString()
 	return buf;
 }
 
-const WCHAR* Mapping::vJoyButtons()
+const WCHAR* Mapping::MappingButtons()
 {
-	return vJoyButtonsString;
+	return MappingButtonsString;
 }
 
 void Mapping::PreLoad()
 {
 	vjUsed.clear();
-	vJoyButtonsString[0] = 0;
+	MappingButtonsString[0] = 0;
 	for (int i = 0; i < vJoyButtonID::button_Count; i++)
 		m_toggle[i] = false;
 	for (int i = 0; i < 8; i++)
@@ -482,8 +482,9 @@ void Mapping::RunFirst(vJoyDevice* vjoy)
 
 void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 {
-	vJoyButtonsString[0] = 0;
-	WCHAR* head = vJoyButtonsString;
+	MappingButtonsString[0] = '\0';
+	WCHAR* head = MappingButtonsString;
+	head += swprintf_s(head, MAX_PATH, L"%s", L"vJoy:");
 
 	m_vj_X->ResetCounter();
 	m_vj_Y->ResetCounter();
@@ -499,7 +500,7 @@ void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 		if (!vjoy->GetButton((vJoyButtonID)vjUsed[i])->isPushed())
 			vjoy->GetButton((vJoyButtonID)vjUsed[i])->Release();
 		else
-			head += swprintf_s(head, MAX_PATH, L"%s ", vJoyButton::String((vJoyButtonID)vjUsed[i]));
+			head += swprintf_s(head, MAX_PATH, L" %s", vJoyButton::String((vJoyButtonID)vjUsed[i]));
 	}
 
 	if (tape.ActualDS == 2 && tape.PreferredDS)
@@ -539,7 +540,7 @@ void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
 
 void Mapping::Run(double average)
 {
-	if (tape.vJoyPaused)
+	if (tape.MappingPaused)
 		return;
 
 	for (int i = 0; i < 5; i++)
@@ -1458,7 +1459,7 @@ void Mapping::Run(double average)
 					}
 					case WEB_PREVIOUSTAB: { PostMessage(m_hWnd, WM_WEB_CHANGETAB, 0, 0); break; }
 					case WEB_NEXTTAB: { PostMessage(m_hWnd, WM_WEB_CHANGETAB, 0, 1); break; }
-					case WEB_CLOSETAB: { PostMessage(m_hWnd, WM_COMMAND, ID_WEBCLOSE, 0); break; }
+					case WEB_CLOSETAB: { PostMessage(m_hWnd, WM_COMMAND, ID_WEBCLOSE, -1); break; }
 					case WEB_FULLSCREEN: { PostMessage(m_hWnd, WM_WEB_FULLSCREEN, 0, 0); break; }
 					case WEB_FAVORITE1: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 1); break; }
 					case WEB_FAVORITE2: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 2); break; }
@@ -1799,14 +1800,14 @@ WCHAR* Mapping::LedString(LedActionID id)
 {
 	switch (id)
 	{
-	case Led_Action_none: return WCHARI(L"");
+	case Led_Action_none: return I18N.EMPTY;
 	case Led_Action_Led1: return I18N.LedAction_Led_1;
 	case Led_Action_Led2: return I18N.LedAction_Led_2;
 	case Led_Action_Led3: return I18N.LedAction_Led_3;
 	case Led_Action_Led4: return I18N.LedAction_Led_4;
 	case Led_Action_Led5: return I18N.LedAction_Led_5;
 	case Led_Action_Battery: return I18N.LedAction_BATTERY;
-	default: return WCHARI(L"???");
+	default: return I18N.WHICH;
 	}
 }
 
@@ -1814,7 +1815,7 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 {
 	switch (id)
 	{
-	case mouse_none: return WCHARI(L"");
+	case mouse_none: return I18N.EMPTY;
 	case ACTIVE_MOUSE: return I18N.MouseAction_ACTIVE_MOUSE;
 	case SAVE_POSITION: return I18N.MouseAction_SAVE_POSITION;
 	case MOVE_BACK: return I18N.MouseAction_MOVE_BACK;
@@ -1857,7 +1858,7 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 	case MAGNIFY_DOWN: return I18N.MouseAction_MAGNIFY_DOWN;
 	case MAGNIFY_LEFT: return I18N.MouseAction_MAGNIFY_LEFT;
 	case MAGNIFY_RIGHT: return I18N.MouseAction_MAGNIFY_RIGHT;
-	default: return WCHARI(L"???");
+	default: return I18N.WHICH;
 	}
 }
 
@@ -1865,29 +1866,29 @@ WCHAR* Mapping::SpecialString(SpecialActionID id)
 {
 	switch (id)
 	{
-	case mouse_none: return WCHARI(L"");
+	case mouse_none: return I18N.EMPTY;
 	case MUTE_SOUND: return I18N.SpecialAction_MUTE_SOUND;
 	case VOLUME_UP: return I18N.SpecialAction_VOLUME_UP;
 	case VOLUME_DOWN: return I18N.SpecialAction_VOLUME_DOWN;
 	case MEMORIZE_MODE: return I18N.SpecialAction_MEMORIZE_MODE;
 	case TO_MEM_MODE: return I18N.SpecialAction_TO_MEM_MODE;
-	case TO_MODE1: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(1));
-	case TO_MODE2: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(2));
-	case TO_MODE3: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(3));
-	case TO_MODE4: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(4));
-	case TO_MODE5: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(5));
-	case TO_MODE6: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(6));
-	case TO_MODE7: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(7));
-	case TO_MODE8: return WCHARI(I18N.SpecialAction_TO_MODE + std::to_wstring(8));
+	case TO_MODE1: return I18N.SpecialAction_TO_MODE1;
+	case TO_MODE2: return I18N.SpecialAction_TO_MODE2;
+	case TO_MODE3: return I18N.SpecialAction_TO_MODE3;
+	case TO_MODE4: return I18N.SpecialAction_TO_MODE4;
+	case TO_MODE5: return I18N.SpecialAction_TO_MODE5;
+	case TO_MODE6: return I18N.SpecialAction_TO_MODE6;
+	case TO_MODE7: return I18N.SpecialAction_TO_MODE7;
+	case TO_MODE8: return I18N.SpecialAction_TO_MODE8;
 	case TO_LAST_MODE: return I18N.SpecialAction_TO_LAST_MODE;
-	case BASE_TO_MODE1: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(1));
-	case BASE_TO_MODE2: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(2));
-	case BASE_TO_MODE3: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(3));
-	case BASE_TO_MODE4: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(4));
-	case BASE_TO_MODE5: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(5));
-	case BASE_TO_MODE6: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(6));
-	case BASE_TO_MODE7: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(7));
-	case BASE_TO_MODE8: return WCHARI(I18N.SpecialAction_BASE_TO_MODE + std::to_wstring(8));
+	case BASE_TO_MODE1: return I18N.SpecialAction_BASE_TO_MODE1;
+	case BASE_TO_MODE2: return I18N.SpecialAction_BASE_TO_MODE2;
+	case BASE_TO_MODE3: return I18N.SpecialAction_BASE_TO_MODE3;
+	case BASE_TO_MODE4: return I18N.SpecialAction_BASE_TO_MODE4;
+	case BASE_TO_MODE5: return I18N.SpecialAction_BASE_TO_MODE5;
+	case BASE_TO_MODE6: return I18N.SpecialAction_BASE_TO_MODE6;
+	case BASE_TO_MODE7: return I18N.SpecialAction_BASE_TO_MODE7;
+	case BASE_TO_MODE8: return I18N.SpecialAction_BASE_TO_MODE8;
 	case TO_BASE_MODE: return I18N.SpecialAction_TO_BASE_MODE;
 	case FORGOT_RELEASED: return I18N.SpecialAction_FORGOT_RELEASED;
 	case IF_RELEASED_GOTO: return I18N.SpecialAction_IF_RELEASED_GOTO;
@@ -1916,7 +1917,7 @@ WCHAR* Mapping::SpecialString(SpecialActionID id)
 	case MINIMIZE: return I18N.SpecialAction_MINIMIZE;
 	case RESTORE: return I18N.SpecialAction_RESTORE;
 	case TRANSPARENCY: return I18N.SpecialAction_TRANSPARENCY;
-	default: return WCHARI(L"???");
+	default: return I18N.WHICH;
 	}
 }
 
@@ -1924,7 +1925,7 @@ WCHAR* Mapping::ModulesString(ModulesActionID id)
 {
 	switch (id)
 	{
-	case modules_none: return WCHARI(L"");
+	case modules_none: return I18N.EMPTY;
 	case NOTEPAD: return I18N.ModulesAction_NOTEPAD;
 	case NOTEPAD_DOWN: return I18N.ModulesAction_NOTEPAD_DOWN;
 	case NOTEPAD_UP: return I18N.ModulesAction_NOTEPAD_UP;
@@ -1959,7 +1960,7 @@ WCHAR* Mapping::ModulesString(ModulesActionID id)
 	case WEB_SCREENSHOT: return I18N.ModulesAction_WEB_SCREENSHOT;
 	case WEB_DARKMODE: return I18N.ModulesAction_WEB_DARKMODE;
 	case WEB_DARKMODE2: return I18N.ModulesAction_WEB_DARKMODE2;
-	default: return WCHARI(L"???");
+	default: return I18N.WHICH;
 	}
 }
 

@@ -9,7 +9,9 @@ public:
 
 	WCHAR*				KeyString();
 	WCHAR*				ValueString(int column);
+	const WCHAR*		RapidFireButtons();
 	BOOL				LoadDevice(vJoyDevice*);
+	void				RunFirst();
 	BOOL				Run(std::chrono::system_clock::time_point now);
 
 	unsigned char		Enable = 0;
@@ -30,4 +32,6 @@ private:
 	std::chrono::milliseconds				randPress = std::chrono::milliseconds(0);
 };
 
-	typedef std::vector<RapidFire> RapidFires;
+	//String of RapidFire buttons in use, to show in status bar
+	static std::wstring				RapidFireButtonsString = L"";
+	typedef std::vector<RapidFire>	RapidFires;

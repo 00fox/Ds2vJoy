@@ -1099,7 +1099,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_RESETCONTENT, 0, 0);
 				for (int i = 0; i < dsButtonID::button_Count; i++)
 				{
-					WCHAR* str = dsButton::String((dsButtonID)i);
+					const WCHAR* str = dsButton::String((dsButtonID)i);
 					if (!mappingData.Target[0])
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.Target[1])
@@ -2262,7 +2262,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
@@ -2298,7 +2298,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
@@ -2334,7 +2334,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
@@ -2370,7 +2370,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
@@ -2406,7 +2406,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				{
 					for (int i = 0; i < dsButtonID::button_Count; i++)
 					{
-						WCHAR* str = dsButton::String((dsButtonID)i);
+						const WCHAR* str = dsButton::String((dsButtonID)i);
 						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}

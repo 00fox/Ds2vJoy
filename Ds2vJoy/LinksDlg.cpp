@@ -37,7 +37,7 @@ void LinksDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP3LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP4LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP5LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
-	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS4VJOY), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS2VJOY), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_VJOY), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_WEBVIEW2), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_VIGEMBUS), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
@@ -56,10 +56,10 @@ void LinksDlg::Init(HINSTANCE hInst, HWND hWnd)
 	item.state = LIS_ENABLED | LIS_FOCUSED | LIS_HOTTRACK;
 	item.stateMask = LIS_ENABLED | LIS_FOCUSED | LIS_HOTTRACK;
 
-	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS4VJOY), LM_GETITEM, 0, (LPARAM)&item);
-	//wcscpy_s(item.szID, MAX_LINKID_TEXT, I18N.LINKS_DS4VJOY);
-	wcscpy_s(item.szUrl, L_MAX_URL_LENGTH, I18N.LINKS_URL_DS4VJOY);
-	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS4VJOY), LM_SETITEM, 0, (LPARAM)&item);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS2VJOY), LM_GETITEM, 0, (LPARAM)&item);
+	//wcscpy_s(item.szID, MAX_LINKID_TEXT, I18N.LINKS_DS2VJOY);
+	wcscpy_s(item.szUrl, L_MAX_URL_LENGTH, I18N.LINKS_URL_DS2VJOY);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS2VJOY), LM_SETITEM, 0, (LPARAM)&item);
 
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_VJOY), LM_GETITEM, 0, (LPARAM)&item);
 	wcscpy_s(item.szUrl, L_MAX_URL_LENGTH, I18N.LINKS_URL_VJOY);
@@ -199,7 +199,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case NM_CLICK:
 		case NM_RETURN:
 		{
-			if (wParam == IDC_LINKS_DS4VJOY ||
+			if (wParam == IDC_LINKS_DS2VJOY ||
 				wParam == IDC_LINKS_VJOY ||
 				wParam == IDC_LINKS_WEBVIEW2 ||
 				wParam == IDC_LINKS_VIGEMBUS ||

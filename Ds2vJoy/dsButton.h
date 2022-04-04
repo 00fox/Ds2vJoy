@@ -272,7 +272,7 @@ public:
 	int					GetScrollVal();
 	void				SetThreshold(bool thr = true);
 
-	static WCHAR*		String(ButtonID);
+	static const WCHAR*		String(ButtonID);
 
 private:
 	byte*				m_data = 0;

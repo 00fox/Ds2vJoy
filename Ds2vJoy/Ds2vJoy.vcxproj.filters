@@ -4,21 +4,6 @@
     <Filter Include="1_Log">
       <UniqueIdentifier>{33058d13-ce56-4859-9058-bbb7499daf88}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3_Mapping">
-      <UniqueIdentifier>{3708577f-ccb4-43a3-b765-24dac20a225d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="4_RapidFire">
-      <UniqueIdentifier>{d946df3e-fa91-47d9-a783-5eeba42f372a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="5_Keymap">
-      <UniqueIdentifier>{9c16c011-7dcd-40eb-ae34-027d5b7f6184}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="6_ViGEm">
-      <UniqueIdentifier>{2e0e2b3e-a49b-4e6a-ad2d-37cdf54177bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="7_Guardian">
-      <UniqueIdentifier>{f4f9517f-0d5e-442c-b9b1-b98da9699a8f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="2_Settings">
       <UniqueIdentifier>{6e4fe25e-7fa9-496c-ae03-acb1dec76b9b}</UniqueIdentifier>
     </Filter>
@@ -57,17 +42,35 @@
     <Filter Include="C_Media">
       <UniqueIdentifier>{f5d8e50d-6ae1-4c65-9645-345fa10f281c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="9_Links">
-      <UniqueIdentifier>{b31372e3-6c08-4dc3-9dc4-4d3fa2f0cfbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="8_Explorer">
-      <UniqueIdentifier>{4fcf1e52-3053-4f80-9062-af02bad72398}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="11_Tasktray">
+    <Filter Include="12_Tasktray">
       <UniqueIdentifier>{71850f97-b8c2-4144-aee6-d2494882fc43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10_Notepad">
+    <Filter Include="11_Notepad">
       <UniqueIdentifier>{3d41c15c-1302-4cf8-ac52-4e5be8494f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10_Links">
+      <UniqueIdentifier>{b31372e3-6c08-4dc3-9dc4-4d3fa2f0cfbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="9_Explorer">
+      <UniqueIdentifier>{4fcf1e52-3053-4f80-9062-af02bad72398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="8_Guardian">
+      <UniqueIdentifier>{f4f9517f-0d5e-442c-b9b1-b98da9699a8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="7_ViGEm">
+      <UniqueIdentifier>{2e0e2b3e-a49b-4e6a-ad2d-37cdf54177bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="6_Keymap">
+      <UniqueIdentifier>{9c16c011-7dcd-40eb-ae34-027d5b7f6184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="5_RapidFire">
+      <UniqueIdentifier>{d946df3e-fa91-47d9-a783-5eeba42f372a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4_Mapping">
+      <UniqueIdentifier>{3708577f-ccb4-43a3-b765-24dac20a225d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3_vJoyConf">
+      <UniqueIdentifier>{17dadd87-2a05-4542-8654-d35c6f1b77fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,49 +78,49 @@
       <Filter>0_Ds2vJoy</Filter>
     </ClInclude>
     <ClInclude Include="Guardian.h">
-      <Filter>7_Guardian</Filter>
+      <Filter>8_Guardian</Filter>
     </ClInclude>
     <ClInclude Include="GuardianDlg.h">
-      <Filter>7_Guardian</Filter>
+      <Filter>8_Guardian</Filter>
     </ClInclude>
     <ClInclude Include="RapidFire.h">
-      <Filter>4_RapidFire</Filter>
+      <Filter>5_RapidFire</Filter>
     </ClInclude>
     <ClInclude Include="RapidFireDataDlg.h">
-      <Filter>4_RapidFire</Filter>
+      <Filter>5_RapidFire</Filter>
     </ClInclude>
     <ClInclude Include="RapidFireDlg.h">
-      <Filter>4_RapidFire</Filter>
+      <Filter>5_RapidFire</Filter>
     </ClInclude>
     <ClInclude Include="Mapping.h">
-      <Filter>3_Mapping</Filter>
+      <Filter>4_Mapping</Filter>
     </ClInclude>
     <ClInclude Include="MappingDataDlg.h">
-      <Filter>3_Mapping</Filter>
+      <Filter>4_Mapping</Filter>
     </ClInclude>
     <ClInclude Include="MappingDlg.h">
-      <Filter>3_Mapping</Filter>
+      <Filter>4_Mapping</Filter>
     </ClInclude>
     <ClInclude Include="ViGEm.h">
-      <Filter>6_ViGEm</Filter>
+      <Filter>7_ViGEm</Filter>
     </ClInclude>
     <ClInclude Include="ViGEmDlg.h">
-      <Filter>6_ViGEm</Filter>
+      <Filter>7_ViGEm</Filter>
     </ClInclude>
     <ClInclude Include="Settings.h">
       <Filter>2_Settings</Filter>
     </ClInclude>
     <ClInclude Include="Keymap.h">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="KeymapDataDlg.h">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="KeymapDlg.h">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="Findwindow.h">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="vJoy.h">
       <Filter>0_vJoy</Filter>
@@ -126,13 +129,13 @@
       <Filter>2_Settings</Filter>
     </ClInclude>
     <ClInclude Include="LinksDlg.h">
-      <Filter>9_Links</Filter>
+      <Filter>10_Links</Filter>
     </ClInclude>
     <ClInclude Include="Language.h">
       <Filter>B_Language</Filter>
     </ClInclude>
     <ClInclude Include="Tasktray.h">
-      <Filter>11_Tasktray</Filter>
+      <Filter>12_Tasktray</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>A_Resources</Filter>
@@ -174,57 +177,75 @@
       <Filter>1_Log</Filter>
     </ClInclude>
     <ClInclude Include="NotepadDlg.h">
-      <Filter>10_Notepad</Filter>
+      <Filter>11_Notepad</Filter>
     </ClInclude>
     <ClInclude Include="ExplorerDlg.h">
-      <Filter>8_Explorer</Filter>
+      <Filter>9_Explorer</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoy\hidReportDescFfb.h">
+      <Filter>Z_vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoy\hidtoken.h">
+      <Filter>Z_vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoy\hidusage.h">
+      <Filter>Z_vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoy\wrapper.h">
+      <Filter>Z_vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoy\declarations.h">
+      <Filter>Z_vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoyDevice.h">
+      <Filter>3_vJoyConf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Guardian.cpp">
-      <Filter>7_Guardian</Filter>
+      <Filter>8_Guardian</Filter>
     </ClCompile>
     <ClCompile Include="GuardianDlg.cpp">
-      <Filter>7_Guardian</Filter>
+      <Filter>8_Guardian</Filter>
     </ClCompile>
     <ClCompile Include="RapidFire.cpp">
-      <Filter>4_RapidFire</Filter>
+      <Filter>5_RapidFire</Filter>
     </ClCompile>
     <ClCompile Include="RapidFireDataDlg.cpp">
-      <Filter>4_RapidFire</Filter>
+      <Filter>5_RapidFire</Filter>
     </ClCompile>
     <ClCompile Include="RapidFireDlg.cpp">
-      <Filter>4_RapidFire</Filter>
+      <Filter>5_RapidFire</Filter>
     </ClCompile>
     <ClCompile Include="Mapping.cpp">
-      <Filter>3_Mapping</Filter>
+      <Filter>4_Mapping</Filter>
     </ClCompile>
     <ClCompile Include="MappingDataDlg.cpp">
-      <Filter>3_Mapping</Filter>
+      <Filter>4_Mapping</Filter>
     </ClCompile>
     <ClCompile Include="MappingDlg.cpp">
-      <Filter>3_Mapping</Filter>
+      <Filter>4_Mapping</Filter>
     </ClCompile>
     <ClCompile Include="ViGEm.cpp">
-      <Filter>6_ViGEm</Filter>
+      <Filter>7_ViGEm</Filter>
     </ClCompile>
     <ClCompile Include="ViGEmDlg.cpp">
-      <Filter>6_ViGEm</Filter>
+      <Filter>7_ViGEm</Filter>
     </ClCompile>
     <ClCompile Include="Settings.cpp">
       <Filter>2_Settings</Filter>
     </ClCompile>
     <ClCompile Include="Keymap.cpp">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="KeymapDataDlg.cpp">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="KeymapDlg.cpp">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="Findwindow.cpp">
-      <Filter>5_Keymap</Filter>
+      <Filter>6_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="vJoy.cpp">
       <Filter>0_vJoy</Filter>
@@ -233,13 +254,13 @@
       <Filter>2_Settings</Filter>
     </ClCompile>
     <ClCompile Include="LinksDlg.cpp">
-      <Filter>9_Links</Filter>
+      <Filter>10_Links</Filter>
     </ClCompile>
     <ClCompile Include="Language.cpp">
       <Filter>B_Language</Filter>
     </ClCompile>
     <ClCompile Include="Tasktray.cpp">
-      <Filter>11_Tasktray</Filter>
+      <Filter>12_Tasktray</Filter>
     </ClCompile>
     <ClCompile Include="Ds2vJoy.cpp">
       <Filter>0_Ds2vJoy</Filter>
@@ -269,10 +290,13 @@
       <Filter>1_Log</Filter>
     </ClCompile>
     <ClCompile Include="NotepadDlg.cpp">
-      <Filter>10_Notepad</Filter>
+      <Filter>11_Notepad</Filter>
     </ClCompile>
     <ClCompile Include="ExplorerDlg.cpp">
-      <Filter>8_Explorer</Filter>
+      <Filter>9_Explorer</Filter>
+    </ClCompile>
+    <ClCompile Include="vJoyDevice.cpp">
+      <Filter>3_vJoyConf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +322,8 @@
     <None Include="HidGuardian\HidGuardian.zip" />
     <None Include="HidGuardian\HidCerberus.zip" />
     <None Include="WebView2\WebView2Loader.dll" />
+    <None Include="vJoy\vJoyDevice.zip" />
+    <None Include="vJoy\vJoyInstall.dll" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -306,5 +332,10 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="Fonts\NotepadFont.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="vJoy\vJoyInstall.lib">
+      <Filter>Z_vJoy</Filter>
+    </Library>
   </ItemGroup>
 </Project>

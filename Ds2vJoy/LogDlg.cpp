@@ -76,6 +76,7 @@ void LogDlg::_InitDialog(HWND hWnd)
 void LogDlg::ColorDemo(HWND hWnd, HWND hEdit)
 {
 	CPULimiter limiter = 1; //CPU percents
+	limiter.CalculateAndSleep();
 	_log.m_pause = true;
 	for (int i = 0; i < 16; i++)
 		for (int j = 0; j < 16; j++)
@@ -115,6 +116,7 @@ void LogDlg::ColorDemo(HWND hWnd, HWND hEdit)
 void LogDlg::ColorRand(HWND hWnd, HWND hEdit)
 {
 	CPULimiter limiter = 1; //CPU percents
+	limiter.CalculateAndSleep();
 	_log.m_pause = true;
 	while (_log.m_colorrand)
 	{

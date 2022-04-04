@@ -23,88 +23,110 @@ struct _virtualkey2str
 
 WCHAR* Keymap::KeyString()
 {
-	if (Enable == 2)
-		return WCHARI(L"▒▒▒▒▒");
+	static WCHAR buf[MAX_PATH];
+	buf[0] = 0;
+	WCHAR* head = buf;
 
-	return vJoyButton::String((vJoyButtonID)ButtonID);
+	if (Enable == 2)
+		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒");
+	else
+		return vJoyButton::String((vJoyButtonID)ButtonID);
+
+	return buf;
 }
 
 WCHAR* Keymap::ValueString(int column)
 {
+	static WCHAR buf[MAX_PATH];
 	switch (column)
 	{
 	case 1:
 	{
+		buf[0] = 0;
+		WCHAR* head = buf;
+
 		if (Enable == 2)
-			return WCHARI(L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+			head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+		else
+		{
+			for (int i = 0; i < vk.size(); i++)
+				head += swprintf_s(head, MAX_PATH, L"%s ", String(BytetoKeyboardID(vk[i])));
 
-		WCHAR* head = bufstring;
+			if (bufstring < head)
+				*(--head) = 0;
+		}
 
-		for (int i = 0; i < vk.size(); i++)
-			head += swprintf_s(head, MAX_PATH, L"%s ", String(BytetoKeyboardID(vk[i])));
-
-		if (bufstring < head)
-			*(--head) = 0;
-
-		return bufstring;
-		break;
+		return buf;
 	}
 	case 2:
 	{
-		if (Enable == 2)
-			return WCHARI(L"▒▒▒▒▒▒▒▒");
+		buf[0] = 0;
+		WCHAR* head = buf;
 
-		return WCHARI(findWindow.Val());
+		if (Enable == 2)
+			head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒▒▒▒");
+		else
+			head += swprintf_s(head, MAX_PATH, L"%s ", findWindow.Val().c_str());
+
+		return buf;
 	}
 	case 3:
 	{
-		if (Enable == 2)
-			return WCHARI(L"▒▒▒▒▒▒");
-
-		static WCHAR buf[MAX_PATH];
+		buf[0] = 0;
 		WCHAR* head = buf;
-		if (NaturalTyping)
-			head += swprintf_s(head, MAX_PATH, L"N");
+
+		if (Enable == 2)
+			head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒");
 		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (usePostmessage)
-			head += swprintf_s(head, MAX_PATH, L"S");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (WndRestore == 1)
-			head += swprintf_s(head, MAX_PATH, L"R");
-		else if (WndRestore == 2)
-			head += swprintf_s(head, MAX_PATH, L"h");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (WndMaximize == 1)
-			head += swprintf_s(head, MAX_PATH, L"M");
-		else if (WndMaximize == 2)
-			head += swprintf_s(head, MAX_PATH, L"m");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (WndShow == 1)
-			head += swprintf_s(head, MAX_PATH, L"S");
-		else if (WndShow == 2)
-			head += swprintf_s(head, MAX_PATH, L"n");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (useActivating)
-			head += swprintf_s(head, MAX_PATH, L"A");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (ExtendedKey)
-			head += swprintf_s(head, MAX_PATH, L"K");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
-		if (Scancode)
-			head += swprintf_s(head, MAX_PATH, L"C");
-		else
-			head += swprintf_s(head, MAX_PATH, L"  ");
+		{
+			if (NaturalTyping)
+				head += swprintf_s(head, MAX_PATH, L"N");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (usePostmessage)
+				head += swprintf_s(head, MAX_PATH, L"S");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (WndRestore == 1)
+				head += swprintf_s(head, MAX_PATH, L"R");
+			else if (WndRestore == 2)
+				head += swprintf_s(head, MAX_PATH, L"h");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (WndMaximize == 1)
+				head += swprintf_s(head, MAX_PATH, L"M");
+			else if (WndMaximize == 2)
+				head += swprintf_s(head, MAX_PATH, L"m");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (WndShow == 1)
+				head += swprintf_s(head, MAX_PATH, L"S");
+			else if (WndShow == 2)
+				head += swprintf_s(head, MAX_PATH, L"n");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (useActivating)
+				head += swprintf_s(head, MAX_PATH, L"A");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (ExtendedKey)
+				head += swprintf_s(head, MAX_PATH, L"K");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+			if (Scancode)
+				head += swprintf_s(head, MAX_PATH, L"C");
+			else
+				head += swprintf_s(head, MAX_PATH, L"  ");
+		}
 		return buf;
 	}
-	default: return WCHARI(L"");
+	default: return I18N.EMPTY;
 	}
+}
+
+const WCHAR* Keymap::KeymapButtons()
+{
+	return KeymapButtonsString.c_str();
 }
 
 static const struct _virtualkey2str keystr[] = {
@@ -638,6 +660,11 @@ BOOL Keymap::LoadDevice(vJoyDevice* vjoy)
 	return TRUE;
 }
 
+void Keymap::RunFirst()
+{
+	KeymapButtonsString = L"Keymap source:";
+}
+
 void Keymap::Run()
 {
 	if (tape.KeymapPaused)
@@ -645,6 +672,9 @@ void Keymap::Run()
 
 	if (m_button == 0)
 		return;
+
+	if (m_button->isPushed())
+		KeymapButtonsString = KeymapButtonsString + L" " + vJoyButton::String(vJoyButtonID(ButtonID));
 
 	if (m_keydownflag)
 	{
@@ -1142,198 +1172,200 @@ BYTE Keymap::KeyboardIDtoByte(KeyboardID id)
 	}
 }
 
-WCHAR* Keymap::String(KeyboardID id)
+const WCHAR* Keymap::String(KeyboardID id)
 {
+	static std::wstring KeymapStringResult = L"";
 	switch (id)
 	{
-	case none: return WCHARI(L"");
-	case KID_LBUTTON: return WCHARI(L"LBUTTON");
-	case KID_RBUTTON: return WCHARI(L"RBUTTON");
-	case KID_CANCEL: return WCHARI(L"CANCEL");
-	case KID_MBUTTON: return WCHARI(L"MBUTTON");
-	case KID_XBUTTON1: return WCHARI(L"XBUTTON1");
-	case KID_XBUTTON2: return WCHARI(L"XBUTTON2");
-	case KID_BACK: return WCHARI(L"BACK");
-	case KID_TAB: return WCHARI(L"TAB");
-	case KID_CLEAR: return WCHARI(L"CLEAR");
-	case KID_RETURN: return WCHARI(L"RETURN");
-	case KID_SHIFT: return WCHARI(L"SHIFT");
-	case KID_CONTROL: return WCHARI(L"CONTROL");
-	case KID_MENU: return WCHARI(L"MENU");
-	case KID_PAUSE: return WCHARI(L"PAUSE");
-	case KID_CAPITAL: return WCHARI(L"CAPITAL");
-	case KID_HANGUL: return WCHARI(L"KANA");
-	case KID_IME_ON: return WCHARI(L"IME_ON");
-	case KID_JUNJA: return WCHARI(L"JUNJA");
-	case KID_FINAL: return WCHARI(L"FINAL");
-	case KID_KANJI: return WCHARI(L"KANJI");
-	case KID_IME_OFF: return WCHARI(L"IME_OFF");
-	case KID_ESCAPE: return WCHARI(L"ESCAPE");
-	case KID_CONVERT: return WCHARI(L"CONVERT");
-	case KID_NONCONVERT: return WCHARI(L"NONCONVERT");
-	case KID_ACCEPT: return WCHARI(L"ACCEPT");
-	case KID_MODECHANGE: return WCHARI(L"MODECHANGE");
-	case KID_SPACE: return WCHARI(L"SPACE");
-	case KID_PRIOR: return WCHARI(L"PRIOR");
-	case KID_NEXT: return WCHARI(L"NEXT");
-	case KID_END: return WCHARI(L"END");
-	case KID_HOME: return WCHARI(L"HOME");
-	case KID_LEFT: return WCHARI(L"LEFT");
-	case KID_UP: return WCHARI(L"UP");
-	case KID_RIGHT: return WCHARI(L"RIGHT");
-	case KID_DOWN: return WCHARI(L"DOWN");
-	case KID_SELECT: return WCHARI(L"SELECT");
-	case KID_PRINT: return WCHARI(L"PRINT");
-	case KID_EXECUTE: return WCHARI(L"EXECUTE");
-	case KID_SNAPSHOT: return WCHARI(L"SNAPSHOT");
-	case KID_INSERT: return WCHARI(L"INSERT");
-	case KID_DELETE: return WCHARI(L"DELETE");
-	case KID_HELP: return WCHARI(L"HELP");
-	case KID_0: return WCHARI(L"0");
-	case KID_1: return WCHARI(L"1");
-	case KID_2: return WCHARI(L"2");
-	case KID_3: return WCHARI(L"3");
-	case KID_4: return WCHARI(L"4");
-	case KID_5: return WCHARI(L"5");
-	case KID_6: return WCHARI(L"6");
-	case KID_7: return WCHARI(L"7");
-	case KID_8: return WCHARI(L"8");
-	case KID_9: return WCHARI(L"9");
-	case KID_A: return WCHARI(L"A");
-	case KID_B: return WCHARI(L"B");
-	case KID_C: return WCHARI(L"C");
-	case KID_D: return WCHARI(L"D");
-	case KID_E: return WCHARI(L"E");
-	case KID_F: return WCHARI(L"F");
-	case KID_G: return WCHARI(L"G");
-	case KID_H: return WCHARI(L"H");
-	case KID_I: return WCHARI(L"I");
-	case KID_J: return WCHARI(L"J");
-	case KID_K: return WCHARI(L"K");
-	case KID_L: return WCHARI(L"L");
-	case KID_M: return WCHARI(L"M");
-	case KID_N: return WCHARI(L"N");
-	case KID_O: return WCHARI(L"O");
-	case KID_P: return WCHARI(L"P");
-	case KID_Q: return WCHARI(L"Q");
-	case KID_R: return WCHARI(L"R");
-	case KID_S: return WCHARI(L"S");
-	case KID_T: return WCHARI(L"T");
-	case KID_U: return WCHARI(L"U");
-	case KID_V: return WCHARI(L"V");
-	case KID_W: return WCHARI(L"W");
-	case KID_X: return WCHARI(L"X");
-	case KID_Y: return WCHARI(L"Y");
-	case KID_Z: return WCHARI(L"Z");
-	case KID_LWIN: return WCHARI(L"LWIN");
-	case KID_RWIN: return WCHARI(L"RWIN");
-	case KID_APPS: return WCHARI(L"APPS");
-	case KID_SLEEP: return WCHARI(L"SLEEP");
-	case KID_NUMPAD0: return WCHARI(L"NUMPAD0");
-	case KID_NUMPAD1: return WCHARI(L"NUMPAD1");
-	case KID_NUMPAD2: return WCHARI(L"NUMPAD2");
-	case KID_NUMPAD3: return WCHARI(L"NUMPAD3");
-	case KID_NUMPAD4: return WCHARI(L"NUMPAD4");
-	case KID_NUMPAD5: return WCHARI(L"NUMPAD5");
-	case KID_NUMPAD6: return WCHARI(L"NUMPAD6");
-	case KID_NUMPAD7: return WCHARI(L"NUMPAD7");
-	case KID_NUMPAD8: return WCHARI(L"NUMPAD8");
-	case KID_NUMPAD9: return WCHARI(L"NUMPAD9");
-	case KID_MULTIPLY: return WCHARI(L"MULTIPLY");
-	case KID_ADD: return WCHARI(L"ADD");
-	case KID_SEPARATOR: return WCHARI(L"SEPARATOR");
-	case KID_SUBTRACT: return WCHARI(L"SUBTRACT");
-	case KID_DECIMAL: return WCHARI(L"DECIMAL");
-	case KID_DIVIDE: return WCHARI(L"DIVIDE");
-	case KID_F1: return WCHARI(L"F1");
-	case KID_F2: return WCHARI(L"F2");
-	case KID_F3: return WCHARI(L"F3");
-	case KID_F4: return WCHARI(L"F4");
-	case KID_F5: return WCHARI(L"F5");
-	case KID_F6: return WCHARI(L"F6");
-	case KID_F7: return WCHARI(L"F7");
-	case KID_F8: return WCHARI(L"F8");
-	case KID_F9: return WCHARI(L"F9");
-	case KID_F10: return WCHARI(L"F10");
-	case KID_F11: return WCHARI(L"F11");
-	case KID_F12: return WCHARI(L"F12");
-	case KID_F13: return WCHARI(L"F13");
-	case KID_F14: return WCHARI(L"F14");
-	case KID_F15: return WCHARI(L"F15");
-	case KID_F16: return WCHARI(L"F16");
-	case KID_F17: return WCHARI(L"F17");
-	case KID_F18: return WCHARI(L"F18");
-	case KID_F19: return WCHARI(L"F19");
-	case KID_F20: return WCHARI(L"F20");
-	case KID_F21: return WCHARI(L"F21");
-	case KID_F22: return WCHARI(L"F22");
-	case KID_F23: return WCHARI(L"F23");
-	case KID_F24: return WCHARI(L"F24");
-	case KID_NUMLOCK: return WCHARI(L"NUMLOCK");
-	case KID_SCROLL: return WCHARI(L"SCROLL");
-	case KID_LSHIFT: return WCHARI(L"LSHIFT");
-	case KID_RSHIFT: return WCHARI(L"RSHIFT");
-	case KID_LCONTROL: return WCHARI(L"LCONTROL");
-	case KID_RCONTROL: return WCHARI(L"RCONTROL");
-	case KID_LMENU: return WCHARI(L"LMENU");
-	case KID_RMENU: return WCHARI(L"RMENU");
-	case KID_BROWSER_BACK: return WCHARI(L"BROWSER_BACK");
-	case KID_BROWSER_FORWARD: return WCHARI(L"BROWSER_FORWARD");
-	case KID_BROWSER_REFRESH: return WCHARI(L"BROWSER_REFRESH");
-	case KID_BROWSER_STOP: return WCHARI(L"BROWSER_STOP");
-	case KID_BROWSER_SEARCH: return WCHARI(L"BROWSER_SEARCH");
-	case KID_BROWSER_FAVORITES: return WCHARI(L"BROWSER_FAVORITES");
-	case KID_BROWSER_HOME: return WCHARI(L"BROWSER_HOME");
-	case KID_VOLUME_MUTE: return WCHARI(L"VOLUME_MUTE");
-	case KID_VOLUME_DOWN: return WCHARI(L"VOLUME_DOWN");
-	case KID_VOLUME_UP: return WCHARI(L"VOLUME_UP");
-	case KID_MEDIA_NEXT_TRACK: return WCHARI(L"MEDIA_NEXT_TRACK");
-	case KID_MEDIA_PREV_TRACK: return WCHARI(L"MEDIA_PREV_TRACK");
-	case KID_MEDIA_STOP: return WCHARI(L"MEDIA_STOP");
-	case KID_MEDIA_PLAY_PAUSE: return WCHARI(L"MEDIA_PLAY_PAUSE");
-	case KID_LAUNCH_MAIL: return WCHARI(L"LAUNCH_MAIL");
-	case KID_LAUNCH_MEDIA_SELECT: return WCHARI(L"LAUNCH_MEDIA_SELECT");
-	case KID_LAUNCH_APP1: return WCHARI(L"LAUNCH_APP1");
-	case KID_LAUNCH_APP2: return WCHARI(L"LAUNCH_APP2");
-	case KID_OEM_1: return WCHARI(L"OEM_1");
-	case KID_OEM_PLUS: return WCHARI(L"OEM_PLUS");
-	case KID_OEM_COMMA: return WCHARI(L"OEM_COMMA");
-	case KID_OEM_MINUS: return WCHARI(L"OEM_MINUS");
-	case KID_OEM_PERIOD: return WCHARI(L"OEM_PERIOD");
-	case KID_OEM_2: return WCHARI(L"OEM_2");
-	case KID_OEM_3: return WCHARI(L"OEM_3");
-	case KID_OEM_4: return WCHARI(L"OEM_4");
-	case KID_OEM_5: return WCHARI(L"OEM_5");
-	case KID_OEM_6: return WCHARI(L"OEM_6");
-	case KID_OEM_7: return WCHARI(L"OEM_7");
-	case KID_OEM_8: return WCHARI(L"OEM_8");
-	case KID_OEM_AX: return WCHARI(L"OEM_AX");
-	case KID_OEM_102: return WCHARI(L"OEM_102");
-	case KID_ICO_HELP: return WCHARI(L"ICO_HELP");
-	case KID_ICO_00: return WCHARI(L"ICO_00");
-	case KID_PROCESSKEY: return WCHARI(L"PROCESSKEY");
-	case KID_ICO_CLEAR: return WCHARI(L"ICO_CLEAR");
-	case KID_PACKET: return WCHARI(L"PACKET");
-	case KID_OEM_RESET: return WCHARI(L"OEM_RESET");
-	case KID_OEM_JUMP: return WCHARI(L"OEM_JUMP");
-	case KID_OEM_PA1: return WCHARI(L"OEM_PA1");
-	case KID_OEM_PA2: return WCHARI(L"OEM_PA2");
-	case KID_OEM_PA3: return WCHARI(L"OEM_PA3");
-	case KID_OEM_WSCTRL: return WCHARI(L"OEM_WSCTRL");
-	case KID_OEM_CUSEL: return WCHARI(L"OEM_CUSEL");
-	case KID_OEM_FINISH: return WCHARI(L"OEM_FINISH");
-	case KID_OEM_COPY: return WCHARI(L"OEM_COPY");
-	case KID_OEM_ENLW: return WCHARI(L"OEM_ENLW");
-	case KID_OEM_BACKTAB: return WCHARI(L"OEM_BACKTAB");
-	case KID_ATTN: return WCHARI(L"ATTN");
-	case KID_CRSEL: return WCHARI(L"CRSEL");
-	case KID_EXSEL: return WCHARI(L"EXSEL");
-	case KID_EREOF: return WCHARI(L"EREOF");
-	case KID_PLAY: return WCHARI(L"PLAY");
-	case KID_ZOOM: return WCHARI(L"ZOOM");
-	case KID_NONAME: return WCHARI(L"NONAME");
-	case KID_PA1: return WCHARI(L"PA1");
-	case KID_OEM_CLEAR: return WCHARI(L"OEM_CLEAR");
-	default: return WCHARI(L"???");
+	case none: { KeymapStringResult = L""; break; }
+	case KID_LBUTTON: { KeymapStringResult = L"LBUTTON"; break; }
+	case KID_RBUTTON: { KeymapStringResult = L"RBUTTON"; break; }
+	case KID_CANCEL: { KeymapStringResult = L"CANCEL"; break; }
+	case KID_MBUTTON: { KeymapStringResult = L"MBUTTON"; break; }
+	case KID_XBUTTON1: { KeymapStringResult = L"XBUTTON1"; break; }
+	case KID_XBUTTON2: { KeymapStringResult = L"XBUTTON2"; break; }
+	case KID_BACK: { KeymapStringResult = L"BACK"; break; }
+	case KID_TAB: { KeymapStringResult = L"TAB"; break; }
+	case KID_CLEAR: { KeymapStringResult = L"CLEAR"; break; }
+	case KID_RETURN: { KeymapStringResult = L"RETURN"; break; }
+	case KID_SHIFT: { KeymapStringResult = L"SHIFT"; break; }
+	case KID_CONTROL: { KeymapStringResult = L"CONTROL"; break; }
+	case KID_MENU: { KeymapStringResult = L"MENU"; break; }
+	case KID_PAUSE: { KeymapStringResult = L"PAUSE"; break; }
+	case KID_CAPITAL: { KeymapStringResult = L"CAPITAL"; break; }
+	case KID_HANGUL: { KeymapStringResult = L"KANA"; break; }
+	case KID_IME_ON: { KeymapStringResult = L"IME_ON"; break; }
+	case KID_JUNJA: { KeymapStringResult = L"JUNJA"; break; }
+	case KID_FINAL: { KeymapStringResult = L"FINAL"; break; }
+	case KID_KANJI: { KeymapStringResult = L"KANJI"; break; }
+	case KID_IME_OFF: { KeymapStringResult = L"IME_OFF"; break; }
+	case KID_ESCAPE: { KeymapStringResult = L"ESCAPE"; break; }
+	case KID_CONVERT: { KeymapStringResult = L"CONVERT"; break; }
+	case KID_NONCONVERT: { KeymapStringResult = L"NONCONVERT"; break; }
+	case KID_ACCEPT: { KeymapStringResult = L"ACCEPT"; break; }
+	case KID_MODECHANGE: { KeymapStringResult = L"MODECHANGE"; break; }
+	case KID_SPACE: { KeymapStringResult = L"SPACE"; break; }
+	case KID_PRIOR: { KeymapStringResult = L"PRIOR"; break; }
+	case KID_NEXT: { KeymapStringResult = L"NEXT"; break; }
+	case KID_END: { KeymapStringResult = L"END"; break; }
+	case KID_HOME: { KeymapStringResult = L"HOME"; break; }
+	case KID_LEFT: { KeymapStringResult = L"LEFT"; break; }
+	case KID_UP: { KeymapStringResult = L"UP"; break; }
+	case KID_RIGHT: { KeymapStringResult = L"RIGHT"; break; }
+	case KID_DOWN: { KeymapStringResult = L"DOWN"; break; }
+	case KID_SELECT: { KeymapStringResult = L"SELECT"; break; }
+	case KID_PRINT: { KeymapStringResult = L"PRINT"; break; }
+	case KID_EXECUTE: { KeymapStringResult = L"EXECUTE"; break; }
+	case KID_SNAPSHOT: { KeymapStringResult = L"SNAPSHOT"; break; }
+	case KID_INSERT: { KeymapStringResult = L"INSERT"; break; }
+	case KID_DELETE: { KeymapStringResult = L"DELETE"; break; }
+	case KID_HELP: { KeymapStringResult = L"HELP"; break; }
+	case KID_0: { KeymapStringResult = L"0"; break; }
+	case KID_1: { KeymapStringResult = L"1"; break; }
+	case KID_2: { KeymapStringResult = L"2"; break; }
+	case KID_3: { KeymapStringResult = L"3"; break; }
+	case KID_4: { KeymapStringResult = L"4"; break; }
+	case KID_5: { KeymapStringResult = L"5"; break; }
+	case KID_6: { KeymapStringResult = L"6"; break; }
+	case KID_7: { KeymapStringResult = L"7"; break; }
+	case KID_8: { KeymapStringResult = L"8"; break; }
+	case KID_9: { KeymapStringResult = L"9"; break; }
+	case KID_A: { KeymapStringResult = L"A"; break; }
+	case KID_B: { KeymapStringResult = L"B"; break; }
+	case KID_C: { KeymapStringResult = L"C"; break; }
+	case KID_D: { KeymapStringResult = L"D"; break; }
+	case KID_E: { KeymapStringResult = L"E"; break; }
+	case KID_F: { KeymapStringResult = L"F"; break; }
+	case KID_G: { KeymapStringResult = L"G"; break; }
+	case KID_H: { KeymapStringResult = L"H"; break; }
+	case KID_I: { KeymapStringResult = L"I"; break; }
+	case KID_J: { KeymapStringResult = L"J"; break; }
+	case KID_K: { KeymapStringResult = L"K"; break; }
+	case KID_L: { KeymapStringResult = L"L"; break; }
+	case KID_M: { KeymapStringResult = L"M"; break; }
+	case KID_N: { KeymapStringResult = L"N"; break; }
+	case KID_O: { KeymapStringResult = L"O"; break; }
+	case KID_P: { KeymapStringResult = L"P"; break; }
+	case KID_Q: { KeymapStringResult = L"Q"; break; }
+	case KID_R: { KeymapStringResult = L"R"; break; }
+	case KID_S: { KeymapStringResult = L"S"; break; }
+	case KID_T: { KeymapStringResult = L"T"; break; }
+	case KID_U: { KeymapStringResult = L"U"; break; }
+	case KID_V: { KeymapStringResult = L"V"; break; }
+	case KID_W: { KeymapStringResult = L"W"; break; }
+	case KID_X: { KeymapStringResult = L"X"; break; }
+	case KID_Y: { KeymapStringResult = L"Y"; break; }
+	case KID_Z: { KeymapStringResult = L"Z"; break; }
+	case KID_LWIN: { KeymapStringResult = L"LWIN"; break; }
+	case KID_RWIN: { KeymapStringResult = L"RWIN"; break; }
+	case KID_APPS: { KeymapStringResult = L"APPS"; break; }
+	case KID_SLEEP: { KeymapStringResult = L"SLEEP"; break; }
+	case KID_NUMPAD0: { KeymapStringResult = L"NUMPAD0"; break; }
+	case KID_NUMPAD1: { KeymapStringResult = L"NUMPAD1"; break; }
+	case KID_NUMPAD2: { KeymapStringResult = L"NUMPAD2"; break; }
+	case KID_NUMPAD3: { KeymapStringResult = L"NUMPAD3"; break; }
+	case KID_NUMPAD4: { KeymapStringResult = L"NUMPAD4"; break; }
+	case KID_NUMPAD5: { KeymapStringResult = L"NUMPAD5"; break; }
+	case KID_NUMPAD6: { KeymapStringResult = L"NUMPAD6"; break; }
+	case KID_NUMPAD7: { KeymapStringResult = L"NUMPAD7"; break; }
+	case KID_NUMPAD8: { KeymapStringResult = L"NUMPAD8"; break; }
+	case KID_NUMPAD9: { KeymapStringResult = L"NUMPAD9"; break; }
+	case KID_MULTIPLY: { KeymapStringResult = L"MULTIPLY"; break; }
+	case KID_ADD: { KeymapStringResult = L"ADD"; break; }
+	case KID_SEPARATOR: { KeymapStringResult = L"SEPARATOR"; break; }
+	case KID_SUBTRACT: { KeymapStringResult = L"SUBTRACT"; break; }
+	case KID_DECIMAL: { KeymapStringResult = L"DECIMAL"; break; }
+	case KID_DIVIDE: { KeymapStringResult = L"DIVIDE"; break; }
+	case KID_F1: { KeymapStringResult = L"F1"; break; }
+	case KID_F2: { KeymapStringResult = L"F2"; break; }
+	case KID_F3: { KeymapStringResult = L"F3"; break; }
+	case KID_F4: { KeymapStringResult = L"F4"; break; }
+	case KID_F5: { KeymapStringResult = L"F5"; break; }
+	case KID_F6: { KeymapStringResult = L"F6"; break; }
+	case KID_F7: { KeymapStringResult = L"F7"; break; }
+	case KID_F8: { KeymapStringResult = L"F8"; break; }
+	case KID_F9: { KeymapStringResult = L"F9"; break; }
+	case KID_F10: { KeymapStringResult = L"F10"; break; }
+	case KID_F11: { KeymapStringResult = L"F11"; break; }
+	case KID_F12: { KeymapStringResult = L"F12"; break; }
+	case KID_F13: { KeymapStringResult = L"F13"; break; }
+	case KID_F14: { KeymapStringResult = L"F14"; break; }
+	case KID_F15: { KeymapStringResult = L"F15"; break; }
+	case KID_F16: { KeymapStringResult = L"F16"; break; }
+	case KID_F17: { KeymapStringResult = L"F17"; break; }
+	case KID_F18: { KeymapStringResult = L"F18"; break; }
+	case KID_F19: { KeymapStringResult = L"F19"; break; }
+	case KID_F20: { KeymapStringResult = L"F20"; break; }
+	case KID_F21: { KeymapStringResult = L"F21"; break; }
+	case KID_F22: { KeymapStringResult = L"F22"; break; }
+	case KID_F23: { KeymapStringResult = L"F23"; break; }
+	case KID_F24: { KeymapStringResult = L"F24"; break; }
+	case KID_NUMLOCK: { KeymapStringResult = L"NUMLOCK"; break; }
+	case KID_SCROLL: { KeymapStringResult = L"SCROLL"; break; }
+	case KID_LSHIFT: { KeymapStringResult = L"LSHIFT"; break; }
+	case KID_RSHIFT: { KeymapStringResult = L"RSHIFT"; break; }
+	case KID_LCONTROL: { KeymapStringResult = L"LCONTROL"; break; }
+	case KID_RCONTROL: { KeymapStringResult = L"RCONTROL"; break; }
+	case KID_LMENU: { KeymapStringResult = L"LMENU"; break; }
+	case KID_RMENU: { KeymapStringResult = L"RMENU"; break; }
+	case KID_BROWSER_BACK: { KeymapStringResult = L"BROWSER_BACK"; break; }
+	case KID_BROWSER_FORWARD: { KeymapStringResult = L"BROWSER_FORWARD"; break; }
+	case KID_BROWSER_REFRESH: { KeymapStringResult = L"BROWSER_REFRESH"; break; }
+	case KID_BROWSER_STOP: { KeymapStringResult = L"BROWSER_STOP"; break; }
+	case KID_BROWSER_SEARCH: { KeymapStringResult = L"BROWSER_SEARCH"; break; }
+	case KID_BROWSER_FAVORITES: { KeymapStringResult = L"BROWSER_FAVORITES"; break; }
+	case KID_BROWSER_HOME: { KeymapStringResult = L"BROWSER_HOME"; break; }
+	case KID_VOLUME_MUTE: { KeymapStringResult = L"VOLUME_MUTE"; break; }
+	case KID_VOLUME_DOWN: { KeymapStringResult = L"VOLUME_DOWN"; break; }
+	case KID_VOLUME_UP: { KeymapStringResult = L"VOLUME_UP"; break; }
+	case KID_MEDIA_NEXT_TRACK: { KeymapStringResult = L"MEDIA_NEXT_TRACK"; break; }
+	case KID_MEDIA_PREV_TRACK: { KeymapStringResult = L"MEDIA_PREV_TRACK"; break; }
+	case KID_MEDIA_STOP: { KeymapStringResult = L"MEDIA_STOP"; break; }
+	case KID_MEDIA_PLAY_PAUSE: { KeymapStringResult = L"MEDIA_PLAY_PAUSE"; break; }
+	case KID_LAUNCH_MAIL: { KeymapStringResult = L"LAUNCH_MAIL"; break; }
+	case KID_LAUNCH_MEDIA_SELECT: { KeymapStringResult = L"LAUNCH_MEDIA_SELECT"; break; }
+	case KID_LAUNCH_APP1: { KeymapStringResult = L"LAUNCH_APP1"; break; }
+	case KID_LAUNCH_APP2: { KeymapStringResult = L"LAUNCH_APP2"; break; }
+	case KID_OEM_1: { KeymapStringResult = L"OEM_1"; break; }
+	case KID_OEM_PLUS: { KeymapStringResult = L"OEM_PLUS"; break; }
+	case KID_OEM_COMMA: { KeymapStringResult = L"OEM_COMMA"; break; }
+	case KID_OEM_MINUS: { KeymapStringResult = L"OEM_MINUS"; break; }
+	case KID_OEM_PERIOD: { KeymapStringResult = L"OEM_PERIOD"; break; }
+	case KID_OEM_2: { KeymapStringResult = L"OEM_2"; break; }
+	case KID_OEM_3: { KeymapStringResult = L"OEM_3"; break; }
+	case KID_OEM_4: { KeymapStringResult = L"OEM_4"; break; }
+	case KID_OEM_5: { KeymapStringResult = L"OEM_5"; break; }
+	case KID_OEM_6: { KeymapStringResult = L"OEM_6"; break; }
+	case KID_OEM_7: { KeymapStringResult = L"OEM_7"; break; }
+	case KID_OEM_8: { KeymapStringResult = L"OEM_8"; break; }
+	case KID_OEM_AX: { KeymapStringResult = L"OEM_AX"; break; }
+	case KID_OEM_102: { KeymapStringResult = L"OEM_102"; break; }
+	case KID_ICO_HELP: { KeymapStringResult = L"ICO_HELP"; break; }
+	case KID_ICO_00: { KeymapStringResult = L"ICO_00"; break; }
+	case KID_PROCESSKEY: { KeymapStringResult = L"PROCESSKEY"; break; }
+	case KID_ICO_CLEAR: { KeymapStringResult = L"ICO_CLEAR"; break; }
+	case KID_PACKET: { KeymapStringResult = L"PACKET"; break; }
+	case KID_OEM_RESET: { KeymapStringResult = L"OEM_RESET"; break; }
+	case KID_OEM_JUMP: { KeymapStringResult = L"OEM_JUMP"; break; }
+	case KID_OEM_PA1: { KeymapStringResult = L"OEM_PA1"; break; }
+	case KID_OEM_PA2: { KeymapStringResult = L"OEM_PA2"; break; }
+	case KID_OEM_PA3: { KeymapStringResult = L"OEM_PA3"; break; }
+	case KID_OEM_WSCTRL: { KeymapStringResult = L"OEM_WSCTRL"; break; }
+	case KID_OEM_CUSEL: { KeymapStringResult = L"OEM_CUSEL"; break; }
+	case KID_OEM_FINISH: { KeymapStringResult = L"OEM_FINISH"; break; }
+	case KID_OEM_COPY: { KeymapStringResult = L"OEM_COPY"; break; }
+	case KID_OEM_ENLW: { KeymapStringResult = L"OEM_ENLW"; break; }
+	case KID_OEM_BACKTAB: { KeymapStringResult = L"OEM_BACKTAB"; break; }
+	case KID_ATTN: { KeymapStringResult = L"ATTN"; break; }
+	case KID_CRSEL: { KeymapStringResult = L"CRSEL"; break; }
+	case KID_EXSEL: { KeymapStringResult = L"EXSEL"; break; }
+	case KID_EREOF: { KeymapStringResult = L"EREOF"; break; }
+	case KID_PLAY: { KeymapStringResult = L"PLAY"; break; }
+	case KID_ZOOM: { KeymapStringResult = L"ZOOM"; break; }
+	case KID_NONAME: { KeymapStringResult = L"NONAME"; break; }
+	case KID_PA1: { KeymapStringResult = L"PA1"; break; }
+	case KID_OEM_CLEAR: { KeymapStringResult = L"OEM_CLEAR"; break; }
+	default: { KeymapStringResult = L"???"; break; }
 	}
+	return KeymapStringResult.c_str();
 }

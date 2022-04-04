@@ -7,10 +7,10 @@
 #include "MappingDataDlg.h"
 #include "RapidFireDlg.h"
 #include "RapidFireDataDlg.h"
-#include "KeymapDlg.h"
-#include "KeymapDataDlg.h"
 #include "ViGEm.h"
 #include "ViGEmDlg.h"
+#include "KeymapDlg.h"
+#include "KeymapDataDlg.h"
 #include "Guardian.h"
 #include "GuardianDlg.h"
 #include "ExplorerDlg.h"
@@ -18,7 +18,11 @@
 #include "NotepadDlg.h"
 #include "Tasktray.h"
 
-bool				callbackpause;
+#ifdef X64
+BOOL x86 = FALSE;
+#else
+BOOL x86 = TRUE;
+#endif
 
 Settings			tape;
 Guardian			hid;
@@ -29,8 +33,8 @@ static SettingDlg	sDlg;
 static MappingDlg	mDlg;
 static MappingDlg	mDlg2;
 static RapidFireDlg	rDlg;
-static KeymapDlg	kDlg;
 static ViGEmDlg		vDlg;
+static KeymapDlg	kDlg;
 static GuardianDlg	gDlg;
 static LinksDlg		iDlg;
 static NotepadDlg	nDlg;
@@ -59,9 +63,13 @@ static double		accuracyfactor;
 static POINT		gridpoint;
 static double		average = 0;
 
-static WCHAR		vJoySatusString[80] = L"";
-static WCHAR		KeymapSatusString[80] = L"";
+static WCHAR		LogSatusString[80] = L"";
+static WCHAR		SettingsSatusString[80] = L"";
+static WCHAR		MappingSatusString[80] = L"";
+static WCHAR		RapidFireSatusString[80] = L"";
 static WCHAR		ViGEmSatusString[80] = L"";
+static WCHAR		KeymapSatusString[80] = L"";
+static WCHAR		LinksSatusString[80] = L"";
 
 bool isFullScreen = false;
 bool MouseIsOverMain = true;
@@ -98,6 +106,21 @@ int APIENTRY wWinMain(_In_     HINSTANCE hInstance,
 	tape.Ds2hInst = hInstance;
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	//UNREFERENCED_PARAMETER(lpCmdLine);
+
+    // Test if this code runs on the correct machine
+	SYSTEM_INFO info;
+	GetNativeSystemInfo(&info);
+	if (info.wProcessorArchitecture != PROCESSOR_ARCHITECTURE_AMD64)	//PROCESSOR_ARCHITECTURE_AMD64
+	{
+		MessageBox(NULL, WCHARI(IDS_FOR_X64), WCHARI(IDS_APP_TITLE), MB_OK | MB_ICONERROR);
+		return -1;
+	};
+	//PROCESSOR_ARCHITECTURE_AMD64		x64 (AMD or Intel)
+	//PROCESSOR_ARCHITECTURE_ARM		ARM
+	//PROCESSOR_ARCHITECTURE_ARM64		ARM64
+	//PROCESSOR_ARCHITECTURE_IA64		Intel Itanium
+	//PROCESSOR_ARCHITECTURE_INTEL		x86
+	//PROCESSOR_ARCHITECTURE_UNKNOWN	Unknown architecture.
 
 	LoadStringW(hInstance, IDS_DS2VJOY, tape.szWindowClass, 100);
 	LoadStringW(hInstance, IDS_APP_TITLE, tape.szTitle, 100);
@@ -177,9 +200,6 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-	//if (MagInitialize())
-	//	tape.MagInitialized = true;
-
 	DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX/* | WS_THICKFRAME*/;
 	tape.Ds2hWnd = CreateWindowExW(WS_EX_CONTROLPARENT, tape.szWindowClass, tape.szTitle, dwStyle, CW_USEDEFAULT, 0, 492, 327, nullptr, nullptr, hInstance, nullptr);
 
@@ -308,6 +328,7 @@ static void WaitForOtherThreads()
 typedef struct _dsParams
 {
 	vJoyDevice* vj = { 0 };
+	/////vJoyDevice* vjdi = { 0 };	//////////////////////////////////
 	unsigned char vJoyID = 0;
 	dsDevice* ds = { 0 };
 	Mappings mappings;
@@ -322,7 +343,7 @@ typedef struct _dsParams
 
 void dsInput(dsDevice* ds, bool updateflag, void* param)
 {
-	if (callbackpause)
+	if (tape.CallbackPaused)
 		return;
 
 	static std::chrono::system_clock::time_point last = std::chrono::system_clock::now();
@@ -347,9 +368,8 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 			p->mappings[i].Run(average);
 
 	p->mappings[0].RunLast(p->ds, vjoy);
-	wcscpy_s(vJoySatusString, wcslen(p->mappings[0].vJoyButtons()) + 1, p->mappings[0].vJoyButtons());
-
-		vjoy->UpdateState();
+	wcscpy_s(MappingSatusString, wcslen(p->mappings[0].MappingButtons()) + 1, p->mappings[0].MappingButtons());
+	vjoy->UpdateState();
 
 	if (tape.PreferredDS)
 	{
@@ -904,6 +924,8 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 	}
 
 	{
+		p->rapidfires[0].RunFirst();
+
 		bool flag=false;
 		size_t max = p->rapidfires.size();
 		for (int i = 0; i < max; i++)
@@ -913,9 +935,11 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 					flag = true;
 		}
 		p->NextStepFlag = flag;
+
+		wcscpy_s(RapidFireSatusString, wcslen(p->rapidfires[0].RapidFireButtons()) + 1, p->rapidfires[0].RapidFireButtons());
 	}
 
-	if (vjoy->Active())
+	if (vjoy->Active() && tape.vJoyActive && !tape.vJoyPaused)
 		vjoy->Update();
 
 	if (tape.ViGEmActive)
@@ -925,10 +949,14 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 	}
 
 	{
+		p->keymaps[0].RunFirst();
+
 		size_t max = p->keymaps.size();
 		for (int i = 0; i < max; i++)
 			if (p->keymaps[i].Enable == 1)
 				p->keymaps[i].Run();
+
+		wcscpy_s(KeymapSatusString, wcslen(p->keymaps[0].KeymapButtons()) + 1, p->keymaps[0].KeymapButtons());
 	}
 }
 
@@ -936,6 +964,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static dsDevice ds;
 	static vJoyDevice vjoy;
+	//////static vJoyDevice vjoydi;	//////////////////////////////////////
 	static dsParams cbParams;
 	static HWND hTab;
 	static HWND hTopMost;
@@ -944,7 +973,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static HWND hWebClose;
 	static HWND hTab_Explorer;
 	static HWND hTab_DeleteDF;
-	static bool load_dll = false;
 	static bool lastextended = false;
 	static bool extended = false;
 	static bool cloned = false;
@@ -960,6 +988,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static short x = 0;
 	static short y = 0;
 	static bool first_WM_CREATE = false;
+	static bool load_dll = false;
+	static bool done_WM_CREATE = false;
 
 	switch (message)
 	{
@@ -983,7 +1013,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (TabCtrl_GetCurSel(hTab))
 		{
-		case 5: { vg.ViGEmStates(); break; }
+		case 4: { vg.ViGEmStates(); vg.vJoyStates(); break; }
 		case 6: { hid.HidStates(); break; }
 		}
 		break;
@@ -992,14 +1022,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (first_WM_CREATE)
 			break;
+
 		first_WM_CREATE = true;
-		load_dll = false;
 		std::vector<char> data;
 		DWORD resourceSize;
 		if (LoadEmbeddedResource(IDR_VIGEMCLIENT_DLL, &data, &resourceSize))
 			WriteToFile(L"ViGEmClient.dll", data, resourceSize, true, true);
 		if (LoadEmbeddedResource(IDR_VJOYINTERFACE_DLL, &data, &resourceSize))
 			WriteToFile(L"vJoyInterface.dll", data, resourceSize, true, true);
+		if (LoadEmbeddedResource(IDR_VJOYINSTALL_DLL, &data, &resourceSize))
+			WriteToFile(L"vJoyInstall.dll", data, resourceSize, true, true);
 		if (LoadEmbeddedResource(IDR_WEBVIEW2LOADER_DLL, &data, &resourceSize))
 			WriteToFile(L"WebView2Loader.dll", data, resourceSize, true, true);
 		if (LoadEmbeddedResource(IDR_DEVCON_EXE, &data, &resourceSize))
@@ -1025,8 +1057,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			sDlg.Init(tape.Ds2hInst, hWnd);
 			mDlg.Init(tape.Ds2hInst, hWnd);
 			rDlg.Init(tape.Ds2hInst, hWnd);
-			kDlg.Init(tape.Ds2hInst, hWnd);
 			vDlg.Init(tape.Ds2hInst, hWnd);
+			kDlg.Init(tape.Ds2hInst, hWnd);
 			gDlg.Init(tape.Ds2hInst, hWnd);
 			iDlg.Init(tape.Ds2hInst, hWnd);
 			nDlg.Init(tape.Ds2hInst, hWnd);
@@ -1035,6 +1067,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			rDDlg.Init(tape.Ds2hInst, hWnd);
 			kDDlg.Init(tape.Ds2hInst, hWnd);
 			cbParams.vj = &vjoy;
+			/////cbParams.vjdi = &vjoydi;	///////////////////////////////////////////////
 			cbParams.ds = &ds;
 			PostMessage(hWnd, WM_TRANSPARENCY, 0, 0);
 		}
@@ -1060,25 +1093,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			tc_item.mask = TCIF_TEXT;
 			tc_item.pszText = I18N.TabLog;
 			TabCtrl_InsertItem(hTab, 0, &tc_item);
-			if (load_dll)
-			{
-				tc_item.pszText = I18N.TabSettings;
-				TabCtrl_InsertItem(hTab, 1, &tc_item);
-				tc_item.pszText = I18N.TabMapping;
-				TabCtrl_InsertItem(hTab, 2, &tc_item);
-				tc_item.pszText = I18N.TabRapidFire;
-				TabCtrl_InsertItem(hTab, 3, &tc_item);
-				tc_item.pszText = I18N.TabKeymap;
-				TabCtrl_InsertItem(hTab, 4, &tc_item);
-				tc_item.pszText = I18N.TabViGEm;
-				TabCtrl_InsertItem(hTab, 5, &tc_item);
-				tc_item.pszText = I18N.TabGuardian;
-				TabCtrl_InsertItem(hTab, 6, &tc_item);
-				tc_item.pszText = I18N.TabExplorer;
-				TabCtrl_InsertItem(hTab, 7, &tc_item);
-				tc_item.pszText = I18N.TabLinks;
-				TabCtrl_InsertItem(hTab, 8, &tc_item);
-			}
+			tc_item.pszText = I18N.TabSettings;
+			TabCtrl_InsertItem(hTab, 1, &tc_item);
+			tc_item.pszText = I18N.TabMapping;
+			TabCtrl_InsertItem(hTab, 2, &tc_item);
+			tc_item.pszText = I18N.TabRapidFire;
+			TabCtrl_InsertItem(hTab, 3, &tc_item);
+			tc_item.pszText = I18N.TabViGEm;
+			TabCtrl_InsertItem(hTab, 4, &tc_item);
+			tc_item.pszText = I18N.TabKeymap;
+			TabCtrl_InsertItem(hTab, 5, &tc_item);
+			tc_item.pszText = I18N.TabGuardian;
+			TabCtrl_InsertItem(hTab, 6, &tc_item);
+			tc_item.pszText = I18N.TabExplorer;
+			TabCtrl_InsertItem(hTab, 7, &tc_item);
+			tc_item.pszText = I18N.TabLinks;
+			TabCtrl_InsertItem(hTab, 8, &tc_item);
 
 			SendMessage(hTab, WM_SETFONT, WPARAM(tape.hTab1), TRUE);
 			TabCtrl_SetItemSize(hTab, 48, 17);
@@ -1180,29 +1210,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 */
 		}
 
-		echo(L"https://github.com/ytyra/Ds2vJoy 31/07/2021");
+		//echo(L"https://github.com/ytyra/Ds2vJoy 31/07/2021");
 		std::wstring datestring = std::to_wstring(tape.VersionDate);
-		echo(L"Version %sv%s", datestring.std::wstring::substr(0, 8).c_str(), datestring.std::wstring::substr(8, (datestring.length() - 8)).c_str());
-		echo(L"");
+		datestring = L"Version: "
+			+ datestring.std::wstring::substr(0, 4) + L" "
+			+ datestring.std::wstring::substr(4, 2) + L" "
+			+ datestring.std::wstring::substr(6, 2) + L" - "
+			+ datestring.std::wstring::substr(8, (datestring.length() - 8));
+		wcscpy_s(LinksSatusString, wcslen(datestring.c_str()) + 1, datestring.c_str());
 		tasktray.Show();
 
 		vjoy.Init(hWnd, true);
 		vg.Init(hWnd);
 		if (tape.DsvJoyAddedToGuardian)
-			echo(I18N.HidGuardian_Added_to_Guardian, I18N.APP_TITLE, tape.Ds2vJoyPID);
+			echo(I18N.Guardian_Added_to_Guardian, I18N.APP_TITLE, tape.Ds2vJoyPID);
 		hid.Init(hWnd);
-		if (tape.MagInitialized)
-		{
-			echo(I18N.Magnification_Active);
-			HMODULE hMagnification = LoadLibrary(L"Magnification.dll");
-			if (hMagnification != NULL)
-			{
-				typedef bool(WINAPI* hMagSetSmoothing)(bool);
-				hMagSetSmoothing hMagnificationSmoothing = (hMagSetSmoothing)GetProcAddress(hMagnification, "MagSetFullscreenUseBitmapSmoothing");
-				auto isSmoothingActive = hMagnificationSmoothing(true);
-				FreeLibrary(hMagnification);
-			}
-		}
 
 		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
 
@@ -1214,11 +1236,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 1, 10000, NULL);	//Check for vJoy or DS interruptions
 		SetTimer(hWnd, 2, 100, NULL);	//Set Ondulating LED
 		SetTimer(hWnd, 3, 1000, NULL);	//Battery & Latency
-		SetTimer(hWnd, 4, 5000, NULL);	//HidGuardian Whitelist Check
+		SetTimer(hWnd, 4, 5000, NULL);	//Guardian Whitelist Check
 		SetTimer(hWnd, 5, 10, NULL);	//When moving windows & Zoom
 		SetTimer(hWnd, 6, 100, NULL);	//Print Profile, mode, mouse and vJoy Buttons when editing
 		SetTimer(hWnd, 7, 65, NULL);	//Set and focus explorer tab under cursor & Change window form when mouseover
+										//8 Webclose button right click
 
+		done_WM_CREATE = true;
 		break;
 	}
 	case WM_TIMER:
@@ -1232,7 +1256,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam == 2)
 		{
-/*			static COLORREF ledcolor;
+/*
+			static COLORREF ledcolor;
 			ledcolor = tape.LED_Color;
 			if (ds.Active())
 			{
@@ -1345,15 +1370,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			if (m_flag_drag)
 			{
-				/*
-				Not needed because window flag is WS_CAPTION and can naturally receive WM_NCLBUTTONUP message
 				if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
 				{
-					if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
+					//Not needed in web tab window flag is WS_CAPTION and can naturally receive WM_NCLBUTTONUP message
+					if (TabCtrl_GetCurSel(hTab) != 7 || NotepadTab != 7)
 						PostMessage(hWnd, WM_NCLBUTTONUP, 0, 0);
 				}
 				else
-				*/
 				{
 					m_flag_drag++;
 					if (m_flag_drag == 4)
@@ -1403,12 +1426,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam == 6)
 		{
-			if (!IsIconic(hWnd))
+			if (!IsIconic(hWnd) && !isFullScreen)
 			{
 				SendMessageTimeout(hStatus, SB_SETTEXT, 3, LPARAM((L"M:" + std::to_wstring(mode) + L" Pr:" + std::to_wstring(tape.Profile)).c_str()), SMTO_BLOCK, 1000, NULL);
-				if (TabCtrl_GetCurSel(hTab) == 2)
-					SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(vJoySatusString), SMTO_BLOCK, 1000, NULL);
-				else if (TabCtrl_GetCurSel(hTab) == 4)
+				switch (TabCtrl_GetCurSel(hTab))
+				{
+				case 0:
+				{
+					time_t rawtime;
+					struct tm timeinfo;
+					time(&rawtime);
+					localtime_s(&timeinfo, &rawtime);
+
+					//https://www.cplusplus.com/reference/ctime/strftime/
+					if (wcsftime(LogSatusString, 100, L"%a  %d /%m /%y     %T     UTC %z     %u …%W", &timeinfo))
+						SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(LogSatusString), SMTO_BLOCK, 1000, NULL);
+					break;
+				}
+				case 1:
 				{
 					COLORREF color;
 					HDC hdcScreen;
@@ -1418,18 +1453,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if (GetCursorPos(&tape.mousepoint))
 						{
-							color = GetPixel(hdcScreen, tape.mousepoint.x, tape.mousepoint.y);
+							color = GetPixel(hdcScreen, tape.mousepoint.x * tape.Hscale, tape.mousepoint.y * tape.Vscale);
 							if (color != CLR_INVALID)
 							{
-								swprintf_s(KeymapSatusString, sizeof(KeymapSatusString), L"RGB:%03i-%03i-%03i #%02x%02x%02x", GetRValue(color), GetGValue(color), GetBValue(color), GetRValue(color), GetGValue(color), GetBValue(color));
-								SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(KeymapSatusString), SMTO_BLOCK, 1000, NULL);
+								swprintf_s(SettingsSatusString, sizeof(SettingsSatusString), L"Color: # %02X  %02X  %02X    R %03i  G %03i  B %03i", GetRValue(color), GetGValue(color), GetBValue(color), GetRValue(color), GetGValue(color), GetBValue(color));
+								SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(SettingsSatusString), SMTO_BLOCK, 1000, NULL);
 							}
 						}
 						ReleaseDC(GetDesktopWindow(), hdcScreen);
 					}
+					break;
 				}
-				else if (TabCtrl_GetCurSel(hTab) == 5)
-					SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(ViGEmSatusString), SMTO_BLOCK, 1000, NULL);
+				case 2: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(MappingSatusString), SMTO_BLOCK, 1000, NULL); break; }
+				case 3: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(RapidFireSatusString), SMTO_BLOCK, 1000, NULL); break; }
+				case 4: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(ViGEmSatusString), SMTO_BLOCK, 1000, NULL); break; }
+				case 5: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(KeymapSatusString), SMTO_BLOCK, 1000, NULL); break; }
+				case 6: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(hid.GuardianButtons()), SMTO_BLOCK, 1000, NULL); break; }
+				case 8: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(LinksSatusString), SMTO_BLOCK, 1000, NULL); break; }
+				}
 			}
 		}
 		else if (wParam == 7)
@@ -1571,7 +1612,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else if (wParam == 8)
 		{
 			if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-				TabCtrl_SetCurFocus(hTab, 0);
+				PostMessage(hWnd, WM_COMMAND, ID_WEBCLOSE, -1);
 			break;
 		}
 		break;
@@ -1586,18 +1627,55 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		tape.Keymapdata = Keymapdatatmp;
 		break;
 	}
+	case WM_PAUSE:
+	{
+		tape.CallbackPaused = true;
+		ds.GetButton(dsButtonID::LX)->SetThreshold();
+		ds.GetButton(dsButtonID::LY)->SetThreshold();
+		ds.GetButton(dsButtonID::RX)->SetThreshold();
+		ds.GetButton(dsButtonID::RY)->SetThreshold();
+		vjoy.Close();
+		ds.Close();
+		break;
+	}
+	case WM_RESTART:
+	{
+		ds.SetCallback(dsInput, &cbParams);
+		ds.PreOpen();
+		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
+			cbParams.vJoyID = tape.vJoyDeviceID;
+		if (ds.Active())
+		{
+			vDlg.Init2();
+			ds.SetOrangeLED(0x00);
+			ds.SetWhiteLED(0x00);
+			ds.AssignOffsets();
+			ds.Open(hWnd, !lParam);
+			tape.CallbackPaused = false;
+			return TRUE;
+		}
+		else if (!tape.PreferredDS)
+		{
+			vDlg.Init2();
+			ds.Open(hWnd, !lParam);
+			tape.CallbackPaused = false;
+			return TRUE;
+		}
+		break;
+	}
 	case WM_RELOAD:
 	{
 		// lParam == 0 verbose
 		// lParam == 1 silent
-		if (!load_dll)
-			return FALSE;
-
-		vJoySatusString[0] = '\0';
+		LogSatusString[0] = '\0';
+		SettingsSatusString[0] = '\0';
+		MappingSatusString[0] = '\0';
+		RapidFireSatusString[0] = '\0';
+		KeymapSatusString[0] = '\0';
 		ViGEmSatusString[0] = '\0';
 		SendMessage(hWnd, WM_TIMER, 6, 0);
 
-		callbackpause = true;
+		tape.CallbackPaused = true;
 
 		PreviousTab = TabCtrl_GetCurSel(hTab);
 		PreviousNotepadTab = NotepadTab;
@@ -1618,9 +1696,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				hid.RestartDevices(true);
 		}
 
-		ds.Close();
-		vjoy.Close();
 		vg.CloseClient();
+		vjoy.Close();
+		ds.Close();
 		SendMessage(hWnd, WM_RESET, 0, 0);
 
 		tape.Load(Settings::Setting_Category_All);
@@ -1643,11 +1721,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// lParam == 1 silent
 		static bool dsstartrunning = false;
 
-		if (!load_dll || dsstartrunning)
+		if (dsstartrunning)
 			return FALSE;
 		dsstartrunning = true;
 
-		callbackpause = true;
+		tape.CallbackPaused = true;
 		ds.GetButton(dsButtonID::LX)->SetThreshold();
 		ds.GetButton(dsButtonID::LY)->SetThreshold();
 		ds.GetButton(dsButtonID::RX)->SetThreshold();
@@ -1741,7 +1819,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ds.SetWhiteLED(0x00);
 			ds.AssignOffsets();
 			ds.Open(hWnd, !lParam);
-			callbackpause = false;
+			tape.CallbackPaused = false;
 			dsstartrunning = false;
 			return TRUE;
 		}
@@ -1749,7 +1827,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			vDlg.Init2();
 			ds.Open(hWnd, !lParam);
-			callbackpause = false;
+			tape.CallbackPaused = false;
 			dsstartrunning = false;
 			return TRUE;
 		}
@@ -1761,9 +1839,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		// lParam == 0 verbose
 		// lParam == 1 silent
-		if (!load_dll)
-			return FALSE;
-
 		vjoy.Close();
 
 		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
@@ -1876,6 +1951,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
+	case WM_CHANGE_PAD:
+	{
+		if (wParam == 0)
+			vg.CloseClient();
+		else if (wParam == 1)
+		{
+			vg.LoadDevice(&ds, &vjoy);
+			vg.InitClient();
+		}
+		else if (wParam == 2)
+			if (tape.ViGEmActive)
+			{
+				vg.CloseClient();
+				vg.LoadDevice(&ds, &vjoy);
+				vg.InitClient();
+			}
+		break;
+	}
 	case WM_ADDKEYMAP:
 	{
 		if ((int)lParam <= 0)
@@ -1905,31 +1998,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			else if ((int)wParam == 3)
 				kDlg.editKeymapDlgBackMulti();
 		}
-		break;
-	}
-	case WM_CHANGE_PAD:
-	{
-		if (wParam == 0)
-		{
-			tape.ViGEmActive = 0;
-			tape.Save(tape.Setting_ViGEmActive);
-			vg.CloseClient();
-		}
-		else if (wParam == 1)
-		{
-			vg.LoadDevice(&ds, &vjoy);
-			vg.InitClient();
-			tape.ViGEmActive = true;
-			tape.Save(tape.Setting_ViGEmActive);
-		}
-		else if (wParam == 2)
-			if (tape.ViGEmActive)
-			{
-				vg.CloseClient();
-				vg.LoadDevice(&ds, &vjoy);
-				vg.InitClient();
-				tape.ViGEmActive = true;
-			}
 		break;
 	}
 	case WM_CHANGE_HIDS:
@@ -2209,7 +2277,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_NCLBUTTONDOWN:
 	{
-		if (!load_dll)
+		if (!done_WM_CREATE)
 		{
 			GetCursorPos(&tape.mousepoint);
 			RECT win;
@@ -2241,7 +2309,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_NCLBUTTONUP:
 	{
-		if (!load_dll)
+		if (!done_WM_CREATE)
 			break;
 
 		if (m_flag_size)
@@ -2262,7 +2330,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			bool minimize = false;
 			bool maximize = false;
 			bool close = false;
-			if (m_flag_drag_tmp < 10)
+			if (m_flag_drag_tmp < 20)
 				if (y >= 0 && y <= 30)
 				{
 					short z = x;
@@ -2368,7 +2436,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_MOVE:
 	{
-		if (!load_dll)
+		if (!done_WM_CREATE)
 			break;
 
 		if (FirstMove)
@@ -2422,9 +2490,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_SIZE:
 	{
-		if (!load_dll)
-			break;
-
 		RECT win;
 		GetWindowRect(hWnd, &win);
 		RECT desk;
@@ -2440,7 +2505,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 0:
 				case 2:
 				case 3:
-				case 4:
+				case 5:
 				case 9:
 				{
 					if (!IsWindowVisible(kDDlg.m_hDlg) && !IsWindowVisible(rDDlg.m_hDlg))
@@ -2455,7 +2520,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 				case 1:
-				case 5:
+				case 4:
 				case 6:
 				case 8:
 				{
@@ -2526,8 +2591,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		sDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		mDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		rDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
-		kDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		vDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
+		kDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		gDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		iDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		rDDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
@@ -2628,8 +2693,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 1: { sDlg.Hide(); break; }
 				case 2: { mDlg.Hide(); if (!extended) { mDlg2.Hide(); } break; }
 				case 3: { rDlg.Hide(); break; }
-				case 4: { kDlg.Hide(); break; }
-				case 5: { vDlg.Hide(); break; }
+				case 4: { vDlg.Hide(); break; }
+				case 5: { kDlg.Hide(); break; }
 				case 6: { gDlg.Hide(); break; }
 				case 7:
 				{
@@ -2666,8 +2731,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 1: { sDlg.Show(); break; }
 				case 2: { mDlg.Show(); if (mDlg2.m_isCloned) { mDlg2.SetTab(mDlg2.m_Tab); } break; }
 				case 3: { rDlg.Show(); break; }
-				case 4: { kDlg.Show(); break; }
-				case 5: { vDlg.Show(); break; }
+				case 4: { vDlg.Show(); break; }
+				case 5: { kDlg.Show(); break; }
 				case 6: { gDlg.Show(); break; }
 				case 7: 
 				{
@@ -2815,29 +2880,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case IDM_MAPPING:
 		{
-			tape.vJoyPaused = !tape.vJoyPaused;
-			tasktray.SwapMenuitem(0);
-			tape.Save(tape.Setting_vJoyPaused);
+			tape.MappingPaused = !tape.MappingPaused;
+			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_MappingPaused);
+			tape.Save(tape.Setting_MappingPaused);
 			break;
 		}
 		case IDM_RAPIDFIRE:
 		{
 			tape.RapidFirePaused = !tape.RapidFirePaused;
-			tasktray.SwapMenuitem(3);
+			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_RapidFirePaused);
 			tape.Save(tape.Setting_RapidFirePaused);
 			break;
 		}
-		case IDM_KEYMAP:
+		case IDM_VJOY:
 		{
-			tape.KeymapPaused = !tape.KeymapPaused;
-			tasktray.SwapMenuitem(2);
-			tape.Save(tape.Setting_KeymapPaused);
+			tape.vJoyPaused = !tape.vJoyPaused;
+			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_vJoyPaused);
+			tape.Save(tape.Setting_vJoyPaused);
 			break;
 		}
 		case IDM_VIGEM:
 		{
 			tape.ViGEmPaused = !tape.ViGEmPaused;
-			tasktray.SwapMenuitem(1);
+			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_ViGEmPaused);
 			tape.Save(tape.Setting_ViGEmPaused);
 			if (tape.ViGEmPaused)
 				vg.ClosePad();
@@ -2845,10 +2910,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				vg.InitPad();
 			break;
 		}
+		case IDM_KEYMAP:
+		{
+			tape.KeymapPaused = !tape.KeymapPaused;
+			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_KeymapPaused);
+			tape.Save(tape.Setting_KeymapPaused);
+			break;
+		}
 		case IDM_GUARDIAN:
 		{
 			tape.GuardianPaused = !tape.GuardianPaused;
-			tasktray.SwapMenuitem(4);
+			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_GuardianPaused);
 			tape.Save(tape.Setting_GuardianPaused);
 			hid.WhitelistInit();
 			hid.BlacklistInit(-1);
@@ -2863,8 +2935,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_WEBCLOSE:
 		{
 			if (lParam == -1)
-				TabCtrl_SetCurFocus(hTab, 0);
-			else
 			{
 				::SetFocus(NULL);
 				if (web_tabs.size() > 1 && tape.web_actualtab != web_tabs.size())
@@ -2891,6 +2961,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else if (web_tabs.size() == 1)
 					web_tabs[tape.web_actualtab]->CloseWebView();
 			}
+			else
+				TabCtrl_SetCurFocus(hTab, 0);
 			break;
 		}
 		case IDM_PROFILE1: { SendMessage(hWnd, WM_RELOAD, 1, 0); break; }
@@ -2914,7 +2986,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case SC_CLOSE: { PostMessage(hWnd, WM_DESTROY, 0, 0); break; }
 		case SC_MINIMIZE:
 		{
-			if (load_dll)
+			if (done_WM_CREATE)
 			{
 				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 				tape.TopMost = false;
@@ -2926,7 +2998,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case SC_MAXIMIZE:
 		{
-			if (load_dll)
+			if (done_WM_CREATE)
 			{
 				if (notepad)
 				{
@@ -2989,24 +3061,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		vjoy.Close();
 		ds.Close();
 		FreeLanguage();
+		if (tape.vJoyShutDown)
+			disable(GetvJoyVersion());
 		PostQuitMessage(0);
 		{
 			HMODULE hMod = ::GetModuleHandle(L"ViGEmClient.dll");
-			if (hMod != 0)
+			if (hMod != nullptr)
 				::FreeLibrary(hMod);
 		}
 		{
 			HMODULE hMod = ::GetModuleHandle(L"vJoyInterface.dll");
-			if (hMod != 0)
+			if (hMod != nullptr)
+				::FreeLibrary(hMod);
+		}
+		{
+			HMODULE hMod = ::GetModuleHandle(L"vJoyInstall.dll");
+			if (hMod != nullptr)
 				::FreeLibrary(hMod);
 		}
 		{
 			HMODULE hMod = ::GetModuleHandle(L"WebView2Loader.dll");
-			if (hMod != 0)
+			if (hMod != nullptr)
 				::FreeLibrary(hMod);
 		}
 		::DeleteFile(L"ViGEmClient.dll");
 		::DeleteFile(L"vJoyInterface.dll");
+		::DeleteFile(L"vJoyInstall.dll");
 		::DeleteFile(L"WebView2Loader.dll");
 		::DeleteFile(L"Devcon.exe");
 		::DeleteFile(L"ViGEmClient.dmp");

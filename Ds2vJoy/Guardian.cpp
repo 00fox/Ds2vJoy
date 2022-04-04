@@ -18,30 +18,52 @@ Guardian::~Guardian()
 	{
 		AffectedList();
 
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
 		if (tape.dsHID1Enable && tape.dsHID1 && pid1_affected)
+		{
 			RemoveBlacklistDevice(tape.getHID(1));
+			DeviceRestart(L"HID", tape.getHID(1));
+		}
 		if (tape.dsHID2Enable && tape.dsHID2 && pid2_affected)
+		{
 			RemoveBlacklistDevice(tape.getHID(2));
+			DeviceRestart(L"HID", tape.getHID(2));
+		}
 		if (tape.dsHID3Enable && tape.dsHID3 && pid3_affected)
+		{
 			RemoveBlacklistDevice(tape.getHID(3));
+			DeviceRestart(L"HID", tape.getHID(3));
+		}
 	}
 }
 
 void Guardian::Init(HWND hWnd)
 {
 	m_hWnd = hWnd;
+
 	if (tape.GuardianActive && !tape.GuardianPaused)
 	{
 		WhitelistInit();
-		BlacklistInit(-1);
+		BlacklistInit(-2);
 	}
+}
+
+const WCHAR* Guardian::GuardianButtons()
+{
+	return GuardianButtonsString.c_str();
+}
+
+void Guardian::GuardianButtonsComputString()
+{
+	GuardianButtonsString = L"PIDs: ";
+	for (int i = 0; i < ProcessPIDs.size(); i++)
+		GuardianButtonsString = GuardianButtonsString + L" " + std::to_wstring(ProcessPIDs[i]);
 }
 
 void Guardian::AllDevicesRestart()
 {
 	for (int i = 1; i < 4; i++)
-		if (tape.getHID(i) != L"")
-			DeviceRestart(tape.getHID(i));
+		DeviceRestart(L"HID", tape.getHID(i));
 
 	return;
 }
@@ -52,6 +74,15 @@ void Guardian::BlacklistInit(int hid)
 	{
 		AffectedList();
 
+		bool torestart = false;
+		if (!tape.CallbackPaused && hid > -2)
+		{
+			SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+			torestart = true;
+		}
+		else
+			hid = -1;
+
 		if (tape.dsHID1 && (hid == -1 || hid == 0 || hid == 1))
 		{
 			if (tape.dsHID1Enable && !tape.GuardianPaused)
@@ -60,26 +91,13 @@ void Guardian::BlacklistInit(int hid)
 				{
 					RemoveBlacklistDevice(tape.getHID(1));
 					BlacklistDevice(tape.getHID(1));
-					Sleep(100);
-					if (tape.getHID(1) != L"")
-						DeviceRestart(tape.getHID(1));
 				}
 				else if (!tape.GuardianActive && pid1_affected)
-				{
 					RemoveBlacklistDevice(tape.getHID(1));
-					Sleep(100);
-					if (tape.getHID(1) != L"")
-						DeviceRestart(tape.getHID(1));
-				}
 			}
 			else if (pid1_affected)
-			{
 				RemoveBlacklistDevice(tape.getHID(1));
-				Sleep(100);
-				if (tape.getHID(1) != L"")
-					DeviceRestart(tape.getHID(1));
-			}
-		
+			DeviceRestart(L"HID", tape.getHID(1));
 		}
 		if (tape.dsHID2 && (hid == -1 || hid == 0 || hid == 2))
 		{
@@ -89,26 +107,13 @@ void Guardian::BlacklistInit(int hid)
 				{
 					RemoveBlacklistDevice(tape.getHID(2));
 					BlacklistDevice(tape.getHID(2));
-					Sleep(100);
-					if (tape.getHID(2) != L"")
-						DeviceRestart(tape.getHID(2));
 				}
 				else if (!tape.GuardianActive && pid2_affected)
-				{
 					RemoveBlacklistDevice(tape.getHID(2));
-					Sleep(100);
-					if (tape.getHID(2) != L"")
-						DeviceRestart(tape.getHID(2));
-				}
 			}
 			else if (pid2_affected)
-			{
 				RemoveBlacklistDevice(tape.getHID(2));
-				Sleep(100);
-				if (tape.getHID(2) != L"")
-					DeviceRestart(tape.getHID(2));
-			}
-
+			DeviceRestart(L"HID", tape.getHID(2));
 		}
 		if (tape.dsHID3 && (hid == -1 || hid == 0 || hid == 3))
 		{
@@ -118,27 +123,17 @@ void Guardian::BlacklistInit(int hid)
 				{
 					RemoveBlacklistDevice(tape.getHID(3));
 					BlacklistDevice(tape.getHID(3));
-					Sleep(100);
-					if (tape.getHID(3) != L"")
-						DeviceRestart(tape.getHID(3));
 				}
 				else if (!tape.GuardianActive && pid3_affected)
-				{
 					RemoveBlacklistDevice(tape.getHID(3));
-					Sleep(100);
-					if (tape.getHID(3) != L"")
-						DeviceRestart(tape.getHID(3));
-				}
 			}
 			else if (pid3_affected)
-			{
 				RemoveBlacklistDevice(tape.getHID(3));
-				Sleep(100);
-				if (tape.getHID(3) != L"")
-					DeviceRestart(tape.getHID(3));
-			}
-
+			DeviceRestart(L"HID", tape.getHID(3));
 		}
+
+		if (torestart)
+			PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 	}
 }
 
@@ -153,7 +148,7 @@ void Guardian::WhitelistInit()
 			RemoveWhitelistByPID(ProcessPIDs[i]);
 		}
 	}
-	ProcessPIDs = { 0 };
+	ProcessPIDs = { };
 	if (tape.GuardianActive && !tape.GuardianPaused)
 		WhitelistDs2vJoy();
 	WhitelistCheck();
@@ -207,40 +202,19 @@ void Guardian::HidStates()
 	HidCState = HidCerberusState();
 }
 
-int Guardian::GetHidGState()
+char Guardian::GetHidGState()
 {
 	return HidGState;
 }
 
-int Guardian::GetHidCState()
+char Guardian::GetHidCState()
 {
 	return HidCState;
 }
 
-int Guardian::GuardianState(bool verbose)
+char Guardian::GuardianState(bool verbose)
 {
-	char GuardianState = -1;
-
-	std::wstring devconpath = L"Devcon.exe status Root\\HidGuardian";
-	std::wstring devconcmd = LaunchCmd(devconpath.c_str());
-
-	if (FindInString(devconcmd, L"No matching devices found"))
-		GuardianState = 0;
-	if (FindInString(devconcmd, L"Driver is running"))
-		GuardianState = 1;
-	if (FindInString(devconcmd, L"Device is disabled"))
-		GuardianState = 2;
-
-	if (verbose)
-		switch (GuardianState)
-		{
-		case 0: { echo(L"HidGuardian driver is uninstalled"); break; }
-		case 1: { echo(L"HidGuardian driver is runing"); break; }
-		case 2: { echo(L"HidGuardian driver is disabled"); break; }
-		default: { echo(L"HidGuardian state unknown"); break; }
-		}
-
-	return GuardianState;
+	return GetDeviceState(L"ROOT\\SYSTEM", L"Root\\HidGuardian", verbose);
 }
 
 BOOL Guardian::GuardianInstall(bool verbose)
@@ -256,129 +230,109 @@ BOOL Guardian::GuardianInstall(bool verbose)
 
 	if (ExtractEmbededResource(installpath, IDR_HIDGUARDIAN_ZIP, true))
 	{
-		std::wstring devconpath = L"Devcon.exe install \"" + PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\HidGuardian\\HidGuardian.inf\" Root\\HidGuardian";
-		LaunchCmd(devconpath.c_str());
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+		std::wstring infpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\HidGuardian\\HidGuardian.inf";
+		InstallDriverByHwId(infpath, L"Root\\HidGuardian");
 
-		devconpath = L"Devcon.exe classfilter HIDClass upper -HidGuardian";
+		Sleep(200);
+		std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper -HidGuardian";
 		LaunchCmd(devconpath.c_str());
+		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 
-		if (GuardianState() == 1)
+		switch (GuardianState())
 		{
-			echo(I18N.HidGuardian_driver_installed);
+		case DRIVER_STATE_ACTIVE:
+		{
+			echo(I18N.Guardian_driver_installed);
 			return TRUE;
 		}
+		case DRIVER_STATE_DISABLED:
+		{
+			echo(I18N.Guardian_driver_installed);
+			return TRUE;
+		}
+		}
 	}
-	echo(I18N.HidGuardian_driver_instalation_failed);
+	echo(I18N.Guardian_driver_instalation_failed);
 
 	return FALSE;
 }
 
 BOOL Guardian::GuardianUninstall(bool verbose)
 {
-	BOOL GuardianUninstall = FALSE;
-
-	if (GuardianState() > 0)
+	switch (GuardianState())
 	{
-		{
-			std::wstring devconpath = L"Devcon.exe remove Root\\HidGuardian";
-			LaunchCmd(devconpath.c_str());
-
-			devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
-			LaunchCmd(devconpath.c_str());
-		}
-
-		if (GuardianState() < 1)
-		{
-			echo(I18N.HidGuardian_driver_uninstalled);
-			GuardianUninstall = TRUE;
-		}
-		else
-			echo(I18N.HidGuardian_driver_uninstalation_failed);
-	}
-	else
+	case DRIVER_STATE_NOTPRESENT:
 	{
 		if (verbose)
 			echo(L"HidGuardian driver is already uninstalled");
-		GuardianUninstall = TRUE;
+		return TRUE;
 	}
+	case DRIVER_STATE_ACTIVE:
+	case DRIVER_STATE_DISABLED:
+	{
+		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
+		RemoveDriverByHwId(L"ROOT\\SYSTEM", L"Root\\HidGuardian", verbose);
 
-	std::wstring installpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\HidGuardian\0\0";
-	std::filesystem::remove_all(installpath);
+		Sleep(200);
+		std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
+		LaunchCmd(devconpath.c_str());
+		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 
-	std::wstring prfdirpath = PrfPath() + L"/" + tape.ProgramFilesDirName;
-	prfdirpath = ReplaceInString(prfdirpath, L"\\", '/');
-	RemoveDirectoryW(prfdirpath.c_str());
+		if (GuardianState() == DRIVER_STATE_NOTPRESENT)
+		{
+			std::wstring installpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\HidGuardian\0\0";
+			std::filesystem::remove_all(installpath);
 
-	return GuardianUninstall;
+			std::wstring prfdirpath = PrfPath() + L"/" + tape.ProgramFilesDirName;
+			prfdirpath = ReplaceInString(prfdirpath, L"\\", '/');
+			RemoveDirectoryW(prfdirpath.c_str());
+
+			echo(I18N.Guardian_driver_uninstalled);
+			return TRUE;
+		}
+		else
+		{
+			if (verbose)
+				echo(I18N.Guardian_driver_uninstalation_failed);
+			return FALSE;
+		}
+	}
+	default:
+	{
+		if (verbose)
+		{
+			echo(L"HidGuardian driver has a problem");
+			GetDeviceError(L"ROOT\\SYSTEM", L"Root\\HidGuardian", true);
+		}
+		return FALSE;
+	}
+	}
 }
 
 BOOL Guardian::GuardianEnable(bool verbose)
 {
-	int hdState = GuardianState();
+	BOOL result = SetDeviceState(L"ROOT\\SYSTEM", L"Root\\HidGuardian", DICS_ENABLE, verbose);
 
-	if (hdState == 0)
-	{
-		if (verbose)
-			echo(L"HidGuardian driver is not installed");
-		return FALSE;
-	}
-	else if (hdState == 1)
-	{
-		if (verbose)
-			echo(L"HidGuardian driver is already running");
-		return TRUE;
-	}
-
-	std::wstring devconpath = L"Devcon.exe enable Root\\HidGuardian";
+	Sleep(200);
+	std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
 	LaunchCmd(devconpath.c_str());
 
-	if (GuardianState() == 1)
-	{
-		if (verbose)
-			echo(L"HidGuardian driver enabled");
-		return TRUE;
-	}
-
-	if (verbose)
-		echo(L"HidGuardian driver enabling failed");
-
-	return FALSE;
+	return result;
 }
 
 BOOL Guardian::GuardianDisable(bool verbose)
 {
-	int hdState = GuardianState();
+	BOOL result = SetDeviceState(L"ROOT\\SYSTEM", L"Root\\HidGuardian", DICS_DISABLE, verbose);
 
-	if (hdState == 0)
-	{
-		if (verbose)
-			echo(L"HidGuardian driver is not installed");
-		return FALSE;
-	}
-	else if (hdState == 2)
-	{
-		if (verbose)
-			echo(L"HidGuardian driver is already disabled");
-		return TRUE;
-	}
-
-	std::wstring devconpath = L"Devcon.exe disable Root\\HidGuardian";
+	Sleep(200);
+	std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
 	LaunchCmd(devconpath.c_str());
 
-	if (GuardianState() == 2)
-	{
-		if (verbose)
-			echo(L"HidGuardian driver disabled");
-		return TRUE;
-	}
-
-	if (verbose)
-		echo(L"HidGuardian driver disabling failed");
-
-	return FALSE;
+	return result;
 }
 
-int Guardian::HidCerberusState(bool verbose)
+char Guardian::HidCerberusState(bool verbose)
 {
 	char HidCerberusState = -1;
 
@@ -424,11 +378,11 @@ BOOL Guardian::HidCerberusInstall(bool verbose)
 		LPWSTR exepathtmp = (LPWSTR)(LPCWSTR)exepath.c_str();
 		if (ServiceInstall(WCHARI(L"HidCerberus.Srv"), exepathtmp, SERVICE_WIN32_OWN_PROCESS, verbose))
 		{
-			echo(I18N.HidCerberus_service_installed);
+			echo(I18N.Cerberus_service_installed);
 			return TRUE;
 		}
 	}
-	echo(I18N.HidCerberus_service_instalation_failed);
+	echo(I18N.Cerberus_service_instalation_failed);
 
 	return FALSE;
 }
@@ -441,11 +395,11 @@ BOOL Guardian::HidCerberusUninstall(bool verbose)
 	{
 		if (ServiceDelete(WCHARI(L"HidCerberus.Srv"), verbose))
 		{
-			echo(I18N.HidCerberus_service_uninstalled);
+			echo(I18N.Cerberus_service_uninstalled);
 			HidCerberusUninstall = TRUE;
 		}
 		else
-			echo(I18N.HidCerberus_service_uninstalation_failed);
+			echo(I18N.Cerberus_service_uninstalation_failed);
 	}
 	else
 	{
@@ -484,6 +438,7 @@ BOOL Guardian::WhitelistDs2vJoy()
 		{
 			ProcessPIDs.push_back(tape.Ds2vJoyPID);
 			tape.DsvJoyAddedToGuardian = true;
+			GuardianButtonsComputString();
 
 			return TRUE;
 		}
@@ -561,7 +516,8 @@ void Guardian::WhitelistByExeName(std::wstring ProcessExeName)
 						if (WhitelistByPID((int)AllProcessesPIDs[i]))
 						{
 							ProcessPIDs.push_back((int)AllProcessesPIDs[i]);
-							echo(I18N.HidGuardian_Added_to_Guardian, ProcessExeName.c_str(), AllProcessesPIDs[i]);
+							echo(I18N.Guardian_Added_to_Guardian, ProcessExeName.c_str(), AllProcessesPIDs[i]);
+							GuardianButtonsComputString();
 						}
 					}
 				}
@@ -593,7 +549,10 @@ void Guardian::RemoveWhitelistByExeName(std::wstring ProcessExeName)
 						ProcessPIDs.erase(pos);
 					}
 					if (RemoveWhitelistByPID((int)AllProcessesPIDs[i]))
-						echo(I18N.HidGuardian_Removed_from_Guardian, ProcessExeName.c_str(), AllProcessesPIDs[i]);
+					{
+						echo(I18N.Guardian_Removed_from_Guardian, ProcessExeName.c_str(), AllProcessesPIDs[i]);
+						GuardianButtonsComputString();
+					}
 				}
 			}
 		}
