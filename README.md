@@ -646,13 +646,13 @@ But you can install it manually by visiting this page: (shortcut can be found in
 You still can use the program without installing it
 
 You can found usual functions,
-Tabs, close tabs, favorites, home page, back, next, refresh, adress bar, go, autorefresh, zoom minus, zoom plus
+Tabs, exit web module, favorites, home page, back, next, refresh, adress bar, go, autorefresh, zoom minus, zoom plus
 - most of them can be automatized in mappings
 - autorefresh time can be set in settings
 
 There are some right click actions:
 - on a tab, you'll close this tab
-- on close tab (right button), you quit web module
+- on exit web module button, you'll close actual tab
 - on menu favorites, you will set favorite to actual web page instead of navigating to this favorite
 - on zoom minus, you reset zoom to its default value
 - on zoom plus, you set actual zoom as default (saved for next time you use the program)
@@ -701,9 +701,7 @@ And you can enter
 - home page and 1 to 9 favorites for web browser (can be local files)(favorites can be directly set in web module)
 - from 1 to 5 programs name and location which can be launched after that through systray menu
 
-
 ## Notepad
-
 Click on maximize to hide/show notepad
 Notepad is saved every 5 seconds of inactivity if there was any modification, while Notepad is shown, or as soon as you close it
 You can install full Notepad font used by default, you can install it on your system. You'll find it under Ds2vJoy/Fonts directory
