@@ -1,4 +1,11 @@
-﻿# Ds2vJoy
+﻿Please consider supporting the project by clicking [![Github Sponsorship](.github/Sponsors.gif)](https://https://github.com/sponsors/00fox)
+- Influence future choices
+- Or propose yours and give them importance
+You will find a list of pending requests in the issues, along with any bug reports or ideas that you would like to share.
+
+Thanks
+
+# Ds2vJoy
 DualShock™ and DualSense™, DirectInput or XInput to DirectOutput or XOutput for Windows 64 bits
 
 You can combine one or more of these options, no one is required:
