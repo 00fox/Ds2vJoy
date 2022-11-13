@@ -1,6 +1,6 @@
 ﻿Please consider supporting the project by clicking [![Github Sponsorship](.github/Sponsors.gif)](https://https://github.com/sponsors/00fox)
 - Influence future choices
-- Or propose yours and give them importance
+- Or propose your own and give them importance
 - You will find a list of pending requests in the issues, take a look...
 
 Thanks
