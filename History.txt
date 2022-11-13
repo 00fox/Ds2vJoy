@@ -1,0 +1,532 @@
+20221113-1
+General:
+- Converted the use of dll in static.
+- Added Emergency with escape: if something goes wrong, stay pushed on ESC for more than two seconds, and program will stop to interprete and doing actions as long you push it.
+- Progress bar when loading and changing language to stay tuned of what happen.
+- Multiple icons in system tray to know actual states.
+- Only last finger emplacement count for touchpad.
+- Fix screen limits while move mouse with multiple monitors.
+
+Mapping:
+- Added buttons for battery, mic state, USB.
+- Added buttons for DirectInput, more constant buttons.
+- Added buttons for vJoy Axis to Trigger ans Inverse.
+- Added buttons for vJoy virtual working evironement: 8 axis and 16 buttons.
+- Added buttons for Stance and actual position - while DS4/DS5.
+- Added buttons for Sixaxis (Velocity + Gyrocompass) - while DS4/DS5.
+- Changed all buttons caluculus to long, and values to short (except threshold in byte), values only at the end. More consistent with multiple sources and destinations.
+- Mouse moves and serveral time action based, now follow the average time turn, so it won't be pad or blutooth dependant anymore and feel more stable and always same speed.
+- While in a mapping, you can valid changements and reload it the same time by clicking at the right of the button OK (to make several quick tests for ex.).
+- Added after effects actions (can be used to calibrate too)
+
+Settings:
+- language system added in settings, push your traduction if you want.
+- Added DirectInput choice and configuration in settings for up to simultaneous two devices, you can choose which buttons will correspond to what in the program, so for example, you can use special features as simultaneous L1R1 presses.
+- Skip vigem DS4 as an available serial.
+- vJoy device acquisition selection can be set to none.
+- Threshold usage modified.
+- Black theme change all the program and not only the Notepad.
+
+Diverse:
+- Text corrected for TO_MEM_MODE special action
+- Mouse movement stops if source is disconnected to prevent uncontrollable behavior (but you can still use it if you haven't specified a joystick as the source)
+- Bug with battery values and mic status with ds5 solved.
+- Visual bug with second source in mappings corrected.
+- Code optomization
+
+20220404-1
+Ds2vjoy build in driver utilities x64 only Latest
+Memory leak introduced by status informations in last build removed
+Added driver and devices utilities functions in WindowsTools.h library
+Use them instead of Devcon.exe
+Added add and remove of vJoy driver (wait to next build to utilize since there will be build-in vJoy configuration page)
+Added an option to disable vJoy device on exit (it won't stay under Windows's joysticks peripheral list
+Type of release : MINOR + PATCH (MAJOR/MINOR/PATCH)
+
+20220328-1
+Ds2vjoy Magnifier x64 only
+Added Magnifier
+And mouse actions do deal with:
+
+MAGNIFY: Set magnification on according to values specified in the grid
+if x=y=0, magnification is set on center of the screen
+if x=1 y=0, magnification is set on actual cursor position
+if x=0 y=1, magnification is set on actual point (last memorized)
+if x=y=1, magnification is set on the given point (w,h)
+if nw == 0, factor is actual factor, else it will be nw.nh (nh is the fractional part of zoom level)
+MAGNIFY_PLUS, MAGNIFY_MINUS: control the factor of magnification
+MAGNIFY_RESET: temporary return to full screen, values are not modified then you can go back to actual zoom just after
+MAGNIFY_UP, MAGNIFY_DOWN, MAGNIFY_LEFT, MAGNIFY_RIGHT: move up, down, left or right while magnification factor > 1
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20220319-1
+Ds2vjoy new web module x64 only
+Added Webbrowser
+Added Actions for notepad and web in mappings
+Added screenshots action
+Added Actions to temporary overpass setting for keyboard and mouse input
+Corrected a bug while input keys in keymaps, you can shift a key too
+Program is now compatible ISO C++20 Standard
+Various optimizations
+
+Type of release : MAJOR+PATCH (MAJOR/MINOR/PATCH)
+
+20220224-1
+Ds2vjoy Notepad and various improvements x64 only
+Added Notepad:
+
+Click on maximize to hide/show notepad
+Notepad is saved every 5 seconds of inactivity if there was any modification, while Notepad is shown, or as soon as you close it
+You can install full Notepad font used by default, you can install it on your system. You'll find it under Ds2vJoy/Fonts directory
+You can specify your own font, for that manually edit Ds2vJoy.ini file, and modify NotepadFont=NotepadFont,16,0
+
+For example, NotepadFont=Consolas,14,6 change the font to Consolas family, height of 14, width of 6 (0 is default)
+Remember you can use MINIMIZE/RESTORE special actions, for example, quickly hide/show the notepad over the game, and you can right click on window's title bar to make the window semi transparent.
+Various patches and minor improvements
+WebBrowser coming soon
+Type of release : MAJOR+PATCH (MAJOR/MINOR/PATCH)
+
+20211210-1
+Ds2vjoy keyboard and mouse as source x64
+Keyboard and mouse as source
+Can be selected in settings
+vJoy is no more needed to use all other features
+Added stats, add counter in your script, know which template you use the more, or count kills etc.
+Reset one by one in clone tab, or all at once by dedicated special action
+Type of release : MAJOR+PATCH (MAJOR/MINOR/PATCH)
+
+20211027-1
+Ds2vjoy new mode actions x64
+Changed some mode action rules and added 1+1+1(8) new ones:
+At the left of destinations, you'll find special mouse, sound, modes and time actions
+…
+MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
+TO_MEM_MODE: Go back to memorized mode
+TO_MODE: Switch to mode 1-8
+TO_LAST_MODE: Go back to last mode
+BASE_TO_MODE: Change base mode to 1-8 (base mode is a virtual concept about a real mode, therefore, can be used to emulate different cases to which all other modes go back after)
+TO_BASE_MODE: Go back to base mode
+Type of release : MINOR+PATCH (MAJOR/MINOR/PATCH)
+
+20211025-1
+Ds2vjoy various patch x64
++ Led wave cycle acceleration in settings
++ Disable double for source:
+Under each source and destination, you'll find disabling
+this button will be disabled for next mappings if this mapping is running (except with Force)
+double (only source), if Short (or Double), even when release time, before time to activate spent (or second press)
+double (only destination), if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
++ Changed source value used to calculate destination value rules:
+OrXor1	OrXor2	Sustain ?	Source1		Source2		Source3		Source1
+0	0	'No Sustain' ?	val					>	released1
+1/2	0	> : 0xFF	val	>	val			>	released1
+0	1/2	(see Controls/	val					>	released1
+1/2	1/2	Interrupt)	val	>	val	>	val	>	released1
+sustain is released and time stamps is in use (and no 'Interrupt' else mapping is stopped when released)
+PATCH (MAJOR/MINOR/PATCH)
+
+
+20211012-1
+Ds2vjoy stability patch x64
+PATCH (MAJOR/MINOR/PATCH)
+
+20211004-1
+Ds2vjoy new transitivity mode x64
+Added 'Conduct' to transitivity modes, and updated the Table of transitivity in the help as below:
+Table of Transitivity:
+Transitivity	Pause	Type	Result
+One time	Conduct	If the source is already pushed when entering the new mode,
+the mapping is triggered
+Transitivity		Complete	You can release and trigger again in new mode
+if it was already active before changing mode
+Transitivity	One time	Limited	Action continue while changing mode,
+but you can't trigger again if release
+Come back		Retroactive	Instead of continuation, button is released,
+but triggered again if still pushed when initial mode is back
+Come back	One time	One time back	The same as Retroactive, but while pushed,
+you can change mode and get it triggered again only one time
+After, you have to release and trigger it again in its own mode
+in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
+except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+
+20211003-1
+Changed tags for keymaps (see below, added to the help)
+Corrected a bug while saving Send to
+Move elements in editing page, to be more ergonomic
+Tag	Description
+N	'Natural typing' is checked
+S	'Send to' is checked
+R/h	'Restore'/'Hide' is checked
+M/m	'Maximize'/'Minimize' is checked
+S/n	'Show'/'Normal' is checked
+A	'Activate window' is checked
+K	'KEYEVENTF_EXTENDEDKEY' is checked
+C	'KEYEVENTF_SCANCODE' is checked
+Method:
+
+Tags	In practice
+Empty	The keys will be sent to your actual focus
+S	It will use Postmessage to send keys to specified process
+S+A	It will activate window of the specified process before (each key if 'Natual typing' is in use)
+PATCH (MAJOR/MINOR/PATCH)
+
+20211001-1
+Ds2vjoy keymap upgrade x64
+Changed the keymap structure to concorde to these added in the help:
+You can now enter up to 64 characters per keymap
+You can enter directly keys in the 'Enter Keycode' part, or use 'Send Keycode' choices (for advanced use)
+'Natural typing' is a simple way, without seeking for perfection, nor performance goal, to write as a human
+'Send to', permit you to specify the process, and will ungrey (disabled) Find button
+'By post message / activating window' let you choice the method if 'Send to' is active
+Post message is an internal way of programs, if they support it, to send and/or receive messages
+Activating put the window foreground if necessary, and focus the keystroke on it (doesn't work if minimized)
+If 'Send to' is active, you can maximize, restore etc window before
+but, they are also served alone, together with minimize, hide etc, for example to manage your windows on the screen, and no longer a game, even if you don't enter any text to send
+https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
+KEYEVENTF_EXTENDEDKEY: If specified, the scan code was preceded by a prefix byte that has the value 0xE0 (224).
+KEYEVENTF_SCANCODE: If specified, wScan identifies the key and wVk is ignored.
+https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
+Solved clear problem, which didn't work if you didn't enter new keys before saving
+Type of release : MINOR+PATCH (MAJOR/MINOR/PATCH)
+
+20210930-1
+Ds2vjoy notice and vJoy second view x64
+Added the possibility to add notes, notice, rule, combo description etc to vJoy list according to this rules added in the help:
+
+vJoy
+Sort, order, add, delete, copy or edit (double click or menu) your mappings easily
+Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
+
+Two different orders exist for each column
+single click corresponds to single column natural ordering, except there isn't inverted order, you can proceed on several columns in succession
+clicking twice consecutively on the same, launch a programmed sort operation (see table below)
+for security reasons, you have to maintain the right button down and then left click on the column header (avoid unwanted sorts, while order is important in your mapping)
+Instead, with a simple left click, you change the view (one for mapping different of clone's) and get a 'Notice' column instead of 'vJoy+Tags'
+Then with a right click on an item, you can manage to add and view a note, comment, notice, reminder, game rule, combo description, etc. different for each (max 260 characters)
+Views (which one) are saved, and restored when you open the program again
+(vJoy only, RapidFire and Keymap use natural + reverse order without the need of right mouse button down)
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210929-1
+Ds2vjoy sorting, time, transitivity and Axis movements x64
+Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests
+
+Added a method of upgrading profile while important changes are made
+this is the case in this release, all profiles of last version will be upgraded to the new one, but CAREFUL! keep a copy of an older version than 20210828-3, as it won't, to copy your mapping from older to new one (just mapping, the rest will stay unchanged)
+Sorting method added under vJoy, RapidFire and Keymap Tabs while clicking on headers of the list (for vJoy, be careful you'll have to manually reorder if order is important in your mapping, but still can be useful), added to the Help:
+Two different orders exist for each column (vJoy only)
+single click corresponds to single column natural ordering, except there isn't inverted order, you can proceed on several columns in succession
+clicking twice consecutively on the same, launch a programmed sort operation (see table below)
+for security reasons, you have to maintain the right button down and then left click on the column header (avoid unwanted sorts, while order is important in your mapping)
+RapidFire and Keymap use natural + reverse order without the need of right mouse button down
+Sorting order (Programmed method):
+
+column	1	2	3	4	5	7	8
+1	Enable	ds1	dsor	dsnot	Led	vj	Tags
+2	Enable	dsor	dsnot	Led	vj	ds1	Tags
+3	Enable	dsnot	Led	vj	ds1	dsor	Tags
+4	Enable	Led	vj	ds1	dsor	dsnot	Tags
+5	Enable	Tags	ds1	dsor	dsnot	Led	vj
+in either case, vj are the first valid ones found among the eight available, no matter where you put them.
+Transitivity added since we already added modes and how to memorize, change them and coming back, and it was obvious that we could add some rules and possibilities to them, added to the Help (vJoy editing):
+While talking about OnRelease middle destination checkboxes, and just after:
+
+Upper one, NoRelease, is to decide to not do release action while transitivity mode active (see below) and mode changed
+double, one turn of this release action will still be performed then stopped
+Upper one again, NlRelease (normal release), is to decide not perform NoRelease condition if back to initial mode
+double, not perform NoRelease condition while in the new mode
+(2*8 checkboxes have been added)
+
+In the section which talk about buttons under Led buttons:
+
+Pause: …
+…
+double: One time, used in Transitivity (see table of transitivity below)
+Transitivity: Principal way of transitivity which brings different behaviors and transition possibilities while mode changed
+double, Come back, another way of transitivity which brings its owns (see table of transitivity below)
+(1 checkbox has been added, 'Transitivity'/'Come back' and 'Pause' can be double checked to 'One time' now)
+
+Table of Transitivity:
+
+Transitivity	Pause	Type	Result
+Transitivity		Complete	You can release and trigger again in new mode
+if it was already active before changing mode
+Transitivity	One time	Limited	Action continue while changing mode, but you can't trigger again if release
+Come back		Retroactive	Instead of continuation, button is released,
+but triggered again if still pushed when initial mode is back
+Come back	One time	One time back	The same as Retroactive,
+but while pushed, you can change mode and get it triggered again only one time
+After, you have to release and trigger it again in its own mode
+in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
+While editing a vJoy mapping you now have the choice of special mouse, sound, modes and time actions for all destinations, up from first row only
+Added a third mouse move action, and save n move action, with nh and nw of the grid, as destination point
+If you enter a stop time to move mouse actions, the movement is done in the time of (stop - start)ms, adjusted to average turn (+ bluetooth delay if used)
+Added four Grid or Raid mouse actions
+At the left of destinations, you'll find special mouse, sound, modes and time actions
+…
+GRID_LEFT/GRID_UP/GRID_RIGHT/GRID_DOWN: If you use Grid or Raid mouse mode (see mouse group checkboxes), can move one tick in any of four directions
+Added 7 special actions in mouse, sound, modes ans time actions
+…
+FORGOT_RELEASED: Loose the released state if source has been released before, and force it to check it again
+IF RELEASED GOTO: Go to the specified point of the timeline, if source has been released (use stop value)
+IF PUSHED GOTO: Go to the specified point of the timeline, if source is still pushed (use stop value)
+RETURN_TO: return to the specified point of the timeline, resetting the actions if they need to be (use stop value)
+INTERRUPT: same as 'Interrupt' condition, but time dependent
+NO_SUSTAIN: same as 'No sustain' condition, but time dependent
+PAUSE: same as 'Pause' condition, but time dependent
+(see an example in the help)
+Added Axis movement according to this rules added in the help
+…
+Double, you'll find Axis movements (see a picture in the help)
+RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN, XY_CENTER, XY_LEFT, XY_UP_LEFT, XY_UP, XY_UP_RIGHT, XY_RIGHT, XY_DOWN_RIGHT, XY_DOWN, XY_DOWN_LEFT, XY_Q1_CW, XY_Q1_CN, XY_Q2_CW, XY_Q2_CN, XY_Q3_CW, XY_Q3_CN, XY_Q4_CW, XY_Q4_CN, XY_E1_CW, XY_E1_CN, XY_E2_CW, XY_E2_CN, XY_E3_CW, XY_E3_CN, XY_E4_CW, XY_E4_CN, XY_E5_CW, XY_E5_CN, XY_E6_CW, XY_E6_CN, XY_E7_CW, XY_E7_CN, XY_E8_CW, XY_E8_CN, XY_C_L, XY_C_UL, XY_C_U, XY_C_UR, XY_C_R, XY_C_DR, XY_C_D, XY_C_DL, XY_2C_L, XY_2C_UL, XY_2C_U, XY_2C_UR, XY_2C_R, XY_2C_DR, XY_2C_D, XY_2C_DL, XY_D_L, XY_D_UL, XY_D_U, XY_D_UR, XY_D_R, XY_D_DR, XY_D_D, XY_D_DL, XY_T_L_CW, XY_T_L_CN, XY_T_U_CW, XY_T_U_CN, XY_T_R_CW, XY_T_R_CN, XY_T_D_CW, XY_T_D_CN, XY_S_L_CW, XY_S_L_CN, XY_S_U_CW, XY_S_U_CN, XY_S_R_CW, XY_S_R_CN, XY_S_D_CW, XY_S_D_CN, XY_L_L_CW, XY_L_L_CN, XY_L_U_CW, XY_L_U_CN, XY_L_R_CW, XY_L_R_CN, XY_L_D_CW, XY_L_D_CN, ZRZ_CENTER, ZRZ_LEFT, ZRZ_UP_LEFT, ZRZ_UP, ZRZ_UP_RIGHT, ZRZ_RIGHT, ZRZ_DOWN_RIGHT, ZRZ_DOWN, ZRZ_DOWN_LEFT, ZRZ_Q1_CW, ZRZ_Q1_CN, ZRZ_Q2_CW, ZRZ_Q2_CN, ZRZ_Q3_CW, ZRZ_Q3_CN, ZRZ_Q4_CW, ZRZ_Q4_CN, ZRZ_E1_CW, ZRZ_E1_CN, ZRZ_E2_CW, ZRZ_E2_CN, ZRZ_E3_CW, ZRZ_E3_CN, ZRZ_E4_CW, ZRZ_E4_CN, ZRZ_E5_CW, ZRZ_E5_CN, ZRZ_E6_CW, ZRZ_E6_CN, ZRZ_E7_CW, ZRZ_E7_CN, ZRZ_E8_CW, ZRZ_E8_CN, ZRZ_C_L, ZRZ_C_UL, ZRZ_C_U, ZRZ_C_UR, ZRZ_C_R, ZRZ_C_DR, ZRZ_C_D, ZRZ_C_DL, ZRZ_2C_L, ZRZ_2C_UL, ZRZ_2C_U, ZRZ_2C_UR, ZRZ_2C_R, ZRZ_2C_DR, ZRZ_2C_D, ZRZ_2C_DL, ZRZ_D_L, ZRZ_D_UL, ZRZ_D_U, ZRZ_D_UR, ZRZ_D_R, ZRZ_D_DR, ZRZ_D_D, ZRZ_D_DL, ZRZ_T_L_CW, ZRZ_T_L_CN, ZRZ_T_U_CW, ZRZ_T_U_CN, ZRZ_T_R_CW, ZRZ_T_R_CN, ZRZ_T_D_CW, ZRZ_T_D_CN, ZRZ_S_L_CW, ZRZ_S_L_CN, ZRZ_S_U_CW, ZRZ_S_U_CN, ZRZ_S_R_CW, ZRZ_S_R_CN, ZRZ_S_D_CW, ZRZ_S_D_CN, ZRZ_L_L_CW, ZRZ_L_L_CN, ZRZ_L_U_CW, ZRZ_L_U_CN, ZRZ_L_R_CW, ZRZ_L_R_CN, ZRZ_L_D_CW, ZRZ_L_D_CN
+if no start/stop time is entered, the value used to calculate the position is the usual source calculation value
+otherwise, the movement undergoes its complete evolution over time, going from start to stop
+if OnRelease is used, the movement will start after release
+double, the movement start at the start time, undergoes its complete evolution over time, going from start to stop, and stay at its maximum if finished before release + stop time
+Upper one, Overcontrol:
+Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
+
+but you can use Overcontrol checkbox to fuse values
+double, Protect: further axis action which should overpass this one won't be permit (may be used on other vJoy buttons)
+if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
+All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
+
+Complete turn, clockwise or counterclockwise, starting by the north (motorization, loops, perpetual motion)
+Stay at the middle (combos and technology)
+Stay at one of the eight typical position of the circonference (W, NW, N, NE, E, SE, S, SW)
+Quarter of turn, clockwise and counterclockwise (Q1=NE, Q2=SE, Q3=SW, Q4=NW)
+Eighth of turn, clockwise and counterclockwise (E1=NNE, E2=ENE, E3=ESE, E4=SSE, E5=SSW, E6=WSW, E7=WNW, E8=NNW)
+Center to one of the eight position of the circonference
+One of the eight position of the circonference to center
+Each of the eight possible diagonals
+Four sides, eight moves, of the two triangles (upside and downside base, identical to the square)
+Four sides, eight moves, of the square
+Four sides, eight moves, of the lozange (diamond)
+Then you can now have merged axis values, and not have to use the same type all the time, on the one hand for mapping, and also for ViGEm
+The values of the axis are now proportional to the threshold, so the grip remains soft rather than starting abruptly, even with high threshold values
+Added source trigger Axis, each axis is split into two full trigger, four by stick, you can use them individually on a button or an trigger, or together on the same, so for example left or right isn't important at all
+Added source sniper axis, which works the same except the threshold is minimal, then you can have near no threshold some times and keep normal axis with the threshold you defined for usual situations.
+It's near no threshold and not no threshold because I've used them to stabilize sniper mouse mode, which require liberty of movement but not erratic while near center
+Added mouse coordinates in vJoy editing at the lower right corner
+Two digits in the lower right corner are the mouse coordinates, to make it easier to enter special mouse actions
+click on the left number to start capture, the color changes for 3s, and after 3s it come back to its normal state with the mouse point you were at captured
+click on the right number, while you already selected an element of the grid, insert the coordinates into this column (x,y or w,h or nw,nh)
+Patched guardian whitelist that was broken
+Some code optimization, and the ViGEm problems during profile change definitely solved
+Ordered Ds2vJoy.rc, to help if you want to traduce in your language
+Type of release : MAJOR+PATCH (MAJOR/MINOR/PATCH)
+
+20210828-3
+Ds2vjoy ViGEm patch x64
+Addressed a problem, in which buttons didn't showed their correct values after swapping between two profiles with different destination choice (DS4 vs X360)
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210828-1
+Ds2vjoy multiselection editing x64
+Added the possibility to multiselection editing under vJoy, RapidFire and Keympap tabs, modified help this way:
+
+Edit, delete, copy and move actions can process multiple mappings(/rapid fires/keymaps) the same time
+You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
+When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid (DS/)vJoy button
+Changed the visual of RapidFire and Keymap tabs, and added destination process and tags under Keympap, modified help this way:
+
+Tags:
+
+Tag	Description
+Empty	Nothing is checked
+P	'Send to' is checked
+A	'By Postmessage / activation window' is checked
+Tags	In practice
+Empty	The keys will be sent to your actual focus
+P	It will use Postmessage to send keys to specified process
+PA	It will activate window of the specified process before
+A	Act like if nothing were checked, the keys will be sent to your actual focus
+Listview's tooltips of vJoy, RapidFire and Keympap tabs, no longer disapear under window when in topmost state (foreground by extended mode or button pushed in the up right corner)
+
+New method to run at startup as the old one warmed for troyan if clicked too much often
+Code optimization
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210826-1
+Ds2vjoy separator in lists x64
+Added the ability to add a separator in list views under vJoy, RapidFire and Keymap tabs
++ some code optimization
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210824-2
+Ds2vjoy color adjustment x64
+Better contrast in Reminder
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210824-1
+Ds2vjoy drawers, clone, and modes for mappings x64
+Added drawers and, the ability of moving between them, and affecting a different mode for each
+Added a dual view where you can clone a tab, for example to compare, move or just fill ViGEm with the values of vJoy in front of you
+Then, have added modes functionality (known as shifted), you can switch and go back, or more complex, according to these rules added to the help:
+
+vJoy
+Each tab corresponds to a drawer, in which you can organize the different mappings
+
+Each of these tabs are by default, like the first one, set to 'Always', but just show their numbers.
+'Always' means that all mappings, if they are checked, will always work, just, the tabs are processed in the order of appearance
+But you can assign a mode for each of these tabs, which allows you to say that the mappings they contain will only be active in this mode
+The tabs left in the 'Always' position will remain active even if you are in another mode than the starting one: the 1 (see vJoy editing, special mouse actions, sound and modes, to know how)
+The first tab is neutral and cannot be assigned to another mode, the others (1-8) all can. There is no order to follow, and two tabs can share the same mode. On the other hand, the order of processing is also the order of the tabs
+There is a dual view mode, where you can clone a tab
+
+For example to compare, move
+Or simply fill ViGEm with the values of vJoy in front of you
+The second window will stay opened in extended view (see Efficiency) for this purpose. You still can close it manually
+Otherwise, automatically hidden, outside extended mode, if you change tabs
+You get it back if you change again for vJoy Tab, until you manually close it
+Order, add, delete, copy or edit (double click or menu) your mappings easily
+Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
+
+Delete, copy and move actions can process multiple mappings the same time
+when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+vJoy editing
+At the left of first 4 destinations, you'll find special mouse actions, sound and modes
+...
+MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
+TO_MODE: Switch to mode 1-8
+TO_LAST_MODE: Go back to last mode, memorized when MEMORIZE_MODE used
+Efficiency (see picture in help)
+On bottom right, you can see a Reminder to remember dispatch of attributed buttons
+You can use it as you wish, it is saved as soon as you change a state, and you get it back next session
+Corner indicator automatically indicates all vJoy buttons (1-32) used in all mappings
+Type of release : MAJOR (MAJOR/MINOR/PATCH)
+Please report bug
+
+20210817-1
+Ds2vjoy toggle patch x64
+The toggle buttons states are refreshed as soon as the start of a new mapping turn, instead of when that particular mapping, host of that toggle, is processed
+So, then updated at that time
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210816-1
+Ds2vjoy threshold fix x64
+The values of the buttons below, now match the threshold up to the maximum:
+L2LOW
+R2LOW
+L2HIGH
+R2HIGH
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210815-1
+Ds2vjoy topmost and extended x64
+Remove topmost when minimized, give it back when restore if it was there before
+Extended mode stay if you click on minimize or close, and back on restore
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210814-2
+Ds2vjoy profile in status and disable indicator x64
+Log, added:
+Satus is separated in 4 colums which are:
+Battery
+Delay
+Buttons pressed (in vJoy and ViGEm tabs)
+Profile (1-3)
+vJoy, added:
+DS Button:
+'#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated
+vJoy Button:
+'#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
+'>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
++Some code improvements
+Type of release : MINOR+PATCH (MAJOR/MINOR/PATCH)
+
+20210813-1
+Ds2vjoy rapidfire, scroll and sound update x64
+vJoy editing. changed:
+SCROLL_UP_VARIABLE, SCROLL_DOWN_VARIABLE
+if on trigger, variable speed following the pressure force, otherwise exponential
+or fixed scroll adjusted for games that don't support the number of wheel ticks signal
+vJoy editing. added:
+MUTE_SOUND
+VOLUME_UP, VOLUME_DOWN
+if on trigger, variable speed following the pressure force, otherwise exponential
+Other keystrokes that do not require adaptive pressure, can easily be added using a vJoy button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
+RapidFire, added:
+If you enter an odd number for 'Release time', 0-19 milliseconds will be added, different each press
+If you enter an odd number for 'Press time', 0-19 milliseconds will be added, different each turn
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210811-1
+Ds2vjoy visual enhancements x64
+Visual enhancements under vJoy Tab
+And popup when no first source selected as we need it to calculate destination value with the new formula for and/or/xor ... not
+You have null, half and full if you need a neutral source
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210808-2
+Ds2vjoy 'or' rule condition update x64
+When:
+OrXor1 = 1 (Or)
+OrXor2 = 0 (Nothing)
+One of both source is killed (now unable to launch the mapping)
+Rule added to the help:
+If only first 'Or' is used and first source is killed to launch the mapping (for example, pushed more than a short press),
+and still pushed, second source is still available. But both will have to be released to be available to trigger the mapping again
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210807-3
+Ds2vjoy or/xor rules condition update x64
+Updated 'or/xor''s calculated destination value according to this rules added in the help:
+The source value used to calculate destination value is then:
+OrXor1	OrXor2	Source1		Released ?		Source2		Source3		Source1
+0	0	val ? 0	>	Sustain ?					>	released1
+1/2	0	val ? 0	>	0xFF : released1	>	val ? 0			>	released1
+0	1/2	val ? 0	>	(see Macro					>	released1
+1/2	1/2	val ? 0	>	condition)	>	val ? 0	>	val ? 0	>	released1
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210806-1 
+Ds2vjoy cumulative patch x64
+Table of which vJoy button is in use now filtered, and buttons appear only one time under vJoy Tab status
+Tags now appear in lowercase when a checkbox is double checked, as intended
+Battery status, when used, appear now under vJoy Tab as 'Battery status' instead of 'Led6'. Other leds's use continue to show 'Led1' to 'Led5'
+Type of release : MINOR+PATCH (MAJOR/MINOR/PATCH)
+
+20210804-2
+Ds2vjoy two new tags and mouse toggle bug solved x64
+Added two tags when in vJoy Tab:
+C: Macro condition is in use
+P: Pause condition is in use
+Corrected the display of:
+'+' Indicate combination
+'||' Indicate combination with or condition
+'⊕' Indicate combination with xor condition
+'-' Indicate this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions)
+'--' Indicate this mapping won't be launched if this button is pressed, but continue if already launched
+Fixed issue where 'Toggle' condition worked fine for mouse as long as it was placed (with ACTIVE_MOUSE) in the first position, but not in the other three
+Type of release : MINOR+PATCH (MAJOR/MINOR/PATCH)
+
+20210804-1
+Ds2vjoy splitted 'macro' condition to 'macro' + 'pause' x64
+Splitted 'macro' condition and changed help according to:
+Macro: Interrupt macros on release (even if timestamp not finished)
+Pause: pause this mapping while a not condition
+otherwise:
+if not is a simple, and not button is pressed, the mapping is interrupted
+if not is a double, and not button is pressed, the mapping still continue
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210803-2
+Ds2vjoy patch visual bug in ViGEm X360 + vJoy as source x64
+Patching vJoy source informations not display properly in ViGEm Tab, X360 configuration
+Type of release : PATCH (MAJOR/MINOR/PATCH)
+
+20210803-1
+Changed double state checkbox for IfMouse condition to a 3states one
+While editing a vJoy mapping
+Changed the help to:
+If mouse, if a mouse is already in use
+double, if none mouse is actually in use
+Type of release : MINOR (MAJOR/MINOR/PATCH)
+
+20210731-1
+Ds2vjoy 1st release x64
+First release after adapting DS4vJoy and DS5vJoy to work together and adding stuff like ViGEm, HidGuardian, capabilities of complex macros, methods, timestamps, combos and mutiple ways to use mouse, and new DS5 triggers and a lot of minor changes.
+Type of release : MAJOR (MAJOR/MINOR/PATCH)
