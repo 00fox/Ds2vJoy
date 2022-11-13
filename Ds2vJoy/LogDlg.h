@@ -12,12 +12,19 @@ public:
 	LogDlg();
 	~LogDlg();
 
-	void				Init(HINSTANCE, HWND, bool load_dll = true);
 	void				echo(wchar_t* buffer);
+	void				Init();
+	void				SetShowTime(bool showtime = true);
+	void				PageUp();
+	void				PageDown();
+	void				PageHome();
+	void				PageEnd();
 	void				Update();
 	void				Show();
 	void				Hide();
 	BOOL				MoveWindow(int, int, int, int, BOOL);
+
+	HWND				m_hDlg = NULL;
 
 	bool				m_pause = false;
 	short				m_back = -1;
@@ -33,14 +40,14 @@ private:
 	void				ColorRand(HWND hWnd, HWND hEdit);
 	wchar_t*			LogGet();
 
-	HWND				m_hWnd = NULL;
-	HWND				m_hDlg = NULL;
 	HWND				m_hEdit = NULL;
 
 	std::deque<wchar_t*>queue = { 0 };
 	std::mutex			m_mutex = { };
-	bool				m_load_dll = false;
+	bool				m_showTime = true;
 	int					m_count = 0;
+	bool				m_hasfocus = false;
 };
 
-	extern				LogDlg _log;
+	extern bool			log_closing;
+	extern LogDlg		_log;

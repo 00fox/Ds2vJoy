@@ -3,19 +3,20 @@
 class RapidFireDataDlg
 {
 public:
-	enum ModifiedRapidFire {
-		Mofified_ButtonID,
-		Mofified_ButtonID2,
-		Mofified_Firsttime,
-		Mofified_Releasetime,
-		Mofified_Presstime,
-		Mofified_count
+	enum ModifiedRapidFire : char
+	{
+		ModifiedRapidFire_ButtonID,
+		ModifiedRapidFire_ButtonID2,
+		ModifiedRapidFire_Firsttime,
+		ModifiedRapidFire_Releasetime,
+		ModifiedRapidFire_Presstime,
+		ModifiedRapidFire_Count
 	};
 
 	RapidFireDataDlg();
 	~RapidFireDataDlg();
 
-	void				Init(HINSTANCE hInst, HWND hWnd);
+	void				Init();
 	void				Open(HWND parent, int mode);
 	void				Show();
 	void				Hide();
@@ -25,7 +26,7 @@ public:
 	int					m_mode = 0;
 
 	RapidFire			rapidFireData;
-	bool				Modified[Mofified_count] = { false };
+	bool				Modified[ModifiedRapidFire_Count] = { false };
 
 private:
 	static	INT_PTR CALLBACK Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -34,7 +35,6 @@ private:
 	void				_InitDialog(HWND hWnd);
 	void				_ShowWindow(HWND hWnd);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_parent = NULL;
 
 	bool				canprint = false;

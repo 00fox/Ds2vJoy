@@ -10,11 +10,12 @@ MappingDlg::~MappingDlg()
 {
 }
 
-void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
+void MappingDlg::Init(bool isClone)
 {
-	m_hWnd = hWnd;
 	m_Tab = 0;
-	m_hDlg2 = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MIND), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg2 = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_MIND), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
+	SendDlgItemMessage(m_hDlg2, IDC_MAPPING_MIND_TEXT, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg2, IDC_MIND_OK, WM_SETFONT, WPARAM(tape.hButton2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg2, IDC_MIND_CANCEL, WM_SETFONT, WPARAM(tape.hButton2), MAKELPARAM(TRUE, 0));
 	SetWindowText(GetDlgItem(m_hDlg2, IDC_MIND_OK), I18N.MIND_OK);
@@ -23,15 +24,15 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 	if (isClone)
 	{
 		m_isClonedList = true;
-		m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_CLONE), hWnd, (DLGPROC)Proc, LPARAM(this));
+		m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_CLONE), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
 
 		for (int i = 0; i < 32; i++) { m_Randcolor[i] = rand() % 4; }
 
-		long lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
+		int lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
 		lStyle = lStyle & ~WS_CAPTION;
 		SetWindowLong(m_hDlg, GWL_STYLE, lStyle);
 
-		SendDlgItemMessage(m_hDlg, IDC_CLONE_MENU, WM_SETFONT, WPARAM(tape.hEdit), MAKELPARAM(TRUE, 0));
+		SendDlgItemMessage(m_hDlg, IDC_CLONE_MENU, WM_SETFONT, WPARAM(tape.hMenu2), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_STATS, WM_SETFONT, WPARAM(tape.hStats), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_STAT1, WM_SETFONT, WPARAM(tape.hStats), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_STAT2, WM_SETFONT, WPARAM(tape.hStats), MAKELPARAM(TRUE, 0));
@@ -41,7 +42,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_STAT6, WM_SETFONT, WPARAM(tape.hStats), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_STAT7, WM_SETFONT, WPARAM(tape.hStats), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_STAT8, WM_SETFONT, WPARAM(tape.hStats), MAKELPARAM(TRUE, 0));
-		SendDlgItemMessage(m_hDlg, IDC_CLONE_CANCEL, WM_SETFONT, WPARAM(tape.hEdit2), MAKELPARAM(TRUE, 0));
+		SendDlgItemMessage(m_hDlg, IDC_CLONE_CANCEL, WM_SETFONT, WPARAM(tape.hCancel), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(m_hDlg, IDC_CLONE_POSTIT, WM_SETFONT, WPARAM(tape.hPostIt), MAKELPARAM(TRUE, 0));
 		SetWindowText(GetDlgItem(m_hDlg, IDC_CLONE_MENU), I18N.CLONE_MENU);
 		SetWindowText(GetDlgItem(m_hDlg, IDC_CLONE_STATS), I18N.CLONE_STATS);
@@ -93,7 +94,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		SetTimer(m_hDlg, 1, 50, NULL);
 	}
 	else
-		m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING), hWnd, (DLGPROC)Proc, LPARAM(this));
+		m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_MAPPING), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
 
 	{
 		int m_TabsID[10];
@@ -107,7 +108,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		m_TabsID[7] = IDM_MENU_TO_MODE_6;
 		m_TabsID[8] = IDM_MENU_TO_MODE_7;
 		m_TabsID[9] = IDM_MENU_TO_MODE_8;
-		hMenu_Tabs = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
+		hMenu_Tabs = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
 		DeleteMenu(hMenu_Tabs, IDM_MENU_TO_MODE_0, FALSE);
 		DeleteMenu(hMenu_Tabs, IDM_MENU_TO_MODE_1, FALSE);
 		DeleteMenu(hMenu_Tabs, IDM_MENU_TO_MODE_2, FALSE);
@@ -117,7 +118,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		DeleteMenu(hMenu_Tabs, IDM_MENU_TO_MODE_6, FALSE);
 		DeleteMenu(hMenu_Tabs, IDM_MENU_TO_MODE_7, FALSE);
 		DeleteMenu(hMenu_Tabs, IDM_MENU_TO_MODE_8, FALSE);
-		hMenu_Tabs_2 = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
+		hMenu_Tabs_2 = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_TABS));
 		MENUITEMINFO info;
 		for (int i = 0; i < 10; i++)
 		{
@@ -165,7 +166,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		m_TabsID[13] = IDM_MENU_MOVE_TO_8;
 		m_TabsID[14] = IDM_MENU_SWAP_VIEW;
 		m_TabsID[15] = IDM_MENU_ADD_NOTICE;
-		m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_MAPPING));
+		m_hMenu = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_MAPPING));
 		redrawMenu(16);
 
 		if (isClone)
@@ -179,7 +180,7 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 			m_TabsID[6] = IDM_CLONE_TO_MODE_6;
 			m_TabsID[7] = IDM_CLONE_TO_MODE_7;
 			m_TabsID[8] = IDM_CLONE_TO_MODE_8;
-			m_hMenu2 = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_CLONE));
+			m_hMenu2 = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_CLONE));
 			redrawMenu(9, true);
 		}
 	}
@@ -192,13 +193,13 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 
 		HWND header = ListView_GetHeader(m_hList);
 		DWORD dwHeaderStyle = ::GetWindowLong(header, GWL_STYLE);
-		dwHeaderStyle |= HDS_HIDDEN | HDS_NOSIZING;
+		dwHeaderStyle = dwHeaderStyle & ~HDS_DRAGDROP | HDS_NOSIZING | HDS_HIDDEN;
 		::SetWindowLong(header, GWL_STYLE, dwHeaderStyle);
 
 		LVCOLUMN col;
 		col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 		col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH | HDF_OWNERDRAW;
-		col.pszText = I18N.dsButton;
+		col.pszText = I18N.srceButton;
 		col.cx = 53;
 		ListView_InsertColumn(m_hList, 0, &col);
 		col.pszText = WCHARI(L"");
@@ -213,8 +214,8 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		col.pszText = WCHARI(L"");
 		col.cx = 58;
 		ListView_InsertColumn(m_hList, 4, &col);
-		col.pszText = (tape.MappingViewMode) ? I18N.Notice : I18N.vJoyButton;
-		col.cx = 107;
+		col.pszText = (tape.MappingViewMode) ? I18N.Notice : I18N.destButton;
+		col.cx = 126 - ((isClone) ? GetSystemMetrics(SM_CXVSCROLL) + 2 : 0);
 		ListView_InsertColumn(m_hList, 5, &col);
 		col.pszText = I18N.TagsButton;
 		col.cx = 57;
@@ -237,34 +238,35 @@ void MappingDlg::Init(HINSTANCE hInst, HWND hWnd, bool isClone)
 		m_hTab = GetDlgItem(m_hDlg, IDC_MAPPING_TAB);
 		SendMessage(m_hTab, WM_SETFONT, WPARAM(tape.hTab2), TRUE);
 		TabCtrl_SetItemSize(m_hTab, 43, 17);
-		TabCtrl_SetPadding(m_hTab, 0, 2);
-		redrawTabs(tape.TabMapping);
+		TabCtrl_SetPadding(m_hTab, 0, 1);
+		redrawTabs(tape.TabMapping, false);
 	}
 	else
 	{
-		Hide();
 		Show();
+		Hide();
 	}
-
-	Hide();
 }
 
 void MappingDlg::SetTab(int tab, bool activate)
 {
+	if (m_Tab != tab)
+	{
+		if (mode >= 0 && mode < 9 && tab != -1)
+			m_Tab = tab;
+		else
+			m_Tab = 0;
+		tape.TabMapping = m_Tab;
+		tape.Save(tape.Setting_TabMapping);
+	}
 	if (m_isClonedList)
 		ShowWindow(GetDlgItem(m_hDlg, IDC_CLONE_MENU), SW_HIDE);
 	else
 	{
-		tape.TabMapping = tab;
-		tape.Save(tape.Setting_TabMapping);
-		TabCtrl_SetCurSel(m_hTab, tab);
-	}
-	if (m_Tab != tab)
-	{
-		if (mode >= 0 && mode < 9)
-			m_Tab = tab;
+		if (tape.DarkTheme)
+			TabCtrl_DeselectAll(m_hTab, FALSE);
 		else
-			m_Tab = 0;
+			TabCtrl_SetCurSel(m_hTab, tab);
 	}
 	load();
 	if (m_isClonedList)
@@ -279,7 +281,7 @@ void MappingDlg::SetTab(int tab, bool activate)
 		Show();
 }
 
-void MappingDlg::redrawTabs(int tab)
+void MappingDlg::redrawTabs(int tab, bool actualize)
 {
 	TCITEM tc_item;
 	tc_item.mask = TCIF_TEXT;
@@ -298,14 +300,17 @@ void MappingDlg::redrawTabs(int tab)
 			if (i)
 				_snwprintf_s(buff, sizeof(buff), L"%d", i);
 			else
-				_snwprintf_s(buff, sizeof(buff), L"%s", L"Always");
+				_snwprintf_s(buff, sizeof(buff), L"%s", I18N.MAPPING_ALWAYS);
 			tc_item.pszText = buff;
 		}
 		TabCtrl_InsertItem(m_hTab, i, &tc_item);
 	}
-	ShowWindow(m_hTab, SW_HIDE);
-	ShowWindow(m_hTab, SW_SHOW);
-	SetTab(tab);
+	if (actualize)
+	{
+		ShowWindow(m_hTab, SW_HIDE);
+		ShowWindow(m_hTab, SW_SHOW);
+	}
+	SetTab(tab, actualize);
 }
 
 void MappingDlg::redrawMenu(int ntabs, bool isclonemenu)
@@ -373,8 +378,8 @@ void MappingDlg::redrawListReminder()
 {
 	RECT win;
 	GetWindowRect(m_hDlg, &win);
-	::MoveWindow(GetDlgItem(m_hDlg, IDC_MAPPING_CLEAR), 7, win.bottom - win.top - 18, 66, 11, FALSE);
-	::MoveWindow(GetDlgItem(m_hDlg, IDC_CLONE_POSTIT), 7, win.bottom - win.top - 18, 66, 12, FALSE);
+	::MoveWindow(GetDlgItem(m_hDlg, IDC_MAPPING_CLEAR), 7, win.bottom - win.top - 18, 70, 11, FALSE);
+	::MoveWindow(GetDlgItem(m_hDlg, IDC_CLONE_POSTIT), 7, win.bottom - win.top - 18, 70, 12, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_1), 85, win.bottom - win.top - 17, 11, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_2), 94, win.bottom - win.top - 17, 11, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_3), 107, win.bottom - win.top - 17, 11, 11, FALSE);
@@ -407,6 +412,26 @@ void MappingDlg::redrawListReminder()
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_30), 424, win.bottom - win.top - 17, 11, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_31), 448, win.bottom - win.top - 17, 11, 11, FALSE);
 	::MoveWindow(GetDlgItem(m_hDlg, IDC_POST_ITS_32), 458, win.bottom - win.top - 17, 11, 11, FALSE);
+}
+
+void MappingDlg::PageUp()
+{
+	ListView_Scroll(m_hList, 0, -14);
+}
+
+void MappingDlg::PageDown()
+{
+	ListView_Scroll(m_hList, 0, 14);
+}
+
+void MappingDlg::PageHome()
+{
+	ListView_Scroll(m_hList, 0, -32765);
+}
+
+void MappingDlg::PageEnd()
+{
+	ListView_Scroll(m_hList, 0, 32765);
 }
 
 void MappingDlg::_InitDialog(HWND hWnd)
@@ -453,9 +478,18 @@ void MappingDlg::_InitDialog(HWND hWnd)
 
 void MappingDlg::_ShowWindow(HWND hWnd)
 {
-	SendMessage(m_hList, LVM_SETBKCOLOR, 0, LPARAM(tape.ink_LIST_BACK));
-	SendMessage(m_hList, LVM_SETTEXTCOLOR, 0, LPARAM(tape.ink_LIST));
-	SendMessage(m_hList, LVM_SETTEXTBKCOLOR, 0, LPARAM(tape.ink_LIST_BACKGROUND));
+	if (tape.DarkTheme)
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK_DARK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST_DARK);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND_DARK);
+	}
+	else
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND);
+	}
 
 	if (m_isClonedList)
 	{
@@ -549,7 +583,10 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetTextColor(hdcStatic, tape.ink_BTN);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_BTN);
-		return (LRESULT)tape.hB_BTN;
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
@@ -563,31 +600,63 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (CtrlID == IDC_CLONE_MENU)
 		{
-			SetTextColor(hdcStatic, tape.ink_BTN_CLONE);
 			SetBkMode(hdcStatic, TRANSPARENT);
-			return (LRESULT)tape.hB_STATIC;
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_DARK);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_BTN_CLONE);
+				return (LRESULT)tape.hB_BackGround;
+			}
 		}
 		else
 		{
-			SetTextColor(hdcStatic, tape.ink_STATIC);
 			SetBkMode(hdcStatic, TRANSPARENT);
 			SetBkColor(hdcStatic, tape.Bk_STATS);
-			return (LRESULT)tape.hB_CLONE_BackGround;
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_POSTIT);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC);
+				return (LRESULT)tape.hB_CLONE_BackGround;
+			}
 		}
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_EDIT);
-		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_EDIT;
+		SetBkMode((HDC)wParam, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_EDIT_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT);
+			return (LRESULT)tape.hB_EDIT;
+		}
 	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_LIST);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_LIST;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
 	}
 	case WM_PAINT:
 	{
@@ -598,7 +667,10 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_CLONE_BackGround);
+			if (tape.DarkTheme)
+				FillRect(hDC, &rect, tape.hB_BackGround_DARK);
+			else
+				FillRect(hDC, &rect, tape.hB_CLONE_BackGround);
 
 			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
@@ -611,8 +683,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					GetClientRect(GetDlgItem(hWnd, m_ReminderId[i]), &rect);
 					rect.right -= 1;
 					rect.bottom -= 1;
-					FillRect(hDC, &rect, tape.hB_POSTIT);
-					if (tape.vJoyUsed[i])
+					if (tape.DarkTheme)
+						FillRect(hDC, &rect, tape.hB_POSTIT_DARK);
+					else
+						FillRect(hDC, &rect, tape.hB_POSTIT);
+					if (tape.destUsed[i])
 					{
 						rect.bottom -= 1;
 						rect.right -= 1;
@@ -664,7 +739,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						FillRect(hDC, &rect, tape.hB_POSTIT_Rand2);
 					else
 						FillRect(hDC, &rect, tape.hB_POSTIT_Rand3);
-					if (tape.vJoyUsed[i])
+					if (tape.destUsed[i])
 					{
 						rect.bottom -= 1;
 						rect.right -= 1;
@@ -773,13 +848,13 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					case 5:
 					{
 						DrawMenuStructure->rcItem.left = 285;
-						DrawMenuStructure->rcItem.right = ((m_isClonedList && tape.CloneViewMode) || (!m_isClonedList && tape.MappingViewMode)) ? 449 : 392;
+						DrawMenuStructure->rcItem.right = ((tape.MappingViewMode) ? 468 : 411) - ((m_isClonedList) ? GetSystemMetrics(SM_CXVSCROLL) + 2 : 0);
 						break;
 					}
 					case 6:
 					{
-						DrawMenuStructure->rcItem.left = 392;
-						DrawMenuStructure->rcItem.right = 449;
+						DrawMenuStructure->rcItem.left = 411 - ((m_isClonedList) ? GetSystemMetrics(SM_CXVSCROLL) + 2 : 0);
+						DrawMenuStructure->rcItem.right = 468 - ((m_isClonedList) ? GetSystemMetrics(SM_CXVSCROLL) + 2 : 0);
 						break;
 					}
 					}
@@ -796,10 +871,20 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if (disable1 || disable2)
 						{
-							if (disable1)
-								FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disable1);
+							if (tape.DarkTheme)
+							{
+								if (disable1)
+									FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disable1_DARK);
+								else
+									FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disable2_DARK);
+							}
 							else
-								FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disable2);
+							{
+								if (disable1)
+									FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disable1);
+								else
+									FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disable2);
+							}
 							if (selected)
 							{
 								SelectObject(DrawMenuStructure->hDC, GetStockObject(DC_PEN));
@@ -814,23 +899,40 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						else if (selected)
 							FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_HIGHLIGHT);
 						else
-							FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST);
+						{
+							if (tape.DarkTheme)
+								FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_BackGround_DARK);
+							else
+								FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_BackGround);
+						}
 						if (not1 || not2)
 						{
 							if (selected && !(disable1 || disable2))
-								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST_not_HIGHLIGHT);
+							{
+								if (tape.DarkTheme)
+									SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST_not_HIGHLIGHT_DARK);
+								else
+									SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST_not_HIGHLIGHT);
+							}
 							else
 								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST_not);
 						}
 						else if (selected)
 						{
-							if (disable1 || disable2)
+							if (tape.DarkTheme)
+								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST_not_HIGHLIGHT_DARK);
+							else if (disable1 || disable2)
 								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST);
 							else
 								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST_HIGHLIGHT);
 						}
 						else
-							SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST);
+						{
+							if (tape.DarkTheme && !(disable1 || disable2))
+								SetTextColor(DrawMenuStructure->hDC, tape.ink_STATIC_CHK_DARK);
+							else
+								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST);
+						}
 					}
 					else
 					{
@@ -841,8 +943,16 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						}
 						else
 						{
-							FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disabled);
-							SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST);
+							if (tape.DarkTheme)
+							{
+								FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disabled_DARK);
+								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST);
+							}
+							else
+							{
+								FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST_Disabled);
+								SetTextColor(DrawMenuStructure->hDC, tape.ink_LIST);
+							}
 						}
 					}
 
@@ -867,7 +977,10 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					SetDCPenColor(DrawMenuStructure->hDC, tape.ink_LIST_separator_HIGH);
 				else
 					SetDCPenColor(DrawMenuStructure->hDC, tape.ink_LIST_separator);
-				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_LIST);
+				if (tape.DarkTheme)
+					FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_BackGround_DARK);
+				else
+					FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_BackGround);
 				MoveToEx(DrawMenuStructure->hDC, DrawMenuStructure->rcItem.left - 4, DrawMenuStructure->rcItem.top + 7, nullptr);
 				LineTo(DrawMenuStructure->hDC, DrawMenuStructure->rcItem.right, DrawMenuStructure->rcItem.top + 7);
 			}
@@ -892,20 +1005,20 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_MENU_SEE_VIEW2: { itemnumber = 10; break; }
 			}
 
-			if (m_isClonedList && itemnumber == m_Tab)
+			if ((m_isClonedList && itemnumber == m_Tab) || (itemnumber == 10 && !selected))
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_SELECTED);
-			else if (itemnumber == 10 && selected)
+			else if (itemnumber == 10)
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_white);
 			else if (selected)
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_HIGHLIGHT);
 			else if (itemnumber == 9)
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_red);
-			else if (m_isClonedList)
+			else if (m_isClonedList || tape.DarkTheme)
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_CLONE);
 			else
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU);
 
-			SelectObject(DrawMenuStructure->hDC, tape.hMenus);
+			SelectObject(DrawMenuStructure->hDC, tape.hMenu);
 			WCHAR wszBuffer[MAX_PATH];
 			int nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
@@ -924,6 +1037,50 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
 				DrawMenuStructure->rcItem.left += 5;
 				DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &(DrawMenuStructure->rcItem), DT_VCENTER | DT_SINGLELINE);
+			}
+		}
+		else if (DrawMenuStructure->CtlType == ODT_TAB)
+		{
+			BOOL selected = DrawMenuStructure->itemState & ODS_SELECTED;
+
+			if (tape.DarkTheme)
+			{
+				if (std::chrono::system_clock::now() - m_timeOfLastDarkMenuCall > std::chrono::milliseconds{ 1 })
+				{
+					m_timeOfLastDarkMenuCall = std::chrono::system_clock::now();
+					SetTimer(hWnd, 2, USER_TIMER_MINIMUM, NULL);
+				}
+				else
+					m_timeOfLastDarkMenuCall = std::chrono::system_clock::now();
+			}
+			else
+			{
+				RECT rect = DrawMenuStructure->rcItem;
+				TC_ITEM tc_item;
+				tc_item.mask = TCIF_TEXT;
+				WCHAR buff[MAX_PATH - 1];
+				tc_item.pszText = buff;
+				tc_item.cchTextMax = MAX_PATH - 1;
+				if (!TabCtrl_GetItem(m_hTab, DrawMenuStructure->itemID, &tc_item))
+					return FALSE;
+
+				rect.top += ::GetSystemMetrics(SM_CYEDGE);
+
+				SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
+				SetTextColor(DrawMenuStructure->hDC, tape.ink_TAB);
+
+				WCHAR wszBuffer[MAX_PATH];
+				int nCharCount = _snwprintf_s(wszBuffer, sizeof(wszBuffer), L"%s", buff);
+				if (nCharCount > 0)
+				{
+					int nCharacters;
+					for (nCharacters = 0;
+						nCharacters < nCharCount; nCharacters++)
+						if (wszBuffer[nCharacters] == L'\t' ||
+							wszBuffer[nCharacters] == L'\b')
+							break;
+					DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+				}
 			}
 		}
 		break;
@@ -955,12 +1112,65 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetWindowText(GetDlgItem(hWnd, IDC_CLONE_STAT7), WCHARI(6, L"%05d", tape.Stat[6]));
 			SetWindowText(GetDlgItem(hWnd, IDC_CLONE_STAT8), WCHARI(6, L"%05d", tape.Stat[7]));
 		}
+		else if (wParam == 2)
+		{
+			HDC hDC = GetDC(m_hTab);
+			RECT rect;
+			GetClientRect(m_hTab, &rect);
+			FillRect(hDC, &rect, tape.hB_black);
+
+			if (std::chrono::system_clock::now() - m_timeOfLastDarkMenuCall > std::chrono::milliseconds{ 1 })
+			{
+				KillTimer(hWnd, 2);
+				for (int i = 0; i < 9; i++)
+				{
+					rect.left = (53 * i) - 3;
+					if (i == 0)
+						rect.left += 2;
+					rect.right = (53 * (i + 1)) - 3;
+
+					TC_ITEM tc_item;
+					tc_item.mask = TCIF_TEXT;
+					WCHAR buff[MAX_PATH - 1];
+					tc_item.pszText = buff;
+					tc_item.cchTextMax = MAX_PATH - 1;
+					if (!TabCtrl_GetItem(m_hTab, i, &tc_item))
+						return FALSE;
+
+					SetBkMode(hDC, TRANSPARENT);
+					if (m_Tab == i)
+						SetTextColor(hDC, tape.ink_LIST_header1_DARK);
+					else
+						SetTextColor(hDC, tape.ink_LIST_header2_DARK);
+
+					WCHAR wszBuffer[MAX_PATH];
+					int nCharCount = 0;
+					if (m_Tab == i)
+						nCharCount = _snwprintf_s(wszBuffer, sizeof(wszBuffer), L"> %s <", buff);
+					else
+						nCharCount = _snwprintf_s(wszBuffer, sizeof(wszBuffer), L"%s", buff);
+					if (nCharCount > 0)
+					{
+						int nCharacters;
+						for (nCharacters = 0;
+							nCharacters < nCharCount; nCharacters++)
+							if (wszBuffer[nCharacters] == L'\t' ||
+								wszBuffer[nCharacters] == L'\b')
+								break;
+						SelectObject(hDC, tape.hTab2);
+						DrawTextW(hDC, wszBuffer, nCharacters, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+				}
+
+				::ReleaseDC(m_hTab, hDC);
+			}
+		}
 		return FALSE;
 	}
 	case WM_RBUTTONDOWN:
 	{
 		if (m_isClonedList)
-			PostMessage(m_hWnd, WM_TRANSPARENCY, 0, 1);
+			PostMessage(tape.Ds2hWnd, WM_TRANSPARENCY, 0, 1);
 		break;
 	}
 	case WM_LBUTTONUP:
@@ -971,7 +1181,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				EndDrag(LOWORD(lParam), HIWORD(lParam) - 35);
 			else
 				EndDrag(LOWORD(lParam), HIWORD(lParam));
-			InvalidateRect(hWnd, NULL, FALSE);
+			InvalidateRect(hWnd, NULL, TRUE);
 		}
 		break;
 	}
@@ -994,12 +1204,6 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_NOTIFY:
 	{
-		switch (((LPNMHDR)lParam)->code)
-		{
-		case HDN_BEGINTRACK:
-			SetWindowLong(m_hDlg, 0, TRUE);  // prevent resizing
-			return TRUE;
-		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_MAPPING_TAB:
@@ -1027,7 +1231,8 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			case TCN_SELCHANGE:
 			{
-				SetTab(TabCtrl_GetCurSel(m_hTab));
+				if (TabCtrl_GetCurSel(m_hTab) != -1)
+					SetTab(TabCtrl_GetCurSel(m_hTab));
 				break;
 			}
 			}
@@ -1082,9 +1287,9 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						std::vector<unsigned short> vjdata;
 						for (int j = 0; j < 8; j++)
 						{
-							if (newmapbis[i].vjID[j])
+							if (newmapbis[i].destID[j])
 							{
-								short vjvalue = newmapbis[i].vjID[j];
+								short vjvalue = newmapbis[i].destID[j];
 								vjvalue |= (newmapbis[i].ActionType[j] << 8);
 								vjdata.push_back(vjvalue);
 							}
@@ -1097,46 +1302,46 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						{
 						case 0:
 						{
-							sortresult |= ((std::bitset<128>)newmapbis[i].dsID[0] << 0);
-							sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 8);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 9);
+							sortresult |= ((std::bitset<128>)newmapbis[i].srceID[0] << 0);
+							sortresult |= ((std::bitset<128>)newmapbis[i].Target[0] << 16);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 18);
 						}
 						break;
 						case 1:
 						{
-							sortresult |= ((std::bitset<128>)newmapbis[i].dsID[1] << 0);
-							sortresult |= ((std::bitset<128>)newmapbis[i].Target[1] << 8);
-							sortresult |= ((std::bitset<128>)newmapbis[i].OrXorNot[0] << 9);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 11);
+							sortresult |= ((std::bitset<128>)newmapbis[i].srceID[1] << 0);
+							sortresult |= ((std::bitset<128>)newmapbis[i].Target[1] << 16);
+							sortresult |= ((std::bitset<128>)newmapbis[i].OrXorNot[0] << 18);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 20);
 						}
 						break;
 						case 2:
 						{
-							sortresult |= ((std::bitset<128>)newmapbis[i].dsID[2] << 0);
-							sortresult |= ((std::bitset<128>)newmapbis[i].Target[2] << 8);
-							sortresult |= ((std::bitset<128>)newmapbis[i].OrXorNot[1] << 9);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 11);
+							sortresult |= ((std::bitset<128>)newmapbis[i].srceID[2] << 0);
+							sortresult |= ((std::bitset<128>)newmapbis[i].Target[2] << 16);
+							sortresult |= ((std::bitset<128>)newmapbis[i].OrXorNot[1] << 18);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 20);
 						}
 						break;
 						case 3:
 						{
 							sortresult |= ((std::bitset<128>)newmapbis[i].OrXorNot[2] << 0);
-							sortresult |= ((std::bitset<128>)newmapbis[i].dsID[3] << 2);
-							sortresult |= ((std::bitset<128>)newmapbis[i].Target[3] << 10);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].OrXorNot[2] >= 1) << 11);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 12);
+							sortresult |= ((std::bitset<128>)newmapbis[i].srceID[3] << 2);
+							sortresult |= ((std::bitset<128>)newmapbis[i].Target[3] << 18);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].OrXorNot[2] >= 1) << 20);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 21);
 						}
 						break;
 						case 4:
 						{
 							sortresult |= ((std::bitset<128>)newmapbis[i].OrXorNot[3] << 0);
-							sortresult |= ((std::bitset<128>)newmapbis[i].dsID[4] << 2);
-							sortresult |= ((std::bitset<128>)newmapbis[i].Target[4] << 10);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].OrXorNot[3] >= 1) << 11);
-							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 12);
+							sortresult |= ((std::bitset<128>)newmapbis[i].srceID[4] << 2);
+							sortresult |= ((std::bitset<128>)newmapbis[i].Target[4] << 18);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].OrXorNot[3] >= 1) << 20);
+							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 21);
 						}
 						break;
-						case 6:
+						case 5:
 						{
 							sortresult |= ((std::bitset<128>)vjdata[7] << 0);
 							sortresult |= ((std::bitset<128>)vjdata[6] << 9);
@@ -1149,7 +1354,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							sortresult |= ((std::bitset<128>)(newmapbis[i].Enable == 1) << 72);
 						}
 						break;
-						case 7:
+						case 6:
 						{
 							sortresult |= ((std::bitset<128>)newmapbis[i].Toggle << 0);
 							sortresult |= ((std::bitset<128>)newmapbis[i].Transitivity << 2);
@@ -1188,7 +1393,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tape.Mappingdata.swap(newmap);
 				tape.Save(tape.Setting_Mappingdata);
 
-				PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM(0, m_Tab));
+				PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM(0, m_Tab));
 
 				m_active = true;
 				break;
@@ -1388,11 +1593,11 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					for (int i = 0; i < 32; i++)
 					{
-						tape.Reminder[i] = 0; m_Randcolor[i] = rand() % 4;
+						tape.Reminder[i] = 0;
+						m_Randcolor[i] = rand() % 4;
 					}
 					tape.Save(tape.Setting_Reminder);
-					Hide();
-					Show();
+					InvalidateRect(hWnd, NULL, TRUE);
 					RedrawWindow(hWnd, NULL, NULL, RDW_INTERNALPAINT | RDW_UPDATENOW);
 					break;
 				}
@@ -1894,7 +2099,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_MENU_TO_MODE_6: { tape.Mode[tabrightclick] = 6; tape.Save(tape.Setting_TabToMode); redrawTabs(tabrightclick); tape.Save(tape.Setting_TabToMode); break; }
 			case IDM_MENU_TO_MODE_7: { tape.Mode[tabrightclick] = 7; tape.Save(tape.Setting_TabToMode); redrawTabs(tabrightclick); tape.Save(tape.Setting_TabToMode); break; }
 			case IDM_MENU_TO_MODE_8: { tape.Mode[tabrightclick] = 8; tape.Save(tape.Setting_TabToMode); redrawTabs(tabrightclick); tape.Save(tape.Setting_TabToMode); break; }
-			case IDM_MENU_SEE_VIEW2: { PostMessage(m_hWnd, WM_ADDMAPPING, 4, MAKELPARAM(1, tabrightclick)); break; }
+			case IDM_MENU_SEE_VIEW2: { PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 4, MAKELPARAM(1, tabrightclick)); break; }
 			}
 		}
 		switch (LOWORD(wParam))
@@ -2021,10 +2226,10 @@ void MappingDlg::save()
 		item.iItem = i;
 		if (!ListView_GetItem(m_hList, &item))
 		{
-			PostMessage(m_hWnd, WM_ADDMAPPING, mDDlg.m_mode, MAKELPARAM(0, m_Tab));
+			PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, mDDlg.m_mode, MAKELPARAM(0, m_Tab));
 			RECT win;
-			GetWindowRect(m_hWnd, &win);
-			MessageBoxPos(m_hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
+			GetWindowRect(tape.Ds2hWnd, &win);
+			MessageBoxPos(tape.Ds2hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
 			return;
 		}
 		if (item.lParam != NULL)
@@ -2041,7 +2246,7 @@ void MappingDlg::save()
 	tape.Mappingdata.swap(newmap);
 	tape.Save(tape.Setting_Mappingdata);
 
-	PostMessage(m_hWnd, WM_ADDMAPPING, NULL, MAKELPARAM(0, NULL));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, NULL, MAKELPARAM(0, NULL));
 	m_active = true;
 }
 
@@ -2076,7 +2281,7 @@ void MappingDlg::addMappingDlgBack()
 	save();
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::addSeparator()
@@ -2099,7 +2304,7 @@ void MappingDlg::addSeparator()
 	save();
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::editMappingDlg()
@@ -2132,7 +2337,7 @@ void MappingDlg::editMappingDlg()
 	else if (nselected > 1)
 	{
 		lastidxs.clear();
-		for (int i = 0; i < MappingDataDlg::Mofified_count; i++)
+		for (int i = 0; i < MappingDataDlg::ModifiedMapping_Count; i++)
 			mDDlg.Modified[i] = false;
  		int idx;
 		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
@@ -2183,7 +2388,7 @@ void MappingDlg::editMappingDlgBack()
 	}
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::editMappingDlgBackMulti()
@@ -2206,7 +2411,7 @@ void MappingDlg::editMappingDlgBackMulti()
 			Mapping* data2 = (Mapping*)item.lParam;
 			m = *data2;
 			data2 = new Mapping(m);
-			for (int i = 0; i < MappingDataDlg::Mofified_count; i++)
+			for (int i = 0; i < MappingDataDlg::ModifiedMapping_Count; i++)
 				if (mDDlg.Modified[i])
 					switch (i)
 					{
@@ -2225,20 +2430,20 @@ void MappingDlg::editMappingDlgBackMulti()
 					case MappingDataDlg::Mofified_Target4: { data2->Target[3] = data1->Target[3]; break; }
 					case MappingDataDlg::Mofified_Target5: { data2->Target[4] = data1->Target[4]; break; }
 					case MappingDataDlg::Mofified_Toggle: { data2->Toggle = data1->Toggle; break; }
-					case MappingDataDlg::Mofified_dsID1: { data2->dsID[0] = data1->dsID[0]; break; }
-					case MappingDataDlg::Mofified_dsID2: { data2->dsID[1] = data1->dsID[1]; break; }
-					case MappingDataDlg::Mofified_dsID3: { data2->dsID[2] = data1->dsID[2]; break; }
-					case MappingDataDlg::Mofified_dsID4: { data2->dsID[3] = data1->dsID[3]; break; }
-					case MappingDataDlg::Mofified_dsID5: { data2->dsID[4] = data1->dsID[4]; break; }
+					case MappingDataDlg::Mofified_dsID1: { data2->srceID[0] = data1->srceID[0]; break; }
+					case MappingDataDlg::Mofified_dsID2: { data2->srceID[1] = data1->srceID[1]; break; }
+					case MappingDataDlg::Mofified_dsID3: { data2->srceID[2] = data1->srceID[2]; break; }
+					case MappingDataDlg::Mofified_dsID4: { data2->srceID[3] = data1->srceID[3]; break; }
+					case MappingDataDlg::Mofified_dsID5: { data2->srceID[4] = data1->srceID[4]; break; }
 					case MappingDataDlg::Mofified_OrXorNot1: { data2->OrXorNot[0] = data1->OrXorNot[0]; break; }
 					case MappingDataDlg::Mofified_OrXorNot2: { data2->OrXorNot[1] = data1->OrXorNot[1]; break; }
 					case MappingDataDlg::Mofified_OrXorNot3: { data2->OrXorNot[2] = data1->OrXorNot[2]; break; }
 					case MappingDataDlg::Mofified_OrXorNot4: { data2->OrXorNot[3] = data1->OrXorNot[3]; break; }
-					case MappingDataDlg::Mofified_dsDisable1: { data2->dsDisable[0] = data1->dsDisable[0]; break; }
-					case MappingDataDlg::Mofified_dsDisable2: { data2->dsDisable[1] = data1->dsDisable[1]; break; }
-					case MappingDataDlg::Mofified_dsDisable3: { data2->dsDisable[2] = data1->dsDisable[2]; break; }
-					case MappingDataDlg::Mofified_dsDisable4: { data2->dsDisable[3] = data1->dsDisable[3]; break; }
-					case MappingDataDlg::Mofified_dsDisable5: { data2->dsDisable[4] = data1->dsDisable[4]; break; }
+					case MappingDataDlg::Mofified_dsDisable1: { data2->srceDisable[0] = data1->srceDisable[0]; break; }
+					case MappingDataDlg::Mofified_dsDisable2: { data2->srceDisable[1] = data1->srceDisable[1]; break; }
+					case MappingDataDlg::Mofified_dsDisable3: { data2->srceDisable[2] = data1->srceDisable[2]; break; }
+					case MappingDataDlg::Mofified_dsDisable4: { data2->srceDisable[3] = data1->srceDisable[3]; break; }
+					case MappingDataDlg::Mofified_dsDisable5: { data2->srceDisable[4] = data1->srceDisable[4]; break; }
 					case MappingDataDlg::Mofified_ActionType1: { data2->ActionType[0] = data1->ActionType[0]; break; }
 					case MappingDataDlg::Mofified_ActionType2: { data2->ActionType[1] = data1->ActionType[1]; break; }
 					case MappingDataDlg::Mofified_ActionType3: { data2->ActionType[2] = data1->ActionType[2]; break; }
@@ -2247,14 +2452,14 @@ void MappingDlg::editMappingDlgBackMulti()
 					case MappingDataDlg::Mofified_ActionType6: { data2->ActionType[5] = data1->ActionType[5]; break; }
 					case MappingDataDlg::Mofified_ActionType7: { data2->ActionType[6] = data1->ActionType[6]; break; }
 					case MappingDataDlg::Mofified_ActionType8: { data2->ActionType[7] = data1->ActionType[7]; break; }
-					case MappingDataDlg::Mofified_vjID1: { data2->vjID[0] = data1->vjID[0]; break; }
-					case MappingDataDlg::Mofified_vjID2: { data2->vjID[1] = data1->vjID[1]; break; }
-					case MappingDataDlg::Mofified_vjID3: { data2->vjID[2] = data1->vjID[2]; break; }
-					case MappingDataDlg::Mofified_vjID4: { data2->vjID[3] = data1->vjID[3]; break; }
-					case MappingDataDlg::Mofified_vjID5: { data2->vjID[4] = data1->vjID[4]; break; }
-					case MappingDataDlg::Mofified_vjID6: { data2->vjID[5] = data1->vjID[5]; break; }
-					case MappingDataDlg::Mofified_vjID7: { data2->vjID[6] = data1->vjID[6]; break; }
-					case MappingDataDlg::Mofified_vjID8: { data2->vjID[7] = data1->vjID[7]; break; }
+					case MappingDataDlg::Mofified_vjID1: { data2->destID[0] = data1->destID[0]; break; }
+					case MappingDataDlg::Mofified_vjID2: { data2->destID[1] = data1->destID[1]; break; }
+					case MappingDataDlg::Mofified_vjID3: { data2->destID[2] = data1->destID[2]; break; }
+					case MappingDataDlg::Mofified_vjID4: { data2->destID[3] = data1->destID[3]; break; }
+					case MappingDataDlg::Mofified_vjID5: { data2->destID[4] = data1->destID[4]; break; }
+					case MappingDataDlg::Mofified_vjID6: { data2->destID[5] = data1->destID[5]; break; }
+					case MappingDataDlg::Mofified_vjID7: { data2->destID[6] = data1->destID[6]; break; }
+					case MappingDataDlg::Mofified_vjID8: { data2->destID[7] = data1->destID[7]; break; }
 					case MappingDataDlg::Mofified_Overcontrol1: { data2->Overcontrol[0] = data1->Overcontrol[0]; break; }
 					case MappingDataDlg::Mofified_Overcontrol2: { data2->Overcontrol[1] = data1->Overcontrol[1]; break; }
 					case MappingDataDlg::Mofified_Overcontrol3: { data2->Overcontrol[2] = data1->Overcontrol[2]; break; }
@@ -2295,14 +2500,14 @@ void MappingDlg::editMappingDlgBackMulti()
 					case MappingDataDlg::Mofified_NlRelease6: { data2->NlRelease[5] = data1->NlRelease[5]; break; }
 					case MappingDataDlg::Mofified_NlRelease7: { data2->NlRelease[6] = data1->NlRelease[6]; break; }
 					case MappingDataDlg::Mofified_NlRelease8: { data2->NlRelease[7] = data1->NlRelease[7]; break; }
-					case MappingDataDlg::Mofified_vjDisable1: { data2->vjDisable[0] = data1->vjDisable[0]; break; }
-					case MappingDataDlg::Mofified_vjDisable2: { data2->vjDisable[1] = data1->vjDisable[1]; break; }
-					case MappingDataDlg::Mofified_vjDisable3: { data2->vjDisable[2] = data1->vjDisable[2]; break; }
-					case MappingDataDlg::Mofified_vjDisable4: { data2->vjDisable[3] = data1->vjDisable[3]; break; }
-					case MappingDataDlg::Mofified_vjDisable5: { data2->vjDisable[4] = data1->vjDisable[4]; break; }
-					case MappingDataDlg::Mofified_vjDisable6: { data2->vjDisable[5] = data1->vjDisable[5]; break; }
-					case MappingDataDlg::Mofified_vjDisable7: { data2->vjDisable[6] = data1->vjDisable[6]; break; }
-					case MappingDataDlg::Mofified_vjDisable8: { data2->vjDisable[7] = data1->vjDisable[7]; break; }
+					case MappingDataDlg::Mofified_vjDisable1: { data2->destDisable[0] = data1->destDisable[0]; break; }
+					case MappingDataDlg::Mofified_vjDisable2: { data2->destDisable[1] = data1->destDisable[1]; break; }
+					case MappingDataDlg::Mofified_vjDisable3: { data2->destDisable[2] = data1->destDisable[2]; break; }
+					case MappingDataDlg::Mofified_vjDisable4: { data2->destDisable[3] = data1->destDisable[3]; break; }
+					case MappingDataDlg::Mofified_vjDisable5: { data2->destDisable[4] = data1->destDisable[4]; break; }
+					case MappingDataDlg::Mofified_vjDisable6: { data2->destDisable[5] = data1->destDisable[5]; break; }
+					case MappingDataDlg::Mofified_vjDisable7: { data2->destDisable[6] = data1->destDisable[6]; break; }
+					case MappingDataDlg::Mofified_vjDisable8: { data2->destDisable[7] = data1->destDisable[7]; break; }
 					case MappingDataDlg::Mofified_Mouse1: { data2->Mouse[0] = data1->Mouse[0]; break; }
 					case MappingDataDlg::Mofified_Mouse2: { data2->Mouse[1] = data1->Mouse[1]; break; }
 					case MappingDataDlg::Mofified_Mouse3: { data2->Mouse[2] = data1->Mouse[2]; break; }
@@ -2340,7 +2545,7 @@ void MappingDlg::editMappingDlgBackMulti()
 	save();
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::stateMappingDlg()
@@ -2392,7 +2597,7 @@ void MappingDlg::deleteMappingDlg()
 		{ m_active = true; return; }
 
 	RECT win;
-	GetWindowRect(m_hWnd, &win);
+	GetWindowRect(tape.Ds2hWnd, &win);
 	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, win.left + 160, win.top + 60) == IDYES)
 	{
 		int idx;
@@ -2410,7 +2615,7 @@ void MappingDlg::deleteMappingDlg()
 	}
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::duplicateMappingDlg()
@@ -2467,7 +2672,7 @@ void MappingDlg::duplicateMappingDlg()
 	}
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::moveMappingDlg(int tab)
@@ -2498,8 +2703,8 @@ void MappingDlg::moveMappingDlg(int tab)
 	save();
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, tab));
 }
 
 void MappingDlg::addNoticeDlg()
@@ -2528,7 +2733,7 @@ void MappingDlg::addNoticeDlg()
 				Show2();
 				RECT win;
 				RECT win2;
-				GetWindowRect(m_hWnd, &win);
+				GetWindowRect(tape.Ds2hWnd, &win);
 				GetWindowRect(m_hDlg2, &win2);
 				MoveWindow2(win.left + 275, win.top + 30, win2.right - win2.left, win2.bottom - win2.top, false);
 				wcscpy_s(NoticeDlg, wcslen(mDDlg.mappingData.Notice) + 1, mDDlg.mappingData.Notice);
@@ -2566,7 +2771,7 @@ void MappingDlg::addNoticeDlgBack()
 	}
 
 	m_active = true;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 int MappingDlg::insertMapping(int idx, Mapping* m)
@@ -2582,27 +2787,27 @@ int MappingDlg::insertMapping(int idx, Mapping* m)
 	item.iItem = idx;
 	item.iSubItem = 0;
 	item.lParam = LPARAM(m);
-	item.pszText = m->dsString(0);
+	item.pszText = m->SrceString(0);
 	int ret = ListView_InsertItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 1;
 	item.lParam = 0;
-	item.pszText = m->dsString(1);
+	item.pszText = m->SrceString(1);
 	ListView_SetItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 2;
 	item.lParam = 0;
-	item.pszText = m->dsString(2);
+	item.pszText = m->SrceString(2);
 	ListView_SetItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 3;
 	item.lParam = 0;
-	item.pszText = m->dsString(3);
+	item.pszText = m->SrceString(3);
 	ListView_SetItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 4;
 	item.lParam = 0;
-	item.pszText = m->dsString(4);
+	item.pszText = m->SrceString(4);
 	ListView_SetItem(m_hList, &item);
 	item.mask = LVIF_TEXT;
 	item.iSubItem = 5;
@@ -2614,7 +2819,7 @@ int MappingDlg::insertMapping(int idx, Mapping* m)
 	}
 	else
 	{
-		item.pszText = (WCHAR*)(m->vJoyString());
+		item.pszText = (WCHAR*)(m->DestString());
 		ListView_SetItem(m_hList, &item);
 		item.mask = LVIF_TEXT;
 		item.iSubItem = 6;
@@ -2697,7 +2902,7 @@ void MappingDlg::EndDrag(int x, int y)
 	}
 
 	m_flag_drag = false;
-	PostMessage(m_hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+	PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 0, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
 }
 
 void MappingDlg::setInsertMark(int idx)
@@ -2743,11 +2948,11 @@ BOOL MappingDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 	RECT win;
 	GetWindowRect(m_hDlg, &win);
 	if (m_isClonedList)
-		::MoveWindow(m_hList, 3, 37, win.right - win.left - 6, win.bottom - win.top - 60, FALSE);
+		::MoveWindow(m_hList, 2, 36, win.right - win.left - 4, win.bottom - win.top - 60, FALSE);
 	else
 	{
 		::MoveWindow(m_hTab, 0, -1, win.right - win.left + 8, 17, FALSE);
-		::MoveWindow(m_hList, 0, 16, win.right - win.left, win.bottom - win.top - 15, FALSE);
+		::MoveWindow(m_hList, 0, 16, win.right - win.left + (GetSystemMetrics(SM_CXVSCROLL) + 2), win.bottom - win.top - 16, FALSE);
 	}
 
 	return ret;

@@ -1,81 +1,114 @@
 ﻿# Ds2vJoy
-DualShock™ and DualSense™ to vJoy or ViGEm for Windows 64 bits (Windows 11 Approved)
+DualShock™ and DualSense™, DirectInput or XInput to DirectOutput or XOutput for Windows 64 bits
 
 You can combine one or more of these options, no one is required:
-- DualShock™ and DualSense™ as source
+- DualShock™ and DualSense™, DirectInput or XInput as source
+  - Mix of two different DirectInput sources allowed
   - Bluetooth compatible
   - A lot of buttons added (individual axes, L1R1 the same time etc)
-- Keyboard and mouse as source or destination
-- vJoy (universal joystick) as source or destination (but in exclusive mode)
-- viGEm (playstation or xbox emulation) as destination
+- Keyboard and mouse as source and destination
+- DirectOutput (via vJoy) as source and destination
+  - Build-in vJoy installation and configuration
+- XOutput (playstation or xbox XInput emulation via viGEm, Build-in installation) as destination
+- Guardian (via HidGuardian & HidCerberus, Build-in installations) to let the game only see the needed destination
+
+Program is portable, build-in installations are driver only, no more stuff is installed
 
 Content:
+- Practical Sisaxis intregration for DualShock™ and DualSense™
 - Combinations, Modes (known as shifted), Macros, and Time based operations allowed
 - All logical arithmetic, you can register multiple operations executed in order, one line, one full mapping
-  - multiple source to activate one is possible, with and, or, xor and not
+  - multiple sources to activate one is possible, with and, or, xor and not
   - triggers added like if mouse activated, onRelease, disabled, even if disabled...
 - Several logical operations, like Toggle, Switch, Transitivity, Sustain, Pause
 - Control complex mouse operations, Sniper, Navigate in a grid when needed...
 - Control axis movements, 170 different movements can be done, fused, protected (OverControl)
-- Special actions, mouse, sound, modes, window, stats, time
-- Modules actions, web and Notepad
+- Special actions, mouse, sound, modes, windows, stats, time
+- Modules actions, Web and Notepad
   - Microsoft Edge WebView2 for internet, local files, with automation, stay overgame
-  - Simple notepad, rapid access
-- HidGuardian included to let the game only see the needed vJoy or ViGEm joystick
+  - Simple notepad, rapid access, autosave
+  - They can stay over your desktop or game, borders disappear automatically when mouseout
 - Multiple efficiency, like docking, insight, transparency, automatic full height, minimize & restore
 
-**Opened Issues, please report bugs, problems, you're also welcome to suggest ideas or requests**
+**Opened Issues, please report bugs, problems**
 
 ## How to use
-1. Install vJoy (https://github.com/jshafer817/vJoy/releases)
-   * or not if you plan to use ViGEm
-2. Open 'Configure vJoy' and select Axis, up to 128 Buttons and up to 4 continuous POV and effects
-   * It may result in a PC restart.
-3. Launch Ds2vJoy.exe
+1. Launch Ds2vJoy.exe, no installation is required
    * an .ini file will be created, to save parameters, with some examples already filled
-   * and needed .dll, whose will be destroyed when you'll exit
-4. Connect your PC and DS4/DS5 via USB or Bluetooth 
-5. Configure as you wish (you have 3 profiles accessible by system tray)
+2. If first time install drivers you need, vJoy, ViGem, Guardian under XOutput & Guardian Tabs
+   * real quick, drivers only, you can remove them after use if you wish
+3. Connect your DS4/DS5 or any other Joystick, or two via USB or Bluetooth
+   * or simply skip to use only keyboard and mouse
+4. Choose your sources under Settings Tab
+5. Configure as you wish (you have 3 profiles accessible by the system tray)
 
 - It is okay to connect DS4 after starting the game. VJoy and ViGEm are always visible in the game
 - When you change a setting, Ds2vJoy.ini is automatically and instantly saved
 - Ds2vJoy is portable, you can use multiple copy in different directories with different parameters
-- Install for ViGEm, HidGuardian and HidCerberus are included, they will use subdirectories of C:\Program Files\Ds2vJoy removed as soon as you chose to uninstall them from Ds2vJoy menu tabs, the same for C:\Program Files\Ds2vJoy itself when no required anymore
+- Included Installation for vJoy, ViGEm, HidGuardian and HidCerberus use subdirectories of C:\Program Files\Ds2vJoy
+   * removed as soon as you chose to uninstall them from Ds2vJoy menu tabs,
+   * the same for C:\Program Files\Ds2vJoy itself when no required anymore.
 
 ## Log
 ![Log](Doc/1_Ds2vJoy_Log.png)
 
 Satus is separated in 4 colums which are:
 - Battery
+  - USB usb or BT bluetooth or Active with unsuported DirectInput mode
+  - + while on charge
+  - Low batt alert when 0 (between 0% and up to 15% depending on the joystick and the circumstances)
 - Delay
-- Diverse informations (see Efficiency)
-- Mode (1-8) and Profile (1-3)
+  - an Asterisk near time unit, indicate that Magnification is active
+- Diverse informations, change with the module page:
+  - Log: Date Time UTC Day Week
+  - Settings: Show color under cursor
+  - Mappings: You can see which button is pressed
+  - RapidFire: Source button if one is in use
+  - ViGEm: Remapped buttons actually activated
+  - Keymap: Source button if one is launched
+  - Guardian: PIDs allowed to see hidden joysticks
+  - Links: Version of Ds2vJoy
+- Mode (1-8), Stance(1-4), and Profile (1-3)
+  - Stance 1 is Back
+  - Stance 2 is Leaned
+  - Stance 3 is Leaned+Sat
+  - Stance 4 is Sat
+  - Stance 5 is Leaning
 
 ## Settings
 ![Settings](Doc/2_Ds2vJoy_Settings.png)
 
-- Choose between preferred Sony® joypad, vJoy device in use
-  - but for example if you chosen DS5 and only DS4 is connected this one will be in used
-  - You may have to restart the program to change apply
+- Emergency with escape: if something goes wrong, stay pushed on ESC for more than two seconds, and program will stop to interprete and doing actions as long you push it
+
+- Choose between preferred Sony® joypad, DirectInput or XInput, vJoy device in use
 - Choose if you want keyboard, mouse or both as source (use more ressources)
+- 'Shutdown vJoy' will disable vJoy driver aftre exiting, it will be reactivated next time or open the program, if you intend to use it, after choosing it in the XOutput tab
 - Usual Configurations
+  - Mouse bypass screen dimensions is when you activate mouse to be used with in mappings and move it, mouse can bypass principal screen limits, be on a second monitor etc., or not, and stay inside
+  - There is special actions to inverse temporary this choice if you let it unchecked
 - Triggers mode (only works with DS5)
   - May be used only for touch pleasure
   - But in conjunction with L2, L2LOW, L2HIGH, L2FULL (same for R2),
   - you may use distinctly 2 or 3 separate actions on the same trigger
 - You can specify a serial if you have multiple DS connected
   - or/and several copies of Ds2vJoy running
+- You can specify (reload list and clear) one or two DirectInput Device to use in a single template, if none, prefered joystick will be use
+  - second source will be activated only if first source has been chosen, then you can combine two or separated joysticks in one to us ewith the program
+  - the template can be edited by clicking on 'Di Device'
+  - even if you need only one pad as soure, it help to use special features calculated for DS5, like two buttons simultaneously
+  - to do that the program need to know which ones of your pad are which ones of DS5
+  - You can save multiple templates, and laod them between modes, and each mode use his own template, so you take adventage of both systems
 - You can fix threshold of sticks, and set times more accurate to your senses
   - threshold value for axis accept a number between 0 and 128, default 8
   - values of the axis are proportional to the threshold, so the grip remains soft rather than starting abruptly, even with high threshold values
   - Simultaneous is R1L1 or R2L2 the same time (with this 40ms as default delta)
 - You can set the opacity percent while transparency is activated (right click on caption bar)
 - Multiple touchpad divide in multiple buttons,
-  - But for more simple uses, there is a lot of special buttons (see vJoy)
+  - But for more simple uses, there is a lot of special buttons (see Mapping)
 - Led is calm wave fluctuating, you can modify the frequency, and color can be stopped on exit
 
-## vJoy
-![vJoy](Doc/3_Ds2vJoy_Mapping.png)
+## Mapping
+![Mapping](Doc/3_Ds2vJoy_Mapping.png)
 
 Each line correspond to a different mapping
 
@@ -93,12 +126,12 @@ Each tab corresponds to a drawer, in which you can organize the different mappin
 
 There is a dual view mode, where you can clone a tab
 - For example to compare, move
-- Or simply fill ViGEm with the values of vJoy in front of you
+- Or simply fill ViGEm with the values of mapping in front of you
 - The second window will stay opened in extended view (see Efficiency) for this purpose. You still can close it manually
 - Otherwise, automatically hidden, outside extended mode, if you change tabs
-- You get it back if you change again for vJoy Tab, until you manually close it
+- You get it back if you change again for Mapping Tab, until you manually close it
 
-![vJoy](Doc/4_Ds2vJoy_Mapping_Tools.png)
+![Mapping](Doc/4_Ds2vJoy_Mapping_Tools.png)
 
 Order, add, delete, copy or edit (double click or right click menu) your mappings easily
 Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
@@ -113,10 +146,10 @@ Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
 - Add, move a sepator, for clarity or organization, at the end or specified location
   - Cant't be edited, and does not interfere with the operation
 
-![vJoy](Doc/5_Ds2vJoy_Mapping_List.png.png)
+![Mapping](Doc/5_Ds2vJoy_Mapping_List.png.png)
 
-DS Button:
-- First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
+Source Button:
+- First column is the principal source (see it particular function at the start of Mapping editing, and or/xor conditions)
 - '+' Indicates combination (columns 2,3,4,5)
 - '||' Indicates combination with or condition (second and third columns)
   - '⊕' Indicates combination with xor condition (second and third columns)
@@ -127,7 +160,7 @@ DS Button:
 - Purple indicates simple disable, blue indictates double disable, grey indicates inactive mapping
 * Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 
-vJoy Button:
+Destination Button:
 - See a brief of what will be launched like vJoy, modes, special actions
 - You don't need vJoy installed, if not, buttons are virtual, but usefull for remapping etc, if yes, they match vJoy selected device number
 - '#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
@@ -148,11 +181,11 @@ Tags:
 | ►YR | Transitivity condition is in use (see Controls and Transitivity)
 |  T  | Toggle condition is in use (see Controls)
 | RZW | An OnRelease (/+NoRelease/+NlRelease) condition is in use (see OnRelease)
-|  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see If Mouse actions and Grid)
+|  M  | If mouse will be in used (checkboxes choice, mouse actions are in Mapping Button) (see If Mouse actions and Grid)
 - a lowercase indicates that the checkbox is double checked for this condition
 
-## vJoy editing
-![vJoy Editing](Doc/6_Ds2vJoy_Mapping_Editing.png)
+## Mapping editing
+![Mapping Editing](Doc/6_Ds2vJoy_Mapping_Editing.png)
 
 - First row is source
   - First source is the one used to calculate destination value, except if or/xor is in use (see below), then it adapt
@@ -166,6 +199,9 @@ Tags:
   - or to use mouse in a zone instead of the full screen, divided or not in a grid
   - or to use mouse in the full screen, divided
 - Two digits in the lower right corner are the mouse coordinates (see Efficiency)
+- At the right of button OK, it's relaod, window pop again
+  - After validating an edition of a single mapping, to make some different quick tests, with same datas
+  - After adding a new mapping, to directly add a new one, with fresh datas
 
 ______________________________________________________________________________________ Input method
 
@@ -195,37 +231,205 @@ In terms of time:
 | Medium long   | ~press > twice the time as long
 | Very long     | found in settings
  
-______________________________________________________________________________________ Buttons
+______________________________________________________________________________________ Source Buttons
 
-A lot of buttons type has been added, for DS and for vJoy
+A lot of buttons type has been added, for DS, DirectInput, XInput and for vJoy
 
-RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE, OPTIONS, SQUARE, TRIANGLE, CIRCLE, CROSS, R3, PS, TOUCH, MUTE, L1, R1, L2, R2, L2TRIGGER, R2TRIGGER, EMPTY, MIDDLE, FULL, LXINV, LYINV, RXINV, RYINV, SNIPER_LX, SNIPER_LY, SNIPER_RX, SNIPER_RY, AXISL_TR_LEFT, AXISL_TR_UP, AXISL_TR_RIGHT, AXISL_TR_DOWN, AXISR_TR_LEFT, AXISR_TR_UP, AXISR_TR_RIGHT, AXISR_TR_DOWN, AXISL_LEFT, AXISL_UP_LEFT, AXISL_UP, AXISL_UP_RIGHT, AXISL_RIGHT, AXISL_DOWN_RIGHT, AXISL_DOWN, AXISL_DOWN_LEFT, AXISR_LEFT, AXISR_UP_LEFT, AXISR_UP, AXISR_UP_RIGHT, AXISR_RIGHT, AXISR_DOWN_RIGHT, AXISR_DOWN, AXISR_DOWN_LEFT, TOUCHUP, TOUCHPAD, TOUCH1, TOUCH2, TOUCH3, TOUCH4, TOUCHL, TOUCHR, L2TRIGGER_33, R2TRIGGER_33, L2TRIGGER_66, R2TRIGGER_66, L2TRIGGER_100, R2TRIGGER_100, L1R1, L2R2, BATTERY
+RAW NAMES: LX, LY, RX, RY, L3, DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, SHARE, OPTIONS, SQUARE, TRIANGLE, CIRCLE, CROSS, R3, PS, TOUCH, MUTE, L1, R1, L2, R2, L2_TRIGGER, R2_TRIGGER
 - Usual DS buttons classed by MMORPG action bar order
-- Multiple level Triggers (Normal L2 R2, Normal Triggers, ~33, 66 and 100% according to Proactive Triggers mode
-- Null 0%, middle 50% and full 100% value, for your macros and tips (always on)
+
+RAW NAMES: LX_INV, LY_INV, RX_INV, RY_INV
 - Inversed Axis
+
+RAW NAMES: LX_SNIPER, LY_SNIPER, RX_SNIPER, RY_SNIPER
 - Sniper Axis, which works the same except the threshold is minimal, then you can have near no threshold some times and keep normal axis with the threshold you defined for usual situations
+
+RAW NAMES: AXISL_TR_LEFT, AXISL_TR_UP, AXISL_TR_RIGHT, AXISL_TR_DOWN, AXISR_TR_LEFT, AXISR_TR_UP, AXISR_TR_RIGHT, AXISR_TR_DOWN
 - Trigger Axis, each axis is split into two full trigger, four by stick, you can use them individually on a button or an trigger, or together on the same, so for example left or right isn't important at all
+
+RAW NAMES: AXISL_LEFT, AXISL_UP_LEFT, AXISL_UP, AXISL_UP_RIGHT, AXISL_RIGHT, AXISL_DOWN_RIGHT, AXISL_DOWN, AXISL_DOWN_LEFT, AXISR_LEFT, AXISR_UP_LEFT, AXISR_UP, AXISR_UP_RIGHT, AXISR_RIGHT, AXISR_DOWN_RIGHT, AXISR_DOWN, AXISR_DOWN_LEFT
 - Cardinal Axis (for old games for example, instead of Dpad)
+
+RAW NAMES: TOUCHUP, TOUCHPAD, TOUCH1, TOUCH2, TOUCH3, TOUCH4, TOUCHL, TOUCHR
 - Different parts of the touchpad (all, Up, Only touch part, Left, Right and 4 corners)
+
+RAW NAMES: L2_TRIGGER_33, R2_TRIGGER_33, L2_TRIGGER_66, R2_TRIGGER_66, L2_TRIGGER_100, R2_TRIGGER_100
+- Multiple level Triggers (Normal L2 R2, Normal Triggers, ~33, 66 and 100% according to Proactive Triggers mode
+
+RAW NAMES: L1R1, L2R2
 - Simultaneous presses, L1R1 L2R2 (you have a short - configurable - time to press both buttons same time, and will be released only when both will)
-- Battery level
 
-RAW NAMES: MOUSE_AXEX, MOUSE_AXEY, MOUSE_LEFT, MOUSE_RIGHT, MOUSE_UP, MOUSE_DOWN
-- Mouse movements, keep cursor in center of screen if mouse isn not captured
+RAW NAMES: EMPTY, MIDDLE, FULL, QUARTER1, QUARTER2, THIRD1, THIRD2, TEN, TWENTY, THIRTY, FORTY, SIXTY, SEVENTY, EIGHTY, NINETY
+- Null 0%, middle 50% and full 100% value, and more for your macros and tips (always on)
 
-RAW NAMES: KID_LBUTTON, KID_MBUTTON, KID_RBUTTON, KID_XBUTTON1, KID_XBUTTON2, KID_F1, KID_F2, KID_F3, KID_F4, KID_F5, KID_F6, KID_F7, KID_F8, KID_F9, KID_F10, KID_F11, KID_F12, KID_0, KID_1, KID_2, KID_3, KID_4, KID_5, KID_6, KID_7, KID_8, KID_9, KID_OEM_MINUS, KID_OEM_PLUS, KID_OEM_1, KID_OEM_2, KID_OEM_3, KID_OEM_4, KID_OEM_5, KID_OEM_6, KID_OEM_7, KID_OEM_8, KID_OEM_102, KID_OEM_COMMA, KID_OEM_PERIOD, KID_A, KID_B, KID_C, KID_D, KID_E, KID_F, KID_G, KID_H, KID_I, KID_J, KID_K, KID_L, KID_M, KID_N, KID_O, KID_P, KID_Q, KID_R, KID_S, KID_T, KID_U, KID_V, KID_W, KID_X, KID_Y, KID_Z, KID_ESCAPE, KID_TAB, KID_RETURN, KID_SPACE, KID_BACK, KID_DELETE, KID_INSERT, KID_NUMLOCK, KID_LSHIFT, KID_RSHIFT, KID_LCONTROL, KID_RCONTROL, KID_LWIN, KID_RWIN, KID_LMENU, KID_RMENU, KID_LEFT, KID_UP, KID_RIGHT, KID_DOWN, KID_PRIOR, KID_NEXT, KID_END, KID_HOME, KID_NUMPAD0, KID_NUMPAD1, KID_NUMPAD2, KID_NUMPAD3, KID_NUMPAD4, KID_NUMPAD5, KID_NUMPAD6, KID_NUMPAD7, KID_NUMPAD8, KID_NUMPAD9, KID_DIVIDE, KID_MULTIPLY, KID_SUBTRACT, KID_ADD, KID_SEPARATOR, KID_DECIMAL
+RAW NAMES: BATTERY, BATTERY0, BATTERY1, BATTERY2, BATTERY3, BATTERY4, BATTERY5, BATTERY6, BATTERY7, BATTERY8, BATTERY9
+- Battery levels
+
+RAW NAMES: USB, EARS, MIC
+usb plugged in, earphones, microphone active
+
+RAW NAMES: FINGER, FINGERS
+- One or two fingers on touchpad
+
+RAW NAMES: DS_SELECTED, DS4_SELECTED, DS5_SELECTED, DI_SELECTED
+- If a source is selected in settings
+
+RAW NAMES: DI_ACTIVE, KBD_ACTIVE, MSE_ACTIVE, MSE_DI_ACTIVE
+- If a source is in activity
+
+RAW NAMES: INACTIVITY_5MN, INACTIVITY_10MN, INACTIVITY_15MN, INACTIVITY_30MN
+- Inactivity for a period of time (buttons and dpads)
+
+RAW NAMES: NO_MOVEMENT_5MN, NO_MOVEMENT_10MN, NO_MOVEMENT_15MN, NO_MOVEMENT_30MN
+- Bo move for a period of time (3 accelerometers axis)
+
+______________________________________________________________________________________ Source Buttons DirectInput
+- Additional DirectInput Axis
+- Inversed Axis
+- Triggers
+
+RAW NAMES: SLO, SLO_INV, SLO_SNIPER, SL1, SL1_INV, SL1_SNIPER
+- SLO and SL1 act the same as LX, LY, RX, RY. They are linked by couple (circular threshold)
+  - It apply too, to some fonctionalities as Overcontrol and Protect (see Overcontrol)
+    
+RAW NAMES: DI_X, DI_X_INV, DI_X_TRIGGER
+RAW NAMES: DI_Y, DI_Y_INV, DI_Y_TRIGGER
+RAW NAMES: DI_Z, DI_Z_INV, DI_Z_TRIGGER
+RAW NAMES: DI_RX, DI_RX_INV, DI_RX_TRIGGER
+RAW NAMES: DI_RY, DI_RY_INV, DI_RY_TRIGGER
+RAW NAMES: DI_RZ, DI_RZ_INV, DI_RZ_TRIGGER
+RAW NAMES: DI_SL0, DI_SL0_INV, DI_SL0_TRIGGER
+RAW NAMES: DI_SL1, DI_SL1_INV, DI_SL1_TRIGGER
+- DI_X, DI_Y, DI_Z, DI_RX, DI_RY, DI_RZ, DI_SL0, DI_SL1 aren't, they have individual threshold
+  - But they still can use Overcontrol fonctionalities
+
+RAW NAMES: DPAD2_LEFT, DPAD2_UP, DPAD2_RIGHT, DPAD2_DOWN, DPAD2_LEFT, DPAD3_UP, DPAD3_RIGHT, DPAD3_DOWN, DPAD3_LEFT, DPAD4_UP, DPAD4_RIGHT, DPAD4_DOWN, DPAD4_LEFT
+- Three additional splitted DPAD
+
+RAW NAMES: BUTTON16-32
+- And Buttons up to 32 (DS buttons corresponds to 1 to 15, mute is 15)
+
+______________________________________________________________________________________ Velocity & Gyrocompass Buttons
+
+RAW NAMES: SISAXIS_STANCE, SISAXIS_ZONE, SISAXIS_STANCE1, SISAXIS_STANCE2, SISAXIS_STANCE3, SISAXIS_STANCE4, SISAXIS_STANCE5, SISAXIS_ZONE1, SISAXIS_ZONE2, SISAXIS_ZONE3, SISAXIS_ZONE4, SISAXIS_ZONE5
+- Axis with visual Stance and Zone  (actual position)
+- Each individual buttons for both
+
+Some buttons are stance dependant, most are not
+For those which are, you can set you're actual stance by destination actions:
+- CHANGE_POSITION, STANCE1, STANCE2, STANCE3, STANCE4, STANCE5:
+
+STANCE1 is Back....... and use Position Zone1.. = back, bottom.. named ZONE1
+STANCE2 is Leaned..... and use Position Zone2.. = back, top..... named ZONE2
+STANCE3 is Leaned+Sat. and use Position Zone1&2 = all top....... named ZONE3
+STANCE4 is Sat........ and use Position Zone3.. = front, top.... named ZONE4
+STANCE5 is Leaning.... and use Position Zone4.. = front, bottom. named ZONE5
+The actual Stance is visible on the top of the tray icon and at the right of status bar, and with those buttons
+
+In any cases, Stance and Zone (actual position) are some ways dependant and independant
+For example,
+- Quarter give tou an axis, from 0 if the joystick is near you, and full if you have it away from you or lowered (even on back)
+- If you're sat,
+  - and the position is zone 3 (associated with sat) your movements will correspond to evolve the Quarter axis from minimum to maximum
+  - and the position is zone 4 (which is normally associated to Leaning), the axis will still works, but stay at its maximum, all along the zone
+
+RAW NAMES: SISAXIS_ROLL, SISAXIS_ROLL_TRIGGER, SISAXIS_ROLL_CENTER, SISAXIS_LEFT1, SISAXIS_LEFT2, SISAXIS_LEFT3, SISAXIS_LEFT4, SISAXIS_LEFT5, SISAXIS_LEFT6, SISAXIS_LEFT7, SISAXIS_RIGHT, SISAXIS_RIGHT1, SISAXIS_RIGHT2, SISAXIS_RIGHT3, SISAXIS_RIGHT4, SISAXIS_RIGHT5, SISAXIS_RIGHT6, SISAXIS_RIGHT7
+Roll is moving clockwise/Anticlockwise the axis starting from the earphones port to the usb port
+So, the movement consists in holding the joystick by one side, and rotating this side on its axis
+It's a velocity, so its strength depends on how much acceleration you give to the movement
+- Axis and Trigger
+- Button When it's centered
+- Button When it's right
+- Each forces for both rotation senses (Left/Right) 1to6 + tilt
+
+RAW NAMES: SISAXIS_YAW, SISAXIS_YAW_TRIGGER, SISAXIS_YAW_CENTER, SISAXIS_ANTI1, SISAXIS_ANTI2, SISAXIS_ANTI3, SISAXIS_ANTI4, SISAXIS_ANTI5, SISAXIS_ANTI6, SISAXIS_ANTI7, SISAXIS_CLOCK, SISAXIS_CLOCK1, SISAXIS_CLOCK2, SISAXIS_CLOCK3, SISAXIS_CLOCK4, SISAXIS_CLOCK5, SISAXIS_CLOCK6, SISAXIS_CLOCK7
+Yaw is moving clockwise/Anticlockwise the axis starting from the microphone holes to the back of the joystick
+So, the movement is like holding the joystick from above, between the headphone port and the usb port and rotating it like the hands of a clock seen from above
+It works too if you have the joystick in only one hand, and you do a circular movement of the arm, staying alomost horizontal 
+It's a velocity, so its strength depends on how much acceleration you give to the movement
+- Axis and Trigger
+- Button When it's centered
+- Button When it's clockwise
+- Each forces for both rotation senses (Anti/Clock) 1to6 + tilt
+
+RAW NAMES: SISAXIS_PITCH, SISAXIS_PITCH_TRIGGER, SISAXIS_PITCH_CENTER, SISAXIS_REAR1, SISAXIS_REAR2, SISAXIS_REAR3, SISAXIS_REAR4, SISAXIS_REAR5, SISAXIS_REAR6, SISAXIS_REAR7, SISAXIS_FORE, SISAXIS_FORE1, SISAXIS_FORE2, SISAXIS_FORE3, SISAXIS_FORE4, SISAXIS_FORE5, SISAXIS_FORE6, SISAXIS_FORE7
+Pitch is moving clockwise/Anticlockwise the axis starting from the Dpad buttons to the four right buttons
+So, the movement is from you to in front of you, circularly, and reverse
+It's a velocity, so its strength depends on how much acceleration you give to the movement
+- Axis and Trigger
+- Button When it's centered
+- Button When it's fore
+- Each forces for both rotation senses (Rear/Fore) 1to6 + tilt
+
+RAW NAMES: SISAXIS_SIDEWARD, SISAXIS_SIDEWARD_TRIGGER, SISAXIS_SIDEWARD_CENTER, SISAXIS_WEST1, SISAXIS_WEST2, SISAXIS_WEST3, SISAXIS_WEST4, SISAXIS_WEST5, SISAXIS_WEST6, SISAXIS_EAST, SISAXIS_EAST1, SISAXIS_EAST2, SISAXIS_EAST3, SISAXIS_EAST4, SISAXIS_EAST5, SISAXIS_EAST6
+Sideward is moving the joystick like wings near the horizon or as a starship inclination while nearly vertical
+It's a gyrocompass value, so its strength should be independent of how much acceleration you give the movement, but it had, which was reduced by buffering the values
+- Axis and Trigger
+- Button When it's centered
+- Button When it's east
+- Each forces for both directional senses (West/East) 1to6
+
+RAW NAMES: SISAXIS_TOWARD, SISAXIS_TOWARD_TRIGGER, SISAXIS_TOWARD_CENTER, SISAXIS_BACKWARD1, SISAXIS_BACKWARD2, SISAXIS_BACKWARD3, SISAXIS_BACKWARD4, SISAXIS_BACKWARD5, SISAXIS_BACKWARD6, SISAXIS_FORWARD, SISAXIS_FORWARD1, SISAXIS_FORWARD2, SISAXIS_FORWARD3, SISAXIS_FORWARD4, SISAXIS_FORWARD5, SISAXIS_FORWARD6
+Toward is moving the joystick as if you wanted to go forward, or backward. But by inclinating it, because there isn't any magnetic compass or reference point
+It's a gyrocompass value, so its strength should be independent of how much acceleration you give the movement, but it had, which was reduced by buffering the values
+- Axis and Trigger
+- Button When it's centered
+- Button When it's forward
+- Each forces for both directional senses (Backward/Forward) 1to6
+
+RAW NAMES: SISAXIS_LEVEL, SISAXIS_LEVEL_TRIGGER, SISAXIS_LEVEL_CENTER, SISAXIS_SOUTH1, SISAXIS_SOUTH2, SISAXIS_SOUTH3, SISAXIS_SOUTH4, SISAXIS_SOUTH5, SISAXIS_SOUTH6, SISAXIS_NORTH, SISAXIS_NORTH1, SISAXIS_NORTH2, SISAXIS_NORTH3, SISAXIS_NORTH4, SISAXIS_NORTH5, SISAXIS_NORTH6
+Level is moving the joystick to the ground or sky, or inclinating it like anakin podracer nose up and down
+It's a gyrocompass value, so its strength should be independent of how much acceleration you give the movement, but it had, which was reduced by buffering the values
+- Axis and Trigger
+- Button When it's centered
+- Button When it's north
+- Each forces for both directional senses (South/North) 1to6
+
+RAW NAMES: SISAXIS_WHEEL, SISAXIS_QUARTER, SISAXIS_GEAR_REAR, SISAXIS_GEAR_1, SISAXIS_GEAR_2, SISAXIS_GEAR_3, SISAXIS_GEAR_4, SISAXIS_GEAR_5
+- WHEEL, left right, as in a car
+  - It should have been by inclinating wings when near horizon, but it has been compensated with other sensor values to still be able to use it as a wheel in those positions
+- QUARTER, full axis from begining to end of each zone (~ back to front, exept that it can be bottom center to rear center, for ex. in STANCE1)
+- GEARS, zones of QUARTER axis (2/7 REAR, 1/7 each other 1 to 5)
+
+When you're in (for ex.) STANCE2, leaned, and the joystick is in (for ex.) position zone3, sat, the result will be different as if you were in the zone, according to:
+- WHEEL will keep his last value you had while in the same zone
+- QUARTER will stay at its maximum in next zone, and at its minimum in previous zone
+  - Last zone stay at its maximum for STANCE1&2 and at its minimum for STANCE3&4
+- GEARS are simply following the same rule, with REAR or GEAR5 activated when minimal, maximal values are achieved with QUARTER
+
+______________________________________________________________________________________ Mouse and Keyboard Buttons
+
+RAW NAMES: MOUSE_AXEX, MOUSE_AXEY, MOUSE_AXEZ, MOUSE_LEFT, MOUSE_RIGHT, MOUSE_UP, MOUSE_DOWN
+- Mouse movements, (or wheel) keep cursor in center of screen if mouse isn not captured
+		
+RAW NAMES: MOUSE_LBUTTON, MOUSE_MBUTTON, MOUSE_RBUTTON, MOUSE_XBUTTON1, MOUSE_XBUTTON2, MOUSE_BUTTON6, MOUSE_BUTTON7, MOUSE_BUTTON8
 - Mouse buttons
+
+KID_F1, KID_F2, KID_F3, KID_F4, KID_F5, KID_F6, KID_F7, KID_F8, KID_F9, KID_F10, KID_F11, KID_F12, KID_0, KID_1, KID_2, KID_3, KID_4, KID_5, KID_6, KID_7, KID_8, KID_9, KID_OEM_MINUS, KID_OEM_PLUS, KID_OEM_1, KID_OEM_2, KID_OEM_3, KID_OEM_4, KID_OEM_5, KID_OEM_6, KID_OEM_7, KID_OEM_8, KID_OEM_102, KID_OEM_COMMA, KID_OEM_PERIOD, KID_A, KID_B, KID_C, KID_D, KID_E, KID_F, KID_G, KID_H, KID_I, KID_J, KID_K, KID_L, KID_M, KID_N, KID_O, KID_P, KID_Q, KID_R, KID_S, KID_T, KID_U, KID_V, KID_W, KID_X, KID_Y, KID_Z, KID_ESCAPE, KID_TAB, KID_RETURN, KID_SPACE, KID_BACK, KID_DELETE, KID_INSERT, KID_NUMLOCK, KID_LSHIFT, KID_RSHIFT, KID_LCONTROL, KID_RCONTROL, KID_LWIN, KID_RWIN, KID_LMENU, KID_RMENU, KID_LEFT, KID_UP, KID_RIGHT, KID_DOWN, KID_PRIOR, KID_NEXT, KID_END, KID_HOME, KID_NUMPAD0, KID_NUMPAD1, KID_NUMPAD2, KID_NUMPAD3, KID_NUMPAD4, KID_NUMPAD5, KID_NUMPAD6, KID_NUMPAD7, KID_NUMPAD8, KID_NUMPAD9, KID_DIVIDE, KID_MULTIPLY, KID_SUBTRACT, KID_ADD, KID_SEPARATOR, KID_DECIMAL
 - Keyboard
 
-RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR, SL1TR, XINV, YINV, ZINV, RXINV, RYINV, RZINV, SL0INV, SL1INV, DPAD1_LEFT, DPAD1_UP_LEFT, DPAD1_UP, DPAD1_UP_RIGHT, DPAD1_RIGHT, DPAD1_DOWN_RIGHT, DPAD1_DOWN, DPAD1_DOWN_LEFT, DPAD2_LEFT, DPAD2_UP_LEFT, DPAD2_UP, DPAD2_UP_RIGHT, DPAD2_RIGHT, DPAD2_DOWN_RIGHT, DPAD2_DOWN, DPAD2_DOWN_LEFT, DPAD3_LEFT, DPAD3_UP_LEFT, DPAD3_UP, DPAD3_UP_RIGHT, DPAD3_RIGHT, DPAD3_DOWN_RIGHT, DPAD3_DOWN, DPAD3_DOWN_LEFT, DPAD4_LEFT, DPAD4_UP_LEFT, DPAD4_UP, DPAD4_UP_RIGHT, DPAD4_RIGHT, DPAD4_DOWN_RIGHT, DPAD4_DOWN, DPAD4_DOWN_LEFT
+______________________________________________________________________________________ Destination Buttons (vJoy active or not)
+
+RAW NAMES: X, Y, Z, RX, RY, RZ, SL0, SL1, BUTTON1-128
 - Usual vJoy buttons
+
+RAW NAMES: XINV, YINV, ZINV, RXINV, RYINV, RZINV, SL0INV, SL1INV
 - Inversed Axis
-- Triggered Axis (to transform lower start point to middle stability)
+
+RAW NAMES: XTR, YTR, ZTR, RXTR, RYTR, RZTR, SL0TR, SL1TR
+- Triggered Axis (to transform lower start point to middle stability), 
+
+RAW NAMES: DPAD1_LEFT, DPAD1_UP_LEFT, DPAD1_UP, DPAD1_UP_RIGHT, DPAD1_RIGHT, DPAD1_DOWN_RIGHT, DPAD1_DOWN, DPAD1_DOWN_LEFT, DPAD2_LEFT, DPAD2_UP_LEFT, DPAD2_UP, DPAD2_UP_RIGHT, DPAD2_RIGHT, DPAD2_DOWN_RIGHT, DPAD2_DOWN, DPAD2_DOWN_LEFT, DPAD3_LEFT, DPAD3_UP_LEFT, DPAD3_UP, DPAD3_UP_RIGHT, DPAD3_RIGHT, DPAD3_DOWN_RIGHT, DPAD3_DOWN, DPAD3_DOWN_LEFT, DPAD4_LEFT, DPAD4_UP_LEFT, DPAD4_UP, DPAD4_UP_RIGHT, DPAD4_RIGHT, DPAD4_DOWN_RIGHT, DPAD4_DOWN, DPAD4_DOWN_LEFT
 - Splitted Dpad, then you have unlimited capabilities instead of 1 to 1 Dpad affectation
   - Dpad use a mathematical medium function, then you can attribute other sources than normal ones
   - And instead having the result of for example Left + Up > Up Left
-  - You can have it for Left + Up + UpRight + Right (which is mmm…   let the program do it itself…  )
+  - You can have it for Left + Up + UpRight + Right (which is mm…   let the program do it itself…  )
+
+RAW NAMES: WORK1AX, WORK2AX, WORK3AX, WORK4AX, WORK5AX, WORK6AX, WORK7AX, WORK8AX, WORK1TR, WORK2TR, WORK3TR, WORK4TR, WORK5TR, WORK6TR, WORK7TR, WORK8TR
+- Additional 8 axis, in normal and triggers mode
+
+RAW NAMES: WORK1-16
+- Additional 16 buttons (outside vJoy range) for intermediates calculus and filters with mappings
 
 ______________________________________________________________________________________ If mouse/Force
 
@@ -332,7 +536,7 @@ Table of Transitivity:
   - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
 * IF RELEASED GOTO, IF PUSHED GOTO and RETURN_TO time actions, are not concerned by transitivity
 
-![vJoy Help](Doc/7_Ds2vJoy_Mapping_Help.png)
+![Mapping Help](Doc/7_Ds2vJoy_Mapping_Help.png)
 
 You can find this help directly in Ds2vJoy by pressing help below grid entries or in tooltips
 
@@ -345,6 +549,7 @@ Simple, you'll find mouse actions
 - ACTIVE_MOUSE: use to bring the chosen mouse
   - from the bottom group of checkboxes into the timestamp
   - and/or make it responsive to the toggle
+  - Mouse movement stops if source is disconnected to prevent uncontrollable behavior (but you can still use it if you haven't specified a joystick as the source)
 - SAVE_POSITION: save the mouse position, each mapping save his individual 'mouse position'
 - MOVE_BACK: return to saved point
 - MOVE_TO_XY/MOVE_TO_WH/MOVE_TO_NN: go to x,y/w,h/nw,nh (left/central/right numbers of the grid)
@@ -367,6 +572,9 @@ Simple, you'll find mouse actions
 - MAGNIFY_PLUS, MAGNIFY_MINUS: control the factor of magnification
 - MAGNIFY_RESET: temporary return to full screen, values are not modified then you can go back to actual zoom just after
 - MAGNIFY_UP, MAGNIFY_DOWN, MAGNIFY_LEFT, MAGNIFY_RIGHT: move up, down, left or right while magnification factor > 1
+- MAGNIFY_LOCK: Magnification stay always Initialized, then first zoom is achieved more quickly, else Magnification is uninitialized as soon as zom factor is <= 1 (default)
+- MAGNIFY_CURSOR_ON, MAGNIFY_CURSOR_OFF, MAGNIFY_CURSOR_SWITCH: Window's cursor is visible/not visible/switch between when magnification is active
+- MSE_CAN_BYPASS_ON, MSE_CAN_BYPASS_OFF: Temporary overpass setting for 'Mouse bypass screen dimensions' (see Settings)
 
 ______________________________________________________________________________________ Special actions
 
@@ -375,7 +583,7 @@ Double, you'll find sound, modes, window, stats and time actions
 - MUTE_SOUND
 - VOLUME_UP, VOLUME_DOWN
   - if on trigger, variable speed following the pressure force, otherwise exponential
-    - Other keystrokes that do not require adaptive pressure, can easily be added using a vJoy button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
+    - Other keystrokes that do not require adaptive pressure, can easily be added using a Mapping button linked to a keymap, to which you can also add the rapidfire if you need a repeat time
 - MEMORIZE_MODE: Memorize actual mode, Mappings share the same mode, but each one save his individual 'last mode'
 - TO_MEM_MODE: Go back to memorized mode
 - TO_MODE: Switch to mode 1-8
@@ -389,6 +597,8 @@ Double, you'll find sound, modes, window, stats and time actions
 - INTERRUPT: same as 'Interrupt' condition, but time dependent
 - NO_SUSTAIN: same as 'No sustain' condition, but time dependent
 - PAUSE: same as 'Pause' condition, but time dependent
+- CHANGE_POSITION: When active, stance is automatically changed according of your position
+- STANCE1, STANCE2, STANCE3, STANCE4, STANCE5: Instead, specify Back/Leaned/Leaned+Sat/Sat/Leaning
 - BEEP1/BEEP2/BEEP3: Different beep sounds
 - RESET_STATS: Reset All stats (see Efficiency)
 - ADDSTAT1-8: Add a counter on a stat of your choice (1 to 8) (see Efficiency)
@@ -396,6 +606,9 @@ Double, you'll find sound, modes, window, stats and time actions
 - MSE_INPUT_ON, MSE_INPUT_OFF: Temporary overpass setting for mouse input
 - SCREENSHOT: Take a screenshot delimited by two points (x,y),(w,h), leave them null for whole screen
 - MINIMIZE/RESTORE/TRANSPARENCY: Put main window minimized, restore it or activate/deactivate opacity (% defined insettings)
+- INPUT_OFF: All sources off (in settings)
+- DS4_INPUT_ON, DS5_INPUT_ON, DI_INPUT_ON, XI_INPUT_ON: Put o source on (in settings)
+- EXIT: Exit program
 
 ______________________________________________________________________________________ Example
 
@@ -442,29 +655,126 @@ ________________________________________________________________________________
 
 Triple, you'll find Axis movements
 
-RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN, XY_CENTER, XY_LEFT, XY_UP_LEFT, XY_UP, XY_UP_RIGHT, XY_RIGHT, XY_DOWN_RIGHT, XY_DOWN, XY_DOWN_LEFT, XY_Q1_CW, XY_Q1_CN, XY_Q2_CW, XY_Q2_CN, XY_Q3_CW, XY_Q3_CN, XY_Q4_CW, XY_Q4_CN, XY_E1_CW, XY_E1_CN, XY_E2_CW, XY_E2_CN, XY_E3_CW, XY_E3_CN, XY_E4_CW, XY_E4_CN, XY_E5_CW, XY_E5_CN, XY_E6_CW, XY_E6_CN, XY_E7_CW, XY_E7_CN, XY_E8_CW, XY_E8_CN, XY_C_L, XY_C_UL, XY_C_U, XY_C_UR, XY_C_R, XY_C_DR, XY_C_D, XY_C_DL, XY_2C_L, XY_2C_UL, XY_2C_U, XY_2C_UR, XY_2C_R, XY_2C_DR, XY_2C_D, XY_2C_DL, XY_D_L, XY_D_UL, XY_D_U, XY_D_UR, XY_D_R, XY_D_DR, XY_D_D, XY_D_DL, XY_T_L_CW, XY_T_L_CN, XY_T_U_CW, XY_T_U_CN, XY_T_R_CW, XY_T_R_CN, XY_T_D_CW, XY_T_D_CN, XY_S_L_CW, XY_S_L_CN, XY_S_U_CW, XY_S_U_CN, XY_S_R_CW, XY_S_R_CN, XY_S_D_CW, XY_S_D_CN, XY_L_L_CW, XY_L_L_CN, XY_L_U_CW, XY_L_U_CN, XY_L_R_CW, XY_L_R_CN, XY_L_D_CW, XY_L_D_CN, ZRZ_CENTER, ZRZ_LEFT, ZRZ_UP_LEFT, ZRZ_UP, ZRZ_UP_RIGHT, ZRZ_RIGHT, ZRZ_DOWN_RIGHT, ZRZ_DOWN, ZRZ_DOWN_LEFT, ZRZ_Q1_CW, ZRZ_Q1_CN, ZRZ_Q2_CW, ZRZ_Q2_CN, ZRZ_Q3_CW, ZRZ_Q3_CN, ZRZ_Q4_CW, ZRZ_Q4_CN, ZRZ_E1_CW, ZRZ_E1_CN, ZRZ_E2_CW, ZRZ_E2_CN, ZRZ_E3_CW, ZRZ_E3_CN, ZRZ_E4_CW, ZRZ_E4_CN, ZRZ_E5_CW, ZRZ_E5_CN, ZRZ_E6_CW, ZRZ_E6_CN, ZRZ_E7_CW, ZRZ_E7_CN, ZRZ_E8_CW, ZRZ_E8_CN, ZRZ_C_L, ZRZ_C_UL, ZRZ_C_U, ZRZ_C_UR, ZRZ_C_R, ZRZ_C_DR, ZRZ_C_D, ZRZ_C_DL, ZRZ_2C_L, ZRZ_2C_UL, ZRZ_2C_U, ZRZ_2C_UR, ZRZ_2C_R, ZRZ_2C_DR, ZRZ_2C_D, ZRZ_2C_DL, ZRZ_D_L, ZRZ_D_UL, ZRZ_D_U, ZRZ_D_UR, ZRZ_D_R, ZRZ_D_DR, ZRZ_D_D, ZRZ_D_DL, ZRZ_T_L_CW, ZRZ_T_L_CN, ZRZ_T_U_CW, ZRZ_T_U_CN, ZRZ_T_R_CW, ZRZ_T_R_CN, ZRZ_T_D_CW, ZRZ_T_D_CN, ZRZ_S_L_CW, ZRZ_S_L_CN, ZRZ_S_U_CW, ZRZ_S_U_CN, ZRZ_S_R_CW, ZRZ_S_R_CN, ZRZ_S_D_CW, ZRZ_S_D_CN, ZRZ_L_L_CW, ZRZ_L_L_CN, ZRZ_L_U_CW, ZRZ_L_U_CN, ZRZ_L_R_CW, ZRZ_L_R_CN, ZRZ_L_D_CW, ZRZ_L_D_CN
 - if no start/stop time is entered, the value used to calculate the position is the usual source calculation value
 - otherwise, the movement undergoes its complete evolution over time, going from start to stop
   - if OnRelease is used, the movement will start after release
     - double, the movement start at the start time, undergoes its complete evolution over time, going from start to stop, and stay at its maximum if finished before release + stop time
 
-All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
-![Axis movements](Doc/8_Ds2vJoy_Mapping_Movements.png)
+RAW NAMES: XY_CW, XY_CN, ZRZ_CW, ZRZ_CN, RXRY_CW, RXRY_CN, SL0SL1_CW, SL0SL1_CN
 - Complete turn, clockwise or counterclockwise, starting by the north (motorization, loops, perpetual motion)
+
+RAW NAMES: XY_CENTER, ZRZ_CENTER
 - Stay at the middle (combos and technology)
+
+RAW NAMES: XY_LEFT, XY_UP_LEFT, XY_UP, XY_UP_RIGHT, XY_RIGHT, XY_DOWN_RIGHT, XY_DOWN, XY_DOWN_LEFT
+RAW NAMES: ZRZ_LEFT, ZRZ_UP_LEFT, ZRZ_UP, ZRZ_UP_RIGHT, ZRZ_RIGHT, ZRZ_DOWN_RIGHT, ZRZ_DOWN, ZRZ_DOWN_LEFT
 - Stay at one of the eight typical position of the circonference (W, NW, N, NE, E, SE, S, SW)
+
+RAW NAMES: XY_Q1_CW, XY_Q1_CN, XY_Q2_CW, XY_Q2_CN, XY_Q3_CW, XY_Q3_CN, XY_Q4_CW, XY_Q4_CN
+RAW NAMES: ZRZ_Q1_CW, ZRZ_Q1_CN, ZRZ_Q2_CW, ZRZ_Q2_CN, ZRZ_Q3_CW, ZRZ_Q3_CN, ZRZ_Q4_CW, ZRZ_Q4_CN
 - Quarter of turn, clockwise and counterclockwise (Q1=NE, Q2=SE, Q3=SW, Q4=NW)
+
+RAW NAMES: XY_E1_CW, XY_E1_CN, XY_E2_CW, XY_E2_CN, XY_E3_CW, XY_E3_CN, XY_E4_CW, XY_E4_CN, XY_E5_CW, XY_E5_CN, XY_E6_CW, XY_E6_CN, XY_E7_CW, XY_E7_CN, XY_E8_CW, XY_E8_CN
+RAW NAMES: ZRZ_E1_CW, ZRZ_E1_CN, ZRZ_E2_CW, ZRZ_E2_CN, ZRZ_E3_CW, ZRZ_E3_CN, ZRZ_E4_CW, ZRZ_E4_CN, ZRZ_E5_CW, ZRZ_E5_CN, ZRZ_E6_CW, ZRZ_E6_CN, ZRZ_E7_CW, ZRZ_E7_CN, ZRZ_E8_CW, ZRZ_E8_CN
 - Eighth of turn, clockwise and counterclockwise (E1=NNE, E2=ENE, E3=ESE, E4=SSE, E5=SSW, E6=WSW, E7=WNW, E8=NNW)
+
+RAW NAMES: XY_C_L, XY_C_UL, XY_C_U, XY_C_UR, XY_C_R, XY_C_DR, XY_C_D, XY_C_DL
+RAW NAMES: ZRZ_C_L, ZRZ_C_UL, ZRZ_C_U, ZRZ_C_UR, ZRZ_C_R, ZRZ_C_DR, ZRZ_C_D, ZRZ_C_DL
 - Center to one of the eight position of the circonference
+
+RAW NAMES: XY_2C_L, XY_2C_UL, XY_2C_U, XY_2C_UR, XY_2C_R, XY_2C_DR, XY_2C_D, XY_2C_DL
+RAW NAMES: ZRZ_2C_L, ZRZ_2C_UL, ZRZ_2C_U, ZRZ_2C_UR, ZRZ_2C_R, ZRZ_2C_DR, ZRZ_2C_D, ZRZ_2C_DL
 - One of the eight position of the circonference to center
+
+RAW NAMES: XY_D_L, XY_D_UL, XY_D_U, XY_D_UR, XY_D_R, XY_D_DR, XY_D_D, XY_D_DL
+RAW NAMES: ZRZ_D_L, ZRZ_D_UL, ZRZ_D_U, ZRZ_D_UR, ZRZ_D_R, ZRZ_D_DR, ZRZ_D_D, ZRZ_D_DL
 - Each of the eight possible diagonals
+
+RAW NAMES: XY_T_L_CW, XY_T_L_CN, XY_T_U_CW, XY_T_U_CN, XY_T_R_CW, XY_T_R_CN, XY_T_D_CW, XY_T_D_CN
+RAW NAMES: ZRZ_T_L_CW, ZRZ_T_L_CN, ZRZ_T_U_CW, ZRZ_T_U_CN, ZRZ_T_R_CW, ZRZ_T_R_CN, ZRZ_T_D_CW, ZRZ_T_D_CN
 - Four sides, eight moves, of the two triangles (upside and downside base, identical to the square)
+
+RAW NAMES: XY_S_L_CW, XY_S_L_CN, XY_S_U_CW, XY_S_U_CN, XY_S_R_CW, XY_S_R_CN, XY_S_D_CW, XY_S_D_CN
+RAW NAMES: ZRZ_S_L_CW, ZRZ_S_L_CN, ZRZ_S_U_CW, ZRZ_S_U_CN, ZRZ_S_R_CW, ZRZ_S_R_CN, ZRZ_S_D_CW, ZRZ_S_D_CN
 - Four sides, eight moves, of the square
+
+RAW NAMES: XY_L_L_CW, XY_L_L_CN, XY_L_U_CW, XY_L_U_CN, XY_L_R_CW, XY_L_R_CN, XY_L_D_CW, XY_L_D_CN
+RAW NAMES: ZRZ_L_L_CW, ZRZ_L_L_CN, ZRZ_L_U_CW, ZRZ_L_U_CN, ZRZ_L_R_CW, ZRZ_L_R_CN, ZRZ_L_D_CW, ZRZ_L_D_CN
 - Four sides, eight moves, of the lozange (diamond)
 
+All possible axis movements: (for X,Y,Z,RZ. other axis do only complete revolution)
+![Axis movements](Doc/8_Ds2vJoy_Mapping_Movements.png)
+
+______________________________________________________________________________________ After effects
+
+Quadruple, you'll find after effect actions, can be used to calibrate too
+
+Enter the value in end timestamp:
+- if it's percentage, an integer from 1 to 1000
+- if it's offset's value, an integer from 1 to 9999 (/65535)
+- if it's delete part, which part of the circle, or which part of the trigger
+- if it's distortion degree, it's a tenth of a degree from 0 to 900
+
+RAW NAMES: X_INV, Y_INV, Z_INV, RZ_INV, RX_INV, RY_INV
+- Inverse one axis value
+
+RAW NAMES: X_PLUS, Y_PLUS, Z_PLUS, RZ_PLUS, RX_PLUS, RY_PLUS
+- Increase by offset the value of an axis
+
+RAW NAMES: X_MINUS, Y_MINUS, Z_MINUS, RZ_MINUS, RX_MINUS, RY_MINUS
+- Decrease by offset the value of an axis
+
+RAW NAMES: X_DIM, Y_DIM, Z_DIM, RZ_DIM, X_DIM_P1, X_DIM_P2, Y_DIM_P1, Y_DIM_P2, Z_DIM_P1, Z_DIM_P2, RZ_DIM_P1, RZ_DIM_P2
+- Increase or decrease the value of an axis by percentages
+
+RAW NAMES: RX_DIM_P1, RX_DIM_P2, RY_DIM_P1, RY_DIM_P2
+- Increase or decrease the value of a trigger by percentage
+  - Part 1 is from the min value
+  - Part 2 from the maximal value
+
+RAW NAMES: XY_DEL_12_1 to XY_DEL_12_12, ZRZ_DEL_12_1 to ZRZ_DEL_12_12
+- Render a portion (12 = 4x3 parts) of the circle of a pair of axes inoperative
+
+RAW NAMES: XY_DEL_16_1 to XY_DEL_16_16, ZRZ_DEL_16_1 to ZRZ_DEL_16_16
+- Render a portion (16 = 4x4 parts) of the circle of a pair of axes inoperative
+
+RAW NAMES: RX_DEL_3_1 to RX_DEL_3_3, RY_DEL_3_1 to RY_DEL_3_3
+- Render a portion (3 parts) of a trigger inoperative
+
+RAW NAMES: RX_DEL_4_1 to RX_DEL_4_4, RY_DEL_4_1 to RY_DEL_4_4
+- Render a portion (4 parts) of a trigger inoperative
+
+Next are distortions of the axis, divided into 4 or 6 parts, but there can be several consecutively
+- parts are from top to bottom
+- U is for shift by extending to the top
+- D is for shift by extending to the bottom
+- The maximum offset value is reached in the middle of the zone, and decreases as it moves away until it is zero at the ends of the zone
+- Then enter a value less than half an area, for example, the size of _UU_ is 90°, so enter a distortion value less than 450
+
+RAW NAMES: XY_DISTORT_U___, XY_DISTORT__U__, XY_DISTORT___U_, XY_DISTORT____U
+
+RAW NAMES: XY_DISTORT_UU__, XY_DISTORT__UU_, XY_DISTORT___UU
+
+RAW NAMES: XY_DISTORT_UUU_, XY_DISTORT__UUU
+
+RAW NAMES: XY_DISTORT_UUUU
+
+RAW NAMES: XY_DISTORT_U_____, XY_DISTORT__U____, XY_DISTORT___U___, XY_DISTORT____U__, XY_DISTORT_____U_, XY_DISTORT______U
+
+RAW NAMES: XY_DISTORT_UU____, XY_DISTORT__UU___, XY_DISTORT___UU__, XY_DISTORT____UU_, XY_DISTORT_____UU
+
+RAW NAMES: XY_DISTORT__UUU__, XY_DISTORT___UUU_
+
+RAW NAMES: XY_DISTORT_UUUU__, XY_DISTORT__UUUU_, XY_DISTORT___UUUU
+
+RAW NAMES: XY_DISTORT_UUUUU_, XY_DISTORT__UUUUU
+
+Same for D (down), ZRZ U and ZRZ D
+
+![After Effects](Doc/9_Ds2vJoy_After_Effects.png)
 ______________________________________________________________________________________ Modules actions
 
-Quadruple, you'll find web, and notepad actions
+Quintuple, you'll find web, and notepad actions
 
 - NOTEPAD: Show/Hide Notepad
 - NOTEPAD_DOWN, NOTEPAD_UP: Scroll Notepad
@@ -479,8 +789,7 @@ Quadruple, you'll find web, and notepad actions
 - WEB_VISIBILITY: Show/Hide actual web page without quiting module or minimizing program
 - WEB_SCREENSHOT: Take a screenshot of actual selected tab's web page
 - WEB_DARKMODE, WEB_DARKMODE2: Activate/Deactivate dark mode (colors are changed), mode2 is less intrusive for controls
-- MAGNIFY_ALWAYS_ACTIVE_ON: Magnification stay always Initialized, then first zoom is achieved more quickly
-- MAGNIFY_ALWAYS_ACTIVE_OFF: Magnification is uninitialized as soon as zom factor is <= 1 (default)
+- LINKS_APPLICATION0-4: Launch Application 0-4 from Links Tab
 
 ______________________________________________________________________________________ Overcontrol
 
@@ -488,8 +797,8 @@ Upper one, Overcontrol:
 
 Like for normal axis, the value of axis movement takes place over last axis values of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)
   - but you can use Overcontrol checkbox to fuse values
-    - double, Protect: further axis action which should overpass this one won't be permit (may be used on other vJoy buttons)
-  - if there are merged vJoy axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
+    - double, Protect: further axis action which should overpass this one won't be permit (may be used on other Mapping buttons)
+  - if there are merged Mapping axes of type X, Y, Z, RZ in the mapping, the threshold is removed on, respectively, the LX, LY, RX, RY axes of ds
 
 ______________________________________________________________________________________ Switch
 
@@ -620,11 +929,10 @@ You will find.
 Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
 - Or a simple copy of DS4/DS5 to X360, to simplify compatibility problems
-- Checkboxes are made to swap between DS or vJoy as source individually for each button
 
-If you plan to use ViGEm X360 with vJoy as source, remember to change in the vJoy Tab sample:
-- AXISL Y: Y > YINV
-- AXISR Y: RZ > RZINV
+If you plan to use ViGEm X360 with Mapping as source, remember to change in the Mapping Tab sample:
+- AXISL Y: Y > AXISL YINV: Y
+- AXISR Y: RZ > AXISR YINV: RZ
 
 ## Guardian
 ![Guardian](Doc/16_Ds2vJoy_Guardian.png)
@@ -714,6 +1022,11 @@ Remember you can use MINIMIZE/RESTORE special actions, for example, quickly hide
 
 Picture talk by itself
 
+- The icon contain three informations:
+  - yellow circle at the bottom is the profile, 1-3 left to right
+  - number in the middle is the mode, 1-8
+  - ray at the top is the stance, Back-Leaned-Leaned+Sat-Sat-Leaning left to right
+
 ## Efficiency
 ![Efficiency](Doc/20_Ds2vJoy_Efficiency.png)
 
@@ -730,51 +1043,49 @@ Picture talk by itself
 - Double click on Caption when in web module to switch to full screen, press ESC to exit and come back to normal size with menus
 - Web and Notepad modules can be resized and window becomes borderless, without any menu when mouse is out
 - While webbrowser fullscreen, you can adjuste zoom, by slifing mouse on the top of the screen, and exit fullscreen, ny clicking at bottom left corner
-
-The Diverse informations part of status bar change with the module page:
-- Log: Date Time UTC Day Week
-- Settings: Show color under cursor
-- Mappings: You can see which button is pressed
-- RapidFire: Source button if one is in use
-- ViGEm: Remapped buttons actually activated
-- Keymap: Source button if one is launched
-- Guardian: PIDs allowed to see hidden joysticks
-- Links: Version of Ds2vJoy
+- While in a mapping, you can valid changements and reload it the same time by clicking at the right of the button OK (to make several quick tests for ex.)
 
 Some settings are profile dependant, some are no.
 - Non profile dependant:
 
 | >Settings         | >Tasktray         | >Guardian         | >Web              | >Links           
 |:----------------- |:----------------- |:----------------- |:----------------- |:-----------------
-| Profile           | MappingPaused     | vJoyShutDown      | WebRefreshTime    | App1Name         
+| Profile           | MappingPaused     |                   | WebRefreshTime    | App1Name         
 | TopMost           | RapidFirePaused   | RemoveBlacklist   | DefaultZoomValue  | App2Name         
-| Transparency      | KeymapPaused      | PurgeWhitelist    | DarkMode          | App3Name         
-| Tasktray          | vJoyPaused        | dsHID1            | RawBounds         | App4Name         
-| CloseMinimize     | ViGEmPaused       | dsHID2            | WebLanguage       | App5Name         
+| Transparency      | vJoyPaused        | PurgeWhitelist    | DarkMode          | App3Name         
+| Tasktray          | XInputPaused      | dsHID1            | RawBounds         | App4Name         
+| CloseMinimize     | KeymapPaused      | dsHID2            | WebLanguage       | App5Name         
 | DisconnectBT      | GuardianPaused    | dsHID3            | UserAgent         |                  
 | LowBattAlert      |                   | Exe1Name          | BlockedSites      | App1Location     
 | dsSerial          | NotepadFont       | Exe2Name          |                   | App2Location     
 | BlackLedOnExit    | Notepad           | Exe3Name          | WebURL0 to 9      | App3Location     
 | MappingViewMode   |                   | Exe4Name          |                   | App4Location     
 | CloneViewMode     | Version           | Exe5Name          | InitialScript     | App5Location     
+| vJoyShutDown      |                   |                   |                   |                  
+| Device1           |                   |                   |                   |                  
+| Device2           |                   |                   |                   |                  
+| Dispatch1         |                   |                   |                   |                  
+| Dispatch2         |                   |                   |                   |                  
+| Dispatch3         |                   |                   |                   |                  
 
 - Profile dependant:
 
 | >Settings1        | >Settings2        | >Guardian         | >Datas            | >ViGEm           
 |:----------------- |:----------------- |:----------------- |:----------------- |:-----------------
 | Opacity           | MouseCanBypass    | GuardianActive    | Mappingdata       | ViGEmActive      
-| PreferredDS       | TriggersMode      |                   | RapidFiredata     | vJoyActive       
+| PreferredSource   | TriggersMode      |                   | RapidFiredata     | vJoyActive       
 | MouseActive       | DarkTheme         | dsHID1Enable      | Keymapdata        |                  
 | KeyboardActive    |                   | dsHID2Enable      |                   | DesiredVirtualPad
-| vJoyDeviceID      | TouchPadButton    | dsHID3Enable      | Stats             | target_X360      
-|                   | TouchCol          | Exe1NameEnable    | Reminder          | dstarget_X360    
+| vJoyDevice        | TouchPadButton    | dsHID3Enable      | Stats             | target_X360      
+| XInputDevice      | TouchCol          | Exe1NameEnable    | Reminder          | dstarget_X360    
 | Threshold         | TouchRow          | Exe2NameEnable    |                   | vjtarget_X360    
 | Simultaneous      |                   | Exe3NameEnable    | TabMapping        | target_DS4       
 | LongPress         | LED_Color         | Exe4NameEnable    | TabToMode         | dstarget_DS4     
 | VeryLongPress     | Wave_Speed        | Exe5NameEnable    |                   | vjtarget_DS4     
+| Dispatch          |                   |                   |                   |                  
 
 ## Related links and source
-* https://github.com/090 (merci pour la structure de départ)
+* https://github.com/090 (thanks for the starting structure)
 
 * https://github.com/shauleiz/vJoy
 * https://github.com/jshafer817/vJoy
@@ -794,7 +1105,7 @@ Some settings are profile dependant, some are no.
 * https://github.com/elnormous/HTTPRequest
 * http://www.wischik.com/lu/programmer/zip_utils.html
 
-* https://www.autohotkey.com/
+* https://github.com/AutoHotkey
 * http://www.planetpointy.co.uk/joystick-test-application
 * https://github.com/Jays2Kings/DS4Windows
 * https://www.inputmapper.com

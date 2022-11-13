@@ -5,7 +5,8 @@
 class KeymapDataDlg
 {
 public:
-	enum ModifiedKeymap {
+	enum ModifiedKeymap : unsigned char
+	{
 		Mofified_ButtonID,
 		Mofified_WndRestore,
 		Mofified_WndMaximize,
@@ -17,13 +18,13 @@ public:
 		Mofified_ExtendedKey,
 		Mofified_Scancode,
 		Mofified_findWindow,
-		Mofified_count
+		ModifiedKeymap_Count
 	};
 
 	KeymapDataDlg();
 	~KeymapDataDlg();
 
-	void				Init(HINSTANCE hInst, HWND hWnd);
+	void				Init();
 	void				Open(HWND parent, int mode);
 	void				Show();
 	void				Hide();
@@ -34,7 +35,7 @@ public:
 
 	int					dlgPage = 0;
 	bool				alreadydone = false;
-	bool				Modified[Mofified_count] = { 0 };
+	bool				Modified[ModifiedKeymap_Count] = { 0 };
 
 	Keymap				keymapData;
 	Findwindow			fw;
@@ -44,11 +45,12 @@ private:
 
 	static	INT_PTR CALLBACK Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 			INT_PTR CALLBACK _proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static	LRESULT CALLBACK ListSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR uIDSubClass, DWORD_PTR RefData);
+			LRESULT CALLBACK _listSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void				_InitDialog(HWND hWnd);
 	void				_ShowWindow(HWND hWnd);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_parent = NULL;
 	HWND				m_hList = NULL;
 	HWND				m_hEdit = NULL;
@@ -62,6 +64,9 @@ private:
 	int					m_editCol = 0;
 	bool				m_filter_iwv = false;
 	bool				m_flag_cancel = false;
+
+	const double		y470 = 0.046126560401444254082956;
+	const double		y20minus470 = 0.177480237348534715557960;
 
 	bool				firsttime = false;
 	bool				canprint = false;

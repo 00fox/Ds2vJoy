@@ -50,7 +50,7 @@ int				MessageBoxPos(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, i
 void			TextInputDialog(HWND parent, PCWSTR title, PCWSTR prompt, PCWSTR description, const std::wstring& defaultInput = L"", bool readOnly = false)
 void			CreateToolTip(HWND hWndParent, HWND hControlItem, PTSTR tooltipText)
 void			SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency)
-unsigned long	GetCursorType()
+unsigned int	GetCursorType()
 HRESULT			ScreenCapturePart(int x, int y, int z, int t, std::wstring filename, bool scaling = true)
 BOOL			SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, int pointy = 0)
 BOOL			MagSetColor(char magnifyColor = 0)
@@ -59,6 +59,7 @@ BOOL			MagSetColor(char magnifyColor = 0)
 BOOL			IsWow64()
 DWORD			GetPIDByName(std::wstring ProcessName)
 WCHAR*			GetExeNameByPID(DWORD ProcessID)
+BOOL			uSleep(__int64 usec)
 
 ////////////////////////////////////////////////////////////////////// GUID
 GUID			String2GUID(const std::wstring& str)
@@ -91,6 +92,7 @@ BOOL			RemoveDriverByHwId(std::wstring enumerator, std::wstring hwid, bool verbo
 BOOL			DeviceRestart(std::wstring enumerator, std::wstring hwid, bool tohide = true, bool verbose = false)
 BOOL			DeviceUpdate(std::wstring lpFileName, std::wstring hwid)
 BOOL			InstallDriverByHwId(std::wstring lpFileName, std::wstring hwid)
+int				UpperClassFilter(std::wstring cf_class, std::wstring cf_driver)
 */
 
 ////////////////////////////////////////////////////////////////////// Utilisation
@@ -726,16 +728,15 @@ inline BOOL DeleteDirectory(std::wstring directory, bool recurse = true)
 //-----------------------------------------------------------------------------
 inline BOOL LoadEmbeddedFont(WORD resourceID, HANDLE* fonthandle)
 {
-	HINSTANCE hInst = GetModuleHandle(NULL);
-	HRSRC resourceHandle = ::FindResource(hInst, MAKEINTRESOURCE(resourceID), RT_FONT);
+	HRSRC resourceHandle = ::FindResource(tape.Ds2hInst, MAKEINTRESOURCE(resourceID), RT_FONT);
 
 	if (resourceHandle != nullptr)
 	{
-		HGLOBAL dataHandle = ::LoadResource(hInst, resourceHandle);
+		HGLOBAL dataHandle = ::LoadResource(tape.Ds2hInst, resourceHandle);
 		if (dataHandle != nullptr)
 		{
 			DWORD nFonts = 0;
-			*fonthandle = AddFontMemResourceEx(LockResource(dataHandle), SizeofResource(hInst, resourceHandle), NULL, &nFonts);
+			*fonthandle = AddFontMemResourceEx(LockResource(dataHandle), SizeofResource(tape.Ds2hInst, resourceHandle), NULL, &nFonts);
 
 			FreeResource(dataHandle);
 			if (fonthandle != nullptr)
@@ -1147,25 +1148,42 @@ inline static INT_PTR CALLBACK TextInput_Proc(HWND hDlg, UINT message, WPARAM wP
 	{
 		HDC hdcStatic = (HDC)wParam;
 		SetTextColor(hdcStatic, tape.ink_BTN);
-		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkMode(hdcStatic, OPAQUE);
 		SetBkColor(hdcStatic, tape.Bk_BTN);
-		return (LRESULT)tape.hB_BTN;
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_STATIC);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, tape.Bk_STATIC);
-		return (LRESULT)tape.hB_STATIC;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_STATIC_DARK);
+			return (LRESULT)tape.hB_BackGround_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_STATIC);
+			return (LRESULT)tape.hB_BackGround;
+		}
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
-		SetBkMode(hdcStatic, OPAQUE);
-		SetBkColor((HDC)wParam, tape.ink_black);
-		return (LRESULT)tape.hB_black;
+		SetBkMode((HDC)wParam, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_EDIT_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT);
+			return (LRESULT)tape.hB_EDIT;
+		}
 	}
 	case WM_PAINT:
 	{
@@ -1260,17 +1278,17 @@ inline void TextInputDialog(HWND parent, PCWSTR title, PCWSTR prompt, PCWSTR des
 }
 
 //-----------------------------------------------------------------------------
-inline void CreateToolTip(
+inline HWND CreateToolTip(
 	HWND hWndParent,	/*HWND handle for the parent window, for example dialog box*/
 	HWND hControlItem,	/*HWND handle for the control item, for example checkbox*/
 	PTSTR tooltipText	/*text for the tool-tip*/)
 {
 	if (!hControlItem || !hWndParent || !tooltipText)
-		return;
+		return NULL;
 
 	HWND hwndTip = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_NOFADE | TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, hWndParent, NULL, GetModuleHandle(0), NULL);
 	if (!hwndTip)
-		return;
+		return NULL;
 
 	SetWindowPos(hwndTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
@@ -1293,12 +1311,14 @@ inline void CreateToolTip(
 
 	if (!SendMessage(hwndTip, TTM_ADDTOOL, 0, LPARAM(&toolInfo)))
 		MessageBox(0, TEXT("TTM_ADDTOOL failed\nWrong project manifest!"), 0, 0);
+
+	return hwndTip;
 }
 
 //-----------------------------------------------------------------------------
 inline void SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency)
 {
-	long lExStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+	int lExStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
 
 	if (bTransparent)
 	{
@@ -1323,7 +1343,7 @@ inline void SetWindowTransparent(HWND hwnd, bool bTransparent, int nTransparency
 }
 
 //-----------------------------------------------------------------------------
-inline unsigned long GetCursorType()
+inline unsigned int GetCursorType()
 {
 	HCURSOR cursor = GetCursor();
 
@@ -1477,9 +1497,12 @@ inline BOOL SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, i
 			MagLevel = 1;
 			MagxOffset = tape.W / 2;
 			MagyOffset = tape.H / 2;
-			MagSetFullscreenTransform(1, 0, 0);
-			if (MagUninitialize())
-				tape.MagInitialized = false;
+			if (tape.MagCanUninitialize)
+			{
+				MagShowSystemCursor(true);
+				if (MagUninitialize())
+					tape.MagInitialized = false;
+			}
 		}
 		return FALSE;
 	}
@@ -1490,7 +1513,8 @@ inline BOOL SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, i
 			if (MagInitialize())
 			{
 				tape.MagInitialized = true;
-				//echo(I18N.Magnification_Active);
+				MagShowSystemCursor(tape.MagCursor);
+				//echo(I18N.Magnifier_Magnification_Active);
 
 				switch (method)
 				{
@@ -1511,6 +1535,7 @@ inline BOOL SetMagnifyZoom(unsigned char method, float factor, int pointx = 0, i
 				return FALSE;
 		}
 	}
+	///////////////MagSetWindowFilterList();
 
 	pointx = int(2 * MagxOffset * (1.0 - 1.0 / MagLevel));
 	pointy = int(2 * MagyOffset * (1.0 - 1.0 / MagLevel));
@@ -1626,6 +1651,33 @@ inline WCHAR* GetExeNameByPID(DWORD ProcessID)
 	wcscpy_s(ProcessName, tocopy, ProcessNametmp);
 
 	return ProcessName;
+}
+
+
+//-----------------------------------------------------------------------------
+inline BOOL uSleep(__int64 usec)
+{
+	if (usec <= 0)
+		return FALSE;
+	HANDLE timer;
+	LARGE_INTEGER ft;
+
+	ft.QuadPart = -(10 * usec); //Convert to 100 nanosecond interval, negative value indicates relative time
+
+	if (!(timer = CreateWaitableTimer(NULL, TRUE, NULL)))
+		return FALSE;
+	if (!SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0))
+	{
+		CloseHandle(timer);
+		return FALSE;
+	}
+	if (timer)
+	{
+		WaitForSingleObject(timer, INFINITE);
+		CloseHandle(timer);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////// GUID
@@ -2789,7 +2841,7 @@ inline std::vector<int> GetDeviceError(std::wstring enumerator, std::wstring hwi
 
 				if (SetupDiGetDeviceProperty(hdevinfo, &devinfo, &DEVPKEY_Device_ProblemCode, &propertyType, propertyBuffer, 100, &requiredSize, 0))
 				{
-					unsigned long deviceProblemCode = *((unsigned long*)propertyBuffer);
+					unsigned int deviceProblemCode = *((unsigned int*)propertyBuffer);
 					for (int i = 0; i < 100; i++)
 					{
 						result.push_back(propertyBuffer[i]);
@@ -2923,7 +2975,7 @@ inline char GetDeviceState(std::wstring enumerator, std::wstring hwid, bool verb
 
 				if (SetupDiGetDeviceProperty(hdevinfo, &devinfo, &DEVPKEY_Device_ProblemCode, &propertyType, propertyBuffer, 100, &requiredSize, 0))
 				{
-					unsigned long deviceProblemCode = *((unsigned long*)propertyBuffer);
+					unsigned int deviceProblemCode = *((unsigned int*)propertyBuffer);
 					for (int i = 0; i < 100; i++)
 					{
 						if (propertyBuffer[i] == CM_PROB_DISABLED)
@@ -3445,4 +3497,357 @@ inline BOOL InstallDriverByHwId(std::wstring lpFileName, std::wstring hwid)
 
 	SetupDiDestroyDeviceInfoList(DeviceInfoSet);
 	return TRUE;
+}
+
+//-----------------------------------------------------------------------------
+inline LPTSTR* GetMultiSzIndexArray(_In_ __drv_aliasesMem LPTSTR MultiSz)
+/*
+	Get an index array pointing to the MultiSz passed in
+*/
+{
+	LPTSTR scan;
+	LPTSTR* array;
+	int elements;
+
+	for (scan = MultiSz, elements = 0; scan[0];elements++)
+		scan += _tcslen(scan) + 1;
+
+	array = new LPTSTR[elements + 2];
+	if (!array)
+		return NULL;
+
+	array[0] = MultiSz;
+	array++;
+	if (elements)
+	{
+		for (scan = MultiSz, elements = 0; scan[0]; elements++)
+		{
+			array[elements] = scan;
+			scan += _tcslen(scan) + 1;
+		}
+	}
+	array[elements] = NULL;
+
+	return array;
+}
+
+inline LPTSTR* GetRegMultiSz(_In_ HKEY hKey, _In_ LPCTSTR Val)
+/*
+	Get a multi-sz from registry
+	and return as an array of strings
+*/
+{
+	LPTSTR buffer;
+	DWORD size;
+	DWORD reqSize;
+	DWORD dataType;
+	LPTSTR* array;
+	DWORD szChars;
+	LONG regErr;
+
+	size = 8192; // initial guess
+	buffer = new TCHAR[(size / sizeof(TCHAR)) + 2];
+	if (!buffer)
+		return NULL;
+
+	reqSize = size;
+	regErr = RegQueryValueEx(hKey, Val, NULL, &dataType, (PBYTE)buffer, &reqSize);
+	while ((regErr != NO_ERROR)) {
+		if (GetLastError() != ERROR_MORE_DATA)
+			goto failed;
+
+		if (dataType != REG_MULTI_SZ)
+			goto failed;
+
+		size = reqSize;
+		delete[] buffer;
+		buffer = new TCHAR[(size / sizeof(TCHAR)) + 2];
+		if (!buffer)
+			goto failed;
+
+		regErr = RegQueryValueEx(hKey, Val, NULL, &dataType, (PBYTE)buffer, &reqSize);
+	}
+	szChars = reqSize / sizeof(TCHAR);
+	buffer[szChars] = TEXT('\0');
+	buffer[szChars + 1] = TEXT('\0');
+
+	array = GetMultiSzIndexArray(buffer);
+	if (array)
+		return array;
+
+failed:
+	if (buffer)
+		delete[] buffer;
+
+	return NULL;
+}
+
+inline LPTSTR* CopyMultiSz(_In_opt_ PZPWSTR Array)
+/*
+	Creates a new array from old
+*/
+{
+	LPTSTR multiSz = NULL;
+	HRESULT hr;
+	int cchMultiSz = 0;
+
+	if (Array)
+	{
+		for (int c = 0;Array[c];c++)
+			cchMultiSz += (int)_tcslen(Array[c]) + 1;
+	}
+	cchMultiSz += 1;
+	multiSz = new TCHAR[cchMultiSz];
+	if (!multiSz)
+		return NULL;
+
+	int len = 0;
+	if (Array) {
+		for (int c = 0;Array[c];c++)
+		{
+			//hr = StringCchCopy(multiSz + len, cchMultiSz - len, Array[c]);
+			//if (FAILED(hr))
+			if (wcscpy_s(multiSz + len, cchMultiSz - len, Array[c]))
+			{
+				if (multiSz)
+					delete[] multiSz;
+				return NULL;
+			}
+			len += (int)_tcslen(multiSz + len) + 1;
+		}
+	}
+
+	if (len < cchMultiSz)
+		multiSz[len] = TEXT('\0');
+	else
+		multiSz[cchMultiSz - 1] = TEXT('\0'); // This should never happen!
+
+	LPTSTR* pRes = GetMultiSzIndexArray(multiSz);
+	if (pRes)
+		return pRes;
+
+	delete[] multiSz;
+
+	return NULL;
+}
+
+inline void DelMultiSz(_In_opt_ __drv_freesMem(object) PZPWSTR Array)
+/*
+	Deletes the string array allocated by GetDevMultiSz/GetRegMultiSz/GetMultiSzIndexArray
+*/
+{
+	if (Array) {
+		Array--;
+		if (Array[0]) {
+			delete[] Array[0];
+		}
+		delete[] Array;
+	}
+}
+
+#define EXIT_OK      (0)
+#define EXIT_REBOOT  (1)
+#define EXIT_FAIL    (2)
+#define EXIT_USAGE   (3)
+inline int UpperClassFilter(std::wstring cf_class, std::wstring cf_driver)
+/*
+	Class filters Tweaking
+	!driver: delete first match of driver
+	-driver: insert new driver at start
+	+driver: insert new driver at end
+*/
+{
+	size_t tocopy = cf_driver.length();
+	WCHAR* driver = new WCHAR[tocopy + 1];
+	if (tocopy)
+		wcscpy_s(driver, tocopy + 1, cf_driver.c_str());
+	else
+		driver[0] = 0;
+
+	DWORD nGuids = 0;
+	GUID guid;
+	WCHAR* regval = new WCHAR[1000];
+	HKEY hk = (HKEY)INVALID_HANDLE_VALUE;
+	LPTSTR* multiVal = NULL;
+	SC_HANDLE SCMHandle = NULL;
+	SC_HANDLE ServHandle = NULL;
+	bool modified = false;
+	int failcode = EXIT_FAIL;
+
+	// take the first guid for the name
+	if (!SetupDiClassGuidsFromNameEx(cf_class.c_str(), &guid, 1, &nGuids, NULL, NULL))
+	{
+		if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+			goto final;
+	}
+	if (nGuids == 0)
+		goto final;
+
+	{
+		std::wstring regstr = L"UpperFilters";
+		size_t tocopy = regstr.length();
+		wcscpy_s(regval, tocopy + 1, regstr.c_str());
+	}
+
+	hk = SetupDiOpenClassRegKeyEx(&guid, KEY_READ | KEY_WRITE, DIOCR_INSTALLER, NULL, NULL);
+	if (hk == INVALID_HANDLE_VALUE)
+		goto final;
+
+	multiVal = GetRegMultiSz(hk, regval);
+	if (!multiVal)
+	{
+		multiVal = CopyMultiSz(NULL);
+		if (!multiVal)
+			goto final;
+	}
+
+	{
+		int op = driver[0];
+		LPTSTR serv = driver + 1;
+		int after = -1;
+		int span = 1;
+		int mark = 0;
+		int cnt;
+		int ent;
+		LPTSTR* tmpArray;
+
+		if ((driver == NULL) || (!driver) || !serv[0])
+		{
+			failcode = EXIT_USAGE;
+			goto final;
+		}
+
+		if (op == TEXT('!')) {
+			echo("sddsds");
+			// find specified service in list
+			for (after += span; multiVal[after]; after++)
+			{
+				if (_tcsicmp(multiVal[after], serv) == 0)
+					break;
+			}
+			if (!multiVal[after])
+				goto final;
+
+			// modifying
+			for (int c = after; multiVal[c]; c++)
+				multiVal[c] = multiVal[c + 1];
+
+			LPTSTR* newArray = CopyMultiSz(multiVal);
+			if (!newArray)
+				goto final;
+
+			DelMultiSz(multiVal);
+			multiVal = newArray;
+			span = 0; // deleted
+			modified = true;
+		}
+		else if (op == '+')
+		{
+			// insert after
+			if (after < 0)
+			{
+				int c;
+				for (c = 0; multiVal[c];c++) {}
+				mark = c;
+			}
+			else
+				mark = after + span;
+		}
+		else if (op == '-')
+		{
+			// insert before
+			if (after < 0)
+				mark = 0;
+			else
+				mark = after;
+		}
+		else
+		{
+			// not valid
+			failcode = EXIT_USAGE;
+			goto final;
+		}
+
+		// sanity - see if service exists
+		SCMHandle = OpenSCManager(NULL, NULL, GENERIC_READ);
+		if (!SCMHandle)
+			goto final;
+		ServHandle = OpenService(SCMHandle, serv, GENERIC_READ);
+
+		if (ServHandle)
+			CloseServiceHandle(ServHandle);
+
+		CloseServiceHandle(SCMHandle);
+		if (!ServHandle)
+			goto final;
+
+		// need a bigger array
+		for (cnt = 0; multiVal[cnt]; cnt++) {}
+
+		tmpArray = new LPTSTR[cnt + 2];
+		if (!tmpArray)
+			goto final;
+
+		_Analysis_assume_(mark < cnt);
+		for (ent = 0; ent < mark; ent++)
+			tmpArray[ent] = multiVal[ent];
+
+		tmpArray[ent] = serv;
+		for (;ent < cnt; ent++) {
+			tmpArray[ent + 1] = multiVal[ent];
+		}
+		tmpArray[ent + 1] = NULL;
+
+		LPTSTR* newArray = CopyMultiSz(tmpArray);
+		delete[] tmpArray;
+		if (!newArray)
+			goto final;
+
+		DelMultiSz(multiVal);
+		multiVal = newArray;
+		modified = true;
+	}
+
+	if (modified)
+	{
+		if (multiVal[0])
+		{
+			size_t len = 0;
+			LPTSTR multiSz = multiVal[-1];
+			LPTSTR p = multiSz;
+
+			while (*p)
+			{
+				p += _tcslen(p) + 1;
+			}
+			p++; // skip past null
+			len = (p - multiSz) * sizeof(TCHAR);
+			if (len > DWORD_MAX)
+				goto final;
+
+			LONG err = RegSetValueEx(hk, regval, 0, REG_MULTI_SZ, (LPBYTE)multiSz, (DWORD)len);
+			if (err == NO_ERROR)
+				failcode = EXIT_REBOOT;
+		}
+		else
+		{
+			LONG err = RegDeleteValue(hk, regval);
+			if ((err == NO_ERROR) || (err == ERROR_FILE_NOT_FOUND))
+				failcode = EXIT_REBOOT;
+		}
+	}
+	else
+		failcode = EXIT_OK;
+
+	final:
+
+	if (multiVal)
+		DelMultiSz(multiVal);
+
+	if (hk != (HKEY)INVALID_HANDLE_VALUE)
+		RegCloseKey(hk);
+
+	delete[] driver;
+	delete[] regval;
+	return failcode;
 }

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Source.h"
-#include "vJoy.h"
+#include "Destination.h"
 
 	void				MouseActions(int action, int delta = 0);
 	void				MouseActionEnd(int action);
@@ -9,21 +9,21 @@
 class Mapping
 {
 public:
-	enum LedActionID
+	enum LedActionID : unsigned char
 	{
-		Led_Action_none,
-		Led_Action_Led1,
-		Led_Action_Led2,
-		Led_Action_Led3,
-		Led_Action_Led4,
-		Led_Action_Led5,
-		Led_Action_Battery,
-		Led_Action_Count
+		LedAction_None,
+		LedAction_Led1,
+		LedAction_Led2,
+		LedAction_Led3,
+		LedAction_Led4,
+		LedAction_Led5,
+		LedAction_Battery,
+		LedAction_Count
 	};
 
-	enum MouseActionID
+	enum MouseActionID : byte
 	{
-		mouse_none,
+		MouseAction_None,
 		ACTIVE_MOUSE,
 		MOVE_BACK,
 		SAVE_POSITION,
@@ -66,12 +66,18 @@ public:
 		MAGNIFY_DOWN,
 		MAGNIFY_LEFT,
 		MAGNIFY_RIGHT,
-		mouse_Count
+		MAGNIFY_LOCK,
+		MAGNIFY_CURSOR_ON,
+		MAGNIFY_CURSOR_OFF,
+		MAGNIFY_CURSOR_SWITCH,
+		MSE_CAN_BYPASS_ON,
+		MSE_CAN_BYPASS_OFF,
+		MouseAction_Count
 	};
 
-	enum SpecialActionID
+	enum SpecialActionID : byte
 	{
-		special_none,
+		SpecialAction_None,
 		MUTE_SOUND,
 		VOLUME_UP,
 		VOLUME_DOWN,
@@ -102,6 +108,12 @@ public:
 		INTERRUPT,
 		NO_SUSTAIN,
 		PAUSE,
+		CHANGE_POSITION,
+		STANCE1,
+		STANCE2,
+		STANCE3,
+		STANCE4,
+		STANCE5,
 		BEEP1,
 		BEEP2,
 		BEEP3,
@@ -122,12 +134,18 @@ public:
 		MINIMIZE,
 		RESTORE,
 		TRANSPARENCY,
-		special_Count
+		INPUT_OFF,
+		DS4_INPUT_ON,
+		DS5_INPUT_ON,
+		DI_INPUT_ON,
+		XI_INPUT_ON,
+		EXIT,
+		SpecialAction_Count
 	};
 
-	enum ModulesActionID
+	enum ModulesActionID : byte
 	{
-		modules_none,
+		ModulesAction_None,
 		NOTEPAD,
 		NOTEPAD_DOWN,
 		NOTEPAD_UP,
@@ -162,13 +180,17 @@ public:
 		WEB_SCREENSHOT,
 		WEB_DARKMODE,
 		WEB_DARKMODE2,
-		modules_Count
+		LINKS_APPLICATION0,
+		LINKS_APPLICATION1,
+		LINKS_APPLICATION2,
+		LINKS_APPLICATION3,
+		LINKS_APPLICATION4,
+		ModulesAction_Count
 	};
 
 	Mapping();
 	~Mapping();
 
-	WCHAR*				dsString(unsigned char nbutton);
 	//First column is the principal source (see it particular function at the start of vJoy editing, and or/xor conditions)
 	//Already configured vJoy buttons can be used as source, in conjunctions with DS buttons
 	//'+'  Indicates combination (second column)
@@ -177,14 +199,14 @@ public:
 	//'–'  Indicates this mapping won't be launched if this button is pressed (see 'not' and 'pause' conditions) (third column)
 	//'=' Indicates this mapping won't be launched if this button is pressed, but continue if already launched (third column)
 	//'#' Indicates this button will be disabled for next mappings, except if 'Force' tag is activated (all)
-	const WCHAR*		vJoyString();
+	WCHAR*				SrceString(unsigned char nbutton);
 	//See a brief of what will be launched like vJoy, modes, mouse action (different from mouse)
 	//'#' Indicates this button will be disabled for next mappings, when this button activated, except if 'Force' tag is activated
 	//'>' Indicates this button will be disabled for next mappings, until the end of the time stamps, except if 'Force' tag is activated
-	const WCHAR*		NoticeString();
+	const WCHAR*		DestString();
 	//See a comment, notice, reminder, game rule, combo descritption, etc.
 	//Takes palce instead of vJoyString(); by tape.MappingViewMode
-	const WCHAR*		TagsString();
+	const WCHAR*		NoticeString();
 	//| Tag | Description
 	//|:--- |:------------------------------------------------------------------------------
 	//|  I  | IfMouse condition is in use (see below)
@@ -199,31 +221,29 @@ public:
 	//| RZW | An OnRelease (/+NoRelease/+NlRelease) condition is in use (see below, under time stamps)
 	//|  M  | If mouse will be in used (checkboxes choice, mouse actions are in vJoy Button) (see below)
 	//a lowercase indicates that the checkbox is double checked for this condition
+	const WCHAR*		TagsString();
 	const WCHAR*		MappingButtons();
 	void				PreLoad();
-	BOOL				LoadDevice(HWND hWnd, dsDevice*, vJoyDevice*);
-	void				RunFirst(vJoyDevice*);
-	void				RunLast(dsDevice*, vJoyDevice*);
+	BOOL				LoadDevice(Source*, Destination*);
+	void				RunFirst(Destination*);
+	void				RunLast(Source*, Destination*);
 	void				Run(double average);
 	static WCHAR*		MouseString(MouseActionID id);
 	static WCHAR*		SpecialString(SpecialActionID id);
 	static WCHAR*		ModulesString(ModulesActionID id);
 	static WCHAR*		LedString(LedActionID id);
 
-	unsigned char		Enable = 0;
 	//0 disabled
 	//1 enabled
 	//2 separator
+	unsigned char		Enable = 0;
 	unsigned char		Tab = 0;
-	unsigned char		Ifmouse = 0;
 	//1 if a mouse is already in use
 	//2 if none mouse is actually in use
-	unsigned char		Force = 0;
+	unsigned char		Ifmouse = 0;
 	//1 to ignore if a button has been disabled by a precedent mapping
 	//2 only if this mapping is already working
-	bool				Short = false;
-	bool				Double = false;
-	bool				Long = false;
+	unsigned char		Force = 0;
 	//| Checkboxes    | Method          | Description
 	//|:------------- |:--------------- |:--------------------------------------------------
 	//| None          | Simple          | Start when pressed, stop when release
@@ -246,17 +266,19 @@ public:
 	//| Double short* | ~first press and second press < long + second press duration > long
 	//| Medium long   | ~press > twice the time as long
 	//| Very long     | found in settings
+	bool				Short = false;
+	bool				Double = false;
+	bool				Long = false;
 	unsigned char		Led = 0;
-	unsigned char		Macro = 0;
 	//1 Macro: Interrupt macros on release (even if timestamp not finished),
-	//2 No sustain: we use release value of first source instead of 0xFF if timestamp is still in use and we have released sources
-	unsigned char		Pause = 0;
+	//2 No sustain: we use release value of first source instead of 0xFFFF if timestamp is still in use and we have released sources
+	unsigned char		Macro = 0;
 	//1 pause this mapping while a not1 condition
 	//2 pause this mapping while a not2 condition
 	//3 pause this mapping while a not condition
 	//	otherwise	if not is a simple, and not button is pressed, the mapping is interrupted
 	//				if not is a double, and not button is pressed, the mapping still continue
-	unsigned char		Transitivity = 0;
+	unsigned char		Pause = 0;
 	//Brings different behaviors and transition possibilities while mode changed (see table of transitivity below)
 	//
 	//Table of Transitivity:
@@ -270,14 +292,16 @@ public:
 	//|                 | After, you have to release and trigger it again in its own mode
 	//* in any case, you cannot launch the mapping of a mode when another mode is active, if it was not activated before this change of mode
 	//  - except conduct, especially useful to, for example: FULL>Led2 (placed under a tab switched to mode 2) to indicate mode 2 is well activating
-	unsigned char		Toggle = 0;
+	unsigned char		Transitivity = 0;
 	//1 satisfy mapping conditions one time to start, second one to stop
 	//2 destinations states begin activated at program launch
-	bool				Target[5] = { false };
-	//0 DS
-	//1 vJoy
-	byte				dsID[5] = { dsButtonID::none };
-	unsigned char		OrXorNot[4] = { 0 };
+	unsigned char		Toggle = 0;
+	//0 Source
+	//1 Sisaxis
+	//2 Keybaord or Mouse
+	//3 Destination
+	unsigned char		Target[5] = { 0 };
+	unsigned short		srceID[5] = { SrceButtonID::Button_None };
 	//| OrXor1 | OrXor2 |     | Source1 |       | Source2 |       | Source3 |     |
 	//|:------:|:------:|:---:|:-------:|:-----:|:-------:|:-----:|:-------:|:---:|
 	//|   0    |   0    |     |   val   |   &   |   val   |   &   |   val   |     |
@@ -290,7 +314,7 @@ public:
 	//| OrXor1 | OrXor2 |     Sustain ?    | Source1 |     | Source2 |     | Source3 |     | Source1 |
 	//|:------:|:------:|:----------------:|:-------:|:---:|:-------:|:---:|:-------:|:---:|:-------:|
 	//|   0    |   0    |  'No Sustain' ?  |   val   |     |         |     |         |  >  |released1|
-	//|  1/2   |   0    |      > : 0xFF    |   val   |  >  |   val   |     |         |  >  |released1|
+	//|  1/2   |   0    |    > : 0xFFFF    |   val   |  >  |   val   |     |         |  >  |released1|
 	//|   0    |  1/2   |  (see Controls/  |   val   |     |         |     |         |  >  |released1|
 	//|  1/2   |  1/2   |    Interrupt)    |   val   |  >  |   val   |  >  |   val   |  >  |released1|
 	//* sustain is released and time stamps is in use (and no 'Interrupt' else mapping is stopped when released)
@@ -304,28 +328,28 @@ public:
 	//|  1   |  0   |    val     | & Not |   val   |   &   |   val   |
 	//|  0   |  1   |    val     |   &   |   val   | & Not |   val   |
 	//|  1   |  1   |    val     | & Not |   val   | & Not |   val   |
-	unsigned char		dsDisable[5] = { 0 };
+	unsigned char		OrXorNot[4] = { 0 };
 	//1 this button will be disabled for next mappings if this mapping is running (except with Force)
 	//2 if Short (or Double), even when release time, before time to activate spent (or second press)
+	unsigned char		srceDisable[5] = { 0 };
+	//0 vJoy button, 1 Mouse action, 2 Special action, 3 Axis movement, 4 AffterEffects, 5 Web & Notepad
 	unsigned char		ActionType[8] = { 0 };
-	//0 vJoy button, 1 Mouse action, 2 Special action, 3 Axis movement, Web & Notepad
-	unsigned char		Overcontrol[8] = { 0 };
 	//0 axis of same type overpass precedent values, 1 values are merged, 2 if in use, next mapping won't interfer
-	unsigned char		Switch[8] = { 0 };
+	unsigned char		Overcontrol[8] = { 0 };
 	//Acts in conjunction with the toggle system, but act as a switch: 0 toggle (if Toggle active), 1 on, 2 off
-	byte				vjID[8] = { vJoyButtonID::none };
+	unsigned char		Switch[8] = { 0 };
+	byte				destID[8] = { DestButtonID::Destination_None };
 	unsigned char		OnRelease[8] = { 0 };
-	unsigned char		NoRelease[8] = { 0 };
 	//1 no release while transitivity
 	//2 do one turn when mode changed
-	unsigned char		NlRelease[8] = { 0 };
+	unsigned char		NoRelease[8] = { 0 };
 	//0 NoRelease state for both if NoRelease active
 	//1 normal release if back to initial mode
 	//2 normal release while new mode
-	unsigned char		vjDisable[8] = { 0 };
+	unsigned char		NlRelease[8] = { 0 };
 	//1 this button will be disabled for next mappings if this mapping is running (except with Force)
 	//2 if time stamp is in use, disabling will be effective until whole mapping is finished instead this destination only
-	unsigned char		Mouse[7] = { 0 };
+	unsigned char		destDisable[8] = { 0 };
 	//0 left stick mouse type 0-5 (see below)
 	//1 touchpad mouse type 0-5 (see below)
 	//2 right stick mouse type 0-5 (see below)
@@ -342,156 +366,166 @@ public:
 	//| 3     | Move     | Slow     | the same but adapted for game movements, or precise mouse
 	//| 4     | Sniper   | Accuracy | extreme precision
 	//| 5     | Raid     | Grid     | move inside a zone whom coordinates are entered in numbers group at the right
-	unsigned short		Grid[6] = { 0 };
-	unsigned short		MagFactor = 1;
+	unsigned char		Mouse[7] = { 0 };
 	//0 x, 1 y, 2 w, 3 h, 4 nw, 5 nh
 	//x and y define the starting point of the grid in which the mouse stay if you have activated grid mouse
 	//w and h are the width and height of the grid
 	//nw and nh are the number of columns abd row to which the mouse will stay docked, instead of free movement
 	//if one or both is left to 0, free movement will be available for horizontal or vetical or both ways
 	//x, y and w, h can also be used to move the pointer to a location during special mouse action
-	unsigned long		Start[8] = { 0 };
-	unsigned long		Stop[8] = { 0 };
+	unsigned short		Grid[6] = { 0 };
+	unsigned short		MagFactor = 1;
+	unsigned long long	Start[8] = { 0 };
+	unsigned long long	Stop[8] = { 0 };
 	WCHAR				Notice[MAX_PATH] = L"";
 
 private:
-	HWND				m_hWnd = NULL;
+	//Disable vJoy buttons during Short, First step of Double and Longs, if srceDisable[i] == 2
 	void				PreLaunchDisable();
-	//Disable vJoy buttons during Short, First step of Double and Longs, if dsDisable[i] == 2
-	BOOL				CanBeActivated();
 	//Used for Short/Double to know if it can be activated/available to run second step, taking account of disable states and Or/Xor conditions
-	dsButton*			m_ds[5] = { 0 };
-	vJoyButton*			m_vj[13] = { 0 };
-	char				tomode = -1;
+	BOOL				CanBeActivated();
+	SourceButton*		m_srce[5] = { 0 };
+	DestinationButton*	m_dest[13] = { 0 };
 	//Destination mode stocked for this mapping only, when change to n(0-8, 0=Always) mode, available only for one turn, -1 after
-	unsigned char		locked = 0;
+	char				tomode = -1;
 	//Different levels to trigger again when mode changed
-	unsigned char		modechanged = 0;
+	unsigned char		locked = 0;
 	//If mode has been changed by another mapping (mode<>tomode)
-	unsigned char		modedest[8] = { 0 };
+	unsigned char		modechanged = 0;
 	//If mode has been changed by another mapping (mode<>tomode), one for each first eight destinations
-	unsigned char		modechangedto = 0;
+	unsigned char		modedest[8] = { 0 };
 	//Latest changed mode value
-	bool				legit = false;
+	unsigned char		modechangedto = 0;
 	//While pushing the good combination, method computing is eligible
-	unsigned char		method = 0;
+	bool				legit = false;
 	//Actual method to check, ie double short step 1, short step 2 of double short, reinitialized after all done and new legit
-	bool				isFired = false;
+	unsigned char		method = 0;
 	//Computing the method is pending (short, double short etc.)
-	bool				available = false;
+	bool				isFired = false;
 	//First pass of the method is done, ie double for double short
-	bool				killed = false;
+	bool				available = false;
 	//This method is not eligible anymore, ie short can't be done if we already pushed the keys 250ms
-	bool				activated = false;
+	bool				killed = false;
 	//Method has been done, and about to launch first step of actions
-	bool				isRunning = false;
+	bool				activated = false;
 	//Actions are running still end of macros time or release
-	unsigned long long	cycle = 0;
+	bool				isRunning = false;
 	//number of cycles already done (used to pass as argument to mouse scroll actions)
-	byte				m_data = 0xFF;
-	//the value of m_ds[0]/m_vj[0]/0xFF(if none) to be used to fill, GetVal() if pushed, GetReleasedVal() else (simple or double)(0xFF else)
-	bool				Interrupttmp = false;
+	unsigned long long	cycle = 0;
+	//the value of m_src[0]/m_dest[0]/0xFFFF(if none) to be used to fill, GetVal() if pushed, GetReleasedVal() else (simple or double)(0xFFFF else)
+	unsigned short		m_data = 0xFFFF;
 	//temporary value, exactly alike to Macro=1, used with special time action 'Interrupt'
-	bool				NoSustain = false;
+	bool				Interrupttmp = false;
 	//temporary value, exactly alike to Macro=2, used with special time action 'No sustain'
-	bool				Pausetmp = false;
+	bool				NoSustain = false;
 	//temporary value, exactly alike to Pause=1, used with special time action 'Pause'
-	bool				released = false;
+	bool				Pausetmp = false;
 	//Source of mapping has been released but actions still running, used to determine onReleae acts
-	bool				started[8] = { false };
+	bool				released = false;
 	//Individual start of each macro
-	bool				ran[8] = { false };
+	bool				started[8] = { false };
 	//If a macro has beeen processed at least one time
-	bool				done[8] = { false };
+	bool				ran[8] = { false };
 	//If a macro is finished but other can still be contnuated or not
-	bool				MouseActiondone[8] = { false };
+	bool				done[8] = { false };
 	//If a mouse action necessite am ending action, and this one has been done
-	char				TimeActiondone = -1;
+	bool				MouseActiondone[8] = { false };
 	//If a temporal action has to be done this turn in a decisional order, and which one, to perform only one, at the end of the turn
-	bool				GridCanbeUsed = false;
+	char				TimeActiondone = -1;
 	//If this mapping necessite one or several x,y,w,h values, or none (used to determine if we use grid values or not)
-	bool				Toggledone[8] = { false };
+	bool				GridCanbeUsed = false;
 	//If the toggle has been effectued for this macro for this run
-	bool				exists[5] = { false };
+	bool				Toggledone[8] = { false };
 	//If source is defined
-	bool				pushed[5] = { false };
+	bool				exists[5] = { false };
 	//If source is pushed
-	bool				lastpushed[5] = { false };
+	bool				pushed[5] = { false };
 	//If source was pushed last turn
-	byte				releasedVal[5] = { 0 };
+	bool				lastpushed[5] = { false };
 	//Released value of source
-	bool				killed0 = false;
+	unsigned short		releasedVal[5] = { 0 };
 	//If first source is killed (like stay pushed more than tape.LongPress while method is short)
-	bool				killed1 = false;
+	bool				killed0 = false;
 	//If second source is killed (then we have to wait for release to have a chance to try again)
-	bool				disabled[5] = { false };
+	bool				killed1 = false;
 	//If source is disabled
+	bool				disabled[5] = { false };
+	//If we have to set unlocked state to magnify this turn in tape.MagCanUninitialize
 	unsigned char		secondpass = 0;
 	//If a source is killed but the second is activated, only with OrXorNot[0] && !OrXorNot[1] (except is second source available)
-	std::chrono::system_clock::time_point	start = std::chrono::system_clock::now();
+	bool				magnifyUnLock = true;
 	//start time (of computing method)
-	std::chrono::system_clock::time_point	end = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point	start = std::chrono::system_clock::now();
 	//actual time (of computing method)
-	std::chrono::system_clock::time_point	release = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point	end = std::chrono::system_clock::now();
 	//realease time (of computing method), for double, or wait before eligible again
-	std::chrono::system_clock::time_point	start2 = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point	release = std::chrono::system_clock::now();
 	//start time (of running method)
-	std::chrono::system_clock::time_point	end2 = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point	start2 = std::chrono::system_clock::now();
 	//actual time (of running method)
-	std::chrono::system_clock::time_point	release2 = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point	end2 = std::chrono::system_clock::now();
 	//realeased time (when running method), to determine state of a macro and to launch onRelease actions
-	std::chrono::milliseconds				randStart[8] = { std::chrono::milliseconds(0) };
+	std::chrono::system_clock::time_point	release2 = std::chrono::system_clock::now();
 	//repalce Start[8], and memorize + 0-9ms if Start[i] is odd
-	std::chrono::milliseconds				randStop[8] = { std::chrono::milliseconds(0) };
+	std::chrono::milliseconds				randStart[8] = { std::chrono::milliseconds(0) };
 	//replace Stop[8], and memorize + 0-9ms if Stop[i] is odd
+	std::chrono::milliseconds				randStop[8] = { std::chrono::milliseconds(0) };
 };
 
-	static vJoyButton*	m_vj_X;
-	static vJoyButton*	m_vj_Y;
-	static vJoyButton*	m_vj_Z;
-	static vJoyButton*	m_vj_RX;
-	static vJoyButton*	m_vj_RY;
-	static vJoyButton*	m_vj_RZ;
-	static vJoyButton*	m_vj_SL0;
-	static vJoyButton*	m_vj_SL1;
-	static unsigned char lastmode = 1;
+	static DestinationButton*	m_dest_X;
+	static DestinationButton*	m_dest_Y;
+	static DestinationButton*	m_dest_Z;
+	static DestinationButton*	m_dest_RX;
+	static DestinationButton*	m_dest_RY;
+	static DestinationButton*	m_dest_RZ;
+	static DestinationButton*	m_dest_SL0;
+	static DestinationButton*	m_dest_SL1;
+	static DestinationButton*	m_dest_WORK1;
+	static DestinationButton*	m_dest_WORK2;
+	static DestinationButton*	m_dest_WORK3;
+	static DestinationButton*	m_dest_WORK4;
+	static DestinationButton*	m_dest_WORK5;
+	static DestinationButton*	m_dest_WORK6;
+	static DestinationButton*	m_dest_WORK7;
+	static DestinationButton*	m_dest_WORK8;
 	//Memorized mode, when changed by special actions TO_MODE1-8
-	static unsigned char memmode = 1;
+	static unsigned char lastmode = 1;
 	//Memorized mode, by special action MEMORIZE_MODE
-	static unsigned char basemode = 1;
+	static unsigned char memmode = 1;
 	//Base mode, changed by special actions BASE_TO_MODE1-8
-	static bool			mouse_toggle[8] = { false };
+	static unsigned char basemode = 1;
 	//State of each possible 'Active mouse' toggle
-	static bool			m_toggle[vJoyButtonID::button_Count] = { false };
+	static bool			mouse_toggle[8] = { false };
 	//State of each individual vJoy button toggle
-	static POINT		movebackpoint = { 0, 0 };
+	static bool			m_toggle[DestButtonID::Destination_Count] = { false };
 	//memorized mouse point, to move back in, in a futur possible action
-	static bool			Ledactive[Mapping::Led_Action_Count] = { false };
+	static POINT		movebackpoint = { 0, 0 };
 	//State of each individual Led
-	static WCHAR		MappingButtonsString[80] = L"";
+	static bool			Ledactive[Mapping::LedAction_Count] = { false };
 	//String of Mapping buttons in use, to show in status bar
-	static bool			mouseactivated = false;
+	static WCHAR		MappingButtonsString[80] = L"";
 	//mouse is running, used to determine legit if we use Ifmouse condition
-	static std::vector<byte> dsDisabled = { };
+	static bool			mouseactivated = false;
 	//array of disabled dsButton to determine all nexts legit step
-	static std::vector<byte> vjDisabled = { };
+	static std::vector<unsigned short> srceDisabled = { };
 	//array of disabled vJoyButton to determine all nexts legit step
-	static std::vector<byte> vjUsed = { };
+	static std::vector<byte> destDisabled = { };
 	//memorize all vJoyButton used to release them at RunLast step of Ds2vJoy callback if necessary
+	static std::vector<byte> destUsed = { };
 
-	extern unsigned char		mode;
 	//Actual mode, shared by all mappings
-	extern unsigned char		mousemode[3];
+	extern unsigned char		mode;
 	//[0]left axis, [1]touchpad, [2]right axis
 	//0: deactivate, 1: absolute, 2: mouse, 3: move or slow, 4: sniper or accuracy, 5: raid or grid
-	extern unsigned char		mouseabolute;
+	extern unsigned char		mousemode[3];
 	//Which one is absolute ([0]left axis, [1]touchpad or [2]right axis)(last one activated)
-	extern unsigned short		grid[6];
+	extern unsigned char		mouseabolute;
 	//Grid to move cursor inside (x,y,w,h,nw,nh)
-	extern bool					defaultmouse;
+	extern unsigned short		grid[6];
 	//false:all expept grid, true grid
-	extern std::vector<char>	gridmove;
+	extern bool					isGridNeeded;
 	//movements to be done in a grid, with GRID_LEFT/UP/RIGHT/DOWN mouse actions
+	extern std::vector<char>	gridmove;
 
 	typedef std::vector<Mapping>		Mappings;
 	typedef Mapping::MouseActionID		MouseActionID;

@@ -1,14 +1,16 @@
 ﻿#include "stdafx.h"
-#include "Source.h"
 #include "Ds2vJoy.h"
-#include "vJoy.h"
+#include "Source.h"
+#include "Destination.h"
 #include "SettingDlg.h"
+#include "vJoyDlg.h"
+#include "DInputDlg.h"
 #include "MappingDlg.h"
 #include "MappingDataDlg.h"
 #include "RapidFireDlg.h"
 #include "RapidFireDataDlg.h"
-#include "ViGEm.h"
-#include "ViGEmDlg.h"
+#include "XOutput.h"
+#include "XOutputDlg.h"
 #include "KeymapDlg.h"
 #include "KeymapDataDlg.h"
 #include "Guardian.h"
@@ -24,19 +26,25 @@ BOOL x86 = FALSE;
 BOOL x86 = TRUE;
 #endif
 
+static bool done_WM_CREATE = false;
+
 Settings			tape;
+XOutput				xi;
 Guardian			hid;
-ViGEm				vg;
+
+static HWND hProgressBar;
 
 LogDlg				_log;
 static SettingDlg	sDlg;
+static vJoyDlg		vDlg;
+static DInputDlg	dDlg;
 static MappingDlg	mDlg;
 static MappingDlg	mDlg2;
 static RapidFireDlg	rDlg;
-static ViGEmDlg		vDlg;
 static KeymapDlg	kDlg;
+static XOutputDlg	xDlg;
 static GuardianDlg	gDlg;
-static LinksDlg		iDlg;
+static LinksDlg		lDlg;
 static NotepadDlg	nDlg;
 static Tasktray		tasktray;
 
@@ -44,14 +52,12 @@ MappingDataDlg		mDDlg;
 KeymapDataDlg		kDDlg;
 RapidFireDataDlg	rDDlg;
 
-byte				battery;
-
 unsigned char		mode = 1;
 static double		r;
 unsigned char		mousemode[3] = { 0 };
 unsigned char		mouseabolute = 1;
 unsigned short		grid[6] = { 0 };
-bool				defaultmouse = false;
+bool				isGridNeeded = false;
 std::vector<char>	gridmove = { };
 static double		mousefactor;
 static double		movefactor;
@@ -67,7 +73,7 @@ static WCHAR		LogSatusString[80] = L"";
 static WCHAR		SettingsSatusString[80] = L"";
 static WCHAR		MappingSatusString[80] = L"";
 static WCHAR		RapidFireSatusString[80] = L"";
-static WCHAR		ViGEmSatusString[80] = L"";
+static WCHAR		XOutputSatusString[80] = L"";
 static WCHAR		KeymapSatusString[80] = L"";
 static WCHAR		LinksSatusString[80] = L"";
 
@@ -75,6 +81,10 @@ bool isFullScreen = false;
 bool MouseIsOverMain = true;
 bool MouseIsOverTab = false;
 bool WebMenuVisible = false;
+bool log_closing = false;
+static HDC HDCForInfo = GetDC(NULL);
+static HDC hDCStatus = NULL;
+static COLORREF COLORREFforInfo = RGB(0, 0, 0);
 static std::map<DWORD, HANDLE> s_threads;
 std::wstring initialUri = L"";
 std::vector<std::unique_ptr<ExplorerDlg>> web_tabs;
@@ -85,8 +95,11 @@ static int              RunMessagePump();
 static DWORD WINAPI     ThreadProc(void* pvParam);
 static void             WaitForOtherThreads();
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+//	   LRESULT CALLBACK LowLevelKeyboardProc(int, WPARAM, LPARAM);
 	   INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 //	   BOOL CALLBACK    EnumChildProc(HWND hwndChild, LPARAM lParam);
+	   void				WM_CREATE_END(HWND hWnd);
+	   void				GetPixelForInfo();
 	   void				OutRun();
 
 DPI_AWARENESS_CONTEXT dpiAwarenessContext = DPI_AWARENESS_CONTEXT_UNAWARE;
@@ -130,7 +143,14 @@ int APIENTRY wWinMain(_In_     HINSTANCE hInstance,
 	if (!InitInstance (hInstance, nCmdShow))
 		return FALSE;
 
+
+	if (FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE | COINIT_SPEED_OVER_MEMORY)))
+	//if (FAILED(Windows::Foundation::Initialize(RO_INIT_MULTITHREADED)))
+	//if (FAILED(Windows::Foundation::Initialize(RO_INIT_SINGLETHREADED)))
+		return FALSE;
+
 	SetProcessDpiAwarenessContext(dpiAwarenessContext);
+	InitCommonControls();
 
 	if (lpCmdLine && lpCmdLine[0])
 	{
@@ -152,8 +172,13 @@ int APIENTRY wWinMain(_In_     HINSTANCE hInstance,
 		LocalFree(params);
 	}
 
+	//HHOOK hhkLowLevelKybd = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 	int retVal = RunMessagePump();
 	WaitForOtherThreads();
+
+	//UnhookWindowsHookEx(hhkLowLevelKybd);
+	CoUninitialize();
+
 	return retVal;
 /*
 	MSG msg;
@@ -168,7 +193,38 @@ int APIENTRY wWinMain(_In_     HINSTANCE hInstance,
 	return (int) msg.wParam;
 */
 }
+/*
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	BOOL fEatKeystroke = FALSE;
 
+	if (nCode == HC_ACTION)
+	{
+		switch (wParam)
+		{
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN:
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+			PKBDLLHOOKSTRUCT p = (PKBDLLHOOKSTRUCT)lParam;
+			if (fEatKeystroke = (p->vkCode == 0x41))     //redirect a to b
+			{
+				if ((wParam == WM_KEYDOWN) || (wParam == WM_SYSKEYDOWN)) // Keydown
+				{
+					keybd_event('B', 0, 0, 0);
+				}
+				else if ((wParam == WM_KEYUP) || (wParam == WM_SYSKEYUP)) // Keyup
+				{
+					keybd_event('B', 0, KEYEVENTF_KEYUP, 0);
+				}
+				break;
+			}
+			break;
+		}
+	}
+	return(fEatKeystroke ? 1 : CallNextHookEx(NULL, nCode, wParam, lParam));
+}
+*/
 ATOM RegisterWndClass(HINSTANCE hInstance)
 {
 	{
@@ -185,7 +241,7 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON));
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DS2VJOY_ICON256));
 	wcex.hCursor		= LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
 //	wcex.hbrBackground	= (HBRUSH)GetStockObject(WHITE_BRUSH);
@@ -200,8 +256,10 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
+	RECT desk;
+	ClientArea(&desk);
 	DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX/* | WS_THICKFRAME*/;
-	tape.Ds2hWnd = CreateWindowExW(WS_EX_CONTROLPARENT, tape.szWindowClass, tape.szTitle, dwStyle, CW_USEDEFAULT, 0, 492, 327, nullptr, nullptr, hInstance, nullptr);
+	tape.Ds2hWnd = CreateWindowExW(WS_EX_CONTROLPARENT, tape.szWindowClass, tape.szTitle, dwStyle, (desk.right - desk.left) / 2 - 246, desk.top + 200, 492, 327, nullptr, nullptr, hInstance, nullptr);
 
 	if (!tape.Ds2hWnd)
 		return FALSE;
@@ -233,18 +291,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		
 		SetMenu(tape.Ds2hWnd, hMenu_Ds2vJoy);
 	}
-*/
-   RECT desk;
-   ClientArea(&desk);
-   SetWindowPos(tape.Ds2hWnd, HWND_TOPMOST, (desk.right - desk.left) / 2 - 246, desk.top + 200, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
-
+*//*
    ShowWindow(tape.Ds2hWnd, nCmdShow);
    if (nCmdShow== SW_SHOWMINNOACTIVE)
 	   SendMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
    else if (nCmdShow == SW_RESTORE)
 	   SendMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
    UpdateWindow(tape.Ds2hWnd);
-
+*/
    return TRUE;
 }
 
@@ -294,12 +348,12 @@ static DWORD WINAPI ThreadProc(void* pvParam)
 	if (dlg->m_isHome)
 		GetWindowRect(tape.Ds2hWnd, &win);
 	else
-		GetWindowRect(dlg->m_hWnd, &win);
+		GetWindowRect(dlg->m_hDlg, &win);
 	new ExplorerDlg(L"", false, tape.DefaultZoomValue, win);
 	return RunMessagePump();
 }
 
-// Called on the main thread.  Wait for all other threads to complete before exiting.
+// Called on the main thread. Wait for all other threads to complete before exiting.
 static void WaitForOtherThreads()
 {
 	while (!s_threads.empty())
@@ -325,151 +379,147 @@ static void WaitForOtherThreads()
 	}
 }
 
-typedef struct _dsParams
+typedef struct _GeneralParams
 {
-	vJoyDevice* vj = { 0 };
-	/////vJoyDevice* vjdi = { 0 };	//////////////////////////////////
-	unsigned char vJoyID = 0;
-	dsDevice* ds = { 0 };
-	Mappings mappings;
-	Keymaps keymaps;
-	RapidFires rapidfires;
-	bool NextStepFlag = false;
-	dsButton *splittouch = { 0 };
-	byte splitButton = 0;
-	unsigned char splitCol = 0;
-	unsigned char splitRow = 0;
-} dsParams;
+	Source*			srce = { 0 };
+	Destination*	dest = { 0 };
+	unsigned char	vJoyID = 0;
+	Mappings		mappings;
+	Keymaps			keymaps;
+	RapidFires		rapidfires;
+	bool			NextStepFlag = false;
+	SourceButton*	splittouch = { 0 };
+	byte			splitButton = 0;
+	unsigned char	splitCol = 0;
+	unsigned char	splitRow = 0;
+} GeneralParams;
 
-void dsInput(dsDevice* ds, bool updateflag, void* param)
+void GeneralMotor(bool updateflag, void* param)
 {
 	if (tape.CallbackPaused)
 		return;
 
+	static std::chrono::system_clock::time_point lastesc = std::chrono::system_clock::now();
 	static std::chrono::system_clock::time_point last = std::chrono::system_clock::now();
+	static std::chrono::system_clock::time_point lastmouse = std::chrono::system_clock::now();
 	static std::chrono::system_clock::time_point now;
 	now = std::chrono::system_clock::now();
-	average = double(std::chrono::duration_cast<std::chrono::nanoseconds>(now - last).count()) / double(1000000);
-	last = now;
+	double averagetmp = double(std::chrono::duration_cast<std::chrono::nanoseconds>(now - last).count()) / double(1000000);
 
-	dsParams *p = (dsParams*)param;
+	last = now;
+	if (!(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
+		lastesc = now;
+	if (now - lastesc > std::chrono::seconds(2))
+		return;
+
+	GeneralParams* p = (GeneralParams*)param;
+	Source* srce = p->srce;
+	Destination* dest = p->dest;
 
 	if (updateflag == false && p->NextStepFlag == false)
 		return;
+	average = averagetmp;
 
-	vJoyDevice* vjoy = p->vj;
-
-	vjoy->ClearState();
-	p->mappings[0].RunFirst(vjoy);
+	dest->ClearState();
+	p->mappings[0].RunFirst(dest);
 
 	size_t n = p->mappings.size();
 	for (int i = 0; i < n; i++)
 		if (p->mappings[i].Enable == 1)
 			p->mappings[i].Run(average);
 
-	p->mappings[0].RunLast(p->ds, vjoy);
+	p->mappings[0].RunLast(p->srce, dest);
 	wcscpy_s(MappingSatusString, wcslen(p->mappings[0].MappingButtons()) + 1, p->mappings[0].MappingButtons());
-	vjoy->UpdateState();
+	dest->UpdateState();
 
-	if (tape.PreferredDS)
+	if (tape.ActualSource && now - lastmouse > std::chrono::milliseconds(3) && !tape.MouseMovePaused)
 	{
-		byte touchbox[7] = { 0, 0, 0, 0, 0, 0, 0 };
-		int posymax = (tape.ActualDS == 1) ? 350 : 400;
-		bool TouchActive[2];
-		int touchx[2];
-		int touchy[2];
-		TouchActive[0] = ds->TouchActive(0);
-		TouchActive[1] = ds->TouchActive(1);
-		touchx[0] = ds->TouchX(0);
-		touchx[1] = ds->TouchX(1);
-		touchy[0] = ds->TouchY(0);
-		touchy[1] = ds->TouchY(1);
+		lastmouse = now;
+		POINT CursorPos;
+		double x = srce->GetButton(SourceButton::LX)->GetVal();
+		double y = srce->GetButton(SourceButton::LY)->GetVal();
+		double z = srce->GetButton(SourceButton::RX)->GetVal();
+		double t = srce->GetButton(SourceButton::RY)->GetVal();
+		static bool lastTouchActive;
+		static int lasttouchx = 1;
+		static int lasttouchy = 1;
 
-		if (TouchActive[0])
+		static bool isLastgridNeeded = false;
+		bool isOtherMouse = ((mousemode[0] && mousemode[0] != 5) || (mousemode[1] && mousemode[1] != 5) || (mousemode[2] && mousemode[2] != 5)) ? true : false;
+
+		if (isLastgridNeeded && !isOtherMouse)
+			SetCursorPos(gridpoint.x, gridpoint.y);
+		isLastgridNeeded = isGridNeeded;
+
+		bool GridMoveDone = false;
+
+		if (tape.ActualSource < 3)
 		{
-			if (touchy[0] > 20)
+			static char lastTouchUsed = -1;
+			bool TouchActive = false;
+			int touchx = 0;
+			int touchy = 0;
+			bool TouchActive1 = srce->TouchActive(0);
+			bool TouchActive2 = srce->TouchActive(1);
+			if (TouchActive1 || TouchActive2)
 			{
-				if (touchy[0] < posymax)
+				lastTouchUsed = (TouchActive1 && TouchActive2) ? ((lastTouchUsed == -1) ? 3 : ((lastTouchUsed < 2) ? ((lastTouchUsed) ? 2 : 3) : lastTouchUsed)) : ((TouchActive2) ? 1 : 0);
+				TouchActive = true;
+				touchx = srce->TouchX(lastTouchUsed % 2);
+				touchy = srce->TouchY(lastTouchUsed % 2);
+			}
+			else
+				lastTouchUsed = -1;
+
+			bool touchbox[7] = { 0, 0, 0, 0, 0, 0, 0 };
+			int posymax = (tape.ActualSource == 1) ? 350 : 400;
+			if (TouchActive)
+			{
+				if (touchy > 20)
 				{
-					if (touchx[0] < 960)
-						touchbox[1] = 1;
+					if (touchy < posymax)
+					{
+						if (touchx < 960)
+							touchbox[1] = 1;
+						else
+							touchbox[2] = 1;
+					}
 					else
-						touchbox[2] = 1;
-				}
-				else
-				{
-					if (touchx[0] < 960)
-						touchbox[3] = 1;
-					else
-						touchbox[4] = 1;
+					{
+						if (touchx < 960)
+							touchbox[3] = 1;
+						else
+							touchbox[4] = 1;
+					}
 				}
 			}
-		}
 
-		touchbox[5] = touchbox[1] || touchbox[3];
-		touchbox[6] = touchbox[2] || touchbox[4];
-		touchbox[0] = touchbox[5] || touchbox[6];
-		for (int i = 0; i < 7; i++)
-			p->splittouch->SetTouch(i, touchbox[i]);
+			touchbox[5] = touchbox[1] || touchbox[3];
+			touchbox[6] = touchbox[2] || touchbox[4];
+			touchbox[0] = touchbox[5] || touchbox[6];
+			for (int i = 0; i < 7; i++)
+				p->splittouch->SetTouchBox(i, touchbox[i]);
 
-		//	p->ds->String();
-		if (p->splittouch != 0 && p->splittouch->isPushed())
-		{
-			for (int idx = 0; idx < 2; idx++)
+			//	p->srce->String();
+			if (p->splittouch != 0 && p->splittouch->isPushed())
 			{
-				if (TouchActive[idx])
+				if (TouchActive)
 				{
 					int pos = 0;
 					if (p->splitRow > 0)
 					{
-						switch (tape.ActualDS)
+						switch (tape.ActualSource)
 						{
-						case 1: { pos = touchy[idx] / (943 / p->splitRow) * p->splitCol; break; }
-						case 2: { pos = touchy[idx] / (1080 / p->splitRow) * p->splitCol; break; }
+						case 1: { pos = touchy / (943 / p->splitRow) * p->splitCol; break; }
+						case 2: { pos = touchy / (1080 / p->splitRow) * p->splitCol; break; }
 						}
 					}
 					if (p->splitCol > 0)
-						pos += touchx[idx] / (1920 / p->splitCol);
+						pos += touchx / (1920 / p->splitCol);
 					if (p->splitButton - 1 + pos < 128)
-						vjoy->GetButton((vJoyButtonID)(vJoyButton::Button1 + p->splitButton - 1 + pos))->SetValByte(1);
+						dest->GetButton((DestButtonID)(DestinationButton::Button1 + p->splitButton - 1 + pos))->SetVal(1);
 				}
 			}
-		}
-
-		{
-			POINT CursorPos;
-			double x = ds->GetButton(dsButton::LX)->GetVal();
-			double y = ds->GetButton(dsButton::LY)->GetVal();
-			double z = ds->GetButton(dsButton::RX)->GetVal();
-			double t = ds->GetButton(dsButton::RY)->GetVal();
-			static bool lastTouchActive;
-			static int lasttouchx = 1;
-			static int lasttouchy = 1;
-			static bool lastmouseactivated2 = false;
-			static bool lastmouseactivated34 = false;
-			static bool mouseactivated2 = mousemode[0] == 2 || mousemode[1] == 2 || mousemode[2] == 2;
-			static bool mouseactivated34 = mousemode[0] == 3 || mousemode[1] == 3 || mousemode[2] == 3 ||
-				mousemode[0] == 4 || mousemode[1] == 4 || mousemode[2] == 4;
-
-			if (lastmouseactivated2 && !mouseactivated2)
-			{
-				GetCursorPos(&tape.mousepoint);
-				if (!mouseactivated34 && defaultmouse)
-					SetCursorPos(gridpoint.x, gridpoint.y);
-			}
-			if (lastmouseactivated34 && !mouseactivated34)
-			{
-				GetCursorPos(&gridpoint);
-				if (!mouseactivated2 && !defaultmouse)
-					SetCursorPos(tape.mousepoint.x, tape.mousepoint.y);
-			}
-			if (!lastmouseactivated2 && mouseactivated2)
-				SetCursorPos(tape.mousepoint.x, tape.mousepoint.y);
-			if (!lastmouseactivated34 && mouseactivated34)
-				SetCursorPos(gridpoint.x, gridpoint.y);
-
-			lastmouseactivated2 = mouseactivated2;
-			lastmouseactivated34 = mouseactivated34;
 
 			if (mousemode[1])
 			{
@@ -480,121 +530,121 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				{
 				case 1: //absolute
 				{
-					if (TouchActive[0] && mouseabolute == 1)
+					if (TouchActive && mouseabolute == 1)
 					{
-						int destx = touchx[0];
+						int destx = touchx;
 						int desty = 0;
-						if (tape.ActualDS)
-							desty = touchy[0] * 1080 / 943;
+						if (tape.ActualSource)
+							desty = touchy * 1080 / 943;
 						else
-							desty = touchy[0];
-						if (!tape.MouseCanBypass)
+							desty = touchy;
+						if (!tape.MouseCanBypass && !tape.MouseCanBypasstmp)
 						{
-							restx = max(0, min(tape.W, destx));
-							resty = max(0, min(tape.H, desty));
+							restx = max(0, min(tape.W - 1, destx));
+							resty = max(0, min(tape.H - 1, desty));
 						}
 						SetCursorPos(destx, desty);
-						lasttouchx = touchx[0];
-						lasttouchy = touchy[0];
-						lastTouchActive = TouchActive[0];
+						lasttouchx = touchx;
+						lasttouchy = touchy;
+						lastTouchActive = TouchActive;
 					}
 					break;
 				}
 				case 2: //mouse
 				{
-					if (TouchActive[0] && lastTouchActive)
+					if (TouchActive && lastTouchActive)
 					{
-						restx = restx + ((double)touchx[0] - lasttouchx) * touchfactor;
-						if (tape.ActualDS == 1)
-							resty = resty + ((double)touchy[0] * 1080 / 943 - lasttouchy) * touchfactor;
+						restx = restx + ((double)touchx - lasttouchx) * touchfactor * average;
+						if (tape.ActualSource == 1)
+							resty = resty + ((double)touchy * 1080 / 943 - lasttouchy) * touchfactor * average;
 						else
-							resty = resty + ((double)touchy[0] - lasttouchy) * touchfactor;
+							resty = resty + ((double)touchy - lasttouchy) * touchfactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
-						lasttouchx = touchx[0];
-						lasttouchy = touchy[0];
-						lastTouchActive = TouchActive[0];
+						lasttouchx = touchx;
+						lasttouchy = touchy;
+						lastTouchActive = TouchActive;
 					}
 					break;
 				}
 				case 3: //slow
 				{
-					if (TouchActive[0] && lastTouchActive)
+					if (TouchActive && lastTouchActive)
 					{
-						restx = restx + ((double)touchx[0] - lasttouchx) * slowfactor;
-						if (tape.ActualDS == 1)
-							resty = resty + ((double)touchy[0] * 1080 / 943 - lasttouchy) * slowfactor;
+						restx = restx + ((double)touchx - lasttouchx) * slowfactor * average;
+						if (tape.ActualSource == 1)
+							resty = resty + ((double)touchy * 1080 / 943 - lasttouchy) * slowfactor * average;
 						else
-							resty = resty + ((double)touchy[0] - lasttouchy) * slowfactor;
+							resty = resty + ((double)touchy - lasttouchy) * slowfactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
-						lasttouchx = touchx[0];
-						lasttouchy = touchy[0];
-						lastTouchActive = TouchActive[0];
+						lasttouchx = touchx;
+						lasttouchy = touchy;
+						lastTouchActive = TouchActive;
 					}
 					break;
 				}
 				case 4: //accuracy
 				{
-					if (TouchActive[0] && lastTouchActive)
+					if (TouchActive && lastTouchActive)
 					{
-						restx = restx + ((double)touchx[0] - lasttouchx) * accuracyfactor;
-						if (tape.ActualDS == 1)
-							resty = resty + ((double)touchy[0] * 1080 / 943 - lasttouchy) * accuracyfactor;
+						restx = restx + ((double)touchx - lasttouchx) * accuracyfactor * average;
+						if (tape.ActualSource == 1)
+							resty = resty + ((double)touchy * 1080 / 943 - lasttouchy) * accuracyfactor * average;
 						else
-							resty = resty + ((double)touchy[0] - lasttouchy) * accuracyfactor;
+							resty = resty + ((double)touchy - lasttouchy) * accuracyfactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
-						lasttouchx = touchx[0];
-						lasttouchy = touchy[0];
-						lastTouchActive = TouchActive[0];
+						lasttouchx = touchx;
+						lasttouchy = touchy;
+						lastTouchActive = TouchActive;
 					}
 					break;
 				}
 				case 5: //grid
 				{
-					if ((TouchActive[0] && touchx[0] && touchy[0]) || gridmove.size())
+					if ((TouchActive && touchx && touchy) || gridmove.size())
 					{
-						double ldesty = (tape.ActualDS == 1) ? 943 : 1080;
+						double ldesty = (tape.ActualSource == 1) ? 943 : 1080;
 						if (gridmove.size())
 						{
 							switch (gridmove[0])
@@ -607,9 +657,9 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 						}
 						else
 						{
-							lasttouchx = max(((grid[4]) ? 1 : 0), touchx[0]);
-							lasttouchy = max(((grid[5]) ? 1 : 0), touchy[0]);
-							lastTouchActive = TouchActive[0];
+							lasttouchx = max(((grid[4]) ? 1 : 0), touchx);
+							lasttouchy = max(((grid[5]) ? 1 : 0), touchy);
+							lastTouchActive = TouchActive;
 						}
 						int destw = (grid[2]) ? grid[2] : tape.W - grid[0];
 						int desth = (grid[3]) ? grid[3] : tape.H - grid[1];
@@ -623,36 +673,41 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 							desty = grid[1] + (double(desth) / grid[5]) * (ceil(double(lasttouchy) / (ldesty / grid[5])) - 0.5);
 						else
 							desty = grid[1] + desth * (double(lasttouchy) / ldesty);
-						if (!tape.MouseCanBypass)
+						if (!tape.MouseCanBypass && !tape.MouseCanBypasstmp)
 						{
-							destx = max(0, min(tape.W, destx));
-							desty = max(0, min(tape.H, desty));
+							destx = max(0, min(tape.W - 1, destx));
+							desty = max(0, min(tape.H - 1, desty));
 						}
 						SetCursorPos((int)destx, (int)desty);
+						gridpoint.x = destx;
+						gridpoint.y = desty;
+						GridMoveDone = true;
 					}
 					break;
 				}
 				}
 			}
+		}
+		{
 			if (mousemode[0])
 			{
 				static double restx;
 				static double resty;
-				double xtmp = x - 127.5;
-				double ytmp = y - 127.5;
+				double xtmp = x - 32767.5;
+				double ytmp = y - 32767.5;
 				GetCursorPos(&CursorPos);
 				switch (mousemode[0])
 				{
 				case 1: //absolute
 				{
-					if ((ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed()) && mouseabolute == 0)
+					if ((srce->GetButton(SourceButton::LX)->isPushed() || srce->GetButton(SourceButton::LY)->isPushed()) && mouseabolute == 0)
 					{
-						double restx = min((double)2 * tape.w, max(0, r * ((double)2 * x / 255 - 1) + tape.w));
-						double resty = min((double)2 * tape.h, max(0, r * ((double)2 * y / 255 - 1) + tape.h));
-						if (!tape.MouseCanBypass)
+						double restx = min((double)2 * tape.w, max(0, r * ((double)2 * x / 65535 - 1) + tape.w));
+						double resty = min((double)2 * tape.h, max(0, r * ((double)2 * y / 65535 - 1) + tape.h));
+						if (!tape.MouseCanBypass && !tape.MouseCanBypasstmp)
 						{
-							restx = max(0, min(tape.W, restx));
-							resty = max(0, min(tape.H, resty));
+							restx = max(0, min(tape.W - 1, restx));
+							resty = max(0, min(tape.H - 1, resty));
 						}
 						SetCursorPos((int)restx, (int)resty);
 					}
@@ -660,23 +715,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 2: //mouse
 				{
-					if (ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed())
+					if (srce->GetButton(SourceButton::LX)->isPushed() || srce->GetButton(SourceButton::LY)->isPushed())
 					{
-						restx = restx + xtmp * xtmp * xtmp * mousefactor;
-						resty = resty + ytmp * ytmp * ytmp * mousefactor;
+						restx = restx + xtmp * xtmp * xtmp * mousefactor * average;
+						resty = resty + ytmp * ytmp * ytmp * mousefactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
 					}
@@ -684,23 +739,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 3: //move
 				{
-					if (ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed())
+					if (srce->GetButton(SourceButton::LX)->isPushed() || srce->GetButton(SourceButton::LY)->isPushed())
 					{
-						restx = restx + xtmp * xtmp * xtmp * movefactor;
-						resty = resty + ytmp * ytmp * ytmp * movefactor;
+						restx = restx + xtmp * xtmp * xtmp * movefactor * average;
+						resty = resty + ytmp * ytmp * ytmp * movefactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
 					}
@@ -708,23 +763,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 4: //sniper
 				{
-					if (ds->GetButton(dsButton::SNIPER_LX)->isPushed() || ds->GetButton(dsButton::SNIPER_LY)->isPushed())
+					if (srce->GetButton(SourceButton::LX_SNIPER)->isPushed() || srce->GetButton(SourceButton::LY_SNIPER)->isPushed())
 					{
-						restx = restx + xtmp * sniperfactor;
-						resty = resty + ytmp * sniperfactor;
+						restx = restx + xtmp * sniperfactor * average;
+						resty = resty + ytmp * sniperfactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
 					}
@@ -732,12 +787,12 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 5: //raid
 				{
-					if ((ds->GetButton(dsButton::LX)->isPushed() || ds->GetButton(dsButton::LY)->isPushed()) || gridmove.size())
+					if ((srce->GetButton(SourceButton::LX)->isPushed() || srce->GetButton(SourceButton::LY)->isPushed()) || gridmove.size())
 					{
 						double destw = (grid[2]) ? grid[2] : tape.W - grid[0];
 						double desth = (grid[3]) ? grid[3] : tape.H - grid[1];
-						double restxtmp = restx + abs(xtmp) * xtmp * raidfactor;
-						double restytmp = resty + abs(ytmp) * ytmp * raidfactor;
+						double restxtmp = restx + abs(xtmp) * xtmp * raidfactor * average;
+						double restytmp = resty + abs(ytmp) * ytmp * raidfactor * average;
 						if (gridmove.size())
 						{
 							switch (gridmove[0])
@@ -765,12 +820,15 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 							desty = grid[1] + (desth / grid[5]) * (ceil((double(resty) - grid[1]) / (desth / grid[5])) - 0.5);
 						else
 							desty = resty;
-						if (!tape.MouseCanBypass)
+						if (!tape.MouseCanBypass && !tape.MouseCanBypasstmp)
 						{
-							destx = max(0, min(tape.W, destx));
-							desty = max(0, min(tape.H, desty));
+							destx = max(0, min(tape.W - 1, destx));
+							desty = max(0, min(tape.H - 1, desty));
 						}
 						SetCursorPos((int)destx, (int)desty);
+						gridpoint.x = destx;
+						gridpoint.y = desty;
+						GridMoveDone = true;
 					}
 					break;
 				}
@@ -780,21 +838,21 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 			{
 				static double restx;
 				static double resty;
-				double ztmp = z - 127.5;
-				double ttmp = t - 127.5;
+				double ztmp = z - 32767.5;
+				double ttmp = t - 32767.5;
 				GetCursorPos(&CursorPos);
 				switch (mousemode[2])
 				{
 				case 1: //absolute
 				{
-					if ((ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed()) && mouseabolute == 2)
+					if ((srce->GetButton(SourceButton::RX)->isPushed() || srce->GetButton(SourceButton::RY)->isPushed()) && mouseabolute == 2)
 					{
-						double restx = min((double)2 * tape.w, max(0, r * ((double)2 * z / 255 - 1) + tape.w));
-						double resty = min((double)2 * tape.h, max(0, r * ((double)2 * t / 255 - 1) + tape.h));
-						if (!tape.MouseCanBypass)
+						double restx = min((double)2 * tape.w, max(0, r * ((double)2 * z / 65535 - 1) + tape.w));
+						double resty = min((double)2 * tape.h, max(0, r * ((double)2 * t / 65535 - 1) + tape.h));
+						if (!tape.MouseCanBypass && !tape.MouseCanBypasstmp)
 						{
-							restx = max(0, min(tape.W, restx));
-							resty = max(0, min(tape.H, resty));
+							restx = max(0, min(tape.W - 1, restx));
+							resty = max(0, min(tape.H - 1, resty));
 						}
 						SetCursorPos((int)restx, (int)resty);
 					}
@@ -802,23 +860,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 2: //mouse
 				{
-					if (ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed())
+					if (srce->GetButton(SourceButton::RX)->isPushed() || srce->GetButton(SourceButton::RY)->isPushed())
 					{
-						restx = restx + ztmp * ztmp * ztmp * mousefactor;
-						resty = resty + ttmp * ttmp * ttmp * mousefactor;
+						restx = restx + ztmp * ztmp * ztmp * mousefactor * average;
+						resty = resty + ttmp * ttmp * ttmp * mousefactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
 					}
@@ -826,23 +884,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 3: //move
 				{
-					if (ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed())
+					if (srce->GetButton(SourceButton::RX)->isPushed() || srce->GetButton(SourceButton::RY)->isPushed())
 					{
-						restx = restx + ztmp * ztmp * ztmp * movefactor;
-						resty = resty + ttmp * ttmp * ttmp * movefactor;
+						restx = restx + ztmp * ztmp * ztmp * movefactor * average;
+						resty = resty + ttmp * ttmp * ttmp * movefactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
 					}
@@ -850,23 +908,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 4: //sniper
 				{
-					if (ds->GetButton(dsButton::SNIPER_RX)->isPushed() || ds->GetButton(dsButton::SNIPER_RY)->isPushed())
+					if (srce->GetButton(SourceButton::RX_SNIPER)->isPushed() || srce->GetButton(SourceButton::RY_SNIPER)->isPushed())
 					{
-						restx = restx + ztmp * sniperfactor;
-						resty = resty + ttmp * sniperfactor;
+						restx = restx + ztmp * sniperfactor * average;
+						resty = resty + ttmp * sniperfactor * average;
 						double movex = (restx > 0) ? floor(restx) : ceil(restx);
 						double movey = (resty > 0) ? floor(resty) : ceil(resty);
 						restx -= movex;
 						resty -= movey;
-						if (tape.MouseCanBypass)
+						if (tape.MouseCanBypass || tape.MouseCanBypasstmp)
 						{
 							movex = CursorPos.x + movex;
 							movey = CursorPos.y + movey;
 						}
 						else
 						{
-							movex = max(0, min(tape.W, CursorPos.x + movex));
-							movey = max(0, min(tape.H, CursorPos.y + movey));
+							movex = max(0, min(tape.W - 1, CursorPos.x + movex));
+							movey = max(0, min(tape.H - 1, CursorPos.y + movey));
 						}
 						SetCursorPos((int)movex, (int)movey);
 					}
@@ -874,12 +932,12 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 				}
 				case 5: //raid
 				{
-					if ((ds->GetButton(dsButton::RX)->isPushed() || ds->GetButton(dsButton::RY)->isPushed()) || gridmove.size())
+					if ((srce->GetButton(SourceButton::RX)->isPushed() || srce->GetButton(SourceButton::RY)->isPushed()) || gridmove.size())
 					{
 						double destw = (grid[2]) ? grid[2] : tape.W - grid[0];
 						double desth = (grid[3]) ? grid[3] : tape.H - grid[1];
-						double restxtmp = restx + abs(ztmp) * ztmp * raidfactor;
-						double restytmp = resty + abs(ttmp) * ttmp * raidfactor;
+						double restxtmp = restx + abs(ztmp) * ztmp * raidfactor * average;
+						double restytmp = resty + abs(ttmp) * ttmp * raidfactor * average;
 						if (gridmove.size())
 						{
 							switch (gridmove[0])
@@ -907,20 +965,23 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 							desty = grid[1] + (desth / grid[5]) * (ceil((double(resty) - grid[1]) / (desth / grid[5])) - 0.5);
 						else
 							desty = resty;
-						if (!tape.MouseCanBypass)
+						if (!tape.MouseCanBypass && !tape.MouseCanBypasstmp)
 						{
-							destx = max(0, min(tape.W, destx));
-							desty = max(0, min(tape.H, desty));
+							destx = max(0, min(tape.W - 1, destx));
+							desty = max(0, min(tape.H - 1, desty));
 						}
 						SetCursorPos((int)destx, (int)desty);
+						gridpoint.x = destx;
+						gridpoint.y = desty;
+						GridMoveDone = true;
 					}
 					break;
 				}
 				}
 			}
-			if (gridmove.size())
-				gridmove.erase(gridmove.begin());
 		}
+		if (gridmove.size() && GridMoveDone)
+			gridmove.erase(gridmove.begin());
 	}
 
 	{
@@ -939,13 +1000,13 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 		wcscpy_s(RapidFireSatusString, wcslen(p->rapidfires[0].RapidFireButtons()) + 1, p->rapidfires[0].RapidFireButtons());
 	}
 
-	if (vjoy->Active() && tape.vJoyActive && !tape.vJoyPaused)
-		vjoy->Update();
+	if (dest->Active() && tape.vJoyActive && !tape.vJoyPaused)
+		dest->Update();
 
-	if (tape.ViGEmActive)
+	if (tape.XOutputActive)
 	{
-		vg.Run();
-		wcscpy_s(ViGEmSatusString, wcslen(vg.ViGEmButtons()) + 1, vg.ViGEmButtons());
+		xi.Run();
+		wcscpy_s(XOutputSatusString, wcslen(xi.XOutputButtons()) + 1, xi.XOutputButtons());
 	}
 
 	{
@@ -962,10 +1023,9 @@ void dsInput(dsDevice* ds, bool updateflag, void* param)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	static dsDevice ds;
-	static vJoyDevice vjoy;
-	//////static vJoyDevice vjoydi;	//////////////////////////////////////
-	static dsParams cbParams;
+	static Source srce;
+	static Destination dest;
+	static GeneralParams cbParams;
 	static HWND hTab;
 	static HWND hTopMost;
 	static HWND hStatus;
@@ -980,8 +1040,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static unsigned char PreviousTab = 15;
 	static unsigned char PreviousNotepadTab = 0;
 	static unsigned char NotepadTab = 0;
-	static unsigned long m_flag_drag = 0;
-	static unsigned long m_flag_size = 0;
+	static unsigned long long m_flag_drag = 0;
+	static unsigned long long m_flag_size = 0;
 	static RECT FirstMoveRect = { (0, 0, 0, 0) };
 	static RECT WebRect = { (0, 0, 0, 0) };
 	static bool FirstMove = false;
@@ -989,31 +1049,213 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static short y = 0;
 	static bool first_WM_CREATE = false;
 	static bool load_dll = false;
-	static bool done_WM_CREATE = false;
+	static bool wm_pause = false;
+	static bool wm_reload = false;
+	static bool wm_deststart = false;
+	static bool wm_srcestart = false;
 
 	switch (message)
 	{
+	case WM_CTLCOLORDLG:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_DLG);
+		SetTextColor(hdcStatic, tape.ink_DLG);
+		return (LRESULT)tape.hB_DLG;
+	}
+	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_black;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_MSGBOX);
+			return (LRESULT)tape.hB_MSGBOX;
+		}
+	}
+	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_BTN);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
+	}
+	case WM_CTLCOLORSTATIC:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetBkMode(hdcStatic, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_STATIC_DARK);
+			return (LRESULT)tape.hB_BackGround_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_STATIC);
+			return (LRESULT)tape.hB_BackGround;
+		}
+	}
+	case WM_CTLCOLOREDIT:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetBkMode((HDC)wParam, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_EDIT_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT);
+			return (LRESULT)tape.hB_EDIT;
+		}
+	}
+	case WM_CTLCOLORLISTBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetBkMode(hdcStatic, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
+	}
 	case WM_PAINT:
 	{
 		if (!IsIconic(hWnd))
 		{
 			PAINTSTRUCT ps;
 			HDC hDC = BeginPaint(hWnd, &ps);
-
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_black);
-
+			if (tape.DarkTheme)
+				FillRect(hDC, &rect, tape.hB_black);
+			else
+				FillRect(hDC, &rect, tape.hB_BackGround);
 			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
 		}
 		return FALSE;
 	}
+	case WM_DRAWITEM:
+	{
+		DRAWITEMSTRUCT* DrawMenuStructure = (DRAWITEMSTRUCT*)lParam;
+
+		if (DrawMenuStructure->CtlType == ODT_TAB)
+		{
+			BOOL selected = DrawMenuStructure->itemState & ODS_SELECTED;
+
+			if (tape.DarkTheme)
+			{
+				unsigned int actual = DrawMenuStructure->itemID;
+
+				if (actual != TabCtrl_GetCurSel(DrawMenuStructure->hwndItem))
+					return FALSE;
+
+				HDC hDC = GetDC(DrawMenuStructure->hwndItem);
+				RECT rect;
+				GetClientRect(DrawMenuStructure->hwndItem, &rect);
+				FillRect(hDC, &rect, tape.hB_black);
+				::ReleaseDC(DrawMenuStructure->hwndItem, hDC);
+
+				for (int i = 0; i < TabCtrl_GetItemCount(DrawMenuStructure->hwndItem); i++)
+				{
+					RECT rect = DrawMenuStructure->rcItem;
+					rect.top += (DrawMenuStructure->hwndItem == hTab) ? 2 : -3;
+					if (DrawMenuStructure->hwndItem == hTab)
+					{
+						rect.left = (48 * i) + 2;
+						rect.right = (48 * (i + 1)) + 2;
+					}
+					else
+					{
+						rect.left = (18 * i) + 2;
+						rect.right = (18 * (i + 1)) + 2;
+					}
+
+					TC_ITEM tc_item;
+					tc_item.mask = TCIF_TEXT;
+					WCHAR buff[MAX_PATH - 1];
+					tc_item.pszText = buff;
+					tc_item.cchTextMax = MAX_PATH - 1;
+					if (!TabCtrl_GetItem(DrawMenuStructure->hwndItem, i, &tc_item))
+						return FALSE;
+
+					SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
+					if (actual == i)
+						SetTextColor(DrawMenuStructure->hDC, tape.ink_TAB2_DARK);
+					else
+						SetTextColor(DrawMenuStructure->hDC, tape.ink_TAB_DARK);
+
+					WCHAR wszBuffer[MAX_PATH];
+					int nCharCount = _snwprintf_s(wszBuffer, sizeof(wszBuffer), L"%s", buff);
+					if (nCharCount > 0)
+					{
+						int nCharacters;
+						for (nCharacters = 0;
+							nCharacters < nCharCount; nCharacters++)
+							if (wszBuffer[nCharacters] == L'\t' ||
+								wszBuffer[nCharacters] == L'\b')
+								break;
+						DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+				}
+			}
+			else
+			{
+				RECT rect = DrawMenuStructure->rcItem;
+				TC_ITEM tc_item;
+				tc_item.mask = TCIF_TEXT;
+				WCHAR buff[MAX_PATH - 1];
+				tc_item.pszText = buff;
+				tc_item.cchTextMax = MAX_PATH - 1;
+				if (!TabCtrl_GetItem(DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, &tc_item))
+					return FALSE;
+
+				rect.top += (DrawMenuStructure->hwndItem == hTab) ? 2 : -1;
+				if (selected)
+					rect.top -= ::GetSystemMetrics(SM_CYEDGE);
+
+				SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
+				SetTextColor(DrawMenuStructure->hDC, tape.ink_TAB);
+
+				WCHAR wszBuffer[MAX_PATH];
+				int nCharCount = _snwprintf_s(wszBuffer, sizeof(wszBuffer), L"%s", buff);
+				if (nCharCount > 0)
+				{
+					int nCharacters;
+					for (nCharacters = 0;
+						nCharacters < nCharCount; nCharacters++)
+						if (wszBuffer[nCharacters] == L'\t' ||
+							wszBuffer[nCharacters] == L'\b')
+							break;
+					DrawTextW(DrawMenuStructure->hDC, wszBuffer, nCharacters, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+				}
+			}
+		}
+		break;
+	}
 	case WM_SHOWWINDOW:
 	{
 		switch (TabCtrl_GetCurSel(hTab))
 		{
-		case 4: { vg.ViGEmStates(); vg.vJoyStates(); break; }
+		case 5: { xi.XOutputStates(); xi.vJoyStates(); break; }
 		case 6: { hid.HidStates(); break; }
 		}
 		break;
@@ -1024,70 +1266,97 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		first_WM_CREATE = true;
+		tape.Ds2hWnd = hWnd;
+
+		tape.Init(WCHARI(L"Ds2vJoy.ini"));
+		tape.LoadLanguage();
+		_log.Init();
+
+		if (tape.Tasktray)
+		{
+			::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DEFERERASE | SWP_NOMOVE | SWP_NOSIZE | SWP_HIDEWINDOW);
+			tape.TopMost = false;
+			mDDlg.Hide();
+			mDlg2.Hide();
+		}
+
+		DWORD dwStyle = WS_VISIBLE | WS_POPUP & ~WS_THICKFRAME;
+		hProgressBar = CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, dwStyle, GetSystemMetrics(SM_CXSCREEN) / 2 - 150, GetSystemMetrics(SM_CYSCREEN) / 2 - 100, 200, 20, hWnd, (HMENU)0, tape.Ds2hInst, NULL);
+		SendMessage(hProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 45));
+		SendMessage(hProgressBar, PBM_SETSTEP, (WPARAM)1, 0);
+		SetWindowPos(hProgressBar, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
+
 		std::vector<char> data;
 		DWORD resourceSize;
-		if (LoadEmbeddedResource(IDR_VIGEMCLIENT_DLL, &data, &resourceSize))
-			WriteToFile(L"ViGEmClient.dll", data, resourceSize, true, true);
-		if (LoadEmbeddedResource(IDR_VJOYINTERFACE_DLL, &data, &resourceSize))
-			WriteToFile(L"vJoyInterface.dll", data, resourceSize, true, true);
-		if (LoadEmbeddedResource(IDR_VJOYINSTALL_DLL, &data, &resourceSize))
-			WriteToFile(L"vJoyInstall.dll", data, resourceSize, true, true);
-		if (LoadEmbeddedResource(IDR_WEBVIEW2LOADER_DLL, &data, &resourceSize))
-			WriteToFile(L"WebView2Loader.dll", data, resourceSize, true, true);
-		if (LoadEmbeddedResource(IDR_DEVCON_EXE, &data, &resourceSize))
-			WriteToFile(L"Devcon.exe", data, resourceSize, true, true);
-		if (isFileExists("vJoyInterface.dll") && isFileExists("ViGEmClient.dll") && isFileExists("vJoyInstall.dll") && isFileExists("WebView2Loader.dll"))
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		//if (LoadEmbeddedResource(IDR_DEVCON_EXE, &data, &resourceSize))
+		//	WriteToFile(L"Devcon.exe", data, resourceSize, true, true);
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		//if (isFileExists("Devcon.exe"))
 			load_dll = true;
-
-		_log.Init(tape.Ds2hInst, hWnd, load_dll);
-
-		LoadLanguage();
-		InitCommonControls();
-		tape.Init(tape.Ds2hInst, hWnd);
-		tape.OpenIni(WCHARI(L"Ds2vJoy.ini"));
-		tape.Load(Settings::Setting_Category_All);
+		
+		_log.SetShowTime(load_dll);
+		tape.Load(Settings::SettingCategory_All);
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		if (tape.BreakAndExit)
+		{
+			PostMessage(hProgressBar, WM_CLOSE, 0, 0);
 			PostMessage(hWnd, WM_DESTROY, 0, 0);
+		}
 		GetCursorPos(&tape.mousepoint);
 		GetCursorPos(&gridpoint);
 
 		if (load_dll)
 		{
-			tasktray.Init(tape.Ds2hInst, hWnd);
-			sDlg.Init(tape.Ds2hInst, hWnd);
-			mDlg.Init(tape.Ds2hInst, hWnd);
-			rDlg.Init(tape.Ds2hInst, hWnd);
-			vDlg.Init(tape.Ds2hInst, hWnd);
-			kDlg.Init(tape.Ds2hInst, hWnd);
-			gDlg.Init(tape.Ds2hInst, hWnd);
-			iDlg.Init(tape.Ds2hInst, hWnd);
-			nDlg.Init(tape.Ds2hInst, hWnd);
-			mDlg2.Init(tape.Ds2hInst, hWnd, true);	//Clone
-			mDDlg.Init(tape.Ds2hInst, hWnd);
-			rDDlg.Init(tape.Ds2hInst, hWnd);
-			kDDlg.Init(tape.Ds2hInst, hWnd);
-			cbParams.vj = &vjoy;
-			/////cbParams.vjdi = &vjoydi;	///////////////////////////////////////////////
-			cbParams.ds = &ds;
-			PostMessage(hWnd, WM_TRANSPARENCY, 0, 0);
+			tasktray.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			sDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			vDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			dDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			mDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			mDlg2.Init(true);	//Clone
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			rDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			kDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			xDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			gDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			lDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			nDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			mDDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			rDDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			kDDlg.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			cbParams.srce = &srce;
+			cbParams.dest = &dest;
 		}
 		else
 		{
+			PostMessage(hProgressBar, WM_CLOSE, 0, 0);
 			DWORD style = GetWindowLong(hWnd, GWL_STYLE);
 			SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU);
-			SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+			SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
 
 			echo(I18N.Fatal_Error1);
 			echo();
 			echo(I18N.Fatal_Error2);
+			done_WM_CREATE = true;
 			return FALSE;
 		}
 
-		if (tape.Tasktray)
-			PostMessage(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
-
 		{
-			hTab = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH, 0, 0, 0, 0, hWnd, (HMENU)ID_TABMENU, tape.Ds2hInst, NULL);
+			hTab = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH | TCS_OWNERDRAWFIXED, 0, 0, 476, 21, hWnd, (HMENU)ID_TABMENU, tape.Ds2hInst, NULL);
 
 			TCITEM tc_item;
 			tc_item.mask = TCIF_TEXT;
@@ -1099,9 +1368,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TabCtrl_InsertItem(hTab, 2, &tc_item);
 			tc_item.pszText = I18N.TabRapidFire;
 			TabCtrl_InsertItem(hTab, 3, &tc_item);
-			tc_item.pszText = I18N.TabViGEm;
-			TabCtrl_InsertItem(hTab, 4, &tc_item);
 			tc_item.pszText = I18N.TabKeymap;
+			TabCtrl_InsertItem(hTab, 4, &tc_item);
+			tc_item.pszText = I18N.TabXOutput;
 			TabCtrl_InsertItem(hTab, 5, &tc_item);
 			tc_item.pszText = I18N.TabGuardian;
 			TabCtrl_InsertItem(hTab, 6, &tc_item);
@@ -1110,49 +1379,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			tc_item.pszText = I18N.TabLinks;
 			TabCtrl_InsertItem(hTab, 8, &tc_item);
 
-			SendMessage(hTab, WM_SETFONT, WPARAM(tape.hTab1), TRUE);
+			SendMessage(hTab, WM_SETFONT, WPARAM(tape.hTab), TRUE);
 			TabCtrl_SetItemSize(hTab, 48, 17);
-			TabCtrl_SetPadding(hTab, 0, 2);
-
+			TabCtrl_SetPadding(hTab, 0, 4);
 			TabCtrl_SetCurSel(hTab, 0);
 		}
-
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		{
 			hTopMost = CreateWindowEx(0, L"button", L"↕", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | BS_PUSHLIKE | BS_CENTER, 451, 3, 20, 15, hWnd, (HMENU)ID_TOPMOST, tape.Ds2hInst, NULL);
 			SendMessage(hTopMost, WM_SETFONT, WPARAM(tape.hTopMost), TRUE);
 			if (tape.TopMost)
-			{
 				CheckDlgButton(hWnd, ID_TOPMOST, BST_CHECKED);
-				::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-			}
 			else
 				CheckDlgButton(hWnd, ID_TOPMOST, BST_UNCHECKED);
 		}
-
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		{
-			hStatus = CreateWindowEx( 0, STATUSCLASSNAME, (PCTSTR)NULL, WS_CHILD | WS_VISIBLE | CCS_BOTTOM /*| SBARS_SIZEGRIP*/, 0, 0, 0, 0, hWnd, (HMENU)ID_STATUS, tape.Ds2hInst, NULL);
-			int width[4] = { 70,140,415,-1 };
+			hStatus = CreateWindowEx( 0, STATUSCLASSNAME, (PCTSTR)NULL, WS_CHILD | WS_VISIBLE | CCS_BOTTOM /*| SBARS_SIZEGRIP*/, 0, 264, 476, 24, hWnd, (HMENU)ID_STATUS, tape.Ds2hInst, NULL);
+			int width[4] = { 70,140,412,-1 };
 			SendMessage(hStatus, SB_SETPARTS, 4, LPARAM(width));
 			SendMessage(hStatus, SB_SETTEXT, 0, WPARAM(I18N.Status_Wait));
 			SendMessage(hStatus, WM_SETFONT, WPARAM(tape.hStatus), TRUE);
+			hDCStatus = GetDC(hStatus);
 		}
-
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		{
-			hWebMenu = CreateWindowEx(0, L"button", L"≡", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_CENTER, 0, 0, 22, 17, hWnd, (HMENU)ID_WEBMENU, tape.Ds2hInst, NULL);
+			hWebMenu = CreateWindowEx(0, L"button", L"≡", WS_CHILD | BS_FLAT | BS_CENTER, 0, 0, 22, 17, hWnd, (HMENU)ID_WEBMENU, tape.Ds2hInst, NULL);
+
 			SendMessage(hWebMenu, WM_SETFONT, WPARAM(tape.hWeb), TRUE);
-			ShowWindow(hWebMenu, SW_HIDE);
 			CreateToolTip(hWnd, hWebMenu, I18N.HELP_WEB_MENU);
 		}
-
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		{
-			hWebClose = CreateWindowEx(0, L"button", L"✕", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 454, 0, 22, 17, hWnd, (HMENU)ID_WEBCLOSE, tape.Ds2hInst, NULL);
-			SendMessage(hWebClose, WM_SETFONT, WPARAM(tape.hWebX), TRUE);
-			ShowWindow(hWebClose, SW_HIDE);
+			hWebClose = CreateWindowEx(0, L"button", L"✕", WS_CHILD | BS_FLAT | BS_VCENTER | BS_CENTER, 454, 0, 22, 17, hWnd, (HMENU)ID_WEBCLOSE, tape.Ds2hInst, NULL);
+
+			SendMessage(hWebClose, WM_SETFONT, WPARAM(tape.hCancel), TRUE);
 			CreateToolTip(hWnd, hWebClose, I18N.HELP_WEB_CLOSE);
 		}
-
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		{
-			hTab_Explorer = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | TCS_FIXEDWIDTH | TCS_TOOLTIPS, 0, 0, 0, 0, hWnd, (HMENU)ID_TABEXPLORER, tape.Ds2hInst, NULL);
+			hTab_Explorer = CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, WC_TABCONTROL, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | TCS_FIXEDWIDTH | TCS_TOOLTIPS | TCS_OWNERDRAWFIXED, 19, 0, 435, 17, hWnd, (HMENU)ID_TABEXPLORER, tape.Ds2hInst, NULL);
+
 			TCITEM tc_item;
 			tc_item.mask = TCIF_TEXT;
 			wchar_t tabtxt[256];
@@ -1161,17 +1428,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			tc_item.pszText = WCHARI(L"+");
 			TabCtrl_InsertItem(hTab_Explorer, 1, &tc_item);
 
-			SendMessage(hTab_Explorer, WM_SETFONT, WPARAM(tape.hExplorer), TRUE);
+			SendMessage(hTab_Explorer, WM_SETFONT, WPARAM(tape.hTab), TRUE);
 			TabCtrl_SetItemSize(hTab_Explorer, 18, 17);
-			TabCtrl_SetPadding(hTab_Explorer, 0, 1);
-
+			TabCtrl_SetPadding(hTab_Explorer, 0, 0);
 			TabCtrl_SetCurSel(hTab_Explorer, 0);
-			ShowWindow(hTab_Explorer, SW_HIDE);
 		}
-
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		{
-			hTab_DeleteDF = CreateWindowEx(0, L"Static", L"", WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_CENTERIMAGE, 0, 0, 100, 100, hWnd, nullptr, tape.Ds2hInst, nullptr);
-			ShowWindow(hTab_DeleteDF, SW_HIDE);
+			hTab_DeleteDF = CreateWindowEx(0, L"Static", L"", WS_CHILD | SS_BITMAP | SS_CENTERIMAGE, 188, 94, 100, 100, hWnd, nullptr, tape.Ds2hInst, nullptr);
 
 			HDC memoryDC = CreateCompatibleDC(NULL);
 			HBITMAP m_DeleteDF = CreateCompatibleBitmap(memoryDC, 100, 100);
@@ -1209,50 +1473,61 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ReleaseDC(hTab_DeleteDF, hDC);
 */
 		}
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		{
+			//echo(L"https://github.com/ytyra/Ds2vJoy 31/07/2021");
+			std::wstring datestring = std::to_wstring(tape.VersionDate);
+			datestring = I18N.LinksSatusString
+				+ datestring.std::wstring::substr(0, 4) + L" "
+				+ datestring.std::wstring::substr(4, 2) + L" "
+				+ datestring.std::wstring::substr(6, 2) + L" - "
+				+ datestring.std::wstring::substr(8, (datestring.length() - 8));
+			wcscpy_s(LinksSatusString, wcslen(datestring.c_str()) + 1, datestring.c_str());
+			tasktray.Show();
+		}
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		{
+			dest.Init(true);
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			srce.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			if (tape.DsvJoyAddedToGuardian)
+				echo(I18N.Guardian_Added_to_Guardian, I18N.APP_TITLE, tape.Ds2vJoyPID);
+			hid.Init();
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+			xi.Init();
+		}
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		{
+			if (tape.PreferredSource != 1 && tape.PreferredSource != 2)
+				echo(I18N.ds_notforuse);
+			if (tape.PreferredSource != 3)
+				echo(I18N.di_notforuse);
+			if (tape.PreferredSource != 4)
+				echo(I18N.xi_notforuse);
+		}
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		{
+			SendMessage(hWnd, WM_TRANSPARENCY, 0, 0);
+			SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
+			if (!tape.Tasktray)
+				ShowWindow(hWnd, SW_SHOW);
+			::SetWindowPos(hWnd, (tape.TopMost && !tape.Tasktray) ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DEFERERASE | SWP_NOMOVE | SWP_NOSIZE);
+		}
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
-		//echo(L"https://github.com/ytyra/Ds2vJoy 31/07/2021");
-		std::wstring datestring = std::to_wstring(tape.VersionDate);
-		datestring = L"Version: "
-			+ datestring.std::wstring::substr(0, 4) + L" "
-			+ datestring.std::wstring::substr(4, 2) + L" "
-			+ datestring.std::wstring::substr(6, 2) + L" - "
-			+ datestring.std::wstring::substr(8, (datestring.length() - 8));
-		wcscpy_s(LinksSatusString, wcslen(datestring.c_str()) + 1, datestring.c_str());
-		tasktray.Show();
-
-		vjoy.Init(hWnd, true);
-		vg.Init(hWnd);
-		if (tape.DsvJoyAddedToGuardian)
-			echo(I18N.Guardian_Added_to_Guardian, I18N.APP_TITLE, tape.Ds2vJoyPID);
-		hid.Init(hWnd);
-
-		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
-
-		if (!SendMessage(hWnd, WM_DEVICE_VJOY_START, 0, 0))
-			echo(I18N.Log_Wait_vJoy);
-		if (!SendMessage(hWnd, WM_DEVICE_DS_START, 0, 0))
-			echo(I18N.Log_Wait_ds);
-
-		SetTimer(hWnd, 1, 10000, NULL);	//Check for vJoy or DS interruptions
-		SetTimer(hWnd, 2, 100, NULL);	//Set Ondulating LED
-		SetTimer(hWnd, 3, 1000, NULL);	//Battery & Latency
-		SetTimer(hWnd, 4, 5000, NULL);	//Guardian Whitelist Check
-		SetTimer(hWnd, 5, 10, NULL);	//When moving windows & Zoom
-		SetTimer(hWnd, 6, 100, NULL);	//Print Profile, mode, mouse and vJoy Buttons when editing
-		SetTimer(hWnd, 7, 65, NULL);	//Set and focus explorer tab under cursor & Change window form when mouseover
-										//8 Webclose button right click
-
-		done_WM_CREATE = true;
+		std::thread(WM_CREATE_END, hWnd).detach();
 		break;
 	}
 	case WM_TIMER:
 	{
 		if (wParam == 1)
 		{
-			if (!vjoy.Active())
-				SendMessage(hWnd, WM_DEVICE_VJOY_START, 0, 1);
-			if (!ds.Active() && tape.PreferredDS)
-				SendMessage(hWnd, WM_DEVICE_DS_START, 0, 1);
+			if (!dest.Active() && tape.vJoyDevice)
+				SendMessage(hWnd, WM_DEVICE_DEST_START, 0, 1);
+			if (!srce.Active() && tape.PreferredSource)
+				SendMessage(hWnd, WM_DEVICE_SRCE_START, 0, 1);
+			hid.WhitelistCheck();
 		}
 		else if (wParam == 2)
 		{
@@ -1275,7 +1550,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			static byte Gval = 0;
 			static byte Bval = 0;
 
-			const double π = 3.141592653589793238462643;
+			const double π = 3.141592653589793;
 			const double δ = 0.72;
 			const double β = -0.0004314;
 			const double γ = 0.0000003076;
@@ -1299,10 +1574,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Rval = int(R - (R * LightwaVe * colorphase));
 			Gval = int(G - (G * LightwaVe * colorphase));
 			Bval = int(B - (B * LightwaVe * colorphase));
-			if (ds.Active())
+			if (srce.Active())
 			{
-				ds.SetLED(Rval, Gval, Bval);
-				ds.Write();
+				srce.SetLED(Rval, Gval, Bval);
+				srce.Write();
 			}
 			phase--;
 
@@ -1310,64 +1585,201 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam == 3)
 		{
-			if (ds.Active())
+			static char moduloStatus = -1;
+			if (moduloStatus++ == 39)
+				moduloStatus = -1;
+
+			if (!IsIconic(hWnd) && !isFullScreen)
 			{
-				static bool LowBatt = false;
-				battery = ds.Battery();
-				if (battery < 5)
-				{
-					if (!LowBatt)
+				//Ensure to actualize all the bar
+				SendMessageTimeout(hStatus, SB_SETBKCOLOR, 0, LPARAM(RGB(255, 255, 255)), SMTO_BLOCK, 15, NULL);
+
+				//Battery
+				if (!moduloStatus)
+					if (srce.Active())
 					{
-						LowBatt = true;
-						ds.SetOrangeLED(2);
+						if (tape.ActualSource < 3)
+						{
+							static bool LowBatt = false;
+							bool isBT = srce.isBT();
+							if (tape.BatteryLevel < 11)
+							{
+								if (!LowBatt)
+								{
+									LowBatt = true;
+									if (tape.ActualSource == 2) srce.SetOrangeLED(2);
+								}
+							}
+							else if (LowBatt)
+							{
+								LowBatt = false;
+								if (tape.ActualSource == 2) srce.SetOrangeLED(0);
+							}
+							if (tape.ActualSource == 1 && !tape.BatteryCharge)
+								isBT = true;
+							WCHAR buf[20];
+							swprintf_s(buf, sizeof(buf), (isBT) ? L"BT (%s%d%%)" : L"USB (%s%d%%)", tape.BatteryCharge ? L"+" : L"", tape.BatteryLevel);
+							SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(buf), SMTO_BLOCK, 15, NULL);
+							tasktray.Tip(buf);
+						}
+						else if (tape.ActualSource == 3)
+						{
+							SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Active), SMTO_BLOCK, 15, NULL);
+							tasktray.Tip(I18N.Status_Active);
+						}
+						else
+						{
+							if (tape.BatteryCharge)
+							{
+								SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Charge), SMTO_BLOCK, 15, NULL);
+								tasktray.Tip(I18N.Status_Charge);
+							}
+							else
+							{
+								switch (tape.BatteryLevel)
+								{
+								case 0:
+								{
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Active), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(I18N.Status_Active);
+									break;
+								}
+								case 10:
+								{
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Empty), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(I18N.Status_Empty);
+									break;
+								}
+								case 40:
+								{
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Low), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(I18N.Status_Low);
+									break;
+								}
+								case 70:
+								{
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Medium), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(I18N.Status_Medium);
+									break;
+								}
+								case 100:
+								{
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Full), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(I18N.Status_Full);
+									break;
+								}
+								}
+							}
+						}
+					}
+					else
+					{
+						if (tape.PreferredSource)
+						{
+							SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Wait), SMTO_BLOCK, 15, NULL);
+							tasktray.Tip(I18N.Status_Wait);
+						}
+						else
+						{
+							WCHAR buf[20];
+							if (tape.KeyboardActive)
+							{
+								if (tape.MouseActive)
+								{
+									swprintf_s(buf, sizeof(buf), L"%s + %s", I18N.SETTINGS_KBD, I18N.SETTINGS_MSE);
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(buf), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(buf);
+								}
+								else
+								{
+									SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.SETTINGS_KBD), SMTO_BLOCK, 15, NULL);
+									tasktray.Tip(I18N.SETTINGS_KBD);
+								}
+							}
+							else if (tape.MouseActive)
+							{
+								SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.SETTINGS_MSE), SMTO_BLOCK, 15, NULL);
+								tasktray.Tip(I18N.SETTINGS_MSE);
+							}
+							else
+							{
+								SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Wait), SMTO_BLOCK, 15, NULL);
+								tasktray.Tip(I18N.Status_Wait);
+							}
+						}
+					}
+
+				//Latency & Mag Initialized
+				if (!(moduloStatus % 10))
+					if (srce.Active())
+					{
+						WCHAR buf[20];
+						if (tape.MagInitialized)
+							swprintf_s(buf, TEXT("%0.5f ms*"), average);
+						else
+							swprintf_s(buf, TEXT("%0.5f ms"), average);
+						SendMessageTimeout(hStatus, SB_SETTEXT, 1, LPARAM(buf), SMTO_BLOCK, 15, NULL);
+					}
+					else
+						SendMessageTimeout(hStatus, SB_SETTEXT, 1, LPARAM(L""), SMTO_BLOCK, 15, NULL);
+
+				//Status informations by page
+					switch (TabCtrl_GetCurSel(hTab))
+					{
+					case 0:
+					{
+						time_t rawtime;
+						struct tm timeinfo;
+						time(&rawtime);
+						localtime_s(&timeinfo, &rawtime);
+
+						//https://www.cplusplus.com/reference/ctime/strftime/
+						if (wcsftime(LogSatusString, 100, I18N.LogSatusString, &timeinfo))
+							SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(LogSatusString), SMTO_BLOCK, 15, NULL);
+						break;
+					}
+					case 1:
+					{
+						swprintf_s(SettingsSatusString, sizeof(SettingsSatusString), I18N.SettingsSatusString, GetRValue(COLORREFforInfo), GetGValue(COLORREFforInfo), GetBValue(COLORREFforInfo), GetRValue(COLORREFforInfo), GetGValue(COLORREFforInfo), GetBValue(COLORREFforInfo));
+						SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(SettingsSatusString), SMTO_BLOCK, 15, NULL);
+						break;
+					}
+					case 2: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(MappingSatusString), SMTO_BLOCK, 15, NULL); break; }
+					case 3: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(RapidFireSatusString), SMTO_BLOCK, 15, NULL); break; }
+					case 4: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(KeymapSatusString), SMTO_BLOCK, 15, NULL); break; }
+					case 5: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(XOutputSatusString), SMTO_BLOCK, 15, NULL); break; }
+					case 6: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(hid.GuardianButtons()), SMTO_BLOCK, 15, NULL); break; }
+					case 8: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(LinksSatusString), SMTO_BLOCK, 15, NULL); break; }
+					}
+
+				//Mode, Profile & Stance
+				if (!(moduloStatus % 2))
+				{
+					static unsigned short LastTrayIcon = 0;
+					static unsigned short ActualTrayIcon = 0;
+					ActualTrayIcon = ((tape.Profile - 1) * 40) + ((mode - 1) * 5) + tape.Stance;
+					if (ActualTrayIcon != LastTrayIcon)
+					{
+						tasktray.m_nid.hIcon = tape.hIconTray[ActualTrayIcon];
+						Shell_NotifyIcon(NIM_MODIFY, &tasktray.m_nid);
+						LastTrayIcon = ActualTrayIcon;
+						SendMessageTimeout(hStatus, SB_SETTEXT, 3, LPARAM((L"M:" + std::to_wstring(mode) + L" P:" + std::to_wstring(tape.Profile) + L" S:" + std::to_wstring(tape.Stance + 1)).c_str()), SMTO_BLOCK, 15, NULL);
 					}
 				}
-				else if (LowBatt)
-				{
-					LowBatt = false;
-					ds.SetOrangeLED(0);
-				}
-				bool charge = ds.BatteryCharge();
-				bool full = ds.BatteryFull();
-				if (charge)battery -= 5;
-				if (full) battery = 100;
-				WCHAR buf[20];
-				if (ds.isBT())
-				{
-					swprintf_s(buf, sizeof(buf), L"BT (%s%d%%)", charge ? L"+" : L"", battery);
-					battery += 1;
-				}
-				else
-				{
-					swprintf_s(buf, sizeof(buf), L"USB (%s%d%%)", charge ? L"+" : L"", battery);
-					battery += 2;
-				}
-				tasktray.Tip(buf);
-				if (!IsIconic(hWnd))
-				{
-					SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(buf), SMTO_BLOCK, 1000, NULL);
-					if (tape.MagInitialized)
-						swprintf_s(buf, TEXT("%0.5f ms*"), average);
-					else
-						swprintf_s(buf, TEXT("%0.5f ms"), average);
-					SendMessageTimeout(hStatus, SB_SETTEXT, 1, LPARAM(buf), SMTO_BLOCK, 1000, NULL);
-				}
-			}
-			else
-			{
-				if (!IsIconic(hWnd))
-				{
-					SendMessageTimeout(hStatus, SB_SETTEXT, 0, LPARAM(I18N.Status_Wait), SMTO_BLOCK, 1000, NULL);
-					SendMessageTimeout(hStatus, SB_SETTEXT, 1, LPARAM(L""), SMTO_BLOCK, 1000, NULL);
-				}
+
+				//Get pixel color under mouse
+				std::thread(GetPixelForInfo).detach();
+
+				//Invert satus bar colors if Dark theme
+				if (tape.DarkTheme)
+					BitBlt(hDCStatus, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, NULL, DSTINVERT);
 			}
 		}
 		else if (wParam == 4)
 		{
-			hid.WhitelistCheck();
-		}
-		else if (wParam == 5)
-		{
+			if (!GetCursorPos(&tape.mousepoint))
+				break;
+
 			if (m_flag_drag)
 			{
 				if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
@@ -1386,15 +1798,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 					if (m_flag_drag > 3 && !FirstMove)
 					{
-						GetCursorPos(&tape.mousepoint);
 						if (TabCtrl_GetCurSel(hTab) == 7 || NotepadTab == 7)
-						{
 							::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x - x, tape.mousepoint.y - y, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
-						}
 						else
-						{
 							::SetWindowPos(hWnd, HWND_NOTOPMOST, tape.mousepoint.x - x, tape.mousepoint.y - y, 492, 327, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_DEFERERASE);
-						}
 					}
 				}
 			}
@@ -1407,7 +1814,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				else
 				{
-					GetCursorPos(&tape.mousepoint);
 					RECT rect;
 					GetWindowRect(hWnd, &rect);
 					switch (m_flag_size)	//W-E-N-S-NW-SE-NE-SW
@@ -1423,198 +1829,212 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			}
-		}
-		else if (wParam == 6)
-		{
-			if (!IsIconic(hWnd) && !isFullScreen)
+			else if (!IsIconic(hWnd) && IsWindowVisible(hWnd) && !isFullScreen)
 			{
-				SendMessageTimeout(hStatus, SB_SETTEXT, 3, LPARAM((L"M:" + std::to_wstring(mode) + L" Pr:" + std::to_wstring(tape.Profile)).c_str()), SMTO_BLOCK, 1000, NULL);
-				switch (TabCtrl_GetCurSel(hTab))
+				if (TabCtrl_GetCurSel(hTab) == 7)
 				{
-				case 0:
-				{
-					time_t rawtime;
-					struct tm timeinfo;
-					time(&rawtime);
-					localtime_s(&timeinfo, &rawtime);
-
-					//https://www.cplusplus.com/reference/ctime/strftime/
-					if (wcsftime(LogSatusString, 100, L"%a  %d /%m /%y     %T     UTC %z     %u …%W", &timeinfo))
-						SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(LogSatusString), SMTO_BLOCK, 1000, NULL);
-					break;
-				}
-				case 1:
-				{
-					COLORREF color;
-					HDC hdcScreen;
-
-					hdcScreen = GetDC(NULL);
-					if (hdcScreen != NULL)
+					if (!WebMenuVisible && tape.isExplorerLoaded)
 					{
-						if (GetCursorPos(&tape.mousepoint))
+						static size_t tab = -1;
+						static bool entered_hTab_Explorer = false;
+						static size_t lastview_hTab_Explorer = -1;
+						if (!IsIconic(hWnd) && IsWindowVisible(hTab_Explorer) && !isFullScreen)
 						{
-							color = GetPixel(hdcScreen, tape.mousepoint.x * tape.Hscale, tape.mousepoint.y * tape.Vscale);
-							if (color != CLR_INVALID)
+							TCHITTESTINFO tabinfo;
+							POINT pt = tape.mousepoint;
+							ScreenToClient(hTab_Explorer, &pt);
+							tabinfo.pt = pt;
+							tab = TabCtrl_HitTest(hTab_Explorer, &tabinfo);
+							if (tab < web_tabs.size() && tab != -1)
 							{
-								swprintf_s(SettingsSatusString, sizeof(SettingsSatusString), L"Color: # %02X  %02X  %02X    R %03i  G %03i  B %03i", GetRValue(color), GetGValue(color), GetBValue(color), GetRValue(color), GetGValue(color), GetBValue(color));
-								SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(SettingsSatusString), SMTO_BLOCK, 1000, NULL);
+								MouseIsOverTab = true;
+								if (lastview_hTab_Explorer == -1)
+								{
+									lastview_hTab_Explorer = 0;
+									web_tabs[tape.web_actualtab]->OnMouseOut();
+								}
+								if (tab != lastview_hTab_Explorer || entered_hTab_Explorer == false)
+								{
+									entered_hTab_Explorer = true;
+									web_tabs[lastview_hTab_Explorer]->Hide();
+									lastview_hTab_Explorer = tab;
+									web_tabs[tab]->OnMouseOut();
+									web_tabs[tab]->Show();
+								}
 							}
-						}
-						ReleaseDC(GetDesktopWindow(), hdcScreen);
-					}
-					break;
-				}
-				case 2: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(MappingSatusString), SMTO_BLOCK, 1000, NULL); break; }
-				case 3: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(RapidFireSatusString), SMTO_BLOCK, 1000, NULL); break; }
-				case 4: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(ViGEmSatusString), SMTO_BLOCK, 1000, NULL); break; }
-				case 5: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(KeymapSatusString), SMTO_BLOCK, 1000, NULL); break; }
-				case 6: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(hid.GuardianButtons()), SMTO_BLOCK, 1000, NULL); break; }
-				case 8: { SendMessageTimeout(hStatus, SB_SETTEXT, 2, LPARAM(LinksSatusString), SMTO_BLOCK, 1000, NULL); break; }
-				}
-			}
-		}
-		else if (wParam == 7)
-		{
-			if (!IsIconic(hWnd) && IsWindowVisible(hWnd) && !isFullScreen)
-			{
-				if (!WebMenuVisible && tape.isExplorerLoaded && TabCtrl_GetCurSel(hTab) == 7)
-				{
-					static size_t tab = -1;
-					static bool entered_hTab_Explorer = false;
-					static size_t lastview_hTab_Explorer = -1;
-					if (!IsIconic(hWnd) && IsWindowVisible(hTab_Explorer) && !isFullScreen)
-					{
-						TCHITTESTINFO tabinfo;
-						GetCursorPos(&tape.mousepoint);
-						POINT pt = tape.mousepoint;
-						ScreenToClient(hTab_Explorer, &pt);
-						tabinfo.pt = pt;
-						tab = TabCtrl_HitTest(hTab_Explorer, &tabinfo);
-						if (tab < web_tabs.size() && tab != -1)
-						{
-							MouseIsOverTab = true;
-							if (lastview_hTab_Explorer == -1)
-							{
-								lastview_hTab_Explorer = 0;
-								web_tabs[tape.web_actualtab]->OnMouseOut();
-							}
-							if (tab != lastview_hTab_Explorer || entered_hTab_Explorer == false)
-							{
-								entered_hTab_Explorer = true;
-								web_tabs[lastview_hTab_Explorer]->Hide();
-								lastview_hTab_Explorer = tab;
-								web_tabs[tab]->OnMouseOut();
-								web_tabs[tab]->Show();
-							}
-						}
-						else if (entered_hTab_Explorer)
-						{
-							MouseIsOverTab = false;
-							entered_hTab_Explorer = false;
-							web_tabs[lastview_hTab_Explorer]->Hide();
-							lastview_hTab_Explorer = -1;
-							web_tabs[tape.web_actualtab]->OnMouseOver();
-							web_tabs[tape.web_actualtab]->Show();
-						}
-					}
-					if (GetCursorPos(&tape.mousepoint) && tab == -1)
-					{
-						if (tab)
-							ShowWindow(hTab_Explorer, SW_SHOW);
-						RECT win;
-						GetWindowRect(hWnd, &win);
-						if (MouseIsOverMain)
-						{
-							if (!PtInRect(&win, tape.mousepoint))
+							else if (entered_hTab_Explorer)
 							{
 								MouseIsOverTab = false;
-								MouseIsOverMain = false;
-								RECT win;
-								GetWindowRect(hWnd, &win);
-								win.left += 7;
-								win.right -= win.left + 7;
-								win.bottom -= win.top + 7;
-								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
-								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
-								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
-								ShowWindow(hWebMenu, SW_HIDE);
-								if (tab == -1)
-									ShowWindow(hWebClose, SW_HIDE);
-								ShowWindow(hTab_Explorer, SW_HIDE);
-								web_tabs[tape.web_actualtab]->OnMouseOut();
+								entered_hTab_Explorer = false;
+								web_tabs[lastview_hTab_Explorer]->Hide();
+								lastview_hTab_Explorer = -1;
+								web_tabs[tape.web_actualtab]->OnMouseOver();
+								web_tabs[tape.web_actualtab]->Show();
 							}
 						}
-						else
+						if (tab == -1)
 						{
-							if (PtInRect(&win, tape.mousepoint))
-							{
-								MouseIsOverMain = true;
-								RECT win;
-								GetWindowRect(hWnd, &win);
-								win.left -= 7;
-								win.right -= win.left - 7;
-								win.bottom -= win.top - 7;
-								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
-								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+							if (tab)
 								ShowWindow(hTab_Explorer, SW_SHOW);
-								ShowWindow(hWebMenu, SW_SHOW);
-								ShowWindow(hWebClose, SW_SHOW);
-								web_tabs[tape.web_actualtab]->OnMouseOver();
+							RECT win;
+							GetWindowRect(hWnd, &win);
+							if (MouseIsOverMain)
+							{
+								if (!PtInRect(&win, tape.mousepoint))
+								{
+									MouseIsOverTab = false;
+									MouseIsOverMain = false;
+									RECT win;
+									GetWindowRect(hWnd, &win);
+									win.left += 7;
+									win.right -= win.left + 7;
+									win.bottom -= win.top + 7;
+									DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+									SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
+									SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+									ShowWindow(hWebMenu, SW_HIDE);
+									if (tab == -1)
+										ShowWindow(hWebClose, SW_HIDE);
+									ShowWindow(hTab_Explorer, SW_HIDE);
+									web_tabs[tape.web_actualtab]->OnMouseOut();
+								}
+							}
+							else
+							{
+								if (PtInRect(&win, tape.mousepoint))
+								{
+									MouseIsOverMain = true;
+									RECT win;
+									GetWindowRect(hWnd, &win);
+									win.left -= 7;
+									win.right -= win.left - 7;
+									win.bottom -= win.top - 7;
+									DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+									SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+									SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+									ShowWindow(hTab_Explorer, SW_SHOW);
+									ShowWindow(hWebMenu, SW_SHOW);
+									ShowWindow(hWebClose, SW_SHOW);
+									web_tabs[tape.web_actualtab]->OnMouseOver();
+								}
 							}
 						}
 					}
 				}
 				else if (TabCtrl_GetCurSel(hTab) == 9)
 				{
-					if (GetCursorPos(&tape.mousepoint))
+					RECT win;
+					GetWindowRect(hWnd, &win);
+					if (MouseIsOverMain)
 					{
-						RECT win;
-						GetWindowRect(hWnd, &win);
-						if (MouseIsOverMain)
+						if (!PtInRect(&win, tape.mousepoint))
 						{
-							if (!PtInRect(&win, tape.mousepoint))
-							{
-								MouseIsOverTab = false;
-								MouseIsOverMain = false;
-								RECT win;
-								GetWindowRect(hWnd, &win);
-								win.left += 7;
-								win.right -= win.left + 7;
-								win.bottom -= win.top + 7;
-								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
-								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
-								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
-							}
+							MouseIsOverTab = false;
+							MouseIsOverMain = false;
+							RECT win;
+							GetWindowRect(hWnd, &win);
+							win.left += 7;
+							win.right -= win.left + 7;
+							win.bottom -= win.top + 7;
+							DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+							SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
+							SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 						}
-						else
+					}
+					else
+					{
+						if (PtInRect(&win, tape.mousepoint))
 						{
-							if (PtInRect(&win, tape.mousepoint))
-							{
-								MouseIsOverMain = true;
-								RECT win;
-								GetWindowRect(hWnd, &win);
-								win.left -= 7;
-								win.right -= win.left - 7;
-								win.bottom -= win.top - 7;
-								DWORD style = GetWindowLong(hWnd, GWL_STYLE);
-								if (NotepadTab == 7)
-									SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-								else
-									SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
-								SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
-							}
+							MouseIsOverMain = true;
+							RECT win;
+							GetWindowRect(hWnd, &win);
+							win.left -= 7;
+							win.right -= win.left - 7;
+							win.bottom -= win.top - 7;
+							DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+							if (NotepadTab == 7)
+								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+							else
+								SetWindowLong(hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+							SetWindowPos(hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 						}
 					}
 				}
 			}
 		}
-		else if (wParam == 8)
+		else if (wParam == 5)
 		{
 			if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 				PostMessage(hWnd, WM_COMMAND, ID_WEBCLOSE, -1);
 			break;
 		}
+		else if (wParam == 6)
+		{
+			ShowWindow(hTab, SW_HIDE);
+			ShowWindow(hTab, SW_SHOW);
+			KillTimer(hWnd, 6);
+			break;
+		}
+		else if (wParam == 7)
+		{
+			ShowWindow(hTab_Explorer, SW_HIDE);
+			ShowWindow(hTab_Explorer, SW_SHOW);
+			KillTimer(hWnd, 7);
+			break;
+		}
+		break;
+	}
+	case WM_CHANGE_LANGUAGE:
+	{
+		wm_pause = true;
+
+		::ShowWindow(hTopMost, SW_HIDE);
+		::ShowWindow(hTab, SW_HIDE);
+		sDlg.Hide();
+
+		DWORD dwStyle = WS_VISIBLE | WS_POPUP & ~WS_THICKFRAME;
+		hProgressBar = CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, dwStyle, GetSystemMetrics(SM_CXSCREEN) / 2 - 150, GetSystemMetrics(SM_CYSCREEN) / 2 - 100, 200, 20, hWnd, (HMENU)0, tape.Ds2hInst, NULL);
+		SendMessage(hProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 14));
+		SendMessage(hProgressBar, PBM_SETSTEP, (WPARAM)1, 0);
+		SetWindowPos(hProgressBar, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
+
+		tasktray.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		sDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		dDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		mDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		mDlg2.Init(true);	//Clone
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		rDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		kDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		xDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		gDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		lDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		nDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		mDDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		rDDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		kDDlg.Init();
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+
+		PostMessage(hProgressBar, WM_CLOSE, 0, 0);
+
+		::ShowWindow(hTopMost, SW_SHOW);
+		::ShowWindow(hTab, SW_SHOW);
+		sDlg.Show();
+		PostMessage(hWnd, WM_SIZE, 0, -1);
+
+		wm_pause = false;
 		break;
 	}
 	case WM_RESET:
@@ -1629,60 +2049,55 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_PAUSE:
 	{
+		if (wm_reload)
+			return false;
+
+		wm_pause = true;
 		tape.CallbackPaused = true;
-		ds.GetButton(dsButtonID::LX)->SetThreshold();
-		ds.GetButton(dsButtonID::LY)->SetThreshold();
-		ds.GetButton(dsButtonID::RX)->SetThreshold();
-		ds.GetButton(dsButtonID::RY)->SetThreshold();
-		vjoy.Close();
-		ds.Close();
-		break;
+		srce.GetButton(SrceButtonID::LX)->SetThreshold();
+		srce.GetButton(SrceButtonID::LY)->SetThreshold();
+		srce.GetButton(SrceButtonID::RX)->SetThreshold();
+		srce.GetButton(SrceButtonID::RY)->SetThreshold();
+		dest.Close();
+		srce.Close();
+
+		return true;
 	}
 	case WM_RESTART:
 	{
-		ds.SetCallback(dsInput, &cbParams);
-		ds.PreOpen();
-		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
-			cbParams.vJoyID = tape.vJoyDeviceID;
-		if (ds.Active())
-		{
-			vDlg.Init2();
-			ds.SetOrangeLED(0x00);
-			ds.SetWhiteLED(0x00);
-			ds.AssignOffsets();
-			ds.Open(hWnd, !lParam);
-			tape.CallbackPaused = false;
-			return TRUE;
-		}
-		else if (!tape.PreferredDS)
-		{
-			vDlg.Init2();
-			ds.Open(hWnd, !lParam);
-			tape.CallbackPaused = false;
-			return TRUE;
-		}
+		wm_pause = false;
+
+		SendMessage(hWnd, WM_DEVICE_DEST_START, 0, lParam);
+		SendMessage(hWnd, WM_DEVICE_SRCE_START, 0, lParam);
+
+		tape.CallbackPaused = false;
 		break;
 	}
 	case WM_RELOAD:
 	{
-		// lParam == 0 verbose
 		// lParam == 1 silent
+		if (tape.MagInitialized)
+			SetMagnifyZoom(MAG_METHOD_RESET, 0, 0, 0);
+		if (wm_reload)
+			break;
+
+		wm_pause = false;
+		wm_reload = true;
+		tape.CallbackPaused = true;
 		LogSatusString[0] = '\0';
 		SettingsSatusString[0] = '\0';
 		MappingSatusString[0] = '\0';
 		RapidFireSatusString[0] = '\0';
 		KeymapSatusString[0] = '\0';
-		ViGEmSatusString[0] = '\0';
+		XOutputSatusString[0] = '\0';
 		SendMessage(hWnd, WM_TIMER, 6, 0);
-
-		tape.CallbackPaused = true;
 
 		PreviousTab = TabCtrl_GetCurSel(hTab);
 		PreviousNotepadTab = NotepadTab;
 		TabCtrl_SetCurFocus(hTab, 0);
 
 		if (!lParam)
-			echo(I18N.Change_Settings);
+			echo(I18N.Settings_Change_Settings);
 
 		{
 			if ((wParam == 1) || (wParam == 2) || (wParam == 3))
@@ -1690,69 +2105,112 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				tape.Save(tape.Setting_All);
 				tape.Profile = (unsigned char)wParam;
 				tape.Save(tape.Setting_Profile);
-				echo(I18N.TT_ProfileChanged, tape.Profile);
+				echo(I18N.TaskTray_ProfileChanged, tape.Profile);
 			}
 			else
 				hid.RestartDevices(true);
 		}
 
-		vg.CloseClient();
-		vjoy.Close();
-		ds.Close();
+		xi.CloseClient();
+		srce.Close();
+		dest.Close();
 		SendMessage(hWnd, WM_RESET, 0, 0);
 
-		tape.Load(Settings::Setting_Category_All);
+		tape.Load(Settings::SettingCategory_All);
 		mDlg.Hide();
 		mDDlg.m_mode = 0;
 
-		vjoy.Init(hWnd);
-		vg.Init(hWnd);
-		hid.Init(hWnd);
+		dest.Init();
+		xi.Init();
+		hid.Init();
 
 		SendMessage(hWnd, WM_DISPLAYCHANGE, 0, 0);
 		SendMessage(hWnd, WM_CREATE_MENU, 0, 0);
-		SendMessage(hWnd, WM_DEVICE_VJOY_START, 0, lParam);
-		SendMessage(hWnd, WM_DEVICE_DS_START, 0, lParam);
+		wm_reload = false;
+		SendMessage(hWnd, WM_DEVICE_DEST_START, 0, lParam);
+		SendMessage(hWnd, WM_DEVICE_SRCE_START, 0, lParam);
 		break;
 	}
-	case WM_DEVICE_DS_START:
+	case WM_DEVICE_DEST_START:
 	{
-		// lParam == 0 verbose
 		// lParam == 1 silent
-		static bool dsstartrunning = false;
+		if (wm_reload || wm_pause || wm_deststart)
+			break;
 
-		if (dsstartrunning)
-			return FALSE;
-		dsstartrunning = true;
+		wm_deststart = true;
+		tape.CallbackPaused = true; 
 
+		dest.Close();
+		if(!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+
+		if (tape.vJoyDevice)
+		{
+			if (dest.Open(tape.vJoyDevice, !lParam))
+				cbParams.vJoyID = tape.vJoyDevice;
+			else if (!lParam)
+				echo(I18N.vJoy_wait);
+		}
+		else if (!lParam)
+			echo(I18N.vJoy_notforuse);
+
+		tape.CallbackPaused = false;
+		wm_deststart = false;
+
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		break;
+	}
+	case WM_DEVICE_SRCE_LIST:
+	{
+		srce.ListOfJoysticks();
+
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		break;
+	}
+	case WM_DEVICE_SRCE_START:
+	{
+		// lParam == 1 silent
+		if (wm_reload || wm_pause || wm_srcestart)
+			break;
+
+		tape.ActualSource = 0;
+		wm_srcestart = true;
 		tape.CallbackPaused = true;
-		ds.GetButton(dsButtonID::LX)->SetThreshold();
-		ds.GetButton(dsButtonID::LY)->SetThreshold();
-		ds.GetButton(dsButtonID::RX)->SetThreshold();
-		ds.GetButton(dsButtonID::RY)->SetThreshold();
-		ds.Close();
+		tape.MouseMovePaused = true;
 
-		ds.SetCallback(dsInput, &cbParams);
+		srce.Close();
+		dest.Clear();
+		srce.GetButton(SrceButtonID::LX)->SetThreshold();
+		srce.GetButton(SrceButtonID::LY)->SetThreshold();
+		srce.GetButton(SrceButtonID::RX)->SetThreshold();
+		srce.GetButton(SrceButtonID::RY)->SetThreshold();
 
-		ds.SetTriggers(tape.TriggersMode);
+		srce.SetCallback(GeneralMotor, &cbParams);
+		srce.SetTriggers(tape.TriggersMode);
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
 		{
 			cbParams.mappings.clear();
 			cbParams.mappings[0].PreLoad();
 			size_t max = tape.Mappingdata.size();
 			for (int i = 0; i < 32; i++)
-				tape.vJoyUsed[i] = false;
+				tape.destUsed[i] = false;
 			for (int i = 0; i < max; i++)
 			{
-				Mapping *data = &tape.Mappingdata[i];
-				if (data->LoadDevice(hWnd, &ds, &vjoy))
+				Mapping* data = &tape.Mappingdata[i];
+				if (data->LoadDevice(&srce, &dest))
 					cbParams.mappings.push_back(*data);
 			}
 		}
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
 		if (tape.SplitTouch)
 		{
-			cbParams.splittouch = ds.GetButton(dsButton::TOUCH);
+			cbParams.splittouch = srce.GetButton(SourceButton::TOUCH);
 			cbParams.splitCol = tape.TouchCol;
 			cbParams.splitRow = tape.TouchRow;
 			cbParams.splitButton = tape.TouchPadButton;
@@ -1765,37 +2223,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			size_t length = tape.RapidFiredata.size();
 			for (int i = 0; i < length; i++)
 			{
-				if (tape.RapidFiredata[i].LoadDevice(&vjoy))
+				if (tape.RapidFiredata[i].LoadDevice(&dest))
 					cbParams.rapidfires.push_back(tape.RapidFiredata[i]);
 			}
 		}
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
 		{
 			cbParams.keymaps.clear();
 			size_t max = tape.Keymapdata.size();
 			for (int i = 0; i < max; i++)
 			{
-				Keymap *data = &tape.Keymapdata[i];
-				if (data->LoadDevice(&vjoy))
+				Keymap* data = &tape.Keymapdata[i];
+				if (data->LoadDevice(&dest))
 					cbParams.keymaps.push_back(*data);
 			}
 		}
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
-		if (tape.ViGEmActive && !vg.vigem_connected)
+		if (tape.XOutputActive && !xi.xoutput_connected)
 		{
-			vg.CloseClient();
-			vg.LoadDevice(&ds, &vjoy);
-			vg.InitClient(true);
-			tape.ViGEmActive = true;
+			xi.CloseClient();
+			xi.LoadDevice(&dest);
+			xi.InitClient(true);
+			tape.XOutputActive = true;
 		}
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
 		cbParams.NextStepFlag = false;
 
-		ds.SetTargetSerial(tape.getSerial());
+		srce.SetSerial(tape.Serial);
 
 		{
-			mDlg.redrawTabs(mDlg.m_Tab);
-			mDlg.SetTab(mDlg.m_Tab, PreviousTab == 2);
+			mDlg.redrawTabs(mDlg.m_Tab, PreviousTab == 2 || TabCtrl_GetCurSel(hTab) == 2);
 			mDlg2.SetTab(mDlg2.m_Tab, false);
 			if (PreviousTab == 9)
 			{
@@ -1810,60 +2273,110 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				TabCtrl_SetCurFocus(hTab, PreviousTab);
 			PreviousTab = 15;
 		}
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 
-		ds.PreOpen();
-		if (ds.Active())
+		srce.PreOpen(!lParam);
+		if (tape.PreferredSource == 4)
 		{
-			vDlg.Init2();
-			ds.SetOrangeLED(0x00);
-			ds.SetWhiteLED(0x00);
-			ds.AssignOffsets();
-			ds.Open(hWnd, !lParam);
-			tape.CallbackPaused = false;
-			dsstartrunning = false;
-			return TRUE;
+			if (srce.Active())
+			{
+				tape.MouseMovePaused = false;
+				if (!srce.Open(hWnd, !lParam))
+					srce.Close();
+			}
+			else if (!lParam)
+				echo(I18N.xi_wait);
 		}
-		else if (!tape.PreferredDS)
+		else if (tape.PreferredSource == 3)
 		{
-			vDlg.Init2();
-			ds.Open(hWnd, !lParam);
-			tape.CallbackPaused = false;
-			dsstartrunning = false;
-			return TRUE;
+			if (srce.Active())
+			{
+				tape.MouseMovePaused = false;
+				if (!srce.Open(hWnd, !lParam))
+					srce.Close();
+			}
+			else if (!lParam)
+				echo(I18N.di_wait);
 		}
-		dsstartrunning = false;
+		else if (tape.PreferredSource)
+		{
+			if (srce.Active())
+			{
+				tape.MouseMovePaused = false;
+				srce.SetOrangeLED(0x00);
+				srce.SetWhiteLED(0x00);
+				if (!srce.Open(hWnd, !lParam))
+					srce.Close();
+			}
+			else if (!lParam)
+				echo(I18N.ds_wait);
+		}
+		else
+			srce.Open(hWnd, !lParam);
 
-		return FALSE;
-	}
-	case WM_DEVICE_VJOY_START:
-	{
-		// lParam == 0 verbose
-		// lParam == 1 silent
-		vjoy.Close();
-
-		if (vjoy.Open(tape.vJoyDeviceID, !lParam))
-			cbParams.vJoyID = tape.vJoyDeviceID;
-
-		return FALSE;
+		tape.CallbackPaused = false;
+		wm_srcestart = false;
+		if (!done_WM_CREATE)
+			SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		break;
 	}
 	case WM_SETORANGELED:
 	{
-		if (ds.Active() && tape.ActualDS == 2)
-			ds.SetOrangeLED((byte)wParam);
+		if (srce.Active() && tape.ActualSource == 2)
+			srce.SetOrangeLED((byte)wParam);
 		break;
 	}
 	case WM_SETWHITELED:
 	{
-		if (ds.Active() && tape.ActualDS == 2)
-			ds.SetWhiteLED((byte)wParam);
+		if (srce.Active() && tape.ActualSource == 2)
+			srce.SetWhiteLED((byte)wParam);
 		break;
 	}
 	case WM_SETTRIGGERS:
 	{
-		if (ds.Active() && tape.ActualDS == 2)
+		if (srce.Active() && tape.ActualSource == 2)
 		{
-			ds.SetTriggers((int)wParam);
-			ds.Write();
+			srce.SetTriggers((int)wParam);
+			srce.Write();
+		}
+		break;
+	}
+	case WM_SETVJOY:
+	{
+		switch (lParam)
+		{
+		case 0:
+		{
+			sDlg.Hide();
+			vDlg.Show();
+			break;
+		}
+		case 1:
+		{
+			sDlg.Show();
+			vDlg.Hide();
+			break;
+		}
+		}
+		break;
+	}
+	case WM_SETDINPUT:
+	{
+		switch (lParam)
+		{
+		case 0:
+		{
+			sDlg.Hide();
+			dDlg.Show();
+			break;
+		}
+		case 1:
+		{
+			sDlg.Show();
+			dDlg.Hide();
+			break;
+		}
 		}
 		break;
 	}
@@ -1873,19 +2386,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case 0:
 		{
-			ds.GetButton(dsButtonID::LX)->SetThreshold();
-			ds.GetButton(dsButtonID::LY)->SetThreshold();
-			ds.GetButton(dsButtonID::RX)->SetThreshold();
-			ds.GetButton(dsButtonID::RY)->SetThreshold();
+			srce.GetButton(SrceButtonID::LX)->SetThreshold();
+			srce.GetButton(SrceButtonID::LY)->SetThreshold();
+			srce.GetButton(SrceButtonID::RX)->SetThreshold();
+			srce.GetButton(SrceButtonID::RY)->SetThreshold();
 			cbParams.mappings.clear();
 			cbParams.mappings[0].PreLoad();
 			size_t max = tape.Mappingdata.size();
 			for (int i = 0; i < 32; i++)
-				tape.vJoyUsed[i] = false;
+				tape.destUsed[i] = false;
 			for (int i = 0; i < max; i++)
 			{
 				Mapping* data = &tape.Mappingdata[i];
-				if (data->LoadDevice(hWnd, &ds, &vjoy))
+				if (data->LoadDevice(&srce, &dest))
 					cbParams.mappings.push_back(*data);
 			}
 			break;
@@ -1933,7 +2446,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				size_t length = tape.RapidFiredata.size();
 				for (int i = 0; i < length; i++)
 				{
-					if (tape.RapidFiredata[i].LoadDevice(&vjoy))
+					if (tape.RapidFiredata[i].LoadDevice(&dest))
 						cbParams.rapidfires.push_back(tape.RapidFiredata[i]);
 				}
 			}
@@ -1954,18 +2467,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CHANGE_PAD:
 	{
 		if (wParam == 0)
-			vg.CloseClient();
+			xi.CloseClient();
 		else if (wParam == 1)
 		{
-			vg.LoadDevice(&ds, &vjoy);
-			vg.InitClient();
+			xi.LoadDevice(&dest);
+			xi.InitClient();
 		}
 		else if (wParam == 2)
-			if (tape.ViGEmActive)
+			if (tape.XOutputActive)
 			{
-				vg.CloseClient();
-				vg.LoadDevice(&ds, &vjoy);
-				vg.InitClient();
+				xi.CloseClient();
+				xi.LoadDevice(&dest);
+				xi.InitClient();
 			}
 		break;
 	}
@@ -1982,7 +2495,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				for (int i = 0; i < max; i++)
 				{
 					Keymap* data = &tape.Keymapdata[i];
-					if (data->LoadDevice(&vjoy))
+					if (data->LoadDevice(&dest))
 						cbParams.keymaps.push_back(*data);
 				}
 			}
@@ -2226,21 +2739,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		tape.Hscale = double(tape.Wp) / double(tape.W);
 		tape.Vscale = double(tape.Hp) / double(tape.H);
 
-		tape.proportianality = (long(tape.W) > long(tape.H)) ? (long(tape.W) / long(tape.H)) : (long(tape.H) / long(tape.W));
+		tape.proportianality = (tape.W > tape.H) ? (double(tape.W) / double(tape.H)) : (double(tape.H) / double(tape.W));
 		r = sqrt(tape.w * tape.w + tape.h * tape.h);
 		double standard_r = sqrt(960 * 960 + 540 * 540);
-		mousefactor = 0.0000089 * (r / standard_r);
-		movefactor = 0.0000071;
-		sniperfactor = 0.0097;
-		raidfactor = 0.00022 * (r / standard_r);
-		touchfactor = 0.6666667 * (r / standard_r);
-		slowfactor = 0.3333333 * (r / standard_r);
+		mousefactor = 0.000002225 * (r / standard_r) / 16974593;
+		movefactor = 0.000001775 / 16974593;
+		sniperfactor = 0.002425 / 257;
+		raidfactor = 0.000055 * (r / standard_r) / 66049;
+		touchfactor = 0.1666667 * (r / standard_r);
+		slowfactor = 0.0833333 * (r / standard_r);
 		accuracyfactor = 0.2 * (r / standard_r);
 		SendMessage(hWnd, WM_SIZE, 0, 0);
 		break;
 	}
-	case WM_CHAR:
-	case WM_SYSKEYDOWN:
+	//case WM_CHAR:
+	//case WM_SYSKEYDOWN:
 	case WM_KEYDOWN:
 	{
 /*
@@ -2278,19 +2791,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_NCLBUTTONDOWN:
 	{
 		if (!done_WM_CREATE)
-		{
-			GetCursorPos(&tape.mousepoint);
-			RECT win;
-			GetWindowRect(hWnd, &win);
-			x = (short)(tape.mousepoint.x - win.left);
-			y = (short)(tape.mousepoint.y - win.top);
-			if (y >= 0 && y <= 30)
-			{
-				if (x > 438 && x < 485)
-					PostMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0); break;
-			}
 			break;
-		}
 
 		GetCursorPos(&tape.mousepoint);
 		GetWindowRect(hWnd, &FirstMoveRect);
@@ -2385,7 +2886,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					if (!extended)
 					{
 						CheckDlgButton(hWnd, ID_TOPMOST, BST_CHECKED);
-						::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+						::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 						lastextended = true;
 						extended = true;
 					}
@@ -2418,7 +2919,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						lastextended = false;
 					if (!tape.TopMost)
 					{
-						::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+						::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 						CheckDlgButton(hWnd, ID_TOPMOST, BST_UNCHECKED);
 					}
 					if (mDlg2.m_isCloned && TabCtrl_GetCurSel(hTab) == 2)
@@ -2473,7 +2974,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			mDDlg.docked = mDDlg.docked_last;
 			PostMessage(hWnd, WM_SIZE, -1, -3);
-			::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+			::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 			if (TabCtrl_GetCurSel(hTab) != 7 || NotepadTab != 7)
 				::SetWindowPos(hWnd, HWND_TOPMOST, win.left, win.top, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_NOZORDER | SWP_DEFERERASE);
 			else
@@ -2505,7 +3006,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 0:
 				case 2:
 				case 3:
-				case 5:
+				case 4:
 				case 9:
 				{
 					if (!IsWindowVisible(kDDlg.m_hDlg) && !IsWindowVisible(rDDlg.m_hDlg))
@@ -2520,7 +3021,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 				case 1:
-				case 4:
+				case 5:
 				case 6:
 				case 8:
 				{
@@ -2570,9 +3071,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		GetClientRect(hWnd, &rect);
 
 		MoveWindow(hTopMost, rect.right - 25, 3, 20, 15, FALSE);
-		MoveWindow(hTab, 0, 0, rect.right, rect.bottom, FALSE);
-		MoveWindow(hStatus, 0, rect.bottom -24, rect.right, rect.bottom, FALSE);
-		MoveWindow(hTab_Explorer, 19, 0, rect.right - 41, 17, FALSE);
+		MoveWindow(hTab, 0, 0, rect.right, 21, FALSE);
+		MoveWindow(hStatus, 0, rect.bottom -24, rect.right, 24, FALSE);
+		MoveWindow(hTab_Explorer, 19, 0, rect.right - 41, (tape.DarkTheme) ? 17 : 19, FALSE);
 		MoveWindow(hWebMenu, 0, 0, 22, 17, FALSE);
 		MoveWindow(hWebClose, rect.right - 22, 0, 22, 17, FALSE);
 		MoveWindow(hTab_DeleteDF, (rect.right / 2) - 50, (rect.bottom / 2) - 50, 100, 100, FALSE);
@@ -2589,16 +3090,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		_log.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		sDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
+		vDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
+		dDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		mDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		rDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
-		vDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
+		xDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		kDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		gDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
-		iDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
+		lDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		rDDlg.MoveWindow(rect.left, rect.top, rect.right, rect.bottom, FALSE);
 		kDDlg.MoveWindow(rect.left - kDDlg.dlgPage * 470, rect.top, rect.right + kDDlg.dlgPage * 470, rect.bottom, FALSE);
 
-		InvalidateRect(hWnd, NULL, FALSE);
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	}
 	case WM_NCLBUTTONDBLCLK:
@@ -2643,47 +3146,79 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_NOTIFY:
 	{
-		switch (((LPNMLISTVIEW)lParam)->hdr.code)
+		switch (((LPNMHDR)lParam)->idFrom)
 		{
-		case BCN_HOTITEMCHANGE:
+		case ID_TOPMOST:
+		case ID_WEBMENU:
+		case ID_WEBCLOSE:
 		{
-			switch (((NMBCHOTITEM*)lParam)->dwFlags)
+			switch (((LPNMHDR)lParam)->code)
 			{
-			case (HICF_ENTERING | HICF_MOUSE):
-				switch (((LPNMHDR)lParam)->idFrom)
+			case NM_CUSTOMDRAW:
+			{
+				if (!tape.DarkTheme)
+					return CDRF_DODEFAULT;
+				LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+				if (DrawListCustom->uItemState == CDIS_HOT || DrawListCustom->uItemState == CDIS_NEARHOT)
 				{
-				case ID_WEBCLOSE:SetTimer(hWnd, 8, 70, NULL); break;
-				default:
-					return FALSE;
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_BTN_DARK);
+					SelectObject(DrawListCustom->hdc, GetStockObject(DC_PEN));
+					SetDCPenColor(DrawListCustom->hdc, tape.ink_grey);
+					RoundRect(DrawListCustom->hdc, DrawListCustom->rc.left + 1, DrawListCustom->rc.top + 1, DrawListCustom->rc.right - 1, DrawListCustom->rc.bottom - 1, 6, 6);
+				}
+				return CDRF_DODEFAULT;
+			}
+			case BCN_HOTITEMCHANGE:
+			{
+				switch (((NMBCHOTITEM*)lParam)->dwFlags)
+				{
+				case (HICF_ENTERING | HICF_MOUSE):
+				{
+					if (tape.DarkTheme)
+						::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"", L"");
+					if (((LPNMHDR)lParam)->idFrom == ID_WEBCLOSE)
+					{
+						::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"", L"");
+						SetTimer(hWnd, 5, 70, NULL);
+					}
+					break;
+				}
+				case (HICF_LEAVING | HICF_MOUSE):
+				{
+					if (tape.DarkTheme)
+						::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"Explorer", NULL);
+					if (((LPNMHDR)lParam)->idFrom == ID_WEBCLOSE)
+					{
+						::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"Explorer", NULL);
+						KillTimer(hWnd, 5);
+					}
+					break;
+				}
 				}
 				break;
-			case (HICF_LEAVING | HICF_MOUSE):
-				switch (((LPNMHDR)lParam)->idFrom)
-				{
-				case ID_WEBCLOSE:KillTimer(hWnd, 8); break;
-				default:
-					return FALSE;
-				}
-				break;
-			default:
-				return FALSE;
+			}
 			}
 			break;
 		}
-		}
-		switch (((LPNMHDR)lParam)->idFrom)
-		{
 		case ID_TABMENU:
 		{
+			if (!done_WM_CREATE || wm_pause)
+				return FALSE;
 			static bool NotFromWeb = true;
 			NotFromWeb = true;
 			switch (((NMHDR*)lParam)->code)
 			{
+			case NM_CLICK:
+			{
+				SetTimer(hWnd, 6, 20, NULL);
+				break;
+			}
 			case TCN_SELCHANGING:
-				SendMessage(hStatus, SB_SETTEXT, 2, WPARAM(L""));
 				mDDlg.m_mode = 0;
 				rDDlg.m_mode = 0;
 				kDDlg.m_mode = 0;
+				vDlg.Hide();
+				dDlg.Hide();
 				mDDlg.Hide();
 				rDDlg.Hide();
 				kDDlg.Hide();
@@ -2693,8 +3228,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case 1: { sDlg.Hide(); break; }
 				case 2: { mDlg.Hide(); if (!extended) { mDlg2.Hide(); } break; }
 				case 3: { rDlg.Hide(); break; }
-				case 4: { vDlg.Hide(); break; }
-				case 5: { kDlg.Hide(); break; }
+				case 4: { kDlg.Hide(); break; }
+				case 5: { xDlg.Hide(); break; }
 				case 6: { gDlg.Hide(); break; }
 				case 7:
 				{
@@ -2708,7 +3243,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					ShowWindow(hStatus, SW_SHOW);
 					break;
 				}
-				case 8: { iDlg.Hide(); break; }
+				case 8: { lDlg.Hide(); break; }
 				case 9:
 				{
 					if (NotepadTab == 7)
@@ -2724,15 +3259,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				break;
 			case TCN_SELCHANGE:
+				KillTimer(hWnd, 6);
 				SendMessage(hWnd, WM_EXITSIZEMOVE, 0, 0);
 				switch (TabCtrl_GetCurSel(hTab))
 				{
 				case 0: { _log.Show(); break; }
 				case 1: { sDlg.Show(); break; }
-				case 2: { mDlg.Show(); if (mDlg2.m_isCloned) { mDlg2.SetTab(mDlg2.m_Tab); } break; }
+				case 2: { mDlg.SetTab(mDlg.m_Tab, true); if (mDlg2.m_isCloned) { mDlg2.SetTab(mDlg2.m_Tab); } break; }
 				case 3: { rDlg.Show(); break; }
-				case 4: { vDlg.Show(); break; }
-				case 5: { kDlg.Show(); break; }
+				case 4: { kDlg.Show(); break; }
+				case 5: { xDlg.Show(); break; }
 				case 6: { gDlg.Show(); break; }
 				case 7: 
 				{
@@ -2764,7 +3300,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					web_tabs[tape.web_actualtab]->Show();
 					break;
 				}
-				case 8: { iDlg.Show(); break; }
+				case 8: { lDlg.Show(); break; }
 				case 9:
 				{
 					ShowWindow(hTopMost, SW_HIDE);
@@ -2824,6 +3360,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						web_tabs[tape.web_actualtab]->Show();
 					}
 				}
+				ShowWindow(hTab_Explorer, SW_HIDE);
+				ShowWindow(hTab_Explorer, SW_SHOW);
+				break;
+			}
+			case NM_CLICK:
+			{
+				SetTimer(hWnd, 7, 20, NULL);
 				break;
 			}
 			case TCN_SELCHANGING:
@@ -2838,6 +3381,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			case TCN_SELCHANGE:
 			{
+				KillTimer(hWnd, 7);
 				int desttab = TabCtrl_GetCurSel(hTab_Explorer);
 				if (desttab == web_tabs.size())
 					SendMessage(hWnd, WM_CREATE_NEW_TAB, (WPARAM)initialUri.c_str(), true);
@@ -2854,6 +3398,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
+		case ID_STATUS:
+		{
+			switch (((NMHDR*)lParam)->code)
+			{
+			case NM_CLICK:
+			{
+				if (TabCtrl_GetCurSel(hTab) == 0)
+					_log.PageDown();
+				else if (TabCtrl_GetCurSel(hTab) == 2)
+					mDlg.PageDown();
+				else if (TabCtrl_GetCurSel(hTab) == 3)
+					rDlg.PageDown();
+				else if (TabCtrl_GetCurSel(hTab) == 4)
+					kDlg.PageDown();
+				break;
+			}
+			case NM_RCLICK:
+			{
+				if (TabCtrl_GetCurSel(hTab) == 0)
+					_log.PageUp();
+				else if (TabCtrl_GetCurSel(hTab) == 2)
+					mDlg.PageUp();
+				else if (TabCtrl_GetCurSel(hTab) == 3)
+					rDlg.PageUp();
+				else if (TabCtrl_GetCurSel(hTab) == 4)
+					kDlg.PageUp();
+				break;
+			}
+			}
+		}
 		}
 		break;
 	}
@@ -2867,10 +3441,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case ID_TOPMOST:
 		{
-			if (SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED)
-				{ ::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); tape.TopMost = true; }
-			else
-				{ ::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); tape.TopMost = false; }
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+			{
+				if (SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED)
+				{
+					::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); tape.TopMost = true;
+				}
+				else
+				{
+					::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW); tape.TopMost = false;
+				}
+			}
+			}
 			break;
 		}
 		case IDM_MENU_EXIT:
@@ -2881,46 +3465,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_MAPPING:
 		{
 			tape.MappingPaused = !tape.MappingPaused;
-			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_MappingPaused);
+			tasktray.SwapMenuitem(Tasktray::TasktrayItem_MappingPaused);
 			tape.Save(tape.Setting_MappingPaused);
 			break;
 		}
 		case IDM_RAPIDFIRE:
 		{
 			tape.RapidFirePaused = !tape.RapidFirePaused;
-			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_RapidFirePaused);
+			tasktray.SwapMenuitem(Tasktray::TasktrayItem_RapidFirePaused);
 			tape.Save(tape.Setting_RapidFirePaused);
 			break;
 		}
 		case IDM_VJOY:
 		{
 			tape.vJoyPaused = !tape.vJoyPaused;
-			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_vJoyPaused);
+			tasktray.SwapMenuitem(Tasktray::TasktrayItem_vJoyPaused);
 			tape.Save(tape.Setting_vJoyPaused);
 			break;
 		}
-		case IDM_VIGEM:
+		case IDM_XINPUT:
 		{
-			tape.ViGEmPaused = !tape.ViGEmPaused;
-			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_ViGEmPaused);
-			tape.Save(tape.Setting_ViGEmPaused);
-			if (tape.ViGEmPaused)
-				vg.ClosePad();
+			tape.XOutputPaused = !tape.XOutputPaused;
+			tasktray.SwapMenuitem(Tasktray::TasktrayItem_XOutputPaused);
+			tape.Save(tape.Setting_XOutputPaused);
+			if (tape.XOutputPaused)
+				xi.ClosePad();
 			else
-				vg.InitPad();
+				xi.InitPad();
 			break;
 		}
 		case IDM_KEYMAP:
 		{
 			tape.KeymapPaused = !tape.KeymapPaused;
-			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_KeymapPaused);
+			tasktray.SwapMenuitem(Tasktray::TasktrayItem_KeymapPaused);
 			tape.Save(tape.Setting_KeymapPaused);
 			break;
 		}
 		case IDM_GUARDIAN:
 		{
 			tape.GuardianPaused = !tape.GuardianPaused;
-			tasktray.SwapMenuitem(Tasktray::Tasktray_Item_GuardianPaused);
+			tasktray.SwapMenuitem(Tasktray::TasktrayItem_GuardianPaused);
 			tape.Save(tape.Setting_GuardianPaused);
 			hid.WhitelistInit();
 			hid.BlacklistInit(-1);
@@ -2968,11 +3552,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_PROFILE1: { SendMessage(hWnd, WM_RELOAD, 1, 0); break; }
 		case IDM_PROFILE2: { SendMessage(hWnd, WM_RELOAD, 2, 0); break; }
 		case IDM_PROFILE3: { SendMessage(hWnd, WM_RELOAD, 3, 0); break; }
-		case IDM_APP1: { if (!LaunchProcess(tape.App1Location)) { echo(I18N.TT_AppNotFound, tape.App1Location); } break; }
-		case IDM_APP2: { if (tape.App2Location) { if (!LaunchProcess(tape.App2Location)) { echo(I18N.TT_AppNotFound, tape.App2Location); } } break; }
-		case IDM_APP3: { if (tape.App3Location) { if (!LaunchProcess(tape.App3Location)) { echo(I18N.TT_AppNotFound, tape.App3Location); } } break; }
-		case IDM_APP4: { if (tape.App4Location) { if (!LaunchProcess(tape.App4Location)) { echo(I18N.TT_AppNotFound, tape.App4Location); } } break; }
-		case IDM_APP5: { if (tape.App5Location) { if (!LaunchProcess(tape.App5Location)) { echo(I18N.TT_AppNotFound, tape.App5Location); } } break; }
+		case IDM_APP0: { if (tape.App0Location) { if (!LaunchProcess(tape.App0Location)) { echo(I18N.TaskTray_AppNotFound, tape.App0Location); } } break; }
+		case IDM_APP1: { if (tape.App1Location) { if (!LaunchProcess(tape.App1Location)) { echo(I18N.TaskTray_AppNotFound, tape.App1Location); } } break; }
+		case IDM_APP2: { if (tape.App2Location) { if (!LaunchProcess(tape.App2Location)) { echo(I18N.TaskTray_AppNotFound, tape.App2Location); } } break; }
+		case IDM_APP3: { if (tape.App3Location) { if (!LaunchProcess(tape.App3Location)) { echo(I18N.TaskTray_AppNotFound, tape.App3Location); } } break; }
+		case IDM_APP4: { if (tape.App4Location) { if (!LaunchProcess(tape.App4Location)) { echo(I18N.TaskTray_AppNotFound, tape.App4Location); } } break; }
 		case IDM_MENU_ABOUT: { DialogBox(tape.Ds2hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About); break; }
 		default: return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -2986,9 +3570,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case SC_CLOSE: { PostMessage(hWnd, WM_DESTROY, 0, 0); break; }
 		case SC_MINIMIZE:
 		{
-			if (done_WM_CREATE)
+			if (done_WM_CREATE && !wm_pause)
 			{
-				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+				::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 				tape.TopMost = false;
 				mDDlg.Hide();
 				mDlg2.Hide();
@@ -2998,7 +3582,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case SC_MAXIMIZE:
 		{
-			if (done_WM_CREATE)
+			if (done_WM_CREATE && !wm_pause)
 			{
 				if (notepad)
 				{
@@ -3036,66 +3620,108 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_DESTROY:
 	{
-		if (tape.MagInitialized)
+		static bool DestructionLaunched = false;
+		if (done_WM_CREATE && !DestructionLaunched)
 		{
-			SetMagnifyZoom(1, 0);
-			MagUninitialize();
+			DestructionLaunched = true;
+			wm_pause = true;
+			log_closing = true;
+			tape.CallbackPaused = true;
+			KillTimer(hWnd, 1);
+			KillTimer(hWnd, 2);
+			KillTimer(hWnd, 3);
+			KillTimer(hWnd, 4);
+			KillTimer(hWnd, 6);
+			if (HDCForInfo != NULL)
+				::ReleaseDC(hWnd, HDCForInfo);
+			if (hDCStatus != NULL)
+				::ReleaseDC(hWnd, hDCStatus);
+			if (tape.MagInitialized)
+				SetMagnifyZoom(MAG_METHOD_RESET, 0, 0, 0);
+			if (tape.NotepadUnsaved)
+				nDlg.Save();
+			if (!tape.BreakAndExit)
+				tape.Save(tape.Setting_All);
+			srce.SetTriggers(0);
+			if (tape.BlackLedOnExit)
+				srce.SetLED(0, 0, 0);
+			else
+				srce.SetLED(GetRValue(tape.LED_Color), GetGValue(tape.LED_Color), GetBValue(tape.LED_Color));
+			srce.SetOrangeLED(0xFF);
+			srce.SetWhiteLED(0xFF);
+			srce.Write();
+			tasktray.Hide();
+			if (tape.DisconnectBT)
+				srce.DisconnectBT();
+			xi.CloseClient();
+			srce.Close(true);
+			dest.Close();
+			if (tape.vJoyShutDown)
+				xi.vJoyDisable();
+			FreeLanguage();
+			DeleteObject((HBRUSH)GetClassLongPtr(hWnd, GCLP_HBRBACKGROUND));
+			PostQuitMessage(0);
+			//{
+			//	HMODULE hMod = ::GetModuleHandle(L"vJoyInstall.dll");
+			//	if (hMod != nullptr)
+			//		::FreeLibrary(hMod);
+			//}
+			//::DeleteFile(L"vJoyInstall.dll");
+			//::DeleteFile(L"Devcon.exe");
 		}
-		if (tape.NotepadUnsaved)
-			nDlg.Save();
-		if (!tape.BreakAndExit)
-			tape.Save(tape.Setting_All);
-		DeleteObject((HBRUSH)GetClassLongPtr(hWnd, GCLP_HBRBACKGROUND));
-		ds.SetTriggers(0);
-		if (tape.BlackLedOnExit)
-			ds.SetLED(0, 0, 0);
-		else
-			ds.SetLED(GetRValue(tape.LED_Color), GetGValue(tape.LED_Color), GetBValue(tape.LED_Color));
-		ds.SetOrangeLED(0xFF);
-		ds.SetWhiteLED(0xFF);
-		ds.Write();
-		tasktray.Hide();
-		if (tape.DisconnectBT)
-			ds.DisconnectBT();
-		vg.CloseClient();
-		vjoy.Close();
-		ds.Close();
-		FreeLanguage();
-		if (tape.vJoyShutDown)
-			disable(GetvJoyVersion());
-		PostQuitMessage(0);
-		{
-			HMODULE hMod = ::GetModuleHandle(L"ViGEmClient.dll");
-			if (hMod != nullptr)
-				::FreeLibrary(hMod);
-		}
-		{
-			HMODULE hMod = ::GetModuleHandle(L"vJoyInterface.dll");
-			if (hMod != nullptr)
-				::FreeLibrary(hMod);
-		}
-		{
-			HMODULE hMod = ::GetModuleHandle(L"vJoyInstall.dll");
-			if (hMod != nullptr)
-				::FreeLibrary(hMod);
-		}
-		{
-			HMODULE hMod = ::GetModuleHandle(L"WebView2Loader.dll");
-			if (hMod != nullptr)
-				::FreeLibrary(hMod);
-		}
-		::DeleteFile(L"ViGEmClient.dll");
-		::DeleteFile(L"vJoyInterface.dll");
-		::DeleteFile(L"vJoyInstall.dll");
-		::DeleteFile(L"WebView2Loader.dll");
-		::DeleteFile(L"Devcon.exe");
-		::DeleteFile(L"ViGEmClient.dmp");
 		break;
 	}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+void WM_CREATE_END(HWND hWnd)
+{
+	/*
+	echo("char:        %d", sizeof(char));			//1		//integers
+	echo("byte:        %d", sizeof(byte));			//1
+	echo("short:       %d", sizeof(short));			//2
+	echo("WCHAR:       %d", sizeof(WCHAR));			//2
+	echo("int:         %d", sizeof(int));			//4
+	echo("long:        %d", sizeof(long));			//4
+	echo("long long:   %d", sizeof(long long));		//8
+	echo("float:       %d", sizeof(float));			//4		//1+6 decimals
+	echo("double:      %d", sizeof(double));		//8		//1+15 decimals
+	echo("long double: %d", sizeof(long double));	//8
+	*/
+	{
+		SendMessage(hWnd, WM_DEVICE_DEST_START, 0, 0);
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+		SendMessage(hWnd, WM_DEVICE_SRCE_START, 0, 0);
+		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+	}
+
+	{
+		SetTimer(hWnd, 1, 5000, NULL);	//Check for DS, DirectInput or vJoy interruptions, and Guardian Whitelist Check
+		SetTimer(hWnd, 2, 100, NULL);	//Set Ondulating LED
+		SetTimer(hWnd, 3, 100, NULL);	//Battery, Latency, tab infos, Mode-Profile-Stance & Invert if Dark theme
+		SetTimer(hWnd, 4, 10, NULL);	//When moving windows & Zoom
+										//Set and focus explorer tab under cursor & Change window form when mouseover
+		//				5				//Webclose button right click
+	}
+	SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
+	PostMessage(hProgressBar, WM_CLOSE, 0, 0);
+	done_WM_CREATE = true;
+}
+
+void GetPixelForInfo()
+{
+	static bool GetPixelForInfoOnAir = false;
+	if (HDCForInfo != NULL && !GetPixelForInfoOnAir)
+	{
+		GetPixelForInfoOnAir = true;
+		COLORREF COLORREFforInfotmp = GetPixel(HDCForInfo, tape.mousepoint.x * tape.Hscale, tape.mousepoint.y * tape.Vscale);
+		if (COLORREFforInfotmp != CLR_INVALID)
+			COLORREFforInfo = COLORREFforInfotmp;
+		GetPixelForInfoOnAir = false;
+	}
 }
 
 INT_PTR CALLBACK About(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -3106,18 +3732,21 @@ INT_PTR CALLBACK About(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_black);
+		SetTextColor(hdcStatic, tape.ink_ABOUT);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, tape.ink_bright_yellow);
-		return (LRESULT)tape.hB_bright_yellow;
+		SetBkColor(hdcStatic, tape.Bk_ABOUT);
+		return (LRESULT)tape.hB_ABOUT;
 	}
 	case WM_INITDIALOG:
 	{
-		RECT desk;
-		ClientArea(&desk);
-		RECT rect;
-		GetClientRect(hWnd, &rect);
-		SetWindowPos(hWnd, HWND_TOP, desk.left + ((desk.right - desk.left - rect.right) / 2), desk.top + ((desk.bottom - desk.top - rect.bottom) / 2), 0, 0, SWP_NOSIZE);
+		RECT desktop;
+		ClientArea(&desktop);
+		RECT dialog;
+		GetClientRect(hWnd, &dialog);
+		SetWindowPos(hWnd, HWND_TOP,
+			desktop.left + ((desktop.right - desktop.left - dialog.right) / 2),
+			desktop.top - 55 + ((desktop.bottom - desktop.top - dialog.bottom) / 2),
+			0, 0, SWP_NOSIZE);
 		SendDlgItemMessage(hWnd, IDC_ABOUT_1, WM_SETFONT, WPARAM(tape.hAbout), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(hWnd, IDC_ABOUT_2, WM_SETFONT, WPARAM(tape.hAbout), MAKELPARAM(TRUE, 0));
 		SendDlgItemMessage(hWnd, IDC_ABOUT_3, WM_SETFONT, WPARAM(tape.hAbout), MAKELPARAM(TRUE, 0));
@@ -3135,18 +3764,18 @@ INT_PTR CALLBACK About(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_bright_yellow);
+			FillRect(hDC, &rect, tape.hB_ABOUT);
 
 			HWND about_ok = GetDlgItem(hWnd, IDC_ABOUT_OK);
 			hDC = BeginPaint(about_ok, &ps);
 			GetClientRect(about_ok, &rect);
-			FillRect(hDC, &rect, tape.hB_bright_yellow);
+			FillRect(hDC, &rect, tape.hB_ABOUT);
 
 			rect.left += 3;
 			rect.top += 1;
 			SelectFont(hDC, tape.hAbout);
-			SetTextColor(hDC, tape.ink_black);
-			SetBkColor(hDC, tape.ink_bright_yellow);
+			SetTextColor(hDC, tape.ink_ABOUT);
+			SetBkColor(hDC, tape.Bk_ABOUT);
 			DrawText(hDC, I18N.ABOUT_OK, -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 			::ReleaseDC(hWnd, hDC);

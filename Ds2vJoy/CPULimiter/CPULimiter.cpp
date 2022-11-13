@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "../StdAfx.h"
 #include "CPULimiter.h"
 
 //constructors
@@ -77,7 +78,7 @@ BOOL CPULimiter::CalculateAndSleep()
 			return FALSE;
 		
 		//Time to Sleep :)
-		Sleep((unsigned long)timetosleepin100ns.QuadPart/10000);
+		Sleep((double)timetosleepin100ns.QuadPart/10000);
 	}  
 
 	//Copy usage time values for next time calculations.

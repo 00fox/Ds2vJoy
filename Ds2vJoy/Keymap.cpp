@@ -30,7 +30,7 @@ WCHAR* Keymap::KeyString()
 	if (Enable == 2)
 		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒");
 	else
-		return vJoyButton::String((vJoyButtonID)ButtonID);
+		return DestinationButton::String((DestButtonID)ButtonID);
 
 	return buf;
 }
@@ -644,7 +644,7 @@ void Keymap::keyupPM()
 	m_keydownflag = false;
 }
 
-BOOL Keymap::LoadDevice(vJoyDevice* vjoy)
+BOOL Keymap::LoadDevice(Destination* srce)
 {
 	if (Enable != 1)
 		return FALSE;
@@ -652,7 +652,7 @@ BOOL Keymap::LoadDevice(vJoyDevice* vjoy)
 	if (!ButtonID)
 		return FALSE;
 
-	m_button = vjoy->GetButton((vJoyButtonID)ButtonID);
+	m_button = srce->GetButton((DestButtonID)ButtonID);
 
 	if (m_button == 0)
 		return FALSE;
@@ -662,7 +662,7 @@ BOOL Keymap::LoadDevice(vJoyDevice* vjoy)
 
 void Keymap::RunFirst()
 {
-	KeymapButtonsString = L"Keymap source:";
+	KeymapButtonsString = I18N.KeymapButtonsString;
 }
 
 void Keymap::Run()
@@ -674,7 +674,7 @@ void Keymap::Run()
 		return;
 
 	if (m_button->isPushed())
-		KeymapButtonsString = KeymapButtonsString + L" " + vJoyButton::String(vJoyButtonID(ButtonID));
+		KeymapButtonsString = KeymapButtonsString + L" " + DestinationButton::String(DestButtonID(ButtonID));
 
 	if (m_keydownflag)
 	{
@@ -973,7 +973,7 @@ KeyboardID Keymap::BytetoKeyboardID(byte id)
 	case VK_NONAME: return KID_NONAME;
 	case VK_PA1: return KID_PA1;
 	case VK_OEM_CLEAR: return KID_OEM_CLEAR;
-	default: return none;
+	default: return KeyboardID_None;
 	}
 }
 
@@ -1177,7 +1177,7 @@ const WCHAR* Keymap::String(KeyboardID id)
 	static std::wstring KeymapStringResult = L"";
 	switch (id)
 	{
-	case none: { KeymapStringResult = L""; break; }
+	case KeyboardID_None: { KeymapStringResult = L""; break; }
 	case KID_LBUTTON: { KeymapStringResult = L"LBUTTON"; break; }
 	case KID_RBUTTON: { KeymapStringResult = L"RBUTTON"; break; }
 	case KID_CANCEL: { KeymapStringResult = L"CANCEL"; break; }

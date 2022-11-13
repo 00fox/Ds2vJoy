@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "LogDlg.h"
+#include "Keymap.h"
 
 LogDlg::LogDlg()
 {
@@ -13,6 +14,9 @@ void echo() { echo(""); }
 
 void echo(const char* format, ...)
 {
+	if (log_closing)
+		return;
+
 	va_list args;
 	int len;
 	char* buffer;
@@ -34,6 +38,9 @@ void echo(const char* format, ...)
 
 void echo(const wchar_t* format, ...)
 {
+	if (log_closing)
+		return;
+
 	va_list args;
 	int len;
 	wchar_t* buffer;
@@ -59,18 +66,30 @@ void LogDlg::echo(wchar_t* buffer)
 	Update();
 }
 
-void LogDlg::Init(HINSTANCE hInst, HWND hWnd, bool load_dll)
+void LogDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_load_dll = load_dll;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_LOG), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_LOG), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Show();
 	m_hEdit = GetDlgItem(m_hDlg, IDC_LOG);
 	SendMessage(m_hEdit, WM_SETFONT, WPARAM(tape.hLog), TRUE);
-	Show();
+	
+}
+
+void LogDlg::SetShowTime(bool showtime)
+{
+	m_showTime = showtime;
 }
 
 void LogDlg::_InitDialog(HWND hWnd)
 {
+	RECT rect;
+	GetClientRect(tape.Ds2hWnd, &rect);
+	
+	rect.left += 3;
+	rect.top += 21;
+	rect.right -= 6;
+	rect.bottom -= 45;
+	::MoveWindow(hWnd, rect.left, rect.top, rect.right, rect.bottom, FALSE);
 }
 
 void LogDlg::ColorDemo(HWND hWnd, HWND hEdit)
@@ -149,6 +168,26 @@ void LogDlg::ColorRand(HWND hWnd, HWND hEdit)
 	_log.Update();
 }
 
+void LogDlg::PageUp()
+{
+	Edit_Scroll(m_hEdit, -7, 0);
+}
+
+void LogDlg::PageDown()
+{
+	Edit_Scroll(m_hEdit, 7, 0);
+}
+
+void LogDlg::PageHome()
+{
+	Edit_Scroll(m_hEdit, -32765, 0);
+}
+
+void LogDlg::PageEnd()
+{
+	Edit_Scroll(m_hEdit, 32765, 0);
+}
+
 INT_PTR CALLBACK LogDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LogDlg* dlg;
@@ -173,6 +212,7 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 {
 	switch (message)
 	{
+	case WM_CTLCOLORSTATIC:
 	case WM_CTLCOLOREDIT:
 	{
 		SetBkMode((HDC)wParam, OPAQUE);
@@ -226,7 +266,7 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_black);
+			FillRect(hDC, &rect, tape.hB_BackGround_DARK);
 
 			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
@@ -243,6 +283,10 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		RECT rect;
 		GetClientRect(hWnd, &rect);
 		::MoveWindow(m_hEdit, 0, 0, rect.right + 3, rect.bottom, FALSE);
+
+		GetClientRect(m_hEdit, &rect);
+		InflateRect(&rect, -5, -3);
+		SendMessage(m_hEdit, EM_SETRECT, 0, (LPARAM)&rect);
 		break;
 	}
 	case WM_COMMAND:
@@ -253,6 +297,82 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		{
 			switch (HIWORD(wParam))
 			{
+			case EN_UPDATE:
+			{
+				static int lastlinesnumber = 0;
+				static bool EN_UPDATEnogo = true;
+				if (EN_UPDATEnogo)
+				{
+					EN_UPDATEnogo = false;
+					if ((GetAsyncKeyState(VK_BACK) & 0x8000) ||
+						(GetAsyncKeyState(VK_DELETE) & 0x8000))
+					{
+						int charsel = HIWORD(Edit_GetSel(m_hEdit));
+						int charline = charsel - Edit_LineIndex(m_hEdit, -1);
+						bool undonotdone = true;
+						for (int i = 0; i < Edit_GetLineCount(m_hEdit); i++)
+							if (Edit_LineIndex(m_hEdit, i) > charsel)
+							{
+								undonotdone = false;
+								Edit_Undo(m_hEdit);
+								Edit_SetSel(m_hEdit, 0, -1);
+								Edit_SetSel(m_hEdit, -1, -1);
+								break;
+							}
+						if (undonotdone && lastlinesnumber > Edit_GetLineCount(m_hEdit))
+							Edit_ReplaceSel(m_hEdit, L"\r\n");
+					}
+					else
+					{
+						int charsel = HIWORD(Edit_GetSel(m_hEdit));
+						int charline = charsel - Edit_LineIndex(m_hEdit, -1);
+
+						WCHAR buf[256];
+						bool undonotdone = true;
+						for (int i = 0; i < Edit_GetLineCount(m_hEdit); i++)
+							if (Edit_LineIndex(m_hEdit, i) > charsel)
+							{
+								undonotdone = false;
+								if (charline > 1)
+								{
+									Edit_GetLine(m_hEdit, max(0, i - 1), buf, 256);
+									std::wstring Line = buf;
+									Line = Line.substr(charline - 1, 1);
+									Edit_SetSel(m_hEdit, charsel - 1, charsel);
+									Edit_ReplaceSel(m_hEdit, L"");
+									Edit_SetSel(m_hEdit, 0, -1);
+									Edit_SetSel(m_hEdit, -1, -1);
+									Edit_ReplaceSel(m_hEdit, Line.c_str());
+									break;
+								}
+								else
+								{
+									Edit_SetSel(m_hEdit, charsel - 1, charsel);
+									Edit_ReplaceSel(m_hEdit, L"");
+									Edit_SetSel(m_hEdit, 0, -1);
+									Edit_SetSel(m_hEdit, -1, -1);
+									break;
+								}
+							}
+						if (undonotdone && GetAsyncKeyState(VK_RETURN) & 0x8000)
+						{
+							WCHAR buf[256];
+							Edit_GetLine(m_hEdit, Edit_GetLineCount(m_hEdit) - 2, buf, 256);
+							std::wstring Line = buf;
+							if (!Line.length())
+							{
+								Edit_SetSel(m_hEdit, charsel - 1, charsel);
+								Edit_ReplaceSel(m_hEdit, L"");
+								Edit_SetSel(m_hEdit, 0, -1);
+								Edit_SetSel(m_hEdit, -1, -1);
+							}
+						}
+					}
+					EN_UPDATEnogo = true;
+				}
+				lastlinesnumber = Edit_GetLineCount(m_hEdit);
+				break;
+			}
 			case EN_ERRSPACE:
 			case EN_MAXTEXT: { Edit_SetText(m_hEdit, L""); break; }
 			case EN_CHANGE:
@@ -323,9 +443,11 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 						if (bytecharset.find(char2) != std::wstring::npos)
 							m_ink = std::stoll(char2, nullptr, 16);
 
+						if (m_back == m_ink)
+							(m_back) ? (m_back = 0) : (m_ink = 0);
+
 						Edit_SetSel(m_hEdit, -1, -1);
-						Hide();
-						Show();
+						InvalidateRect(hWnd, NULL, TRUE);
 						m_pause = false;
 						Update();
 					}
@@ -335,8 +457,7 @@ LRESULT CALLBACK LogDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 					m_back = -1;
 					m_ink = -1;
 					Edit_SetSel(m_hEdit, -1, -1);
-					Hide();
-					Show();
+					InvalidateRect(hWnd, NULL, TRUE);
 				}
 				break;
 			}
@@ -392,7 +513,7 @@ void LogDlg::Update()
 	GetLocalTime(&st);
 	WCHAR date[10];
 
-	if (m_load_dll)
+	if (m_showTime)
 		swprintf_s(date, 10, L"%02d:%02d:%02d ", st.wHour, st.wMinute, st.wSecond);
 
 	while (logcnt != NULL)

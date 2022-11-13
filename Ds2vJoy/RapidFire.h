@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "vJoy.h"
+#include "Destination.h"
 
 class RapidFire
 {
@@ -10,20 +10,20 @@ public:
 	WCHAR*				KeyString();
 	WCHAR*				ValueString(int column);
 	const WCHAR*		RapidFireButtons();
-	BOOL				LoadDevice(vJoyDevice*);
+	BOOL				LoadDevice(Destination*);
 	void				RunFirst();
 	BOOL				Run(std::chrono::system_clock::time_point now);
 
 	unsigned char		Enable = 0;
-	byte				ButtonID = vJoyButtonID::none;
-	byte				ButtonID2 = vJoyButtonID::none;
-	long				Firsttime = 75;
-	long				Releasetime = 75;
-	long				Presstime = 150;
+	byte				ButtonID = DestButtonID::Destination_None;
+	byte				ButtonID2 = DestButtonID::Destination_None;
+	int					Firsttime = 75;
+	int					Releasetime = 75;
+	int					Presstime = 150;
 
 private:
-	vJoyButton*			m_button = 0;
-	vJoyButton*			m_button2 = 0;
+	DestinationButton*	m_button = 0;
+	DestinationButton*	m_button2 = 0;
 	bool				m_pushed = false;
 	bool				m_first = false;
 

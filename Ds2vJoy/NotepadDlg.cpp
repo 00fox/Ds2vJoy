@@ -11,18 +11,16 @@ NotepadDlg::~NotepadDlg()
 		RemoveFontMemResourceEx(m_fonthandle);
 }
 
-void NotepadDlg::Init(HINSTANCE hInst, HWND hWnd)
+void NotepadDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_NOTEPAD), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_NOTEPAD), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 	m_hEdit = GetDlgItem(m_hDlg, IDC_NOTEPAD);
 
 	if (LoadEmbeddedFont(IDR_NOTEPAD_TTF, &m_fonthandle))
 		tape.hNotepad = CreateFont(16, 0, 0, 0, FW_REGULAR, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"NotepadFont");
 	tape.hNotepad = CreateFont(tape.NotepadFontH, tape.NotepadFontW, 0, 0, FW_REGULAR, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, tape.NotepadFont.c_str());
 	SendMessage(m_hEdit, WM_SETFONT, WPARAM(tape.hNotepad), TRUE);
-
-	Hide();
 }
 
 void NotepadDlg::_InitDialog(HWND hWnd)
@@ -58,14 +56,14 @@ LRESULT CALLBACK NotepadDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	{
 		HDC hdcStatic = (HDC)wParam;
 		if (m_error)
-			SetTextColor(hdcStatic, tape.ink_red);
+			SetTextColor(hdcStatic, tape.ink_NOTEPAD_ALERT);
 		else if (tape.DarkTheme)
-			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			SetTextColor(hdcStatic, tape.ink_NOTEPAD_DARK);
 		else
-			SetTextColor(hdcStatic, tape.ink_EDIT_NOTEPAD);
+			SetTextColor(hdcStatic, tape.ink_NOTEPAD);
 		SetBkMode(hdcStatic, OPAQUE);
-		if (tape.DarkTheme) { SetBkColor((HDC)wParam, tape.ink_black); return (LRESULT)tape.hB_black; }
-		else { SetBkColor(hdcStatic, tape.Bk_NOTEPAD); return (LRESULT)tape.hB_white; }
+		if (tape.DarkTheme) { SetBkColor((HDC)wParam, tape.Bk_NOTEPAD_DARK); return (LRESULT)tape.hB_NOTEPAD_BackGround_DARK; }
+		else { SetBkColor(hdcStatic, tape.Bk_NOTEPAD); return (LRESULT)tape.hB_NOTEPAD_BackGround; }
 	}
 	case WM_PAINT:
 	{
@@ -103,6 +101,10 @@ LRESULT CALLBACK NotepadDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		RECT rect;
 		GetClientRect(hWnd, &rect);
 		::MoveWindow(m_hEdit, -1, -1, rect.right + 5, rect.bottom + 2, FALSE);
+
+		GetClientRect(m_hEdit, &rect);
+		InflateRect(&rect, -5, -3);
+		SendMessage(m_hEdit, EM_SETRECT, 0, (LPARAM)&rect);
 		break;
 	}
 	case WM_COMMAND:
@@ -117,8 +119,7 @@ LRESULT CALLBACK NotepadDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			case EN_MAXTEXT:
 			{
 				m_error = true;
-				Hide();
-				Show();
+				InvalidateRect(hWnd, NULL, TRUE);
 				break;
 			}
 			case EN_CHANGE:
@@ -126,7 +127,7 @@ LRESULT CALLBACK NotepadDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 				if (!tape.NotepadUnsaved)
 				{
 					tape.NotepadUnsaved = true;
-					SetWindowText(m_hWnd, I18N.NOTEPAD_UNSAVED);
+					SetWindowText(tape.Ds2hWnd, I18N.NOTEPAD_UNSAVED);
 				}
 				SetTimer(hWnd, 1, 5000, NULL);
 				break;
@@ -165,7 +166,7 @@ void NotepadDlg::Save()
 	GetWindowText(m_hEdit, buf, n);
 	tape.Notepad = buf;
 	tape.Save(tape.Setting_Notepad);
-	SetWindowText(m_hWnd, I18N.APP_TITLE);
+	SetWindowText(tape.Ds2hWnd, I18N.APP_TITLE);
 }
 
 void NotepadDlg::Show()

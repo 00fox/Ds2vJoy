@@ -1,16 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="1_Log">
-      <UniqueIdentifier>{33058d13-ce56-4859-9058-bbb7499daf88}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="2_Settings">
-      <UniqueIdentifier>{6e4fe25e-7fa9-496c-ae03-acb1dec76b9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="0_Ds2vJoy">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="A_Resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -24,12 +14,6 @@
     <Filter Include="Z_Crc32">
       <UniqueIdentifier>{37750dbb-0a33-4512-99c4-b99a5ada37f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="0_vJoy">
-      <UniqueIdentifier>{5d57c129-a256-43b7-b781-0aa9a8056f3a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="0_Source">
-      <UniqueIdentifier>{0f8a9bc8-8ebb-430e-8a75-bbe80005849f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Z_Zip Utils">
       <UniqueIdentifier>{f87e44e2-5e43-47e2-a0b8-ffe445887b80}</UniqueIdentifier>
     </Filter>
@@ -42,35 +26,54 @@
     <Filter Include="C_Media">
       <UniqueIdentifier>{f5d8e50d-6ae1-4c65-9645-345fa10f281c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="12_Tasktray">
-      <UniqueIdentifier>{71850f97-b8c2-4144-aee6-d2494882fc43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="11_Notepad">
-      <UniqueIdentifier>{3d41c15c-1302-4cf8-ac52-4e5be8494f05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10_Links">
-      <UniqueIdentifier>{b31372e3-6c08-4dc3-9dc4-4d3fa2f0cfbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="9_Explorer">
-      <UniqueIdentifier>{4fcf1e52-3053-4f80-9062-af02bad72398}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="8_Guardian">
-      <UniqueIdentifier>{f4f9517f-0d5e-442c-b9b1-b98da9699a8f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="7_ViGEm">
-      <UniqueIdentifier>{2e0e2b3e-a49b-4e6a-ad2d-37cdf54177bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="6_Keymap">
-      <UniqueIdentifier>{9c16c011-7dcd-40eb-ae34-027d5b7f6184}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="5_RapidFire">
-      <UniqueIdentifier>{d946df3e-fa91-47d9-a783-5eeba42f372a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="4_Mapping">
+    <Filter Include="5_Mapping">
       <UniqueIdentifier>{3708577f-ccb4-43a3-b765-24dac20a225d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3_vJoyConf">
-      <UniqueIdentifier>{17dadd87-2a05-4542-8654-d35c6f1b77fd}</UniqueIdentifier>
+    <Filter Include="6_RapidFire">
+      <UniqueIdentifier>{d946df3e-fa91-47d9-a783-5eeba42f372a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="8_Keymap">
+      <UniqueIdentifier>{9c16c011-7dcd-40eb-ae34-027d5b7f6184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="9_Guardian">
+      <UniqueIdentifier>{f4f9517f-0d5e-442c-b9b1-b98da9699a8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10_Explorer">
+      <UniqueIdentifier>{4fcf1e52-3053-4f80-9062-af02bad72398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="11_Links">
+      <UniqueIdentifier>{b31372e3-6c08-4dc3-9dc4-4d3fa2f0cfbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="12_Notepad">
+      <UniqueIdentifier>{3d41c15c-1302-4cf8-ac52-4e5be8494f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Z_TrayIcons">
+      <UniqueIdentifier>{39050e41-ff3d-4bf2-9b40-fa5b2b9f20b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="7_XOutput">
+      <UniqueIdentifier>{2e0e2b3e-a49b-4e6a-ad2d-37cdf54177bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Z_ViGEm">
+      <UniqueIdentifier>{2dc9b65f-2d8c-4981-9892-701d6702af60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4_Settings">
+      <UniqueIdentifier>{6e4fe25e-7fa9-496c-ae03-acb1dec76b9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3_Log">
+      <UniqueIdentifier>{33058d13-ce56-4859-9058-bbb7499daf88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Tasktray">
+      <UniqueIdentifier>{71850f97-b8c2-4144-aee6-d2494882fc43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_Destination">
+      <UniqueIdentifier>{5d57c129-a256-43b7-b781-0aa9a8056f3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_Source">
+      <UniqueIdentifier>{0f8a9bc8-8ebb-430e-8a75-bbe80005849f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="0_Ds2vJoy">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -78,64 +81,55 @@
       <Filter>0_Ds2vJoy</Filter>
     </ClInclude>
     <ClInclude Include="Guardian.h">
-      <Filter>8_Guardian</Filter>
+      <Filter>9_Guardian</Filter>
     </ClInclude>
     <ClInclude Include="GuardianDlg.h">
-      <Filter>8_Guardian</Filter>
+      <Filter>9_Guardian</Filter>
     </ClInclude>
     <ClInclude Include="RapidFire.h">
-      <Filter>5_RapidFire</Filter>
+      <Filter>6_RapidFire</Filter>
     </ClInclude>
     <ClInclude Include="RapidFireDataDlg.h">
-      <Filter>5_RapidFire</Filter>
+      <Filter>6_RapidFire</Filter>
     </ClInclude>
     <ClInclude Include="RapidFireDlg.h">
-      <Filter>5_RapidFire</Filter>
+      <Filter>6_RapidFire</Filter>
     </ClInclude>
     <ClInclude Include="Mapping.h">
-      <Filter>4_Mapping</Filter>
+      <Filter>5_Mapping</Filter>
     </ClInclude>
     <ClInclude Include="MappingDataDlg.h">
-      <Filter>4_Mapping</Filter>
+      <Filter>5_Mapping</Filter>
     </ClInclude>
     <ClInclude Include="MappingDlg.h">
-      <Filter>4_Mapping</Filter>
-    </ClInclude>
-    <ClInclude Include="ViGEm.h">
-      <Filter>7_ViGEm</Filter>
-    </ClInclude>
-    <ClInclude Include="ViGEmDlg.h">
-      <Filter>7_ViGEm</Filter>
+      <Filter>5_Mapping</Filter>
     </ClInclude>
     <ClInclude Include="Settings.h">
-      <Filter>2_Settings</Filter>
+      <Filter>4_Settings</Filter>
     </ClInclude>
     <ClInclude Include="Keymap.h">
-      <Filter>6_Keymap</Filter>
+      <Filter>8_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="KeymapDataDlg.h">
-      <Filter>6_Keymap</Filter>
+      <Filter>8_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="KeymapDlg.h">
-      <Filter>6_Keymap</Filter>
+      <Filter>8_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="Findwindow.h">
-      <Filter>6_Keymap</Filter>
-    </ClInclude>
-    <ClInclude Include="vJoy.h">
-      <Filter>0_vJoy</Filter>
+      <Filter>8_Keymap</Filter>
     </ClInclude>
     <ClInclude Include="SettingDlg.h">
-      <Filter>2_Settings</Filter>
+      <Filter>4_Settings</Filter>
     </ClInclude>
     <ClInclude Include="LinksDlg.h">
-      <Filter>10_Links</Filter>
+      <Filter>11_Links</Filter>
     </ClInclude>
     <ClInclude Include="Language.h">
       <Filter>B_Language</Filter>
     </ClInclude>
     <ClInclude Include="Tasktray.h">
-      <Filter>12_Tasktray</Filter>
+      <Filter>2_Tasktray</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>A_Resources</Filter>
@@ -147,120 +141,111 @@
       <Filter>A_Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source.h">
-      <Filter>0_Source</Filter>
+      <Filter>1_Source</Filter>
     </ClInclude>
     <ClInclude Include="Crc32\Crc32.h">
       <Filter>Z_Crc32</Filter>
     </ClInclude>
-    <ClInclude Include="Zip Utils\unzip.h">
-      <Filter>Z_Zip Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="vJoy\vJoyInterface.h">
-      <Filter>Z_vJoy</Filter>
-    </ClInclude>
-    <ClInclude Include="vJoy\public.h">
-      <Filter>Z_vJoy</Filter>
-    </ClInclude>
     <ClInclude Include="CPULimiter\CPULimiter.h">
       <Filter>Z_CPULimiter</Filter>
-    </ClInclude>
-    <ClInclude Include="vJoyButton.h">
-      <Filter>0_vJoy</Filter>
-    </ClInclude>
-    <ClInclude Include="dsButton.h">
-      <Filter>0_Source</Filter>
     </ClInclude>
     <ClInclude Include="WindowsTools.h">
       <Filter>Z_WindowsTools</Filter>
     </ClInclude>
     <ClInclude Include="LogDlg.h">
-      <Filter>1_Log</Filter>
+      <Filter>3_Log</Filter>
     </ClInclude>
     <ClInclude Include="NotepadDlg.h">
-      <Filter>11_Notepad</Filter>
+      <Filter>12_Notepad</Filter>
     </ClInclude>
     <ClInclude Include="ExplorerDlg.h">
-      <Filter>9_Explorer</Filter>
+      <Filter>10_Explorer</Filter>
     </ClInclude>
-    <ClInclude Include="vJoy\hidReportDescFfb.h">
-      <Filter>Z_vJoy</Filter>
+    <ClInclude Include="Destination.h">
+      <Filter>1_Destination</Filter>
     </ClInclude>
-    <ClInclude Include="vJoy\hidtoken.h">
-      <Filter>Z_vJoy</Filter>
+    <ClInclude Include="DestinationButton.h">
+      <Filter>1_Destination</Filter>
     </ClInclude>
-    <ClInclude Include="vJoy\hidusage.h">
-      <Filter>Z_vJoy</Filter>
+    <ClInclude Include="SourceButton.h">
+      <Filter>1_Source</Filter>
     </ClInclude>
-    <ClInclude Include="vJoy\wrapper.h">
-      <Filter>Z_vJoy</Filter>
+    <ClInclude Include="DInputDlg.h">
+      <Filter>4_Settings</Filter>
     </ClInclude>
-    <ClInclude Include="vJoy\declarations.h">
+    <ClInclude Include="XOutput.h">
+      <Filter>7_XOutput</Filter>
+    </ClInclude>
+    <ClInclude Include="XOutputDlg.h">
+      <Filter>7_XOutput</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoyinterface.h">
       <Filter>Z_vJoy</Filter>
     </ClInclude>
     <ClInclude Include="vJoyDevice.h">
-      <Filter>3_vJoyConf</Filter>
+      <Filter>Z_vJoy</Filter>
+    </ClInclude>
+    <ClInclude Include="vJoyDlg.h">
+      <Filter>4_Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="ViGEmClient.h">
+      <Filter>Z_ViGEm</Filter>
+    </ClInclude>
+    <ClInclude Include="Zip Utils\unzip.h">
+      <Filter>Z_Zip Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Guardian.cpp">
-      <Filter>8_Guardian</Filter>
+      <Filter>9_Guardian</Filter>
     </ClCompile>
     <ClCompile Include="GuardianDlg.cpp">
-      <Filter>8_Guardian</Filter>
+      <Filter>9_Guardian</Filter>
     </ClCompile>
     <ClCompile Include="RapidFire.cpp">
-      <Filter>5_RapidFire</Filter>
+      <Filter>6_RapidFire</Filter>
     </ClCompile>
     <ClCompile Include="RapidFireDataDlg.cpp">
-      <Filter>5_RapidFire</Filter>
+      <Filter>6_RapidFire</Filter>
     </ClCompile>
     <ClCompile Include="RapidFireDlg.cpp">
-      <Filter>5_RapidFire</Filter>
+      <Filter>6_RapidFire</Filter>
     </ClCompile>
     <ClCompile Include="Mapping.cpp">
-      <Filter>4_Mapping</Filter>
+      <Filter>5_Mapping</Filter>
     </ClCompile>
     <ClCompile Include="MappingDataDlg.cpp">
-      <Filter>4_Mapping</Filter>
+      <Filter>5_Mapping</Filter>
     </ClCompile>
     <ClCompile Include="MappingDlg.cpp">
-      <Filter>4_Mapping</Filter>
-    </ClCompile>
-    <ClCompile Include="ViGEm.cpp">
-      <Filter>7_ViGEm</Filter>
-    </ClCompile>
-    <ClCompile Include="ViGEmDlg.cpp">
-      <Filter>7_ViGEm</Filter>
+      <Filter>5_Mapping</Filter>
     </ClCompile>
     <ClCompile Include="Settings.cpp">
-      <Filter>2_Settings</Filter>
+      <Filter>4_Settings</Filter>
     </ClCompile>
     <ClCompile Include="Keymap.cpp">
-      <Filter>6_Keymap</Filter>
+      <Filter>8_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="KeymapDataDlg.cpp">
-      <Filter>6_Keymap</Filter>
+      <Filter>8_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="KeymapDlg.cpp">
-      <Filter>6_Keymap</Filter>
+      <Filter>8_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="Findwindow.cpp">
-      <Filter>6_Keymap</Filter>
-    </ClCompile>
-    <ClCompile Include="vJoy.cpp">
-      <Filter>0_vJoy</Filter>
+      <Filter>8_Keymap</Filter>
     </ClCompile>
     <ClCompile Include="SettingDlg.cpp">
-      <Filter>2_Settings</Filter>
+      <Filter>4_Settings</Filter>
     </ClCompile>
     <ClCompile Include="LinksDlg.cpp">
-      <Filter>10_Links</Filter>
+      <Filter>11_Links</Filter>
     </ClCompile>
     <ClCompile Include="Language.cpp">
       <Filter>B_Language</Filter>
     </ClCompile>
     <ClCompile Include="Tasktray.cpp">
-      <Filter>12_Tasktray</Filter>
+      <Filter>2_Tasktray</Filter>
     </ClCompile>
     <ClCompile Include="Ds2vJoy.cpp">
       <Filter>0_Ds2vJoy</Filter>
@@ -269,34 +254,55 @@
       <Filter>A_Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source.cpp">
-      <Filter>0_Source</Filter>
+      <Filter>1_Source</Filter>
     </ClCompile>
     <ClCompile Include="Crc32\Crc32.cpp">
       <Filter>Z_Crc32</Filter>
     </ClCompile>
-    <ClCompile Include="Zip Utils\unzip.cpp">
-      <Filter>Z_Zip Utils</Filter>
-    </ClCompile>
     <ClCompile Include="CPULimiter\CPULimiter.cpp">
       <Filter>Z_CPULimiter</Filter>
     </ClCompile>
-    <ClCompile Include="vJoyButton.cpp">
-      <Filter>0_vJoy</Filter>
-    </ClCompile>
-    <ClCompile Include="dsButton.cpp">
-      <Filter>0_Source</Filter>
-    </ClCompile>
     <ClCompile Include="LogDlg.cpp">
-      <Filter>1_Log</Filter>
+      <Filter>3_Log</Filter>
     </ClCompile>
     <ClCompile Include="NotepadDlg.cpp">
-      <Filter>11_Notepad</Filter>
+      <Filter>12_Notepad</Filter>
     </ClCompile>
     <ClCompile Include="ExplorerDlg.cpp">
-      <Filter>9_Explorer</Filter>
+      <Filter>10_Explorer</Filter>
+    </ClCompile>
+    <ClCompile Include="Destination.cpp">
+      <Filter>1_Destination</Filter>
+    </ClCompile>
+    <ClCompile Include="DestinationButton.cpp">
+      <Filter>1_Destination</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceButton.cpp">
+      <Filter>1_Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DInputDlg.cpp">
+      <Filter>4_Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="XOutput.cpp">
+      <Filter>7_XOutput</Filter>
+    </ClCompile>
+    <ClCompile Include="XOutputDlg.cpp">
+      <Filter>7_XOutput</Filter>
+    </ClCompile>
+    <ClCompile Include="vJoyInterface.cpp">
+      <Filter>Z_vJoy</Filter>
     </ClCompile>
     <ClCompile Include="vJoyDevice.cpp">
-      <Filter>3_vJoyConf</Filter>
+      <Filter>Z_vJoy</Filter>
+    </ClCompile>
+    <ClCompile Include="vJoyDlg.cpp">
+      <Filter>4_Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="ViGEmClient.cpp">
+      <Filter>Z_ViGEm</Filter>
+    </ClCompile>
+    <ClCompile Include="Zip Utils\unzip.cpp">
+      <Filter>Z_Zip Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -306,24 +312,382 @@
     <Image Include="Ds2vJoyHelp.bmp">
       <Filter>C_Media</Filter>
     </Image>
-    <Image Include="icon.ico">
+    <Image Include="TrayIcons\Ds2vJoy_110.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_111.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_112.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_113.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_114.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_120.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_121.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_122.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_123.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_124.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_130.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_131.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_132.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_133.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_134.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_140.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_141.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_142.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_143.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_144.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_150.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_151.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_152.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_153.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_154.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_160.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_161.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_162.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_163.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_164.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_170.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_171.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_172.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_173.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_174.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_180.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_181.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_182.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_183.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_184.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_210.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_211.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_212.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_213.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_214.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_220.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_221.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_222.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_223.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_224.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_230.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_231.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_232.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_233.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_234.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_240.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_241.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_242.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_243.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_244.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_250.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_251.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_252.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_253.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_254.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_260.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_261.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_262.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_263.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_264.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_270.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_271.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_272.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_273.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_274.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_280.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_281.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_282.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_283.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_284.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_310.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_311.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_312.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_313.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_314.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_320.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_321.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_322.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_323.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_324.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_330.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_331.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_332.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_333.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_334.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_340.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_341.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_342.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_343.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_344.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_350.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_351.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_352.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_353.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_354.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_360.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_361.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_362.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_363.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_364.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_370.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_371.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_372.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_373.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_374.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_380.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_381.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_382.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_383.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="TrayIcons\Ds2vJoy_384.ico">
+      <Filter>Z_TrayIcons</Filter>
+    </Image>
+    <Image Include="Ds2vJoy_icon32.ico">
       <Filter>C_Media</Filter>
     </Image>
-    <Image Include="icon32.ico">
+    <Image Include="Ds2vJoy_icon256.ico">
       <Filter>C_Media</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Devcon\Devcon.exe" />
-    <None Include="vJoy\vJoyInterface.dll" />
-    <None Include="ViGEm\ViGEmClient.dll" />
     <None Include="ViGEm\ViGEmBus.zip" />
     <None Include="HidGuardian\HidGuardian.zip" />
     <None Include="HidGuardian\HidCerberus.zip" />
-    <None Include="WebView2\WebView2Loader.dll" />
     <None Include="vJoy\vJoyDevice.zip" />
-    <None Include="vJoy\vJoyInstall.dll" />
+    <None Include="Resource.hm">
+      <Filter>A_Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -332,10 +696,5 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="Fonts\NotepadFont.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="vJoy\vJoyInstall.lib">
-      <Filter>Z_vJoy</Filter>
-    </Library>
   </ItemGroup>
 </Project>

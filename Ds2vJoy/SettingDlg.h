@@ -6,7 +6,7 @@ public:
 	SettingDlg();
 	~SettingDlg();
 
-	void				Init(HINSTANCE, HWND);
+	void				Init();
 	void				Show();
 	void				Hide();
 	BOOL				MoveWindow(int, int, int, int, BOOL);
@@ -18,12 +18,12 @@ private:
 	void				_InitDialog(HWND hWnd);
 	void				_ShowWindow(HWND hWnd);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_hDlg = NULL;
 
+	unsigned char		m_device = 0;
 	CHOOSECOLOR			cc = { 0 };
 	COLORREF			color = 0;
 	COLORREF			CustColors[16] = { 0 };
 };
 
-	extern				SettingDlg sDlg;
+	extern	SettingDlg				sDlg;

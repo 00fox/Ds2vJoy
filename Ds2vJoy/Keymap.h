@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "vJoy.h"
+#include "Destination.h"
 #include "Findwindow.h"
 
 #define KEYMAP_MAX_KEYS	64
@@ -43,8 +43,9 @@
 class Keymap
 {
 public:
-	enum KeyboardID {
-		none = 0,
+	enum KeyboardID : byte
+	{
+		KeyboardID_None = 0,
 		KID_LBUTTON,
 		KID_RBUTTON,
 		KID_CANCEL = 3,
@@ -232,7 +233,7 @@ public:
 		KID_NONAME,
 		KID_PA1,
 		KID_OEM_CLEAR,
-		keyboard_Count
+		KeyboardID_Count
 	};
 
 	Keymap();
@@ -253,16 +254,16 @@ public:
 	//| PA    | It will activate window of the specified process before
 	//|  A    | Act like if nothing were checked, the keys will be sent to your actual focus
 	const WCHAR*		KeymapButtons();
-	BOOL				LoadDevice(vJoyDevice* vjoy);
+	BOOL				LoadDevice(Destination*);
 	void				GetState();
 	void				RunFirst();
 	void				Run();
 	KeyboardID			BytetoKeyboardID(byte id);
 	BYTE				KeyboardIDtoByte(KeyboardID id);
-	const WCHAR*				String(KeyboardID id);
+	const WCHAR*		String(KeyboardID id);
 
 	unsigned char		Enable = 0;
-	byte				ButtonID = vJoyButtonID::none;
+	byte				ButtonID = DestButtonID::Destination_None;
 	std::vector<BYTE>	vk = { };
 	unsigned char		WndRestore = 0;
 	unsigned char		WndMaximize = 0;
@@ -285,7 +286,7 @@ private:
 	void				keyupPM();
 
 	HWND				postmessageTarget = NULL;
-	vJoyButton*			m_button = NULL;
+	DestinationButton*	m_button = NULL;
 	bool				m_keydownflag = false;
 	bool				alt_down = false;
 	bool				lalt_down = false;

@@ -1,4 +1,10 @@
 #include "stdafx.h"
+#include "../stdafx.h"
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tchar.h>
 #include "unzip.h"
 
 #pragma warning( push )
@@ -2622,7 +2628,7 @@ LUFILE *lufopen(void *z,unsigned int len,DWORD flags,ZRESULT *err)
 #endif
     }
     else
-    { h=CreateFile((const WCHAR*)z,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+    { h=CreateFile((const TCHAR*)z,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
       if (h==INVALID_HANDLE_VALUE) {*err=ZR_NOFILE; return NULL;}
       mustclosehandle=true;
     }
@@ -3755,13 +3761,13 @@ class TUnzip
   unzFile uf; int currentfile; ZIPENTRY cze; int czei;
   char *password;
   char *unzbuf;            // lazily created and destroyed, used by Unzip
-  WCHAR rootdir[MAX_PATH]; // includes a trailing slash
+  TCHAR rootdir[MAX_PATH]; // includes a trailing slash
 
   ZRESULT Open(void *z,unsigned int len,DWORD flags);
   ZRESULT Get(int index,ZIPENTRY *ze);
-  ZRESULT Find(const WCHAR *name,bool ic,int *index,ZIPENTRY *ze);
+  ZRESULT Find(const TCHAR *name,bool ic,int *index,ZIPENTRY *ze);
   ZRESULT Unzip(int index,void *dst,unsigned int len,DWORD flags);
-  ZRESULT SetUnzipBaseDir(const WCHAR *dir);
+  ZRESULT SetUnzipBaseDir(const TCHAR *dir);
   ZRESULT Close();
 };
 
@@ -3774,7 +3780,7 @@ ZRESULT TUnzip::Open(void *z,unsigned int len,DWORD flags)
 #else
   _tcscpy(rootdir,_T("\\"));
 #endif
-  WCHAR lastchar = rootdir[_tcslen(rootdir)-1];
+  TCHAR lastchar = rootdir[_tcslen(rootdir)-1];
   if (lastchar!='\\' && lastchar!='/') _tcscat(rootdir,_T("\\"));
   //
   if (flags==ZIP_HANDLE)
@@ -3790,9 +3796,9 @@ ZRESULT TUnzip::Open(void *z,unsigned int len,DWORD flags)
   return ZR_OK;
 }
 
-ZRESULT TUnzip::SetUnzipBaseDir(const WCHAR *dir)
+ZRESULT TUnzip::SetUnzipBaseDir(const TCHAR *dir)
 { _tcscpy(rootdir,dir);
-  WCHAR lastchar = rootdir[_tcslen(rootdir)-1];
+  TCHAR lastchar = rootdir[_tcslen(rootdir)-1];
   if (lastchar!='\\' && lastchar!='/') _tcscat(rootdir,_T("\\"));
   return ZR_OK;
 }
@@ -3826,7 +3832,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
   if (lufread(extra,1,(uInt)extralen,uf->file)!=extralen) {delete[] extra; return ZR_READ;}
   //
   ze->index=uf->num_file;
-  WCHAR tfn[MAX_PATH];
+  TCHAR tfn[MAX_PATH];
 #ifdef UNICODE
   MultiByteToWideChar(CP_UTF8,0,fn,-1,tfn,MAX_PATH);
 #else
@@ -3838,12 +3844,12 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
   // it won't be a problem. (If the programmer really did want to get the full evil information,
   // then they can edit out this security feature from here).
   // In particular, we chop off any prefixes that are "c:\" or "\" or "/" or "[stuff]\.." or "[stuff]/.."
-  const WCHAR *sfn=tfn;
+  const TCHAR *sfn=tfn;
   for (;;)
   { if (sfn[0]!=0 && sfn[1]==':') {sfn+=2; continue;}
     if (sfn[0]=='\\') {sfn++; continue;}
     if (sfn[0]=='/') {sfn++; continue;}
-    const WCHAR *c;
+    const TCHAR *c;
     c=_tcsstr(sfn,_T("\\..\\")); if (c!=0) {sfn=c+4; continue;}
     c=_tcsstr(sfn,_T("\\../")); if (c!=0) {sfn=c+4; continue;}
     c=_tcsstr(sfn,_T("/../")); if (c!=0) {sfn=c+4; continue;}
@@ -3920,7 +3926,7 @@ ZRESULT TUnzip::Get(int index,ZIPENTRY *ze)
   return ZR_OK;
 }
 
-ZRESULT TUnzip::Find(const WCHAR *tname,bool ic,int *index,ZIPENTRY *ze)
+ZRESULT TUnzip::Find(const TCHAR *tname,bool ic,int *index,ZIPENTRY *ze)
 { char name[MAX_PATH];
 #ifdef UNICODE
   WideCharToMultiByte(CP_UTF8,0,tname,-1,name,MAX_PATH,0,0);
@@ -3943,19 +3949,19 @@ ZRESULT TUnzip::Find(const WCHAR *tname,bool ic,int *index,ZIPENTRY *ze)
   return ZR_OK;
 }
 
-void EnsureDirectory(const WCHAR *rootdir, const WCHAR *dir)
+void EnsureDirectory(const TCHAR *rootdir, const TCHAR *dir)
 { if (rootdir!=0 && GetFileAttributes(rootdir)==0xFFFFFFFF) CreateDirectory(rootdir,0);
   if (*dir==0) return;
-  const WCHAR *lastslash=dir, *c=lastslash;
+  const TCHAR *lastslash=dir, *c=lastslash;
   while (*c!=0) {if (*c=='/' || *c=='\\') lastslash=c; c++;}
-  const WCHAR *name=lastslash;
+  const TCHAR *name=lastslash;
   if (lastslash!=dir)
-  { WCHAR tmp[MAX_PATH]; memcpy(tmp,dir,sizeof(WCHAR)*(lastslash-dir));
+  { TCHAR tmp[MAX_PATH]; memcpy(tmp,dir,sizeof(TCHAR)*(lastslash-dir));
     tmp[lastslash-dir]=0;
     EnsureDirectory(rootdir,tmp);
     name++;
   }
-  WCHAR cd[MAX_PATH]; *cd=0; if (rootdir!=0) _tcscpy(cd,rootdir); _tcscat(cd,dir);
+  TCHAR cd[MAX_PATH]; *cd=0; if (rootdir!=0) _tcscpy(cd,rootdir); _tcscat(cd,dir);
   if (GetFileAttributes(cd)==0xFFFFFFFF) CreateDirectory(cd,NULL);
 }
 
@@ -3988,7 +3994,7 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
   // zipentry=directory is handled specially
   if ((ze.attr&FILE_ATTRIBUTE_DIRECTORY)!=0)
   { if (flags==ZIP_HANDLE) return ZR_OK; // don't do anything
-    const WCHAR *dir = (const WCHAR*)dst;
+    const TCHAR *dir = (const TCHAR*)dst;
     bool isabsolute = (dir[0]=='/' || dir[0]=='\\' || (dir[0]!=0 && dir[1]==':'));
     if (isabsolute) EnsureDirectory(0,dir); else EnsureDirectory(rootdir,dir);
     return ZR_OK;
@@ -3997,7 +4003,7 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
   HANDLE h;
   if (flags==ZIP_HANDLE) h=dst;
   else
-  { const WCHAR *ufn = (const WCHAR*)dst;
+  { const TCHAR *ufn = (const TCHAR*)dst;
     // We'll qualify all relative names to our root dir, and leave absolute names as they are
     // ufn="zipfile.txt"  dir=""  name="zipfile.txt"  fn="c:\\currentdir\\zipfile.txt"
     // ufn="dir1/dir2/subfile.txt"  dir="dir1/dir2/"  name="subfile.txt"  fn="c:\\currentdir\\dir1/dir2/subfiles.txt"
@@ -4005,9 +4011,9 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
     // This might be a security risk, in the case where we just use the zipentry's name as "ufn", where
     // a malicious zip could unzip itself into c:\windows. Our solution is that GetZipItem (which
     // is how the user retrieve's the file's name within the zip) never returns absolute paths.
-    const WCHAR *name=ufn; const WCHAR *c=name; while (*c!=0) {if (*c=='/' || *c=='\\') name=c+1; c++;}
-    WCHAR dir[MAX_PATH]; _tcscpy(dir,ufn); if (name==ufn) *dir=0; else dir[name-ufn]=0;
-    WCHAR fn[MAX_PATH]; 
+    const TCHAR *name=ufn; const TCHAR *c=name; while (*c!=0) {if (*c=='/' || *c=='\\') name=c+1; c++;}
+    TCHAR dir[MAX_PATH]; _tcscpy(dir,ufn); if (name==ufn) *dir=0; else dir[name-ufn]=0;
+    TCHAR fn[MAX_PATH]; 
     bool isabsolute = (dir[0]=='/' || dir[0]=='\\' || (dir[0]!=0 && dir[1]==':'));
     if (isabsolute) {wsprintf(fn,_T("%s%s"),dir,name); EnsureDirectory(0,dir);}
     else {wsprintf(fn,_T("%s%s%s"),rootdir,dir,name); EnsureDirectory(rootdir,dir);}
@@ -4047,9 +4053,9 @@ ZRESULT TUnzip::Close()
 
 ZRESULT lasterrorU=ZR_OK;
 
-unsigned int FormatZipMessageU(ZRESULT code, WCHAR *buf,unsigned int len)
+unsigned int FormatZipMessageU(ZRESULT code, TCHAR *buf,unsigned int len)
 { if (code==ZR_RECENT) code=lasterrorU;
-  const WCHAR *msg=_T("unknown zip result code");
+  const TCHAR *msg=_T("unknown zip result code");
   switch (code)
   { case ZR_OK: msg=_T("Success"); break;
     case ZR_NODUPH: msg=_T("Culdn't duplicate handle"); break;
@@ -4095,7 +4101,7 @@ HZIP OpenZipInternal(void *z,unsigned int len,DWORD flags, const char *password)
   han->flag=1; han->unz=unz; return (HZIP)han;
 }
 HZIP OpenZipHandle(HANDLE h, const char *password) {return OpenZipInternal((void*)h,0,ZIP_HANDLE,password);}
-HZIP OpenZip(const WCHAR *fn, const char *password) {return OpenZipInternal((void*)fn,0,ZIP_FILENAME,password);}
+HZIP OpenZip(const TCHAR *fn, const char *password) {return OpenZipInternal((void*)fn,0,ZIP_FILENAME,password);}
 HZIP OpenZip(void *z,unsigned int len, const char *password) {return OpenZipInternal(z,len,ZIP_MEMORY,password);}
 
 
@@ -4109,7 +4115,7 @@ ZRESULT GetZipItem(HZIP hz, int index, ZIPENTRY *ze)
   return lasterrorU;
 }
 
-ZRESULT FindZipItem(HZIP hz, const WCHAR *name, bool ic, int *index, ZIPENTRY *ze)
+ZRESULT FindZipItem(HZIP hz, const TCHAR *name, bool ic, int *index, ZIPENTRY *ze)
 { if (hz==0) {lasterrorU=ZR_ARGS;return ZR_ARGS;}
   TUnzipHandleData *han = (TUnzipHandleData*)hz;
   if (han->flag!=1) {lasterrorU=ZR_ZMODE;return ZR_ZMODE;}
@@ -4127,10 +4133,10 @@ ZRESULT UnzipItemInternal(HZIP hz, int index, void *dst, unsigned int len, DWORD
   return lasterrorU;
 }
 ZRESULT UnzipItemHandle(HZIP hz, int index, HANDLE h) {return UnzipItemInternal(hz,index,(void*)h,0,ZIP_HANDLE);}
-ZRESULT UnzipItem(HZIP hz, int index, const WCHAR *fn) {return UnzipItemInternal(hz,index,(void*)fn,0,ZIP_FILENAME);}
+ZRESULT UnzipItem(HZIP hz, int index, const TCHAR *fn) {return UnzipItemInternal(hz,index,(void*)fn,0,ZIP_FILENAME);}
 ZRESULT UnzipItem(HZIP hz, int index, void *z,unsigned int len) {return UnzipItemInternal(hz,index,z,len,ZIP_MEMORY);}
 
-ZRESULT SetUnzipBaseDir(HZIP hz, const WCHAR *dir)
+ZRESULT SetUnzipBaseDir(HZIP hz, const TCHAR *dir)
 { if (hz==0) {lasterrorU=ZR_ARGS;return ZR_ARGS;}
   TUnzipHandleData *han = (TUnzipHandleData*)hz;
   if (han->flag!=1) {lasterrorU=ZR_ZMODE;return ZR_ZMODE;}

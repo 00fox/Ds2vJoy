@@ -6,7 +6,7 @@ public:
 	GuardianDlg();
 	~GuardianDlg();
 
-	void				Init(HINSTANCE, HWND);
+	void				Init();
 	void				Show();
 	void				Hide();
 	BOOL				MoveWindow(int, int, int, int, BOOL);
@@ -18,7 +18,6 @@ private:
 	void				_InitDialog(HWND hWnd);
 	void				_ShowWindow(HWND hWnd);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_hDlg = NULL;
 
 	bool				guardianlock = false;

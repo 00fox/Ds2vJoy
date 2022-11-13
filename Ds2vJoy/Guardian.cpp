@@ -18,29 +18,29 @@ Guardian::~Guardian()
 	{
 		AffectedList();
 
-		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
-		if (tape.dsHID1Enable && tape.dsHID1 && pid1_affected)
+		if (SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0))
 		{
-			RemoveBlacklistDevice(tape.getHID(1));
-			DeviceRestart(L"HID", tape.getHID(1));
-		}
-		if (tape.dsHID2Enable && tape.dsHID2 && pid2_affected)
-		{
-			RemoveBlacklistDevice(tape.getHID(2));
-			DeviceRestart(L"HID", tape.getHID(2));
-		}
-		if (tape.dsHID3Enable && tape.dsHID3 && pid3_affected)
-		{
-			RemoveBlacklistDevice(tape.getHID(3));
-			DeviceRestart(L"HID", tape.getHID(3));
+			if (tape.dsHID1Enable && tape.dsHID[0] && pid1_affected)
+			{
+				RemoveBlacklistDevice(tape.dsHID[0]);
+				DeviceRestart(L"HID", tape.dsHID[0]);
+			}
+			if (tape.dsHID2Enable && tape.dsHID[1] && pid2_affected)
+			{
+				RemoveBlacklistDevice(tape.dsHID[1]);
+				DeviceRestart(L"HID", tape.dsHID[1]);
+			}
+			if (tape.dsHID3Enable && tape.dsHID[2] && pid3_affected)
+			{
+				RemoveBlacklistDevice(tape.dsHID[2]);
+				DeviceRestart(L"HID", tape.dsHID[2]);
+			}
 		}
 	}
 }
 
-void Guardian::Init(HWND hWnd)
+void Guardian::Init()
 {
-	m_hWnd = hWnd;
-
 	if (tape.GuardianActive && !tape.GuardianPaused)
 	{
 		WhitelistInit();
@@ -55,15 +55,15 @@ const WCHAR* Guardian::GuardianButtons()
 
 void Guardian::GuardianButtonsComputString()
 {
-	GuardianButtonsString = L"PIDs: ";
+	GuardianButtonsString = I18N.GuardianButtonsString;
 	for (int i = 0; i < ProcessPIDs.size(); i++)
 		GuardianButtonsString = GuardianButtonsString + L" " + std::to_wstring(ProcessPIDs[i]);
 }
 
 void Guardian::AllDevicesRestart()
 {
-	for (int i = 1; i < 4; i++)
-		DeviceRestart(L"HID", tape.getHID(i));
+	for (int i = 0; i < 3; i++)
+		DeviceRestart(L"HID", tape.dsHID[i]);
 
 	return;
 }
@@ -77,62 +77,62 @@ void Guardian::BlacklistInit(int hid)
 		bool torestart = false;
 		if (!tape.CallbackPaused && hid > -2)
 		{
-			SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
-			torestart = true;
+			if (SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0))
+				torestart = true;
 		}
 		else
 			hid = -1;
 
-		if (tape.dsHID1 && (hid == -1 || hid == 0 || hid == 1))
+		if (tape.dsHID[0] && (hid == -1 || hid == 0 || hid == 1))
 		{
 			if (tape.dsHID1Enable && !tape.GuardianPaused)
 			{
 				if (tape.GuardianActive && !pid1_affected)
 				{
-					RemoveBlacklistDevice(tape.getHID(1));
-					BlacklistDevice(tape.getHID(1));
+					RemoveBlacklistDevice(tape.dsHID[0]);
+					BlacklistDevice(tape.dsHID[0]);
 				}
 				else if (!tape.GuardianActive && pid1_affected)
-					RemoveBlacklistDevice(tape.getHID(1));
+					RemoveBlacklistDevice(tape.dsHID[0]);
 			}
 			else if (pid1_affected)
-				RemoveBlacklistDevice(tape.getHID(1));
-			DeviceRestart(L"HID", tape.getHID(1));
+				RemoveBlacklistDevice(tape.dsHID[0]);
+			DeviceRestart(L"HID", tape.dsHID[0]);
 		}
-		if (tape.dsHID2 && (hid == -1 || hid == 0 || hid == 2))
+		if (tape.dsHID[1] && (hid == -1 || hid == 0 || hid == 2))
 		{
 			if (tape.dsHID2Enable && !tape.GuardianPaused)
 			{
 				if (tape.GuardianActive && !pid2_affected)
 				{
-					RemoveBlacklistDevice(tape.getHID(2));
-					BlacklistDevice(tape.getHID(2));
+					RemoveBlacklistDevice(tape.dsHID[1]);
+					BlacklistDevice(tape.dsHID[1]);
 				}
 				else if (!tape.GuardianActive && pid2_affected)
-					RemoveBlacklistDevice(tape.getHID(2));
+					RemoveBlacklistDevice(tape.dsHID[1]);
 			}
 			else if (pid2_affected)
-				RemoveBlacklistDevice(tape.getHID(2));
-			DeviceRestart(L"HID", tape.getHID(2));
+				RemoveBlacklistDevice(tape.dsHID[1]);
+			DeviceRestart(L"HID", tape.dsHID[1]);
 		}
-		if (tape.dsHID3 && (hid == -1 || hid == 0 || hid == 3))
+		if (tape.dsHID[2] && (hid == -1 || hid == 0 || hid == 3))
 		{
 			if (tape.dsHID3Enable && !tape.GuardianPaused)
 			{
 				if (tape.GuardianActive && !pid3_affected)
 				{
-					RemoveBlacklistDevice(tape.getHID(3));
-					BlacklistDevice(tape.getHID(3));
+					RemoveBlacklistDevice(tape.dsHID[2]);
+					BlacklistDevice(tape.dsHID[2]);
 				}
 				else if (!tape.GuardianActive && pid3_affected)
-					RemoveBlacklistDevice(tape.getHID(3));
+					RemoveBlacklistDevice(tape.dsHID[2]);
 			}
 			else if (pid3_affected)
-				RemoveBlacklistDevice(tape.getHID(3));
-			DeviceRestart(L"HID", tape.getHID(3));
+				RemoveBlacklistDevice(tape.dsHID[2]);
+			DeviceRestart(L"HID", tape.dsHID[2]);
 		}
 
-		if (torestart)
+		if (torestart) 
 			PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 	}
 }
@@ -230,13 +230,13 @@ BOOL Guardian::GuardianInstall(bool verbose)
 
 	if (ExtractEmbededResource(installpath, IDR_HIDGUARDIAN_ZIP, true))
 	{
-		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
-		std::wstring infpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\HidGuardian\\HidGuardian.inf";
-		InstallDriverByHwId(infpath, L"Root\\HidGuardian");
+		if (SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0))
+		{
+			std::wstring infpath = PrfPath() + L"\\" + tape.ProgramFilesDirName + L"\\HidGuardian\\HidGuardian.inf";
+			InstallDriverByHwId(infpath, L"Root\\HidGuardian");
+		}
 
-		Sleep(200);
-		std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper -HidGuardian";
-		LaunchCmd(devconpath.c_str());
+		UpperClassFilter(L"HIDClass", L"-HidGuardian");
 		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 
 		switch (GuardianState())
@@ -260,6 +260,7 @@ BOOL Guardian::GuardianInstall(bool verbose)
 
 BOOL Guardian::GuardianUninstall(bool verbose)
 {
+	PurgeBlacklist();
 	switch (GuardianState())
 	{
 	case DRIVER_STATE_NOTPRESENT:
@@ -271,12 +272,10 @@ BOOL Guardian::GuardianUninstall(bool verbose)
 	case DRIVER_STATE_ACTIVE:
 	case DRIVER_STATE_DISABLED:
 	{
-		SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0);
-		RemoveDriverByHwId(L"ROOT\\SYSTEM", L"Root\\HidGuardian", verbose);
+		if (SendMessage(tape.Ds2hWnd, WM_PAUSE, 0, 0))
+			RemoveDriverByHwId(L"ROOT\\SYSTEM", L"Root\\HidGuardian", verbose);
 
-		Sleep(200);
-		std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
-		LaunchCmd(devconpath.c_str());
+		UpperClassFilter(L"HIDClass", L"!HidGuardian");
 		PostMessage(tape.Ds2hWnd, WM_RESTART, 0, 0);
 
 		if (GuardianState() == DRIVER_STATE_NOTPRESENT)
@@ -314,9 +313,7 @@ BOOL Guardian::GuardianEnable(bool verbose)
 {
 	BOOL result = SetDeviceState(L"ROOT\\SYSTEM", L"Root\\HidGuardian", DICS_ENABLE, verbose);
 
-	Sleep(200);
-	std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
-	LaunchCmd(devconpath.c_str());
+	UpperClassFilter(L"HIDClass", L"-HidGuardian");
 
 	return result;
 }
@@ -324,10 +321,8 @@ BOOL Guardian::GuardianEnable(bool verbose)
 BOOL Guardian::GuardianDisable(bool verbose)
 {
 	BOOL result = SetDeviceState(L"ROOT\\SYSTEM", L"Root\\HidGuardian", DICS_DISABLE, verbose);
-
-	Sleep(200);
-	std::wstring devconpath = L"Devcon.exe classfilter HIDClass upper !HidGuardian";
-	LaunchCmd(devconpath.c_str());
+	
+	UpperClassFilter(L"HIDClass", L"!HidGuardian");
 
 	return result;
 }
@@ -389,6 +384,7 @@ BOOL Guardian::HidCerberusInstall(bool verbose)
 
 BOOL Guardian::HidCerberusUninstall(bool verbose)
 {
+	PurgeBlacklist();
 	BOOL HidCerberusUninstall = FALSE;
 
 	if (HidCerberusState() > 0)
@@ -610,14 +606,14 @@ void Guardian::AffectedList()
 {
 	std::wstring affected = GetBlacklist();
 
-	std::wstring::size_type pos = std::wstring(tape.getHID(1)).find_last_of(L"\\/");
-	pid1_affected = FindInString(affected, std::wstring(tape.getHID(1)).substr(pos + 1));
+	std::wstring::size_type pos = std::wstring(tape.dsHID[0]).find_last_of(L"\\/");
+	pid1_affected = FindInString(affected, std::wstring(tape.dsHID[0]).substr(pos + 1));
 
-	pos = std::wstring(tape.getHID(2)).find_last_of(L"\\/");
-	pid2_affected = FindInString(affected, std::wstring(tape.getHID(2)).substr(pos + 1));
+	pos = std::wstring(tape.dsHID[1]).find_last_of(L"\\/");
+	pid2_affected = FindInString(affected, std::wstring(tape.dsHID[1]).substr(pos + 1));
 
-	pos = std::wstring(tape.getHID(3)).find_last_of(L"\\/");
-	pid3_affected = FindInString(affected, std::wstring(tape.getHID(3)).substr(pos + 1));
+	pos = std::wstring(tape.dsHID[2]).find_last_of(L"\\/");
+	pid3_affected = FindInString(affected, std::wstring(tape.dsHID[2]).substr(pos + 1));
 }
 
 BOOL Guardian::PurgeBlacklist()
@@ -638,43 +634,13 @@ BOOL Guardian::PurgeBlacklist()
 BOOL Guardian::RestartDevices(bool verbose)
 {
 	bool result = FALSE;
+
 	if (tape.dsHID1Enable)
-		result = result || RestartDevice(rws2s(tape.dsHID1), true);
+		result = result || DeviceRestart(L"HID", tape.dsHID[0]);
 	if (tape.dsHID2Enable)
-		result = result || RestartDevice(rws2s(tape.dsHID2), true);
+		result = result || DeviceRestart(L"HID", tape.dsHID[1]);
 	if (tape.dsHID3Enable)
-		result = result || RestartDevice(rws2s(tape.dsHID3), true);
+		result = result || DeviceRestart(L"HID", tape.dsHID[2]);
 
 	return result;
-}
-
-BOOL Guardian::RestartDevice(std::string device, bool verbose)
-{
-	if (device != "")
-	{
-		std::wstring devconpath = L"Devcon.exe restart \"" + rs2ws(device) + L"\"";
-		std::wstring devconcmd = LaunchCmd(devconpath.c_str());
-
-		if (FindInString(devconcmd, L"Restarted"))
-		{
-			if (verbose)
-				echo(L"Device restarted");
-
-			return TRUE;
-		}
-		else if (FindInString(devconcmd, L"Requires reboot"))
-		{
-			if (verbose)
-				echo(L"Requires reboot, unplug & plug device instead");
-
-			return TRUE;
-		}
-		else if (FindInString(devconcmd, L"No matching devices found"))
-			return FALSE;
-	}
-
-	if (verbose)
-		echo(L"Device restart failed");
-
-	return FALSE;
 }

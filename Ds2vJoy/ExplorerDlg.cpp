@@ -113,7 +113,7 @@ span		{background-image: none !important; background-color: transparent !importa
 void ExplorerDlg::RunAsync(std::function<void()> callback)
 {
 	auto* task = new std::function<void()>(std::move(callback));
-	PostMessage(m_hWnd, WM_APP, reinterpret_cast<WPARAM>(task), 0);
+	PostMessage(m_hDlg, WM_APP, reinterpret_cast<WPARAM>(task), 0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -159,39 +159,47 @@ void ExplorerDlg::InstallComplete(int return_code)
 
 //////////////////////////////////////////////////////////////////////
 
-ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, double zoom, RECT windowRect) :
+ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, float zoom, RECT windowRect) :
 	m_initialUri(startpage), m_isHome(isHome), m_zoomFactor(zoom), m_items{ ToolBar_Count }
 {
 	m_ToDoOnDeferred = nullptr;
 	HRESULT hr = OleInitialize(NULL);
 	if (FAILED(hr))
+	{
+		switch (hr)
+		{
+		case OLE_E_WRONGCOMPOBJ: { echo("OleInitialize error OLE_E_WRONGCOMPOBJ"); }
+		case RPC_E_CHANGED_MODE: { echo("OleInitialize error RPC_E_CHANGED_MODE"); }
+		default: { echo("OleInitialize error"); }
+		}
 		return;
+	}
 
 	++s_appInstances;
 
 	if (m_isHome)
 	{
-		m_hWnd = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_EXPLORER), tape.Ds2hWnd, (DLGPROC)Proc, (LPARAM)this);
+		m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_EXPLORER), tape.Ds2hWnd, (DLGPROC)Proc, (LPARAM)this);
 	}
 	else
 	{
-		m_hWnd = CreateWindowExW(
+		m_hDlg = CreateWindowExW(
 			WS_EX_CONTROLPARENT, tape.szWindowClass, tape.szTitle, WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
 			windowRect.left, windowRect.top + 17, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top - 17, nullptr, nullptr, tape.Ds2hInst, nullptr);
-		SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
-		SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)&Proc);
-		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+		SetWindowLongPtr(m_hDlg, GWLP_USERDATA, (LONG_PTR)this);
+		SetWindowLongPtr(m_hDlg, GWLP_WNDPROC, (LONG_PTR)&Proc);
+		SetWindowPos(m_hDlg, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
 		m_isCurrentlyTopMost = true;
 	}
 	{
-		m_ScrollbarFramehWnd = CreateWindowEx(0, L"Static", L"", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_CENTER, 0, 0, 17, 17, m_hWnd, nullptr, tape.Ds2hInst, nullptr);
+		m_ScrollbarFramehWnd = CreateWindowEx(0, L"Static", L"", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_CENTER, 0, 0, 17, 17, m_hDlg, nullptr, tape.Ds2hInst, nullptr);
 		ShowWindow(m_ScrollbarFramehWnd, SW_HIDE);
 	}
 /*
 	{
 		m_appBackgroundImageHandle = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCE(IDI_WEBVIEW2_BACKGROUND), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
 		GetObject(m_appBackgroundImageHandle, sizeof(m_appBackgroundImage), &m_appBackgroundImage);
-		m_memHdc = CreateCompatibleDC(GetDC(m_hWnd));
+		m_memHdc = CreateCompatibleDC(GetDC(m_hDlg));
 		SelectObject(m_memHdc, m_appBackgroundImageHandle);
 	}
 *//*
@@ -261,7 +269,7 @@ ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, double zoom
 		redrawMenu(34);
 
 //		if (!m_isHome)
-//			SetMenu(m_hWnd, hMenuWeb);
+//			SetMenu(m_hDlg, hMenuWeb);
 	}
 
 	{
@@ -286,29 +294,29 @@ ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, double zoom
 	}
 
 	{
-		m_items[ToolBar_Favorites] = CreateWindow(L"button", L"☆", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_FAVORITES, nullptr, 0);
-		m_items[ToolBar_Home] = CreateWindow(L"button", L"⌂", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_HOME, nullptr, 0);
-		m_items[ToolBar_Back] = CreateWindow(L"button", L"‹", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_BACK, nullptr, 0);
-		m_items[ToolBar_Forward] = CreateWindow(L"button", L"›", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_FORWARD, nullptr, 0);
-		m_items[ToolBar_Refresh] = CreateWindow(L"button", L"⭯", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_REFRESH, nullptr, 0);
-		m_items[ToolBar_AddressBar] = CreateWindow(L"edit", nullptr, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_WANTRETURN | ES_MULTILINE | ES_AUTOHSCROLL, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_EDIT_URL, nullptr, 0);
-		m_items[ToolBar_Go] = CreateWindow(L"button", L"⮞", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_GO, nullptr, 0);
-		m_items[ToolBar_Cancel] = CreateWindow(L"button", L"⧗", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_CANCEL, nullptr, 0);
-		m_items[ToolBar_AutoRefresh] = CreateWindow(L"button", L"◻", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER | BS_AUTOCHECKBOX | BS_PUSHLIKE, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_AUTOREFRESH, nullptr, 0);
-		m_items[ToolBar_ZoomMinus] = CreateWindow(L"button", L"⁻", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_TOP | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_ZOOM_MINUS, nullptr, 0);
-		m_items[ToolBar_ZoomPlus] = CreateWindow(L"button", L"+", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hWnd, (HMENU)IDC_WEB_ZOOM_PLUS, nullptr, 0);
+		m_items[ToolBar_Favorites] = CreateWindow(L"button", L"☆", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_FAVORITES, nullptr, 0);
+		m_items[ToolBar_Home] = CreateWindow(L"button", L"⌂", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_HOME, nullptr, 0);
+		m_items[ToolBar_Back] = CreateWindow(L"button", L"‹", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_BACK, nullptr, 0);
+		m_items[ToolBar_Forward] = CreateWindow(L"button", L"›", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_FORWARD, nullptr, 0);
+		m_items[ToolBar_Refresh] = CreateWindow(L"button", L"⭯", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_REFRESH, nullptr, 0);
+		m_items[ToolBar_AddressBar] = CreateWindow(L"edit", nullptr, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_WANTRETURN | ES_MULTILINE | ES_AUTOHSCROLL, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_EDIT_URL, nullptr, 0);
+		m_items[ToolBar_Go] = CreateWindow(L"button", L"⮞", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_GO, nullptr, 0);
+		m_items[ToolBar_Cancel] = CreateWindow(L"button", L"⧗", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_CANCEL, nullptr, 0);
+		m_items[ToolBar_AutoRefresh] = CreateWindow(L"button", L"◻", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER | BS_AUTOCHECKBOX | BS_PUSHLIKE, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_AUTOREFRESH, nullptr, 0);
+		m_items[ToolBar_ZoomMinus] = CreateWindow(L"button", L"⁻", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_TOP | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_ZOOM_MINUS, nullptr, 0);
+		m_items[ToolBar_ZoomPlus] = CreateWindow(L"button", L"+", WS_CHILD | WS_VISIBLE | BS_FLAT | BS_VCENTER | BS_CENTER, 0, 0, 0, 0, m_hDlg, (HMENU)IDC_WEB_ZOOM_PLUS, nullptr, 0);
 
 		{
-			CreateToolTip(m_hWnd, m_items[ToolBar_Favorites], I18N.HELP_WEB_FAVORITES);
-			CreateToolTip(m_hWnd, m_items[ToolBar_Home], I18N.HELP_WEB_HOME);
-			CreateToolTip(m_hWnd, m_items[ToolBar_Back], I18N.HELP_WEB_BACK);
-			CreateToolTip(m_hWnd, m_items[ToolBar_Forward], I18N.HELP_WEB_FORWARD);
-			CreateToolTip(m_hWnd, m_items[ToolBar_Refresh], I18N.HELP_WEB_REFRESH);
-			CreateToolTip(m_hWnd, m_items[ToolBar_Go], I18N.HELP_WEB_GO);
-			CreateToolTip(m_hWnd, m_items[ToolBar_Cancel], I18N.HELP_WEB_STOP);
-			CreateToolTip(m_hWnd, m_items[ToolBar_AutoRefresh], I18N.HELP_WEB_AUTOREFRESH);
-			CreateToolTip(m_hWnd, m_items[ToolBar_ZoomMinus], I18N.HELP_WEB_ZOOM_MINUS);
-			CreateToolTip(m_hWnd, m_items[ToolBar_ZoomPlus], I18N.HELP_WEB_ZOOM_PLUS);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Favorites], I18N.HELP_WEB_FAVORITES);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Home], I18N.HELP_WEB_HOME);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Back], I18N.HELP_WEB_BACK);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Forward], I18N.HELP_WEB_FORWARD);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Refresh], I18N.HELP_WEB_REFRESH);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Go], I18N.HELP_WEB_GO);
+			CreateToolTip(m_hDlg, m_items[ToolBar_Cancel], I18N.HELP_WEB_STOP);
+			CreateToolTip(m_hDlg, m_items[ToolBar_AutoRefresh], I18N.HELP_WEB_AUTOREFRESH);
+			CreateToolTip(m_hDlg, m_items[ToolBar_ZoomMinus], I18N.HELP_WEB_ZOOM_MINUS);
+			CreateToolTip(m_hDlg, m_items[ToolBar_ZoomPlus], I18N.HELP_WEB_ZOOM_PLUS);
 		}
 
 		{
@@ -341,11 +349,11 @@ ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, double zoom
 	}
 
 	if (!m_isHome)
-		SetTimer(m_hWnd, 2, 300, nullptr);	//Change window form when mouseover
+		SetTimer(m_hDlg, 2, 300, nullptr);	//Change window form when mouseover
 
 	if (!m_isHome || (m_isHome && web_tabs.size()))
-		ShowWindow(m_hWnd, SW_SHOW);
-	UpdateWindow(m_hWnd);
+		ShowWindow(m_hDlg, SW_SHOW);
+	UpdateWindow(m_hDlg);
 
 	// If WebView2 Runtime installed initialize webview otherwise create new thread to download & install
 	wil::unique_cotaskmem_string version_info;
@@ -371,8 +379,8 @@ ExplorerDlg::ExplorerDlg(const std::wstring& startpage, bool isHome, double zoom
 
 ExplorerDlg::~ExplorerDlg()
 {
-	KillTimer(m_hWnd, 1);
-	KillTimer(m_hWnd, 2);
+	KillTimer(m_hDlg, 1);
+	KillTimer(m_hDlg, 2);
 
 	CloseWebView();
 
@@ -390,7 +398,7 @@ ExplorerDlg::~ExplorerDlg()
 	//DeleteDC(m_memHdc);
 
 	if (m_isHome)
-		DestroyWindow(m_hWnd);
+		DestroyWindow(m_hDlg);
 }
 
 void ExplorerDlg::redrawMenu(int ntabs, bool isfavoritesmenu)
@@ -503,7 +511,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	{
 	case WM_TIMER:
 	{
-		if (IsIconic(hWnd) || !IsWindowVisible(m_hWnd))
+		if (IsIconic(hWnd) || !IsWindowVisible(m_hDlg))
 			break;
 
 		switch (wParam)
@@ -515,7 +523,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		}
 		case 2:
 		{
-			if (IsWindowVisible(m_hWnd) && !isFullScreen)
+			if (IsWindowVisible(m_hDlg) && !isFullScreen)
 			{
 				if (GetCursorPos(&tape.mousepoint))
 				{
@@ -607,7 +615,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	}
 	case WM_DPICHANGED:
 	{
-		if (!m_isHome || IsWindowVisible(m_hWnd))
+		if (!m_isHome || IsWindowVisible(m_hDlg))
 		{
 			RECT* const newWindowSize = reinterpret_cast<RECT*>(lParam);
 			SetWindowPos(hWnd, nullptr, newWindowSize->left, newWindowSize->top, newWindowSize->right - newWindowSize->left, newWindowSize->bottom - newWindowSize->top, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -675,7 +683,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 				}
 				else
 				{
-					if ((GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0) { itemnumber = 2; }
+					if ((GetWindowLong(m_hDlg, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0) { itemnumber = 2; }
 				}
 				break;
 			}
@@ -701,7 +709,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			else
 				::FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU_CLONE);
 
-			SelectObject(DrawMenuStructure->hDC, tape.hMenus);
+			SelectObject(DrawMenuStructure->hDC, tape.hMenu);
 			WCHAR wszBuffer[MAX_PATH];
 			int nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
@@ -723,9 +731,20 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		}
 		break;
 	}
+	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_BTN);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
+	}
 	case WM_CTLCOLORSTATIC:
 	{
-		return (LRESULT)tape.hB_WEB_BackGround;	//Hide scrollbar when recharging page or new page
+		return (LRESULT)tape.hB_BackGround_DARK;	//Hide scrollbar when recharging page or new page
 	}
 	case WM_PAINT:
 	{
@@ -736,7 +755,10 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_black);
+			if (tape.DarkTheme)
+				FillRect(hDC, &rect, tape.hB_BackGround_DARK);
+			else
+				FillRect(hDC, &rect, tape.hB_BackGround);
 
 			// hDC = GetDC(hWnd);
 			// StretchBlt(hDC, m_webView2bounds.left, m_webView2bounds.top, m_webView2bounds.right, m_webView2bounds.bottom,
@@ -778,36 +800,68 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	}
 	case WM_NOTIFY:
 	{
-		switch (((LPNMLISTVIEW)lParam)->hdr.code)
+		switch (((LPNMHDR)lParam)->idFrom)
 		{
-		case BCN_HOTITEMCHANGE:
+		case IDC_WEB_HOME:
+		case IDC_WEB_BACK:
+		case IDC_WEB_FORWARD:
+		case IDC_WEB_REFRESH:
+		case IDC_WEB_GO:
+		case IDC_WEB_CANCEL:
+		case IDC_WEB_AUTOREFRESH:
+		case IDC_WEB_FAVORITES:
+		case IDC_WEB_ZOOM_MINUS:
+		case IDC_WEB_ZOOM_PLUS:
 		{
-			switch (((NMBCHOTITEM*)lParam)->dwFlags)
+			switch (((LPNMHDR)lParam)->code)
 			{
-			case (HICF_ENTERING | HICF_MOUSE):
+			case NM_CUSTOMDRAW:
 			{
-				switch (((LPNMHDR)lParam)->idFrom)
+				if (!tape.DarkTheme)
+					return CDRF_DODEFAULT;
+				LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+				if (DrawListCustom->uItemState == CDIS_HOT || DrawListCustom->uItemState == CDIS_NEARHOT)
 				{
-				case IDC_WEB_FAVORITES: { SetTimer(m_hWnd, 3, 70, NULL); break; }
-				case IDC_WEB_ZOOM_MINUS: { SetTimer(m_hWnd, 4, 70, NULL); break; }
-				case IDC_WEB_ZOOM_PLUS: { SetTimer(m_hWnd, 5, 70, NULL); break; }
-				default: { return FALSE; }
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_BTN_DARK);
+					SelectObject(DrawListCustom->hdc, GetStockObject(DC_PEN));
+					SetDCPenColor(DrawListCustom->hdc, tape.ink_grey);
+					RoundRect(DrawListCustom->hdc, DrawListCustom->rc.left + 1, DrawListCustom->rc.top + 1, DrawListCustom->rc.right - 1, DrawListCustom->rc.bottom - 1, 6, 6);
+				}
+				return CDRF_DODEFAULT;
+			}
+			case BCN_HOTITEMCHANGE:
+			{
+				switch (((NMBCHOTITEM*)lParam)->dwFlags)
+				{
+				case (HICF_ENTERING | HICF_MOUSE):
+				{
+					if (tape.DarkTheme)
+						::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"", L"");
+					switch (((LPNMHDR)lParam)->idFrom)
+					{
+					case IDC_WEB_FAVORITES: { SetTimer(m_hDlg, 3, 70, NULL); break; }
+					case IDC_WEB_ZOOM_MINUS: { SetTimer(m_hDlg, 4, 70, NULL); break; }
+					case IDC_WEB_ZOOM_PLUS: { SetTimer(m_hDlg, 5, 70, NULL); break; }
+					}
+					break;
+					break;
+				}
+				case (HICF_LEAVING | HICF_MOUSE):
+				{
+					if (tape.DarkTheme)
+						::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"Explorer", NULL);
+					::SetFocus(NULL);
+					switch (((LPNMHDR)lParam)->idFrom)
+					{
+					case IDC_WEB_FAVORITES: { KillTimer(m_hDlg, 3); break; }
+					case IDC_WEB_ZOOM_MINUS: { KillTimer(m_hDlg, 4); break; }
+					case IDC_WEB_ZOOM_PLUS: { KillTimer(m_hDlg, 5); break; }
+					}
+					break;
+				}
 				}
 				break;
 			}
-			case (HICF_LEAVING | HICF_MOUSE):
-			{
-				::SetFocus(NULL);
-				switch (((LPNMHDR)lParam)->idFrom)
-				{
-				case IDC_WEB_FAVORITES: { KillTimer(m_hWnd, 3); break; }
-				case IDC_WEB_ZOOM_MINUS: { KillTimer(m_hWnd, 4); break; }
-				case IDC_WEB_ZOOM_PLUS: { KillTimer(m_hWnd, 5); break; }
-				default: { return FALSE; }
-				}
-				break;
-			}
-			default: { return FALSE; }
 			}
 			break;
 		}
@@ -925,7 +979,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			if (m_isHome)
 				GetWindowRect(tape.Ds2hWnd, &win);
 			else
-				GetWindowRect(m_hWnd, &win);
+				GetWindowRect(m_hDlg, &win);
 			new ExplorerDlg(L"", false, m_zoomFactor, win);
 			break;
 		}
@@ -935,7 +989,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		case IDM_MENU_WEB_LANGUAGE:
 		{
 			TextInputDialog(
-				m_hWnd,
+				m_hDlg,
 				I18N.WEB_LANGUAGE_1,
 				I18N.WEB_LANGUAGE_2,
 				I18N.WEB_LANGUAGE_3,
@@ -1142,8 +1196,8 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		{
 			if (m_printToPdfInProgress)
 			{
-				GetWindowRect(m_hWnd, &m_explorer_win);
-				MessageBoxPos(m_hWnd, I18N.WebView2_PDF_Progress, I18N.WebView2_PDF_Tittle, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+				GetWindowRect(m_hDlg, &m_explorer_win);
+				MessageBoxPos(m_hDlg, I18N.WebView2_PDF_Progress, I18N.WebView2_PDF_Tittle, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 			}
 			else
 				PrintToPdf(true);
@@ -1153,8 +1207,8 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		{
 			if (m_printToPdfInProgress)
 			{
-				GetWindowRect(m_hWnd, &m_explorer_win);
-				MessageBoxPos(m_hWnd, I18N.WebView2_PDF_Progress, I18N.WebView2_PDF_Tittle, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+				GetWindowRect(m_hDlg, &m_explorer_win);
+				MessageBoxPos(m_hDlg, I18N.WebView2_PDF_Progress, I18N.WebView2_PDF_Tittle, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 			}
 			else
 				PrintToPdf();
@@ -1210,14 +1264,14 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		case IDM_MENU_WEB_INJECT_SCRIPT:
 		{
 			TextInputDialog(
-				m_hWnd,
+				m_hDlg,
 				I18N.WEB_INJECT_SCRIPT_1,
 				I18N.WEB_INJECT_SCRIPT_2,
 				I18N.WEB_INJECT_SCRIPT_3,
 				L"window.getComputedStyle(document.body).backgroundColor");
 			if (TextInput_confirmed)
 			{
-				GetWindowRect(m_hWnd, &m_explorer_win);
+				GetWindowRect(m_hDlg, &m_explorer_win);
 				m_webView2->ExecuteScript(TextInput_input.c_str(),
 					Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
 						[](HRESULT error, PCWSTR result) -> HRESULT
@@ -1233,7 +1287,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		case IDM_MENU_WEB_INITIALIZE_SCRIPT:
 		{
 			TextInputDialog(
-				m_hWnd,
+				m_hDlg,
 				I18N.WEB_INITIALIZE_SCRIPT_1,
 				I18N.WEB_INITIALIZE_SCRIPT_2,
 				I18N.WEB_INITIALIZE_SCRIPT_3,
@@ -1300,7 +1354,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 				LPWSTR user_agent;
 				m_settings2->get_UserAgent(&user_agent);
 				TextInputDialog(
-					m_hWnd,
+					m_hDlg,
 					I18N.WEB_USERAGENT_1,
 					I18N.WEB_USERAGENT_2,
 					I18N.WEB_USERAGENT_3,
@@ -1317,7 +1371,7 @@ LRESULT CALLBACK ExplorerDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		{
 			LPWSTR emptyBlockedSites = WCHARI(L"foo.com;ftp.bar.org");
 			TextInputDialog(
-				m_hWnd,
+				m_hDlg,
 				I18N.WEB_BLACKLIST_1,
 				I18N.WEB_BLACKLIST_2,
 				I18N.WEB_BLACKLIST_3,
@@ -1366,14 +1420,14 @@ void ExplorerDlg::InitializeWebView()
 	if (!SUCCEEDED(hr))
 	{
 		PostMessage(tape.Ds2hWnd, WM_COMMAND, ID_WEBCLOSE, -1);
-		GetWindowRect(m_hWnd, &m_explorer_win);
+		GetWindowRect(m_hDlg, &m_explorer_win);
 		switch (hr)
 		{
-		case HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND): { MessageBoxPos(m_hWnd, I18N.WebView2_Runtime_Failed_Found, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
-		case HRESULT_FROM_WIN32(ERROR_FILE_EXISTS): { MessageBoxPos(m_hWnd, I18N.WebView2_Data_Folder_Failed_Overwrite, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
-		case E_ACCESSDENIED: { MessageBoxPos(m_hWnd, I18N.WebView2_Data_Folder_Failed_Access, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
-		case E_FAIL: { MessageBoxPos(m_hWnd, I18N.WebView2_Runtime_Failed_Start, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
-		default: { MessageBoxPos(m_hWnd, I18N.WebView2_Create_Environment_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
+		case HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND): { MessageBoxPos(m_hDlg, I18N.WebView2_Runtime_Failed_Found, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
+		case HRESULT_FROM_WIN32(ERROR_FILE_EXISTS): { MessageBoxPos(m_hDlg, I18N.WebView2_Data_Folder_Failed_Overwrite, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
+		case E_ACCESSDENIED: { MessageBoxPos(m_hDlg, I18N.WebView2_Data_Folder_Failed_Access, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
+		case E_FAIL: { MessageBoxPos(m_hDlg, I18N.WebView2_Runtime_Failed_Start, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
+		default: { MessageBoxPos(m_hDlg, I18N.WebView2_Create_Environment_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21); break; }
 		}
 	}
 }
@@ -1382,8 +1436,8 @@ HRESULT ExplorerDlg::OnCreateEnvironmentCompleted(HRESULT result, ICoreWebView2E
 {
 	if (FAILED(result))
 	{
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		MessageBoxPos(m_hWnd, I18N.WebView2_Create_Environment_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		MessageBoxPos(m_hDlg, I18N.WebView2_Create_Environment_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 		FAIL_FAST();
 	}
 
@@ -1392,7 +1446,7 @@ HRESULT ExplorerDlg::OnCreateEnvironmentCompleted(HRESULT result, ICoreWebView2E
 	auto webViewEnvironment3 = m_webViewEnvironment.try_query<ICoreWebView2Environment3>();
 	{
 		m_webViewEnvironment->CreateCoreWebView2Controller(
-			m_hWnd, Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+			m_hDlg, Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
 				this, &ExplorerDlg::OnCreateCoreWebView2ControllerCompleted)
 			.Get());
 	}
@@ -1488,8 +1542,8 @@ HRESULT ExplorerDlg::OnCreateCoreWebView2ControllerCompleted(HRESULT result, ICo
 	}
 	else
 	{
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		MessageBoxPos(m_hWnd, I18N.WebView2_Create_Webview_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		MessageBoxPos(m_hDlg, I18N.WebView2_Create_Webview_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 	}
 	return S_OK;
 }
@@ -1498,7 +1552,7 @@ void ExplorerDlg::CloseExplorerDlg()
 {
 	if (!CloseWebView())
 		return;
-	DestroyWindow(m_hWnd);
+	DestroyWindow(m_hDlg);
 }
 
 bool ExplorerDlg::CloseWebView()
@@ -1506,8 +1560,8 @@ bool ExplorerDlg::CloseWebView()
 	ViewComponentAvailable = false;
 	if (m_printToPdfInProgress)
 	{
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		int selection = MessageBoxPos(m_hWnd, I18N.WebView2_PDF_Closing, I18N.WebView2_PDF_Tittle, MB_YESNO, m_explorer_win.left + 1, m_explorer_win.top + 21);
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		int selection = MessageBoxPos(m_hDlg, I18N.WebView2_PDF_Closing, I18N.WebView2_PDF_Tittle, MB_YESNO, m_explorer_win.left + 1, m_explorer_win.top + 21);
 		if (selection == IDNO)
 			return false;
 	}
@@ -1597,8 +1651,8 @@ void ExplorerDlg::CleanupUserDataFolder(bool init)
 		message += path;
 		message += L" ?\n\nWarning: This action is not reversible.";
 		std::replace(message.begin(), message.end(), '\\', '\n');
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		switch (MessageBoxPos(m_hWnd, message.c_str(), I18N.WebView2_Cleanup_Data_Folder, MB_YESNOCANCEL, m_explorer_win.left + 1, m_explorer_win.top + 21))
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		switch (MessageBoxPos(m_hDlg, message.c_str(), I18N.WebView2_Cleanup_Data_Folder, MB_YESNOCANCEL, m_explorer_win.left + 1, m_explorer_win.top + 21))
 		{
 		case IDYES:
 			for (HWND hwnd : m_items)
@@ -1973,7 +2027,7 @@ void ExplorerDlg::RegisterEventHandlers()
 					if (m_isHome)
 						GetWindowRect(tape.Ds2hWnd, &win);
 					else
-						GetWindowRect(m_hWnd, &win);
+						GetWindowRect(m_hDlg, &win);
 					new ExplorerDlg(address, false, m_zoomFactor, win);
 					/*
 					wil::com_ptr<ICoreWebView2Deferral> deferral;
@@ -1990,7 +2044,7 @@ void ExplorerDlg::RegisterEventHandlers()
 					windowFeatures->get_HasSize(&hasSize);
 
 					RECT win;
-					GetWindowRect(m_hWnd, &win);
+					GetWindowRect(m_hDlg, &win);
 					bool useActualSize = true;
 					if (!!hasPosition && !!hasSize)
 					{
@@ -2099,8 +2153,8 @@ void ExplorerDlg::RegisterEventHandlers()
 				default:												{ message += I18N.WebView2_UNKNOWN_PERMISSION; break; }
 				}
 
-				GetWindowRect(m_hWnd, &m_explorer_win);
-				switch (MessageBoxPos(m_hWnd, message.c_str(), GetDomainOfUri(uri.get()).get(), MB_YESNOCANCEL | ((userInitiated) ? MB_ICONQUESTION : MB_ICONWARNING), m_explorer_win.right - 240, m_explorer_win.top + 21, 240))
+				GetWindowRect(m_hDlg, &m_explorer_win);
+				switch (MessageBoxPos(m_hDlg, message.c_str(), GetDomainOfUri(uri.get()).get(), MB_YESNOCANCEL | ((userInitiated) ? MB_ICONQUESTION : MB_ICONWARNING), m_explorer_win.right - 240, m_explorer_win.top + 21, 240))
 				{
 				case IDYES:
 				{
@@ -2140,7 +2194,7 @@ void ExplorerDlg::RegisterEventHandlers()
 
 					std::wstring promptString = I18N.WEB_SCRIPT_DIALOG_2 + uri.get() + I18N.WEB_SCRIPT_DIALOG_3;
 					TextInputDialog(
-						m_hWnd, I18N.WEB_SCRIPT_DIALOG_1, promptString.c_str(),
+						m_hDlg, I18N.WEB_SCRIPT_DIALOG_1, promptString.c_str(),
 						message.get(), defaultText.get(),
 						/* readonly */ type != COREWEBVIEW2_SCRIPT_DIALOG_KIND_PROMPT);
 					if (TextInput_confirmed)
@@ -2197,7 +2251,7 @@ void ExplorerDlg::RegisterEventHandlers()
 					str += L" - " + m_profileDirName;
 				if (!m_documentTitle.empty())
 					str += L" - " + m_documentTitle;
-				SetWindowText(m_hWnd, str.c_str());
+				SetWindowText(m_hDlg, str.c_str());
 				return S_OK;}).Get(), &m_documentTitleChangedToken);
 
 	m_webView2->add_ContainsFullScreenElementChanged(
@@ -2220,8 +2274,8 @@ void ExplorerDlg::RegisterEventHandlers()
 					message += L"Click No if you only want to re-create the webviews. \n";
 					message += L"Click Cancel for no action. \n";
 				}
-				GetWindowRect(m_hWnd, &m_explorer_win);
-				int response = MessageBoxPos(m_hWnd, message.c_str(), L"New available version", m_webView2 ? MB_YESNOCANCEL : MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+				GetWindowRect(m_hDlg, &m_explorer_win);
+				int response = MessageBoxPos(m_hDlg, message.c_str(), L"New available version", m_webView2 ? MB_YESNOCANCEL : MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 
 				if (response == IDYES)
 					RestartDlg();
@@ -2259,8 +2313,8 @@ wil::unique_bstr ExplorerDlg::GetDomainOfUri(PWSTR uri)
 void ExplorerDlg::ScheduleReloadIfSelectedByUser(const std::wstring& message, const std::wstring& caption, bool closeOnNo)
 {
 	RunAsync([this, message, caption, closeOnNo]() {
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		int selection = MessageBoxPos(m_hWnd, message.c_str(), caption.c_str(), MB_YESNO, m_explorer_win.left + 1, m_explorer_win.top + 21);
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		int selection = MessageBoxPos(m_hDlg, message.c_str(), caption.c_str(), MB_YESNO, m_explorer_win.left + 1, m_explorer_win.top + 21);
 		if (selection == IDYES)
 			m_webView2->Reload();
 		else if (closeOnNo)
@@ -2274,8 +2328,8 @@ void ExplorerDlg::ScheduleReinitIfSelectedByUser(const std::wstring& message, co
 		EnableWindow(hwnd, FALSE);
 	::SetFocus(NULL);
 	RunAsync([this, message, caption, closeOnNo]() {
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		int selection = MessageBoxPos(m_hWnd, message.c_str(), caption.c_str(), MB_YESNO, m_explorer_win.left + 1, m_explorer_win.top + 21);
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		int selection = MessageBoxPos(m_hDlg, message.c_str(), caption.c_str(), MB_YESNO, m_explorer_win.left + 1, m_explorer_win.top + 21);
 		if (selection == IDYES)
 			ReinitializeWebView();
 		else if (closeOnNo)
@@ -2359,20 +2413,20 @@ void ExplorerDlg::AutoRefresh()
 		if (m_webView2)
 		{
 			m_webView2->Reload();
-			SetTimer(m_hWnd, 1, 1000 * tape.WebRefreshTime, NULL);
+			SetTimer(m_hDlg, 1, 1000 * tape.WebRefreshTime, NULL);
 		}
 	}
 	else
 	{
 		SetWindowText(m_items[ToolBar_AutoRefresh], L"◻");
-		KillTimer(m_hWnd, 1);
+		KillTimer(m_hDlg, 1);
 	}
 }
 
 /*
 void ExplorerDlg::TakePreview()
 {
-	if (IsWindowVisible(m_hWnd) && ViewComponentAvailable)
+	if (IsWindowVisible(m_hDlg) && ViewComponentAvailable)
 	{
 		hTab_Tip_canShow = false;
 		ShowWindow(hTab_Tip, SW_HIDE);
@@ -2380,7 +2434,7 @@ void ExplorerDlg::TakePreview()
 		HDC screenDC = CreateDC(L"DISPLAY", NULL, NULL, NULL);
 		HDC memoryDC = CreateCompatibleDC(screenDC);
 		RECT win;
-		GetWindowRect(m_hWnd, &win);
+		GetWindowRect(m_hDlg, &win);
 		int width = win.right - win.left;
 		int height = win.bottom - win.top;
 		int medianh = min((width * 9) / 16, height);
@@ -2438,7 +2492,7 @@ OPENFILENAME ExplorerDlg::CreateOpenFileName(LPWSTR defaultName, LPCWSTR filter)
 	openFileName.lpstrFile = defaultName;
 	openFileName.lpstrFilter = filter;
 	openFileName.nMaxFile = MAX_PATH;
-	openFileName.Flags = OFN_OVERWRITEPROMPT;
+	openFileName.Flags = OFN_OVERWRITEPROMPT | OFN_FORCESHOWHIDDEN | OFN_SHAREAWARE;
 	return openFileName;
 }
 
@@ -2465,7 +2519,7 @@ void ExplorerDlg::PrintToPdf(bool enableLandscape)
 		m_webView2->QueryInterface(IID_PPV_ARGS(&webview2_7));
 		if (webview2_7)
 		{
-			GetWindowRect(m_hWnd, &m_explorer_win);
+			GetWindowRect(m_hDlg, &m_explorer_win);
 			m_printToPdfInProgress = true;
 			webview2_7->PrintToPdf(
 				openFileName.lpstrFile, printSettings.get(),
@@ -2473,7 +2527,7 @@ void ExplorerDlg::PrintToPdf(bool enableLandscape)
 					[this](HRESULT error, BOOL isSuccessful) -> HRESULT {
 						if (FAILED(error))
 						{
-							MessageBoxPos(m_hWnd, I18N.WebView2_PDF_Failed, I18N.WebView2_PDF_Tittle, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+							MessageBoxPos(m_hDlg, I18N.WebView2_PDF_Failed, I18N.WebView2_PDF_Tittle, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 							FAIL_FAST();
 						}
 						m_printToPdfInProgress = false;
@@ -2509,8 +2563,8 @@ void ExplorerDlg::SaveScreenshot(bool autofilename)
 			wil::com_ptr<IStream> stream;
 				SHCreateStreamOnFileEx(defaultName, STGM_READWRITE | STGM_CREATE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream);
 
-				GetWindowRect(m_hWnd, &m_explorer_win);
-				HWND mainWindow = m_hWnd;
+				GetWindowRect(m_hDlg, &m_explorer_win);
+				HWND mainWindow = m_hDlg;
 				m_webView2->CapturePreview(
 					COREWEBVIEW2_CAPTURE_PREVIEW_IMAGE_FORMAT_PNG, stream.get(),
 					Callback<ICoreWebView2CapturePreviewCompletedHandler>(
@@ -2561,7 +2615,7 @@ void ExplorerDlg::ScrollBy(int x, int y)
 	}
 }
 
-void ExplorerDlg::SetZoomFactor(double zoom)
+void ExplorerDlg::SetZoomFactor(float zoom)
 {
 	if (m_webView2)
 	{
@@ -2582,13 +2636,13 @@ void ExplorerDlg::SetScrollBarSize()
 	}
 }
 
-void ExplorerDlg::ZoomMinus(double zoomout)
+void ExplorerDlg::ZoomMinus(float zoomout)
 {
 	m_zoomFactor = m_zoomFactor - max(0.01, zoomout * (m_zoomFactor / 100));
 	SetZoomFactor(m_zoomFactor);
 }
 
-void ExplorerDlg::ZoomPlus(double zoomin)
+void ExplorerDlg::ZoomPlus(float zoomin)
 {
 	m_zoomFactor = m_zoomFactor + max(0.01, zoomin * (m_zoomFactor / 100));
 	SetZoomFactor(m_zoomFactor);
@@ -2617,9 +2671,9 @@ void ExplorerDlg::ToggleTopMost()
 	}
 	else
 	{
-		m_isCurrentlyTopMost = (GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
+		m_isCurrentlyTopMost = (GetWindowLong(m_hDlg, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
 		m_isCurrentlyTopMost = !m_isCurrentlyTopMost;
-		SetWindowPos(m_hWnd, m_isCurrentlyTopMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+		SetWindowPos(m_hDlg, m_isCurrentlyTopMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 }
 
@@ -2719,7 +2773,7 @@ void ExplorerDlg::CompleteDeferred()
 void ExplorerDlg::SendStringWebMessage()
 {
 	TextInputDialog(
-		m_hWnd,
+		m_hDlg,
 		I18N.WEB_POST_MESSAGE_STRING_1,
 		I18N.WEB_POST_MESSAGE_STRING_2,
 		I18N.WEB_POST_MESSAGE_STRING_3);
@@ -2730,7 +2784,7 @@ void ExplorerDlg::SendStringWebMessage()
 void ExplorerDlg::SendJsonWebMessage()
 {
 	TextInputDialog(
-		m_hWnd,
+		m_hDlg,
 		I18N.WEB_POST_MESSAGE_JSON_1,
 		I18N.WEB_POST_MESSAGE_JSON_2,
 		I18N.WEB_POST_MESSAGE_JSON_3,
@@ -2742,7 +2796,7 @@ void ExplorerDlg::SendJsonWebMessage()
 void ExplorerDlg::SubscribeToCdpEvent()
 {
 	TextInputDialog(
-		m_hWnd,
+		m_hDlg,
 		I18N.WEB_SUBSCRIBE_CDP_EVENT_1,
 		I18N.WEB_SUBSCRIBE_CDP_EVENT_2,
 		I18N.WEB_SUBSCRIBE_CDP_EVENT_3,
@@ -2758,8 +2812,8 @@ void ExplorerDlg::SubscribeToCdpEvent()
 		if (preexistingToken != m_devToolsProtocolToken.end())
 			receiver->remove_DevToolsProtocolEventReceived(preexistingToken->second);
 
-		GetWindowRect(m_hWnd, &m_explorer_win);
-		HWND mainWindow = m_hWnd;
+		GetWindowRect(m_hDlg, &m_explorer_win);
+		HWND mainWindow = m_hDlg;
 		receiver->add_DevToolsProtocolEventReceived(
 			Callback<ICoreWebView2DevToolsProtocolEventReceivedEventHandler>(
 				[mainWindow, eventName](
@@ -2775,7 +2829,7 @@ void ExplorerDlg::SubscribeToCdpEvent()
 void ExplorerDlg::CallCdpMethod()
 {
 	TextInputDialog(
-		m_hWnd,
+		m_hDlg,
 		I18N.WEB_CALL_CDP_METHOD_1,
 		I18N.WEB_CALL_CDP_METHOD_2,
 		I18N.WEB_CALL_CDP_METHOD_3,
@@ -2789,7 +2843,7 @@ void ExplorerDlg::CallCdpMethod()
 				? TextInput_input.substr(delimiterPos + 1)
 				: L"{}");
 
-		GetWindowRect(m_hWnd, &m_explorer_win);
+		GetWindowRect(m_hDlg, &m_explorer_win);
 		m_webView2->CallDevToolsProtocolMethod(
 			methodName.c_str(),
 			methodParams.c_str(),
@@ -2804,7 +2858,7 @@ void ExplorerDlg::CallCdpMethod()
 void ExplorerDlg::AddComObject()
 {
 	TextInputDialog(
-		m_hWnd,
+		m_hDlg,
 		I18N.WEB_COM_OBJECT_1,
 		I18N.WEB_COM_OBJECT_2,
 		I18N.WEB_COM_OBJECT_3,
@@ -2816,7 +2870,7 @@ void ExplorerDlg::AddComObject()
 		if (FAILED(hr))
 			hr = CLSIDFromString(TextInput_input.c_str(), &classId);
 
-		GetWindowRect(m_hWnd, &m_explorer_win);
+		GetWindowRect(m_hDlg, &m_explorer_win);
 		if (SUCCEEDED(hr))
 		{
 			wil::com_ptr_nothrow<IDispatch> objectAsDispatch;
@@ -2834,16 +2888,16 @@ void ExplorerDlg::AddComObject()
 				{
 					hr = m_webView2->AddHostObjectToScript(L"example", &objectAsVariant);
 					if (FAILED(hr))
-						MessageBoxPos(m_hWnd, I18N.WebView2_AddHostObjectToScript_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+						MessageBoxPos(m_hDlg, I18N.WebView2_AddHostObjectToScript_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 				}
 				else
-					MessageBoxPos(m_hWnd, I18N.WebView2_IDispatch_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+					MessageBoxPos(m_hDlg, I18N.WebView2_IDispatch_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 			}
 			else
-				MessageBoxPos(m_hWnd, I18N.WebView2_CoCreateInstance_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+				MessageBoxPos(m_hDlg, I18N.WebView2_CoCreateInstance_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 		}
 		else
-			MessageBoxPos(m_hWnd, I18N.WebView2_Convert_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
+			MessageBoxPos(m_hDlg, I18N.WebView2_Convert_Failed, nullptr, MB_OK, m_explorer_win.left + 1, m_explorer_win.top + 21);
 	}
 }
 
@@ -2896,10 +2950,10 @@ void ExplorerDlg::ShowMenu()
 {
 	WebMenuVisible = true;
 	RECT win;
-	GetWindowRect(m_hWnd, &win);
-	int item = TrackPopupMenu((HMENU)GetSubMenu(hMenuWeb, 0), TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, win.left + 1, win.top, NULL, m_hWnd, NULL);
+	GetWindowRect(m_hDlg, &win);
+	int item = TrackPopupMenu((HMENU)GetSubMenu(hMenuWeb, 0), TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, win.left + 1, win.top, NULL, m_hDlg, NULL);
 	if (item)
-		PostMessage(m_hWnd, WM_COMMAND, item, 0);
+		PostMessage(m_hDlg, WM_COMMAND, item, 0);
 	WebMenuVisible = false;
 }
 
@@ -2908,10 +2962,10 @@ void ExplorerDlg::ShowMenuFavorites()
 	WebMenuVisible = true;
 	redrawMenu(10, true);
 	RECT win;
-	GetWindowRect(m_hWnd, &win);
-	int item = TrackPopupMenu((HMENU)GetSubMenu(hMenuFav, 0), TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, win.left + 1, win.top + 17, NULL, m_hWnd, NULL);
+	GetWindowRect(m_hDlg, &win);
+	int item = TrackPopupMenu((HMENU)GetSubMenu(hMenuFav, 0), TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON, win.left + 1, win.top + 17, NULL, m_hDlg, NULL);
 	if (item)
-		PostMessage(m_hWnd, WM_COMMAND, item, 0);
+		PostMessage(m_hDlg, WM_COMMAND, item, 0);
 	WebMenuVisible = false;
 }
 
@@ -2921,7 +2975,7 @@ void ExplorerDlg::Suspend()
 	webView = m_webView2.try_query<ICoreWebView2_3>();
 	if (webView)
 	{
-		GetWindowRect(m_hWnd, &m_explorer_win);
+		GetWindowRect(m_hDlg, &m_explorer_win);
 		HRESULT hr = webView->TrySuspend(
 			Callback<ICoreWebView2TrySuspendCompletedHandler>(
 				[](HRESULT error, BOOL isSuccessful) -> HRESULT {
@@ -2942,7 +2996,7 @@ void ExplorerDlg::Resume()
 void ExplorerDlg::EnterFullScreen()
 {
 	isFullScreen = true;
-	HWND tofull_hWnd = (m_isHome) ? tape.Ds2hWnd : m_hWnd;
+	HWND tofull_hWnd = (m_isHome) ? tape.Ds2hWnd : m_hDlg;
 
 	MONITORINFO monitorinfo = { sizeof(monitorinfo) };
 	if (GetMonitorInfo(MonitorFromWindow(tofull_hWnd, MONITOR_DEFAULTTOPRIMARY), &monitorinfo))
@@ -2952,8 +3006,8 @@ void ExplorerDlg::EnterFullScreen()
 				SendMessage(tape.Ds2hWnd, WM_ENTER_FULLSCREEN, 0, 0);
 			else
 			{
-				DWORD style = GetWindowLong(m_hWnd, GWL_STYLE);
-				SetWindowLong(m_hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
+				DWORD style = GetWindowLong(m_hDlg, GWL_STYLE);
+				SetWindowLong(m_hDlg, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
 			}
 			SetWindowPos(
 				tofull_hWnd, HWND_TOPMOST,
@@ -2966,21 +3020,21 @@ void ExplorerDlg::EnterFullScreen()
 	ResizeEverything();
 	if (!m_isHome)
 		m_mouseIsOver = false;
-	SetTimer(m_hWnd, 6, 70, NULL);
+	SetTimer(m_hDlg, 6, 70, NULL);
 }
 
 void ExplorerDlg::ExitFullScreen()
 {
-	KillTimer(m_hWnd, 6);
-	HWND hWnd = m_hWnd;
-	HWND tofull_hWnd = (m_isHome) ? tape.Ds2hWnd : m_hWnd;
+	KillTimer(m_hDlg, 6);
+	HWND hWnd = m_hDlg;
+	HWND tofull_hWnd = (m_isHome) ? tape.Ds2hWnd : m_hDlg;
 
 	if (m_isHome)
 		SendMessage(tape.Ds2hWnd, WM_EXIT_FULLSCREEN, 0, 0);
 	else
 	{
-		DWORD style = GetWindowLong(m_hWnd, GWL_STYLE);
-		SetWindowLong(m_hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+		DWORD style = GetWindowLong(m_hDlg, GWL_STYLE);
+		SetWindowLong(m_hDlg, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	}
 	SetWindowPos(
 		tofull_hWnd, (m_isHome) ? HWND_TOPMOST : HWND_NOTOPMOST,
@@ -3008,13 +3062,13 @@ void ExplorerDlg::OnMouseOver()
 		if (!m_isHome)
 		{
 			RECT win;
-			GetWindowRect(m_hWnd, &win);
+			GetWindowRect(m_hDlg, &win);
 			win.left -= 7;
 			win.right -= win.left - 7;
 			win.bottom -= win.top - 7;
-			DWORD style = GetWindowLong(m_hWnd, GWL_STYLE);
-			SetWindowLong(m_hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
-			SetWindowPos(m_hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+			DWORD style = GetWindowLong(m_hDlg, GWL_STYLE);
+			SetWindowLong(m_hDlg, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_SIZEBOX | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+			SetWindowPos(m_hDlg, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 		}
 		ShowToolBar();
 		ScrollBarActive();
@@ -3029,13 +3083,13 @@ void ExplorerDlg::OnMouseOut()
 		if (!m_isHome)
 		{
 			RECT win;
-			GetWindowRect(m_hWnd, &win);
+			GetWindowRect(m_hDlg, &win);
 			win.left += 7;
 			win.right -= win.left + 7;
 			win.bottom -= win.top + 7;
-			DWORD style = GetWindowLong(m_hWnd, GWL_STYLE);
-			SetWindowLong(m_hWnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
-			SetWindowPos(m_hWnd, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+			DWORD style = GetWindowLong(m_hDlg, GWL_STYLE);
+			SetWindowLong(m_hDlg, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW | WS_BORDER);
+			SetWindowPos(m_hDlg, NULL, win.left, win.top, win.right, win.bottom, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 		}
 		HideToolBar();
 		ScrollBarInactive();
@@ -3099,7 +3153,7 @@ void ExplorerDlg::ResizeEverything()
 	}
 
 	RECT availableBounds = { 0 };
-	GetClientRect(m_hWnd, &availableBounds);
+	GetClientRect(m_hDlg, &availableBounds);
 	availableBounds.top = toolbarHeight;
 	m_webView2bounds = availableBounds;
 
@@ -3158,15 +3212,15 @@ void ExplorerDlg::ResizeWebView()
 
 void ExplorerDlg::Show()
 {
-	ShowWindow(m_hWnd, SW_SHOW);
+	ShowWindow(m_hDlg, SW_SHOW);
 }
 
 void ExplorerDlg::Hide()
 {
-	ShowWindow(m_hWnd, SW_HIDE);
+	ShowWindow(m_hDlg, SW_HIDE);
 }
 
-static void HideFrameDeffered(HWND tohide, unsigned long timems)
+static void HideFrameDeffered(HWND tohide, unsigned long long timems)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(timems));
 	ShowWindow(tohide, SW_HIDE);
@@ -3174,15 +3228,15 @@ static void HideFrameDeffered(HWND tohide, unsigned long timems)
 
 BOOL ExplorerDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
-	return ::MoveWindow(m_hWnd, x, y, w, h, r);
+	return ::MoveWindow(m_hDlg, x, y, w, h, r);
 } 
 
 void ExplorerDlg::SetTransparency(bool transparencyon)
 {
 	if (transparencyon)
-		SetWindowTransparent(m_hWnd, true, tape.Opacity);
+		SetWindowTransparent(m_hDlg, true, tape.Opacity);
 	else
-		SetWindowTransparent(m_hWnd, false, NULL);
+		SetWindowTransparent(m_hDlg, false, NULL);
 }
 
 /*

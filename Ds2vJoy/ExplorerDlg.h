@@ -10,12 +10,12 @@
 //#include "openssl/err.h"
 //namespace winrtComp = winrt::Windows::UI::Composition;
 
-static void HideFrameDeffered(HWND tohide, unsigned long timems);
+static void HideFrameDeffered(HWND tohide, unsigned long long timems);
 
 class ExplorerDlg
 {
 public:
-	enum ToolBar
+	enum ToolBar : unsigned char
 	{
 		ToolBar_Favorites,
 		ToolBar_Home,
@@ -31,7 +31,7 @@ public:
 		ToolBar_Count
 	};
 
-	ExplorerDlg(const std::wstring& startpage = L"", bool isHome = false, double zoom = tape.DefaultZoomValue, RECT windowRect = { 0 });
+	ExplorerDlg(const std::wstring& startpage = L"", bool isHome = false, float zoom = tape.DefaultZoomValue, RECT windowRect = { 0 });
 	~ExplorerDlg();
 
 	void InstallComplete(int return_code);
@@ -51,8 +51,8 @@ public:
 	void ToggleVisibility();
 	void DarkMode(unsigned char mode = 1);
 	void ScrollBy(int x, int y);
-	void ZoomMinus(double zoomout = 5);
-	void ZoomPlus(double zoomin = 5);
+	void ZoomMinus(float zoomout = 5);
+	void ZoomPlus(float zoomin = 5);
 	void ZoomReset();
 	void ZoomSet();
 	void ShowMenu();
@@ -65,7 +65,7 @@ public:
 	BOOL MoveWindow(int, int, int, int, BOOL);
 	void SetTransparency(bool transparencyon);
 
-	HWND m_hWnd = nullptr;
+	HWND m_hDlg = nullptr;
 	bool m_isHome = false;
 	bool m_onMouseOver = true;
 	bool ViewComponentAvailable = false;
@@ -97,7 +97,7 @@ private:
 	void SetFavorite(int favorite = 1);
 	OPENFILENAME CreateOpenFileName(LPWSTR defaultName, LPCWSTR filter);
 	void PrintToPdf(bool enableLandscape = false);
-	void SetZoomFactor(double zoom = 1.0);
+	void SetZoomFactor(float zoom = 1.0);
 	void SetScrollBarSize();
 	void ToggleTopMost();
 	void SetBoundsMode();
@@ -219,7 +219,7 @@ private:
 	std::vector<std::wstring> m_vblockedSites;
 
 	//View
-	double m_zoomFactor = 1.0;
+	float m_zoomFactor = 1.0;
 	COREWEBVIEW2_COLOR m_webViewColor = { 255, 255, 255, 255 };
 	COREWEBVIEW2_COLOR transparentColor = { 0, 255, 255, 255 };
 	HWND m_downloadsButton;

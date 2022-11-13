@@ -6,7 +6,7 @@ public:
 	Guardian();
 	~Guardian();
 
-	void				Init(HWND);
+	void				Init();
 	const				WCHAR* GuardianButtons();
 	void				GuardianButtonsComputString();
 	void				AllDevicesRestart();
@@ -40,9 +40,7 @@ private:
 	std::wstring		GetBlacklist();
 	void				AffectedList();
 	BOOL				PurgeBlacklist();
-	BOOL				RestartDevice(std::string device = "", bool verbose = false);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_hDlg = NULL;
 
 	const std::string	GuardianUrl = "http://localhost:26762/api/v1/hidguardian/";

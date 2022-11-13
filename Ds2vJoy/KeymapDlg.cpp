@@ -14,38 +14,39 @@ KeymapDlg::KeymapDlg()
 
 KeymapDlg::~KeymapDlg()
 {
+	RemoveWindowSubclass(m_hList, (SUBCLASSPROC)ListSubclassProc, 1);
 }
 
-void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
+void KeymapDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_KEYMAP), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_LIST);
-	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
+	m_hMenu = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
 	redrawMenu(5);
 
 	SendMessage(m_hList, WM_SETFONT, WPARAM(tape.hList), MAKELPARAM(TRUE, 0));
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES | LVS_NOCOLUMNHEADER;
+	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
 	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
 
 	HWND header = ListView_GetHeader(m_hList);
 	DWORD dwHeaderStyle = ::GetWindowLong(header, GWL_STYLE);
-	dwHeaderStyle |= HDS_NOSIZING;
+	dwHeaderStyle = dwHeaderStyle & ~HDS_DRAGDROP | HDS_NOSIZING;
 	::SetWindowLong(header, GWL_STYLE, dwHeaderStyle);
 
 	LVCOLUMN col;
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
 	col.cx = 76;
-	col.pszText = I18N.vJoyButton;
+	col.pszText = I18N.srceButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.Setting;
 	col.cx = 213;
 	ListView_InsertColumn(m_hList, 1, &col);
 	col.pszText = I18N.Process;
-	col.cx = 90;
+	col.cx = 92 + (GetSystemMetrics(SM_CXVSCROLL) + 2);
 	ListView_InsertColumn(m_hList, 2, &col);
 	col.pszText = I18N.TagsButton;
 	col.cx = 70;
@@ -61,6 +62,8 @@ void KeymapDlg::Init(HINSTANCE hInst, HWND hWnd)
 	RECT TipRect = { 5, 1, 2, 2 };
 	SendMessage(hTip, TTM_SETMARGIN, 0, LPARAM(&TipRect));
 	SendMessage(hTip, WM_SETFONT, WPARAM(tape.hTooltip), MAKELPARAM(TRUE, 0));
+
+	SetWindowSubclass(m_hList, (SUBCLASSPROC)ListSubclassProc, 1, (DWORD_PTR)this);
 }
 
 void KeymapDlg::redrawMenu(int ntabs)
@@ -86,6 +89,26 @@ void KeymapDlg::redrawMenu(int ntabs)
 	}
 }
 
+void KeymapDlg::PageUp()
+{
+	ListView_Scroll(m_hList, 0, -14);
+}
+
+void KeymapDlg::PageDown()
+{
+	ListView_Scroll(m_hList, 0, 14);
+}
+
+void KeymapDlg::PageHome()
+{
+	ListView_Scroll(m_hList, 0, -32765);
+}
+
+void KeymapDlg::PageEnd()
+{
+	ListView_Scroll(m_hList, 0, 32765);
+}
+
 void KeymapDlg::_InitDialog(HWND hWnd)
 {
 
@@ -95,9 +118,18 @@ void KeymapDlg::_InitDialog(HWND hWnd)
 
 void KeymapDlg::_ShowWindow(HWND hWnd)
 {
-	SendMessage(m_hList, LVM_SETBKCOLOR, 0, LPARAM(tape.ink_LIST_BACK));
-	SendMessage(m_hList, LVM_SETTEXTCOLOR, 0, LPARAM(tape.ink_LIST));
-	SendMessage(m_hList, LVM_SETTEXTBKCOLOR, 0, LPARAM(tape.ink_LIST_BACKGROUND));
+	if (tape.DarkTheme)
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK_DARK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST_DARK);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND_DARK);
+	}
+	else
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND);
+	}
 	load();
 	m_active = true;
 }
@@ -126,12 +158,28 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
+	case WM_CTLCOLORSCROLLBAR:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_SCROLLBAR);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
+	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_LIST);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_LIST;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
 	}
 	case WM_MEASUREITEM:
 	{
@@ -157,7 +205,7 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			else
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU);
 
-			SelectObject(DrawMenuStructure->hDC, tape.hMenus);
+			SelectObject(DrawMenuStructure->hDC, tape.hMenu);
 			WCHAR wszBuffer[MAX_PATH];
 			int nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
@@ -196,7 +244,7 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (m_flag_drag && GetCapture() == hWnd)
 		{
 			EndDrag(LOWORD(lParam), HIWORD(lParam));
-			InvalidateRect(hWnd, NULL, FALSE);
+			InvalidateRect(hWnd, NULL, TRUE);
 		}
 		break;
 	}
@@ -213,128 +261,12 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_NOTIFY:
 	{
-		switch (((LPNMHDR)lParam)->code)
-		{
-		case HDN_BEGINTRACK:
-		{
-			SetWindowLong(m_hDlg, 0, TRUE);  // prevent resizing
-			return TRUE;
-		}
-		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_KEYMAP_LIST:
 		{
 			switch (((LPNMHDR)lParam)->code)
 			{
-			case LVN_COLUMNCLICK:
-			{
-				m_active = false;
-				kDDlg.Hide();
-
-				LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
-				unsigned char column = pnmv->iSubItem;
-				if (lasttab == column)
-					tabSortingMethod = !tabSortingMethod;
-				else
-					tabSortingMethod = false;
-				lasttab = column;
-
-				Keymaps newmap;
-				Keymaps newmaptmp;
-				size_t length = tape.Keymapdata.size();
-				for (size_t i = 0; i < length; i++)
-					newmaptmp.push_back((Keymap)tape.Keymapdata[i]);
-
-				length = newmaptmp.size();
-				for (size_t i = 0; i < length; i++)
-				{
-					if (newmaptmp[i].Enable == 2)
-					{
-						newmap.push_back((Keymap)newmaptmp[i]);
-						newmaptmp.erase(newmaptmp.begin() + i);
-					}
-				}
-
-				while (newmaptmp.size())
-				{
-					int pos = -1;
-
-					unsigned long long value = 0;
-					std::wstring valuestr = L"";
-
-					length = newmaptmp.size();
-					for (size_t i = 0; i < length; i++)
-					{
-						unsigned long long sortresult = 0;
-						std::wstring sortstr = L"";
-
-						switch (column)
-						{
-						case 0:
-						{
-							sortresult |= ((unsigned long long)newmaptmp[i].ButtonID << 0);
-							break;
-						}
-						case 1:
-						{
-							if (newmaptmp[i].vk.size() > 7)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[7] << 0);
-							if (newmaptmp[i].vk.size() > 6)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[6] << 8);
-							if (newmaptmp[i].vk.size() > 5)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[5] << 16);
-							if (newmaptmp[i].vk.size() > 4)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[4] << 24);
-							if (newmaptmp[i].vk.size() > 3)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[3] << 32);
-							if (newmaptmp[i].vk.size() > 2)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[2] << 40);
-							if (newmaptmp[i].vk.size() > 1)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[1] << 48);
-							if (newmaptmp[i].vk.size() > 0)
-								sortresult |= ((unsigned long long)newmaptmp[i].vk[0] << 56);
-							break;
-						}
-						case 2:
-						{
-							sortstr = newmaptmp[i].findWindow.Val();
-							break;
-						}
-						case 3:
-						{
-							sortresult |= ((unsigned long long)newmaptmp[i].useActivating << 0);
-							sortresult |= ((unsigned long long)newmaptmp[i].usePostmessage << 1);
-							break;
-						}
-						}
-
-						if (column == 2)
-						{
-							if (pos == -1 || (pos >= 0 && ((tabSortingMethod) ? sortstr.compare(valuestr) > 0 : sortstr.compare(valuestr) < 0)))
-							{
-								pos = (int)i;
-								valuestr = sortstr;
-							}
-						}
-						else if (pos == -1 || (pos >= 0 && ((tabSortingMethod) ? sortresult > value : sortresult < value)))
-						{
-							pos = (int)i;
-							value = sortresult;
-						}
-					}
-					newmap.push_back((Keymap)newmaptmp[pos]);
-					newmaptmp.erase(newmaptmp.begin() + pos);
-				}
-
-				tape.Keymapdata.swap(newmap);
-				tape.Save(tape.Setting_Keymapdata);
-
-				PostMessage(m_hWnd, WM_ADDKEYMAP, 0, -1);
-
-				m_active = true;
-				break;
-			}
 			case NM_DBLCLK:
 			{
 				editKeymapDlg();
@@ -398,6 +330,108 @@ INT_PTR KeymapDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
+LRESULT CALLBACK KeymapDlg::ListSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR uIDSubClass, DWORD_PTR RefData)
+{
+	KeymapDlg* dlg = reinterpret_cast<KeymapDlg*>(RefData);
+	if (dlg)
+		return dlg->_listSubclassProc(hWnd, message, wParam, lParam);
+
+	return DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CALLBACK KeymapDlg::_listSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (m_sorting)
+		return 0;
+
+	switch (message)
+	{
+	case WM_NOTIFY:
+	{
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case HDN_ENDDRAG:
+		{
+			InvalidateRect(hWnd, NULL, TRUE);
+			break;
+		}
+		case NM_CUSTOMDRAW:
+		{
+			LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+			switch (DrawListCustom->dwDrawStage)
+			{
+			case CDDS_PREPAINT:
+			{
+				return CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYPOSTPAINT;
+			}
+			case CDDS_ITEMPREPAINT:
+			{
+				if (DrawListCustom->uItemState == CDIS_SELECTED)
+					m_actualColumn = DrawListCustom->dwItemSpec;
+
+				if (tape.DarkTheme)
+				{
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.hB_LIST_Header_DARK : tape.hB_LIST_Header2_DARK);
+					SetBkColor(DrawListCustom->hdc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.Bk_LIST_header1_DARK : tape.Bk_LIST_header2_DARK);
+					if (DrawListCustom->dwItemSpec == 0)
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header1_DARK);
+						DrawText(DrawListCustom->hdc, I18N.srceButton, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+					else
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2_DARK);
+						switch (DrawListCustom->dwItemSpec)
+						{
+						case 1: { DrawText(DrawListCustom->hdc, I18N.Setting, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+						case 2: { DrawText(DrawListCustom->hdc, I18N.Process, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+						case 3: { DrawText(DrawListCustom->hdc, I18N.TagsButton, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+						}
+					}
+				}
+				else
+				{
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.hB_LIST_Header : tape.hB_LIST_Header2);
+					SetBkColor(DrawListCustom->hdc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.ink_LIST_Header : tape.ink_LIST_scndHeader);
+					if (DrawListCustom->dwItemSpec == 0)
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header1);
+						DrawText(DrawListCustom->hdc, I18N.srceButton, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+					else
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2);
+						switch (DrawListCustom->dwItemSpec)
+						{
+						case 1: { DrawText(DrawListCustom->hdc, I18N.Setting, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+						case 2: { DrawText(DrawListCustom->hdc, I18N.Process, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+						case 3: { DrawText(DrawListCustom->hdc, I18N.TagsButton, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+						}
+					}
+				}
+				return CDRF_SKIPDEFAULT;
+			}
+			case CDDS_POSTPAINT:
+			{
+				if (m_actualColumn != m_lastColumn)
+					Sort(m_actualColumn);
+				break;
+			}
+			default:
+				return CDRF_DODEFAULT;
+				break;
+			}
+			break;
+		}
+		}
+		break;
+	}
+	default:
+		return DefSubclassProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
+}
+
 void KeymapDlg::load()
 {
 	m_active = false;
@@ -439,10 +473,10 @@ void KeymapDlg::save()
 		item.iItem = i;
 		if (!ListView_GetItem(m_hList, &item))
 		{
-			SendMessage(m_hWnd, WM_ADDKEYMAP, 0, -1);
+			SendMessage(tape.Ds2hWnd, WM_ADDKEYMAP, 0, -1);
 			RECT win;
-			GetWindowRect(m_hWnd, &win);
-			MessageBoxPos(m_hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
+			GetWindowRect(tape.Ds2hWnd, &win);
+			MessageBoxPos(tape.Ds2hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
 			return;
 		}
 		if (item.lParam != NULL)
@@ -451,7 +485,7 @@ void KeymapDlg::save()
 
 	tape.Keymapdata.swap(newmap);
 	tape.Save(tape.Setting_Keymapdata);
-	SendMessage(m_hWnd, WM_ADDKEYMAP, 0, -1);
+	SendMessage(tape.Ds2hWnd, WM_ADDKEYMAP, 0, -1);
 
 	m_active = true;
 }
@@ -497,7 +531,7 @@ void KeymapDlg::addSeparator()
 	Keymap km;
 	kDDlg.keymapData = km;
 	Keymap* data = new Keymap(kDDlg.keymapData);
-	data->ButtonID = vJoyButtonID::none;
+	data->ButtonID = DestButtonID::Destination_None;
 	data->Enable = 2;
 
 	insertKeymap(idx, data);
@@ -535,7 +569,7 @@ void KeymapDlg::editKeymapDlg()
 	else if (nselected > 1)
 	{
 		lastidxs.clear();
-		for (int i = 0; i < KeymapDataDlg::Mofified_count; i++)
+		for (int i = 0; i < KeymapDataDlg::ModifiedKeymap_Count; i++)
 			kDDlg.Modified[i] = false;
 		int idx;
 		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
@@ -606,7 +640,7 @@ void KeymapDlg::editKeymapDlgBackMulti()
 			Keymap* data2 = (Keymap*)item.lParam;
 			km = *data2;
 			data2 = new Keymap(km);
-			for (int i = 0; i < KeymapDataDlg::Mofified_count; i++)
+			for (int i = 0; i < KeymapDataDlg::ModifiedKeymap_Count; i++)
 				if (kDDlg.Modified[i])
 					switch (i)
 					{
@@ -641,7 +675,7 @@ void KeymapDlg::deleteKeymapDlg()
 		{ m_active = true; return; }
 
 	RECT win;
-	GetWindowRect(m_hWnd, &win);
+	GetWindowRect(tape.Ds2hWnd, &win);
 	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, win.left + 160, win.top + 60) == IDYES)
 	{
 		int idx;
@@ -832,6 +866,109 @@ void KeymapDlg::setInsertMark(int idx)
 	}
 }
 
+void KeymapDlg::Sort(int column)
+{
+	m_sorting = true;
+	m_active = false;
+	kDDlg.Hide();
+
+	Keymaps newmap;
+	Keymaps newmaptmp;
+	size_t length = tape.Keymapdata.size();
+	for (size_t i = 0; i < length; i++)
+		newmaptmp.push_back((Keymap)tape.Keymapdata[i]);
+
+	length = newmaptmp.size();
+	for (size_t i = 0; i < length; i++)
+	{
+		if (newmaptmp[i].Enable == 2)
+		{
+			newmap.push_back((Keymap)newmaptmp[i]);
+			newmaptmp.erase(newmaptmp.begin() + i);
+		}
+	}
+
+	while (newmaptmp.size())
+	{
+		int pos = -1;
+
+		unsigned long long value = 0;
+		std::wstring valuestr = L"";
+
+		length = newmaptmp.size();
+		for (size_t i = 0; i < length; i++)
+		{
+			unsigned long long sortresult = 0;
+			std::wstring sortstr = L"";
+
+			switch (column)
+			{
+			case 0:
+			{
+				sortresult |= ((unsigned long long)newmaptmp[i].ButtonID << 0);
+				break;
+			}
+			case 1:
+			{
+				if (newmaptmp[i].vk.size() > 7)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[7] << 0);
+				if (newmaptmp[i].vk.size() > 6)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[6] << 8);
+				if (newmaptmp[i].vk.size() > 5)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[5] << 16);
+				if (newmaptmp[i].vk.size() > 4)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[4] << 24);
+				if (newmaptmp[i].vk.size() > 3)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[3] << 32);
+				if (newmaptmp[i].vk.size() > 2)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[2] << 40);
+				if (newmaptmp[i].vk.size() > 1)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[1] << 48);
+				if (newmaptmp[i].vk.size() > 0)
+					sortresult |= ((unsigned long long)newmaptmp[i].vk[0] << 56);
+				break;
+			}
+			case 2:
+			{
+				sortstr = newmaptmp[i].findWindow.Val();
+				break;
+			}
+			case 3:
+			{
+				sortresult |= ((unsigned long long)newmaptmp[i].useActivating << 0);
+				sortresult |= ((unsigned long long)newmaptmp[i].usePostmessage << 1);
+				break;
+			}
+			}
+
+			if (column == 2)
+			{
+				if (pos == -1 || (pos >= 0 && (sortstr.compare(valuestr) < 0)))
+				{
+					pos = (int)i;
+					valuestr = sortstr;
+				}
+			}
+			else if (pos == -1 || (pos >= 0 && (sortresult < value)))
+			{
+				pos = (int)i;
+				value = sortresult;
+			}
+		}
+		newmap.push_back((Keymap)newmaptmp[pos]);
+		newmaptmp.erase(newmaptmp.begin() + pos);
+	}
+
+	tape.Keymapdata.swap(newmap);
+	tape.Save(tape.Setting_Keymapdata);
+
+	PostMessage(tape.Ds2hWnd, WM_ADDKEYMAP, 0, -1);
+
+	m_lastColumn = m_actualColumn;
+	m_active = true;
+	m_sorting = false;
+}
+
 void KeymapDlg::Show()
 {
 	::ShowWindow(m_hDlg, SW_SHOW);
@@ -844,5 +981,10 @@ void KeymapDlg::Hide()
 
 BOOL KeymapDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
-	return ::MoveWindow(m_hDlg, x, y, w, h, r);
+	BOOL ret = ::MoveWindow(m_hDlg, x, y, w, h, r);
+	RECT win;
+	GetWindowRect(m_hDlg, &win);
+	::MoveWindow(m_hList, 0, 0, win.right - win.left + (GetSystemMetrics(SM_CXVSCROLL) + 2), win.bottom - win.top, FALSE);
+
+	return ret;
 }

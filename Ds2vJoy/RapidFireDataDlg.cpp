@@ -9,13 +9,15 @@ RapidFireDataDlg::~RapidFireDataDlg()
 {
 }
 
-void RapidFireDataDlg::Init(HINSTANCE hInst, HWND hWnd)
+void RapidFireDataDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE_ADD), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE_ADD), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_SOURCE, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_BTN_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_BTN, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_MULTIPLE, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_BTN2_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_BTN2, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_TEXT_FIRST, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_TEXT_RELEASE, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
@@ -27,7 +29,7 @@ void RapidFireDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_RELEASE, WM_SETFONT, WPARAM(tape.hEdit), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_DOWN, WM_SETFONT, WPARAM(tape.hEdit), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_OK, WM_SETFONT, WPARAM(tape.hButton2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_CANCEL, WM_SETFONT, WPARAM(tape.hButton2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_CANCEL, WM_SETFONT, WPARAM(tape.hCancel), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_RAPIDFIRE_NOTICE, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SetWindowText(GetDlgItem(m_hDlg, IDC_RAPIDFIRE_SOURCE), I18N.RAPIDFIRE_RAPIDFIRE);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_RAPIDFIRE_MULTIPLE), I18N.RAPIDFIRE_MULTIPLE_PRESS);
@@ -40,7 +42,6 @@ void RapidFireDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SetWindowText(GetDlgItem(m_hDlg, IDC_RAPIDFIRE_NOTICE), I18N.RAPIDFIRE_NOTICE);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_RAPIDFIRE_OK), I18N.RAPIDFIRE_OK);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_RAPIDFIRE_CANCEL), I18N.RAPIDFIRE_CANCEL);
-	Hide();
 }
 
 void RapidFireDataDlg::Open(HWND parent, int mode)
@@ -49,14 +50,14 @@ void RapidFireDataDlg::Open(HWND parent, int mode)
 	canprint = false;
 	ShowWindow(parent, SW_HIDE);
 	Show();
-	PostMessage(m_hWnd, WM_SIZE, 0, -1);
+	PostMessage(tape.Ds2hWnd, WM_SIZE, 0, -1);
 }
 
 void RapidFireDataDlg::_InitDialog(HWND hWnd)
 {
-	for (int i = 0; i < vJoyButtonID::button_Count; i++)
+	for (int i = 0; i < DestButtonID::Destination_Count; i++)
 	{
-		WCHAR* str = vJoyButton::String((vJoyButtonID)i);
+		WCHAR* str = DestinationButton::String((DestButtonID)i);
 		SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN, CB_ADDSTRING, 0, LPARAM(str));
 		SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN2, CB_ADDSTRING, 0, LPARAM(str));
 	}
@@ -69,6 +70,9 @@ void RapidFireDataDlg::_ShowWindow(HWND hWnd)
 {
 	SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN, CB_SETCURSEL, rapidFireData.ButtonID, 0);
 	SendDlgItemMessage(hWnd, IDC_RAPIDFIRE_BTN2, CB_SETCURSEL, rapidFireData.ButtonID2, 0);
+
+	SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN_STATIC), (rapidFireData.ButtonID) ? DestinationButton::String((DestButtonID)rapidFireData.ButtonID) : L"...");
+	SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN2_STATIC), (rapidFireData.ButtonID2) ? DestinationButton::String((DestButtonID)rapidFireData.ButtonID2) : L"...");
 
 	canprint = false;
 	WCHAR buf[MAX_PATH];
@@ -108,48 +112,98 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	case WM_CTLCOLORDLG:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_DLG);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_DLG);
+		SetTextColor(hdcStatic, tape.ink_DLG);
 		return (LRESULT)tape.hB_DLG;
 	}
 	case WM_CTLCOLORMSGBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_MSGBOX);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		SetTextColor(hdcStatic, tape.ink_MSGBOX);
 		return (LRESULT)tape.hB_MSGBOX;
 	}
 	case WM_CTLCOLORBTN:
 	{
 		HDC hdcStatic = (HDC)wParam;
 		SetTextColor(hdcStatic, tape.ink_BTN);
-		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkMode(hdcStatic, OPAQUE);
 		SetBkColor(hdcStatic, tape.Bk_BTN);
-		return (LRESULT)tape.hB_BTN;
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_STATIC);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, tape.Bk_STATIC);
-		return (LRESULT)tape.hB_STATIC;
+		switch (GetDlgCtrlID((HWND)lParam))
+		{
+		case IDC_RAPIDFIRE_UNIT_FIRST:
+		case IDC_RAPIDFIRE_UNIT_RELEASE:
+		case IDC_RAPIDFIRE_UNIT_DOWN:
+		case IDC_RAPIDFIRE_NOTICE:
+		case IDC_RAPIDFIRE_BTN_STATIC:
+		case IDC_RAPIDFIRE_BTN2_STATIC:
+		{
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_CHK_DARK);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_CHK);
+				return (LRESULT)tape.hB_BackGround;
+			}
+		}
+		default:
+		{
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_DARK);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC);
+				return (LRESULT)tape.hB_BackGround;
+			}
+		}
+		}
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_EDIT);
-		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_EDIT;
+		SetBkMode((HDC)wParam, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_EDIT_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT);
+			return (LRESULT)tape.hB_EDIT;
+		}
 	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_LIST);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_LIST;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
 	}
 	case WM_PAINT:
 	{
@@ -160,7 +214,43 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_BackGround);
+			if (tape.DarkTheme)
+				FillRect(hDC, &rect, tape.hB_BackGround_DARK);
+			else
+				FillRect(hDC, &rect, tape.hB_BackGround);
+
+			if (tape.DarkTheme)
+			{
+				SetRect(&rect, 207, 78, 270, 98);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK3);
+				SetRect(&rect, 207, 122, 270, 142);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK3);
+				SetRect(&rect, 207, 162, 270, 182);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK3);
+
+				SetRect(&rect, 207, 79, 270, 97);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK);
+				SetRect(&rect, 207, 123, 270, 141);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK);
+				SetRect(&rect, 207, 163, 270, 181);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK);
+			}
+			else
+			{
+				SetRect(&rect, 207, 78, 270, 98);
+				FrameRect(hDC, &rect, tape.hB_EDIT_BORDER);
+				SetRect(&rect, 207, 122, 270, 142);
+				FrameRect(hDC, &rect, tape.hB_EDIT_BORDER);
+				SetRect(&rect, 207, 162, 270, 182);
+				FrameRect(hDC, &rect, tape.hB_EDIT_BORDER);
+
+				SetRect(&rect, 207, 79, 270, 97);
+				FillRect(hDC, &rect, tape.hB_EDIT);
+				SetRect(&rect, 207, 123, 270, 141);
+				FillRect(hDC, &rect, tape.hB_EDIT);
+				SetRect(&rect, 207, 163, 270, 181);
+				FillRect(hDC, &rect, tape.hB_EDIT);
+			}
 
 			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
@@ -178,6 +268,52 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		std::thread(&RapidFireDataDlg::_InitDialog, this, hWnd).detach();
 		return FALSE;
 	}
+	case WM_NOTIFY:
+	{
+		switch (((LPNMHDR)lParam)->idFrom)
+		{
+		case IDC_RAPIDFIRE_OK:
+		case IDC_RAPIDFIRE_CANCEL:
+		{
+			if (!tape.DarkTheme)
+				break;
+			switch (((LPNMHDR)lParam)->code)
+			{
+			case NM_CUSTOMDRAW:
+			{
+				LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+				if (DrawListCustom->uItemState == CDIS_HOT || DrawListCustom->uItemState == CDIS_NEARHOT)
+				{
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_BTN_DARK);
+					SelectObject(DrawListCustom->hdc, GetStockObject(DC_PEN));
+					SetDCPenColor(DrawListCustom->hdc, tape.ink_grey);
+					RoundRect(DrawListCustom->hdc, DrawListCustom->rc.left + 1, DrawListCustom->rc.top + 1, DrawListCustom->rc.right - 1, DrawListCustom->rc.bottom - 1, 6, 6);
+				}
+				return CDRF_DODEFAULT;
+			}
+			case BCN_HOTITEMCHANGE:
+			{
+				switch (((NMBCHOTITEM*)lParam)->dwFlags)
+				{
+				case (HICF_ENTERING | HICF_MOUSE):
+				{
+					::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"", L"");
+					break;
+				}
+				case (HICF_LEAVING | HICF_MOUSE):
+				{
+					::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"Explorer", NULL);
+					break;
+				}
+				}
+				break;
+			}
+			}
+			break;
+		}
+		}
+		break;
+	}
 	case WM_COMMAND:
 	{
 		switch (LOWORD(wParam))
@@ -191,12 +327,12 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				if (rapidFireData.ButtonID == 0 && rapidFireData.ButtonID2 == 0 && m_mode != 3)
 				{
 					RECT win;
-					GetWindowRect(m_hWnd, &win);
+					GetWindowRect(tape.Ds2hWnd, &win);
 					MessageBoxPos(hWnd, I18N.MBOX_NoButtonSelected, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
 					return TRUE;
 				}
 				rapidFireData.Enable = true;
-				PostMessage(m_hWnd, WM_ADDRAPIDFIRE, m_mode, 1);
+				PostMessage(tape.Ds2hWnd, WM_ADDRAPIDFIRE, m_mode, 1);
 				m_mode = 0;
 				break;
 			}
@@ -209,10 +345,20 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			{
 			case BN_CLICKED:
 			{
-				PostMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, 0);
+				PostMessage(tape.Ds2hWnd, WM_ADDRAPIDFIRE, 0, 0);
 				m_mode = 0;
 				break;
 			}
+			}
+			break;
+		}
+		case IDC_RAPIDFIRE_BTN_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN), TRUE);
+				break;
 			}
 			break;
 		}
@@ -223,9 +369,27 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			case CBN_SELCHANGE:
 			{
 				rapidFireData.ButtonID = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-				Modified[Mofified_ButtonID] = true;
+				Modified[ModifiedRapidFire_ButtonID] = true;
 				break;
 			}
+			case CBN_CLOSEUP:
+			{
+				byte result = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN_STATIC), (result) ? DestinationButton::String((DestButtonID)result) : L"...");
+				::ShowWindow(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN_STATIC), SW_HIDE);
+				::ShowWindow(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN_STATIC), SW_SHOW);
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_RAPIDFIRE_BTN2_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN2), TRUE);
+				break;
 			}
 			break;
 		}
@@ -236,7 +400,15 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			case CBN_SELCHANGE:
 			{
 				rapidFireData.ButtonID2 = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-				Modified[Mofified_ButtonID2] = true;
+				Modified[ModifiedRapidFire_ButtonID2] = true;
+				break;
+			}
+			case CBN_CLOSEUP:
+			{
+				byte result = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				SetWindowText(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN2_STATIC), (result) ? DestinationButton::String((DestButtonID)result) : L"...");
+				::ShowWindow(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN2_STATIC), SW_HIDE);
+				::ShowWindow(GetDlgItem(hWnd, IDC_RAPIDFIRE_BTN2_STATIC), SW_SHOW);
 				break;
 			}
 			}
@@ -251,7 +423,7 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				WCHAR buf1[MAX_PATH];
 				GetWindowText((HWND)lParam, buf1, MAX_PATH);
 				rapidFireData.Firsttime = max(0, _wtoi(buf1));
-				if (canprint) Modified[Mofified_Firsttime] = true;
+				if (canprint) Modified[ModifiedRapidFire_Firsttime] = true;
 				break;
 			}
 			}
@@ -266,7 +438,7 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				WCHAR buf2[MAX_PATH];
 				GetWindowText((HWND)lParam, buf2, MAX_PATH);
 				rapidFireData.Releasetime = max(0, _wtoi(buf2));
-				if (canprint) Modified[Mofified_Releasetime] = true;
+				if (canprint) Modified[ModifiedRapidFire_Releasetime] = true;
 				break;
 			}
 			}
@@ -281,7 +453,7 @@ INT_PTR RapidFireDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				WCHAR buf3[MAX_PATH];
 				GetWindowText((HWND)lParam, buf3, MAX_PATH);
 				rapidFireData.Presstime = max(0, _wtoi(buf3));
-				if (canprint) Modified[Mofified_Presstime] = true;
+				if (canprint) Modified[ModifiedRapidFire_Presstime] = true;
 				break;
 			}
 			}

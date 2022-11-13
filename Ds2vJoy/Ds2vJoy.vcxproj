@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -17,6 +18,8 @@
     <RootNamespace>Ds2vJoy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Ds2vJoy</ProjectName>
+    <TargetFrameworkVersion>
+    </TargetFrameworkVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -47,18 +50,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>
     </LinkIncremental>
-    <LibraryPath>..\SDK\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\SDK\inc;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Ds2vJoyComput\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>
     </LinkIncremental>
-    <LibraryPath>..\SDK\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\SDK\inc;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Ds2vJoyComput\</IntDir>
+    <IntDir>$(SolutionDir)_Comput\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -67,8 +66,7 @@
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>USE_WEBVIEW2_WIN10;_DEBUG;_UNICODE;UNICODE;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../SDK/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -78,7 +76,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <DelayLoadDLLs>ViGEmClient.dll;vJoyInterface.dll;vJoyInstall.dll;WebView2Loader.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>vJoyInstall.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>onecoreuap.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -98,7 +96,6 @@
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>USE_WEBVIEW2_WIN10;NDEBUG;_UNICODE;UNICODE;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../SDK/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -109,9 +106,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>No</GenerateDebugInformation>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <DelayLoadDLLs>ViGEmClient.dll;vJoyInterface.dll;vJoyInstall.dll;WebView2Loader.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalOptions>onecoreuap.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -125,6 +122,9 @@
   <ItemGroup>
     <ClInclude Include="CPULimiter\CPULimiter.h" />
     <ClInclude Include="Crc32\Crc32.h" />
+    <ClInclude Include="Destination.h" />
+    <ClInclude Include="DestinationButton.h" />
+    <ClInclude Include="DInputDlg.h" />
     <ClInclude Include="ExplorerDlg.h" />
     <ClInclude Include="LogDlg.h" />
     <ClInclude Include="NotepadDlg.h" />
@@ -132,7 +132,6 @@
     <ClInclude Include="RapidFireDataDlg.h" />
     <ClInclude Include="RapidFireDlg.h" />
     <ClInclude Include="Source.h" />
-    <ClInclude Include="dsButton.h" />
     <ClInclude Include="Ds2vJoy.h" />
     <ClInclude Include="Findwindow.h" />
     <ClInclude Include="Guardian.h" />
@@ -148,27 +147,25 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingDlg.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="SourceButton.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tasktray.h" />
-    <ClInclude Include="ViGEm.h" />
-    <ClInclude Include="ViGEmDlg.h" />
-    <ClInclude Include="vJoy.h" />
-    <ClInclude Include="vJoyButton.h" />
+    <ClInclude Include="ViGEmClient.h" />
     <ClInclude Include="vJoyDevice.h" />
-    <ClInclude Include="vJoy\declarations.h" />
-    <ClInclude Include="vJoy\hidReportDescFfb.h" />
-    <ClInclude Include="vJoy\hidtoken.h" />
-    <ClInclude Include="vJoy\hidusage.h" />
-    <ClInclude Include="vJoy\public.h" />
-    <ClInclude Include="vJoy\vJoyInterface.h" />
-    <ClInclude Include="vJoy\wrapper.h" />
+    <ClInclude Include="vJoyDlg.h" />
+    <ClInclude Include="vJoyinterface.h" />
     <ClInclude Include="WindowsTools.h" />
+    <ClInclude Include="XOutput.h" />
+    <ClInclude Include="XOutputDlg.h" />
     <ClInclude Include="Zip Utils\unzip.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CPULimiter\CPULimiter.cpp" />
     <ClCompile Include="Crc32\Crc32.cpp" />
+    <ClCompile Include="Destination.cpp" />
+    <ClCompile Include="DestinationButton.cpp" />
+    <ClCompile Include="DInputDlg.cpp" />
     <ClCompile Include="ExplorerDlg.cpp" />
     <ClCompile Include="LogDlg.cpp" />
     <ClCompile Include="NotepadDlg.cpp" />
@@ -176,7 +173,6 @@
     <ClCompile Include="RapidFireDataDlg.cpp" />
     <ClCompile Include="RapidFireDlg.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="dsButton.cpp" />
     <ClCompile Include="Ds2vJoy.cpp" />
     <ClCompile Include="Findwindow.cpp" />
     <ClCompile Include="Guardian.cpp" />
@@ -191,35 +187,153 @@
     <ClCompile Include="MappingDlg.cpp" />
     <ClCompile Include="SettingDlg.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SourceButton.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tasktray.cpp" />
-    <ClCompile Include="ViGEm.cpp" />
-    <ClCompile Include="ViGEmDlg.cpp" />
-    <ClCompile Include="vJoy.cpp" />
-    <ClCompile Include="vJoyButton.cpp" />
+    <ClCompile Include="ViGEmClient.cpp" />
     <ClCompile Include="vJoyDevice.cpp" />
+    <ClCompile Include="vJoyDlg.cpp" />
+    <ClCompile Include="vJoyInterface.cpp" />
+    <ClCompile Include="XOutput.cpp" />
+    <ClCompile Include="XOutputDlg.cpp" />
     <ClCompile Include="Zip Utils\unzip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Ds2vJoy.bmp" />
     <Image Include="Ds2vJoyHelp.bmp" />
-    <Image Include="icon.ico" />
-    <Image Include="icon32.ico" />
+    <Image Include="Ds2vJoy_icon256.ico" />
+    <Image Include="Ds2vJoy_icon32.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_110.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_111.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_112.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_113.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_114.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_120.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_121.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_122.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_123.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_124.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_130.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_131.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_132.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_133.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_134.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_140.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_141.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_142.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_143.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_144.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_150.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_151.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_152.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_153.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_154.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_160.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_161.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_162.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_163.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_164.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_170.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_171.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_172.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_173.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_174.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_180.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_181.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_182.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_183.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_184.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_210.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_211.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_212.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_213.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_214.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_220.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_221.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_222.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_223.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_224.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_230.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_231.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_232.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_233.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_234.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_240.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_241.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_242.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_243.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_244.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_250.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_251.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_252.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_253.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_254.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_260.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_261.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_262.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_263.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_264.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_270.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_271.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_272.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_273.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_274.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_280.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_281.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_282.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_283.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_284.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_310.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_311.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_312.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_313.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_314.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_320.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_321.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_322.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_323.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_324.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_330.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_331.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_332.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_333.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_334.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_340.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_341.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_342.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_343.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_344.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_350.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_351.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_352.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_353.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_354.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_360.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_361.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_362.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_363.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_364.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_370.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_371.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_372.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_373.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_374.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_380.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_381.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_382.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_383.ico" />
+    <Image Include="TrayIcons\Ds2vJoy_384.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Devcon\Devcon.exe" />
     <None Include="HidGuardian\HidCerberus.zip" />
     <None Include="HidGuardian\HidGuardian.zip" />
     <None Include="packages.config" />
+    <None Include="Resource.hm" />
     <None Include="ViGEm\ViGEmBus.zip" />
-    <None Include="ViGEm\ViGEmClient.dll" />
     <None Include="vJoy\vJoyDevice.zip" />
-    <None Include="vJoy\vJoyInstall.dll" />
-    <None Include="vJoy\vJoyInterface.dll" />
-    <None Include="WebView2\WebView2Loader.dll" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
@@ -227,22 +341,29 @@
   <ItemGroup>
     <Font Include="Fonts\NotepadFont.ttf" />
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="vJoy\vJoyInstall.lib" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220201.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220201.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
-    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.1150.38\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.1150.38\build\native\Microsoft.Web.WebView2.targets')" />
-    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.1293.44\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.1293.44\build\native\Microsoft.Web.WebView2.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.1418.22\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.1418.22\build\native\Microsoft.Web.WebView2.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220914.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220914.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220201.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220201.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.1150.38\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.1150.38\build\native\Microsoft.Web.WebView2.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.220331.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.220608.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.1293.44\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.1293.44\build\native\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.221104.6\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.1418.22\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.1418.22\build\native\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220914.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.ImplementationLibrary.1.0.220914.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
   </Target>
+  <PropertyGroup>
+    <WebView2LoaderPreference>Static</WebView2LoaderPreference>
+  </PropertyGroup>
 </Project>

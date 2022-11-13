@@ -13,6 +13,7 @@
 #include "Resource.h"
 #include <atlbase.h>			//A2T T2A W2T T2W A2W W2A
 #include <sstream>				//std+Settings stringstream
+#include <variant>
 #include "Language.h"
 //////////////////////////////////////////////////////////////////////
 #include <set>
@@ -46,6 +47,7 @@
 #pragma comment(lib, "Magnification.lib")
 ////////////////////////////////////////////////////////////////////// Zip Utils
 #include "Zip Utils/unzip.h"
+////////////////////////////////////////////////////////////////////// CPULimiter
 #include "CPULimiter/CPULimiter.h"
 ////////////////////////////////////////////////////////////////////// HTTPRequest
 #include "HTTPRequest/HTTPRequest.hpp"
@@ -59,21 +61,31 @@
 #pragma comment(lib, "SetupAPI.lib")
 ////////////////////////////////////////////////////////////////////// Source
 #include "Crc32/Crc32.h"
-////////////////////////////////////////////////////////////////////// Xinput
-//#include <Xinput.h>
-//#pragma comment(lib, "Xinput.lib")
+////////////////////////////////////////////////////////////////////// DirectInput
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+#include <dinputd.h>			// Preffered control panel joystick
+#include <wrl/client.h>			//           "
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+////////////////////////////////////////////////////////////////////// XInput
+#include <Xinput.h>
+#pragma comment(lib, "Xinput.lib")
 ////////////////////////////////////////////////////////////////////// vJoyInterface
 //#include <winioctl.h>
 ////////////////////////////////////////////////////////////////////// vJoy
-#include "vJoy/public.h"
-#include "vJoy/vJoyInterface.h"
-#pragma comment(lib, "vJoy/vJoyInterface.lib")
+#include <Dbt.h>
+#include <INITGUID.H>	// Definitions for controlling GUID initialization
+#include <winioctl.h>
+#include "vJoyInterface.h"
+#include "vJoyDevice.h"
+//#include "vJoy/public.h"
+//#include "vJoy/vJoyInterface.h"
+//#pragma comment(lib, "vJoy/vJoyInterface.lib")
 ////////////////////////////////////////////////////////////////////// vJoyConf
-#include "vJoy/hidtoken.h"
-#include "vJoy/hidusage.h"
-#include "vJoy/declarations.h"
-#include "vJoy/wrapper.h"
-#pragma comment(lib, "vJoy/vJoyInstall.lib")
+//#include "vJoy/hidtoken.h"
+//#include "vJoy/hidusage.h"
+//#include "vJoy/declarations.h"
 ////////////////////////////////////////////////////////////////////// Log
 #include "LogDlg.h"
 ////////////////////////////////////////////////////////////////////// Settings
@@ -87,13 +99,30 @@
 ////////////////////////////////////////////////////////////////////// RapidFire
 //#include <map>
 ////////////////////////////////////////////////////////////////////// ViGem
-#include "ViGEm/Client.h"
-#pragma comment(lib, "ViGEm/ViGEmClient.lib")
+//#include "winres.h"
+//#include <Windows.h>
+//#include <SetupAPI.h>
+//#include <initguid.h>
+//#include <Dbghelp.h>
+//#include <winioctl.h>
+//#include <cstdlib>
+//#include <climits>
+//#include <vector>
+//#include <algorithm>
+//#include <thread>
+//#include <functional>
+//#include <limits.h>
+#include "ViGEmClient.h"
+//#pragma comment(lib, "ViGEm/ViGEmClient.lib")
 ////////////////////////////////////////////////////////////////////// Keymap
 //#include <vector>
 ////////////////////////////////////////////////////////////////////// Guardian
 #include <psapi.h>				// (EnumProcesses, EnumProcessModules & GetModuleBaseName)
 ////////////////////////////////////////////////////////////////////// ExplorerDlg
+//#include "WebView2.h"
+//#include "WebView2EnvironmentOptions.h"
+//#pragma comment(lib, "WebView2Loader.dll.lib")
+//#pragma comment(lib, "WebView2LoaderStatic.lib")
 #include <DispatcherQueue.h>
 #include <regex>
 #include <ShObjIdl_core.h>

@@ -7,9 +7,13 @@ public:
 	MappingDlg();
 	~MappingDlg();
 
-	void				Init(HINSTANCE hInst, HWND hWnd, bool isClone = false);
+	void				Init(bool isClone = false);
 	void				SetTab(int tab, bool activate = true);
-	void				redrawTabs(int tab);
+	void				redrawTabs(int tab, bool actualize = true);
+	void				PageUp();
+	void				PageDown();
+	void				PageHome();
+	void				PageEnd();
 	void				addMappingDlgBack();
 	void				editMappingDlgBack();
 	void				editMappingDlgBackMulti();
@@ -52,7 +56,6 @@ private:
 	void				EndDrag(int x, int y);
 	void				setInsertMark(int idx);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_hDlg = NULL;
 	HWND				m_hDlg2 = NULL;
 	HWND				m_hTab = NULL;
@@ -62,6 +65,7 @@ private:
 	HMENU				hMenu_Tabs = NULL;
 	HMENU				hMenu_Tabs_2 = NULL;
 
+	std::chrono::system_clock::time_point m_timeOfLastDarkMenuCall = std::chrono::system_clock::now();
 	unsigned char		tabrightclick;
 	int					m_TabsID[16] = { 0 };
 	int					m_ReminderId[32] = { 0 };

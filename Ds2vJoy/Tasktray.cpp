@@ -10,15 +10,14 @@ Tasktray::~Tasktray()
 	DestroyMenu(m_menu);
 }
 
-void Tasktray::Init(HINSTANCE hInst, HWND hWnd)
+void Tasktray::Init()
 {
-	m_hWnd = hWnd;
 	m_nid.cbSize = sizeof(NOTIFYICONDATA);
-	m_nid.hWnd = hWnd;
+	m_nid.hWnd = tape.Ds2hWnd;
 	m_nid.uID = 1;
 	m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	m_nid.uCallbackMessage = WM_TASKTRAY;
-	m_nid.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_DS2VJOY_ICON));
+	m_nid.hIcon = LoadIcon(tape.Ds2hInst, MAKEINTRESOURCE(IDI_DS2VJOY_ICON32));
 	swprintf_s(m_nid.szTip, 128, I18N.APP_TITLE);
 	CreateMenu();
 }
@@ -36,6 +35,11 @@ void Tasktray::CreateMenu()
 		if (tape.Profile != 3)
 			AppendMenu(m_menu, MF_POPUP, IDM_PROFILE3, I18N.Profile_3);
 		AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
+	}
+	if (tape.App0Name != nullptr && *tape.App0Name != '\0')
+	{
+		AppendMenu(m_menu, MF_POPUP, IDM_APP0, tape.App0Name);
+		MenuOffset++;
 	}
 	if (tape.App1Name != nullptr && *tape.App1Name != '\0')
 	{
@@ -57,11 +61,6 @@ void Tasktray::CreateMenu()
 		AppendMenu(m_menu, MF_POPUP, IDM_APP4, tape.App4Name);
 		MenuOffset++;
 	}
-	if (tape.App5Name != nullptr && *tape.App5Name != '\0')
-	{
-		AppendMenu(m_menu, MF_POPUP, IDM_APP5, tape.App5Name);
-		MenuOffset++;
-	}
 	if (MenuOffset)
 	{
 		AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
@@ -70,7 +69,7 @@ void Tasktray::CreateMenu()
 	AppendMenu(m_menu, MF_GRAYED, IDM_MAPPING, _T("Mapping"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_RAPIDFIRE, _T("RapidFire"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_VJOY, _T("vJoy"));
-	AppendMenu(m_menu, MF_GRAYED, IDM_VIGEM, _T("ViGEm"));
+	AppendMenu(m_menu, MF_GRAYED, IDM_XINPUT, _T("XOutput"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_KEYMAP, _T("Keymap"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_GUARDIAN, _T("Guardian"));
 	for (int i = 0; i < 6; i++) { SwapMenuitem(i); };
@@ -87,7 +86,7 @@ void Tasktray::SwapMenuitem(int item)
 {
 	switch (item)
 	{
-	case Tasktray_Item_MappingPaused:
+	case TasktrayItem_MappingPaused:
 	{
 		if (tape.MappingPaused)
 			ModifyMenu(m_menu, MenuOffset, MF_BYPOSITION | MF_POPUP, IDM_MAPPING, I18N.MappingPaused_Off);
@@ -95,7 +94,7 @@ void Tasktray::SwapMenuitem(int item)
 			ModifyMenu(m_menu, MenuOffset, MF_BYPOSITION | MF_POPUP, IDM_MAPPING, I18N.MappingPaused_On);
 		break;
 	}
-	case Tasktray_Item_RapidFirePaused:
+	case TasktrayItem_RapidFirePaused:
 	{
 		if (tape.RapidFirePaused)
 			ModifyMenu(m_menu, MenuOffset + 1, MF_BYPOSITION | MF_POPUP, IDM_RAPIDFIRE, I18N.RapidFirePaused_Off);
@@ -103,7 +102,7 @@ void Tasktray::SwapMenuitem(int item)
 			ModifyMenu(m_menu, MenuOffset + 1, MF_BYPOSITION | MF_POPUP, IDM_RAPIDFIRE, I18N.RapidFirePaused_On);
 		break;
 	}
-	case Tasktray_Item_vJoyPaused:
+	case TasktrayItem_vJoyPaused:
 	{
 		if (tape.vJoyPaused)
 			ModifyMenu(m_menu, MenuOffset + 2, MF_BYPOSITION | MF_POPUP, IDM_VJOY, I18N.vJoyPaused_Off);
@@ -111,15 +110,15 @@ void Tasktray::SwapMenuitem(int item)
 			ModifyMenu(m_menu, MenuOffset + 2, MF_BYPOSITION | MF_POPUP, IDM_VJOY, I18N.vJoyPaused_On);
 		break;
 	}
-	case Tasktray_Item_ViGEmPaused:
+	case TasktrayItem_XOutputPaused:
 	{
-		if (tape.ViGEmPaused)
-			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_VIGEM, I18N.ViGEmPaused_Off);
+		if (tape.XOutputPaused)
+			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_XINPUT, I18N.XOutputPaused_Off);
 		else
-			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_VIGEM, I18N.ViGEmPaused_On);
+			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_XINPUT, I18N.XOutputPaused_On);
 		break;
 	}
-	case Tasktray_Item_KeymapPaused:
+	case TasktrayItem_KeymapPaused:
 	{
 		if (tape.KeymapPaused)
 			ModifyMenu(m_menu, MenuOffset + 4, MF_BYPOSITION | MF_POPUP, IDM_KEYMAP, I18N.KeymapPaused_Off);
@@ -127,7 +126,7 @@ void Tasktray::SwapMenuitem(int item)
 			ModifyMenu(m_menu, MenuOffset + 4, MF_BYPOSITION | MF_POPUP, IDM_KEYMAP, I18N.KeymapPaused_On);
 		break;
 	}
-	case Tasktray_Item_GuardianPaused:
+	case TasktrayItem_GuardianPaused:
 	{
 		if (tape.GuardianPaused)
 			ModifyMenu(m_menu, MenuOffset + 5, MF_BYPOSITION | MF_POPUP, IDM_GUARDIAN, I18N.GuardianPaused_Off);
@@ -169,17 +168,17 @@ void Tasktray::Message(WPARAM wParam, LPARAM lParam)
 		{
 		case WM_LBUTTONDBLCLK:
 		{
-			ShowWindow(m_hWnd, SW_SHOWNORMAL);
-			SetForegroundWindow(m_hWnd);
-			PostMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+			ShowWindow(tape.Ds2hWnd, SW_SHOWNORMAL);
+			SetForegroundWindow(tape.Ds2hWnd);
+			PostMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
 			break;
 		}
 		case WM_RBUTTONDOWN:
 		{
-			SetForegroundWindow(m_hWnd);
+			SetForegroundWindow(tape.Ds2hWnd);
 			struct MenuPosition mp;
 			GetMenuPosition(&mp);
-			TrackPopupMenu(m_menu, mp.flags, mp.x, mp.y, 0, m_hWnd, NULL);
+			TrackPopupMenu(m_menu, mp.flags, mp.x, mp.y, 0, tape.Ds2hWnd, NULL);
 			break;
 		}
 		}
@@ -198,7 +197,7 @@ void Tasktray::Message(WPARAM wParam, LPARAM lParam)
 		UINT location = ABE_BOTTOM;
 		APPBARDATA pData;
 		pData.cbSize = sizeof(APPBARDATA);
-		pData.hWnd = m_hWnd;
+		pData.hWnd = tape.Ds2hWnd;
 
 		if (SHAppBarMessage(ABM_GETTASKBARPOS, &pData))
 		{
@@ -212,7 +211,6 @@ void Tasktray::Message(WPARAM wParam, LPARAM lParam)
 	void Tasktray::GetMenuPosition(struct MenuPosition* menuposition)
 	{
 		POINT p;
-
 		if (!GetCursorPos(&p))
 		{
 			p.x = GetSystemMetrics(SM_CXSCREEN) / 2;

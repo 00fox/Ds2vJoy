@@ -31,49 +31,48 @@ MappingDataDlg::~MappingDataDlg()
 	DeleteObject(hbrush_z22);
 }
 
-void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
+void MappingDataDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_hInst = hInst;
 	m_mode = 0;
 	docked = 1;
 	docked_last = 1;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_MAPPING_ADD), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_MAPPING_ADD), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 
-	long lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
+	int lStyle = GetWindowLong(m_hDlg, GWL_STYLE);
 	lStyle = lStyle & ~WS_CAPTION;
 	SetWindowLong(m_hDlg, GWL_STYLE, lStyle);
 
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_1, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_2, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_3, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_4, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_5, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_1, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_2, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_3, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_4, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_5, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_6, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_7, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_8, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_1, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_2, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_3, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_4, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_5, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_1, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_2, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_3, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_4, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_5, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_6, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_7, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_8, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_LED, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_1_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_2_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_3_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_4_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_5_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_6_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_7_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_8_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_1_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_2_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_3_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_4_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_5_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_6_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_7_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_8_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_1_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_2_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_3_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_4_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_5_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_6_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_7_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_8_START, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_1_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_2_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_3_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_4_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_5_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_6_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_7_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_8_STOP, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_GRID_X, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_GRID_Y, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_GRID_W, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
@@ -82,7 +81,8 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_GRID_NH, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_X, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_Y, WM_SETFONT, WPARAM(tape.hEdit3), MAKELPARAM(TRUE, 0));
-
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_CANCEL, WM_SETFONT, WPARAM(tape.hCancel), MAKELPARAM(TRUE, 0));
+	
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_IF_MOUSE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_FORCE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SHORT, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
@@ -92,20 +92,20 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_PAUSE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TRANSITIVITY, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TOGGLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_2_OR, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_3_OR, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_4_NOT, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_5_NOT, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_2_OR, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_3_OR, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_4_NOT, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_5_NOT, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TARGET_1, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TARGET_2, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TARGET_3, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TARGET_4, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_TARGET_5, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_1_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_2_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_3_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_4_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DS_5_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_1_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_2_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_3_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_4_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SRCE_5_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_ONRELEASE_1, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_ONRELEASE_2, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_ONRELEASE_3, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
@@ -154,14 +154,14 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SWITCH_6, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SWITCH_7, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_SWITCH_8, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_1_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_2_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_3_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_4_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_5_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_6_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_7_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_MAPPING_VJOY_8_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_1_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_2_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_3_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_4_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_5_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_6_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_7_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_MAPPING_DEST_8_DISABLE, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_MOUSE_01, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_MOUSE_02, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_MAPPING_MOUSE_03, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
@@ -188,42 +188,41 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SetWindowText(GetDlgItem(m_hDlg, IDC_MIND_OK), I18N.MIND_OK);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_MIND_CANCEL), I18N.MIND_CANCEL);
 
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DS_5), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DS_1), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DS_2), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DS_3), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DS_4), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DS_5), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_1), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_2), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_3), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_4), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_5), 0);
 	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_LED), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_1), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_2), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_3), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_4), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_5), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_6), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_7), 0);
-	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_8), 0);					
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_1), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_2), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_3), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_4), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_5), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_6), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_7), 0);
+	ComboBox_SetMinVisible(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_8), 0);
 
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DS_1), &info); m_lists[0] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DS_2), &info); m_lists[1] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DS_3), &info); m_lists[2] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DS_4), &info); m_lists[3] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DS_5), &info); m_lists[4] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_1), &info); m_lists[0] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_2), &info); m_lists[1] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_3), &info); m_lists[2] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_4), &info); m_lists[3] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_5), &info); m_lists[4] = info.hwndList;
 	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_LED), &info); m_lists[5] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_1), &info); m_lists[6] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_2), &info); m_lists[7] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_3), &info); m_lists[8] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_4), &info); m_lists[9] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_5), &info); m_lists[10] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_6), &info); m_lists[11] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_7), &info); m_lists[12] = info.hwndList;
-	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_8), &info); m_lists[13] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_1), &info); m_lists[6] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_2), &info); m_lists[7] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_3), &info); m_lists[8] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_4), &info); m_lists[9] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_5), &info); m_lists[10] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_6), &info); m_lists[11] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_7), &info); m_lists[12] = info.hwndList;
+	GetComboBoxInfo(GetDlgItem(m_hDlg, IDC_MAPPING_DEST_8), &info); m_lists[13] = info.hwndList;
 	for (int i = 0; i < 14; i++)
 		if (m_lists[i])
 			::MoveWindow(m_lists[i], 0, 0, 50, 288, FALSE);
 
-	HBITMAP m_background = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));
+	HBITMAP m_background = LoadBitmap(tape.Ds2hInst, MAKEINTRESOURCE(IDB_BITMAP1));
 	HDC srcDC = CreateCompatibleDC(GetDC(NULL));
 	HDC newDC = CreateCompatibleDC(GetDC(NULL));
 	HBITMAP srcBitmap = (HBITMAP)SelectObject(srcDC, m_background);
@@ -257,8 +256,6 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SelectObject(newDC, newBitmap);
 	DeleteDC(srcDC);
 	DeleteDC(newDC);
-
-	Hide();
 	
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_1);
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_2);
@@ -269,125 +266,125 @@ void MappingDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_7);
 	mouseoverCB.push_back(IDC_MAPPING_ONRELEASE_8);
 
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_IF_MOUSE), I18N.HELP_IFMOUSE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_FORCE), I18N.HELP_FORCE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SHORT), I18N.HELP_SHORT);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DOUBLE), I18N.HELP_DOUBLE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_LONG), I18N.HELP_LONG);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_2_OR), I18N.HELP_ORXOR);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_3_OR), I18N.HELP_ORXOR);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_4_NOT), I18N.HELP_NOT);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_5_NOT), I18N.HELP_NOT);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_1), I18N.HELP_SOURCE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_2), I18N.HELP_SOURCE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_3), I18N.HELP_SOURCE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_4), I18N.HELP_SOURCE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_5), I18N.HELP_SOURCE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_1), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_2), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_3), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_4), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_5), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_6), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_7), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_8), I18N.HELP_DESTINATION);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_1_DISABLE), I18N.HELP_DISABLING_S);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_2_DISABLE), I18N.HELP_DISABLING_S);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_3_DISABLE), I18N.HELP_DISABLING_S);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_4_DISABLE), I18N.HELP_DISABLING_S);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DS_5_DISABLE), I18N.HELP_DISABLING_S);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_1_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_2_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_3_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_4_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_5_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_6_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_7_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_8_DISABLE), I18N.HELP_DISABLING_D);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MACRO), I18N.HELP_MACRO);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_PAUSE), I18N.HELP_PAUSE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TRANSITIVITY), I18N.HELP_TRANSITIVITY);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TOGGLE), I18N.HELP_TOGGLE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_1), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_2), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_3), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_4), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_5), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_6), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_7), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_8), I18N.HELP_SWITCH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_1), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_2), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_3), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_4), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_5), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_6), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_7), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_8), I18N.HELP_OVERCONTROL);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_1_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_2_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_3_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_4_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_5_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_6_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_7_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_8_START), I18N.HELP_START);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_1_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_2_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_3_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_4_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_5_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_6_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_7_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_VJOY_8_STOP), I18N.HELP_END);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_1), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_2), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_3), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_4), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_5), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_6), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_7), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_8), I18N.HELP_ONRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_4), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_5), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_6), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_7), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_8), I18N.HELP_NORELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_1), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_2), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_3), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_4), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_5), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_6), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_7), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8), I18N.HELP_NLRELEASE);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_01), I18N.HELP_MOUSE_L1);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_02), I18N.HELP_MOUSE_L2);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_03), I18N.HELP_MOUSE_L3);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_04), I18N.HELP_MOUSE_L4);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_05), I18N.HELP_MOUSE_L5);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_11), I18N.HELP_MOUSE_T1);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_12), I18N.HELP_MOUSE_T2);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_13), I18N.HELP_MOUSE_T3);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_14), I18N.HELP_MOUSE_T4);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_15), I18N.HELP_MOUSE_T5);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_21), I18N.HELP_MOUSE_R1);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_22), I18N.HELP_MOUSE_R2);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_23), I18N.HELP_MOUSE_R3);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_24), I18N.HELP_MOUSE_R4);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_25), I18N.HELP_MOUSE_R5);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_GRID), I18N.HELP_MOUSE_GRID);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_X), I18N.HELP_GRID_X);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_Y), I18N.HELP_GRID_Y);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_W), I18N.HELP_GRID_W);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_H), I18N.HELP_GRID_H);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_NW), I18N.HELP_GRID_NW);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_NH), I18N.HELP_GRID_NH);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_X), I18N.HELP_DIGITS);
-	CreateToolTip(hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_Y), I18N.HELP_DIGITS);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_IF_MOUSE), I18N.HELP_IFMOUSE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_FORCE), I18N.HELP_FORCE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SHORT), I18N.HELP_SHORT);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DOUBLE), I18N.HELP_DOUBLE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_LONG), I18N.HELP_LONG);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_2_OR), I18N.HELP_ORXOR);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_3_OR), I18N.HELP_ORXOR);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_4_NOT), I18N.HELP_NOT);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_5_NOT), I18N.HELP_NOT);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_1), I18N.HELP_SOURCE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_2), I18N.HELP_SOURCE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_3), I18N.HELP_SOURCE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_4), I18N.HELP_SOURCE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TARGET_5), I18N.HELP_SOURCE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_1), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_2), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_3), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_4), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_5), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_6), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_7), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ACTION_8), I18N.HELP_DESTINATION);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_1_DISABLE), I18N.HELP_DISABLING_S);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_2_DISABLE), I18N.HELP_DISABLING_S);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_3_DISABLE), I18N.HELP_DISABLING_S);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_4_DISABLE), I18N.HELP_DISABLING_S);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SRCE_5_DISABLE), I18N.HELP_DISABLING_S);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_1_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_2_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_3_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_4_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_5_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_6_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_7_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_8_DISABLE), I18N.HELP_DISABLING_D);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MACRO), I18N.HELP_MACRO);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_PAUSE), I18N.HELP_PAUSE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TRANSITIVITY), I18N.HELP_TRANSITIVITY);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_TOGGLE), I18N.HELP_TOGGLE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_1), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_2), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_3), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_4), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_5), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_6), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_7), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_SWITCH_8), I18N.HELP_SWITCH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_1), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_2), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_3), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_4), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_5), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_6), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_7), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_OVERCONTROL_8), I18N.HELP_OVERCONTROL);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_1_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_2_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_3_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_4_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_5_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_6_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_7_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_8_START), I18N.HELP_START);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_1_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_2_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_3_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_4_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_5_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_6_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_7_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_DEST_8_STOP), I18N.HELP_END);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_1), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_2), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_3), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_4), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_5), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_6), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_7), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_ONRELEASE_8), I18N.HELP_ONRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_3), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_4), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_5), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_6), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_7), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_8), I18N.HELP_NORELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_1), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_2), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_3), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_4), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_5), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_6), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_7), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8), I18N.HELP_NLRELEASE);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_01), I18N.HELP_MOUSE_L1);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_02), I18N.HELP_MOUSE_L2);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_03), I18N.HELP_MOUSE_L3);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_04), I18N.HELP_MOUSE_L4);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_05), I18N.HELP_MOUSE_L5);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_11), I18N.HELP_MOUSE_T1);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_12), I18N.HELP_MOUSE_T2);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_13), I18N.HELP_MOUSE_T3);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_14), I18N.HELP_MOUSE_T4);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_15), I18N.HELP_MOUSE_T5);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_21), I18N.HELP_MOUSE_R1);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_22), I18N.HELP_MOUSE_R2);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_23), I18N.HELP_MOUSE_R3);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_24), I18N.HELP_MOUSE_R4);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_25), I18N.HELP_MOUSE_R5);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_MOUSE_GRID), I18N.HELP_MOUSE_GRID);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_X), I18N.HELP_GRID_X);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_Y), I18N.HELP_GRID_Y);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_W), I18N.HELP_GRID_W);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_H), I18N.HELP_GRID_H);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_NW), I18N.HELP_GRID_NW);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_GRID_NH), I18N.HELP_GRID_NH);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_X), I18N.HELP_DIGITS);
+	CreateToolTip(tape.Ds2hWnd, GetDlgItem(m_hDlg, IDC_MAPPING_Y), I18N.HELP_DIGITS);
 }
 
 void MappingDataDlg::Open(HWND parent, int mode, int tab)
@@ -396,6 +393,7 @@ void MappingDataDlg::Open(HWND parent, int mode, int tab)
 	m_Tab = tab;
 	firsttime = false;
 	canprint = false;
+	m_rightClickOk = false;
 
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_1));
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NORELEASE_2));
@@ -415,7 +413,7 @@ void MappingDataDlg::Open(HWND parent, int mode, int tab)
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_NLRELEASE_8));
 
 	Show();
-	PostMessage(m_hWnd, WM_SIZE, -1, -2);
+	PostMessage(tape.Ds2hWnd, WM_SIZE, -1, -2);
 	danger = false;
 	capturehasbeendone = false;
 	whohasfocus = 0;
@@ -424,7 +422,7 @@ void MappingDataDlg::Open(HWND parent, int mode, int tab)
 
 void MappingDataDlg::_InitDialog(HWND hWnd)
 {
-	for (int i = 0; i < Mapping::Led_Action_Count; i++)
+	for (int i = 0; i < Mapping::LedAction_Count; i++)
 	{
 		WCHAR* str = Mapping::LedString((LedActionID)i);
 		SendDlgItemMessage(hWnd, IDC_MAPPING_LED, CB_ADDSTRING, 0, LPARAM(str));
@@ -513,7 +511,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		{
 			SetBkColor(hdcStatic, tape.Bk_STATIC);
 			SetTextColor(hdcStatic, tape.ink_POSTIT);
-			return (LRESULT)tape.hB_STATIC;
+			return (LRESULT)tape.hB_BackGround;
 		}
 	}
 	case WM_CTLCOLOREDIT:
@@ -522,82 +520,82 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		SetBkMode(hdcStatic, TRANSPARENT);
 		switch (GetDlgCtrlID((HWND)lParam))
 		{
-		case IDC_MAPPING_VJOY_1_START:
+		case IDC_MAPPING_DEST_1_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z01;
 		}
-		case IDC_MAPPING_VJOY_2_START:
+		case IDC_MAPPING_DEST_2_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z02;
 		}
-		case IDC_MAPPING_VJOY_3_START:
+		case IDC_MAPPING_DEST_3_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z03;
 		}
-		case IDC_MAPPING_VJOY_4_START:
+		case IDC_MAPPING_DEST_4_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z04;
 		}
-		case IDC_MAPPING_VJOY_5_START:
+		case IDC_MAPPING_DEST_5_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z05;
 		}
-		case IDC_MAPPING_VJOY_6_START:
+		case IDC_MAPPING_DEST_6_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z06;
 		}
-		case IDC_MAPPING_VJOY_7_START:
+		case IDC_MAPPING_DEST_7_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z07;
 		}
-		case IDC_MAPPING_VJOY_8_START:
+		case IDC_MAPPING_DEST_8_START:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z08;
 		}
-		case IDC_MAPPING_VJOY_1_STOP:
+		case IDC_MAPPING_DEST_1_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z09;
 		}
-		case IDC_MAPPING_VJOY_2_STOP:
+		case IDC_MAPPING_DEST_2_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z10;
 		}
-		case IDC_MAPPING_VJOY_3_STOP:
+		case IDC_MAPPING_DEST_3_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z11;
 		}
-		case IDC_MAPPING_VJOY_4_STOP:
+		case IDC_MAPPING_DEST_4_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z12;
 		}
-		case IDC_MAPPING_VJOY_5_STOP:
+		case IDC_MAPPING_DEST_5_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z13;
 		}
-		case IDC_MAPPING_VJOY_6_STOP:
+		case IDC_MAPPING_DEST_6_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z14;
 		}
-		case IDC_MAPPING_VJOY_7_STOP:
+		case IDC_MAPPING_DEST_7_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z15;
 		}
-		case IDC_MAPPING_VJOY_8_STOP:
+		case IDC_MAPPING_DEST_8_STOP:
 		{
 			SetTextColor(hdcStatic, tape.ink_EDIT_TIMELINE);
 			return (LRESULT)hbrush_z16;
@@ -642,7 +640,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_LIST);
+		SetTextColor(hdcStatic, tape.ink_COMBO);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		return (LRESULT)tape.hB_LIST;
 	}
@@ -682,39 +680,80 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			BOOL selected = (DrawMenuStructure->itemState & ODS_SELECTED) || (DrawMenuStructure->itemState & ODS_HOTLIGHT);
 			if (selected)
-				FrameRect(DrawMenuStructure->hDC, &DrawMenuStructure->rcItem, tape.hB_yellow);
+			{
+				switch (DrawMenuStructure->CtlID)
+				{
+				case IDC_MAPPING_OK:
+				case IDC_MAPPING_RELOAD:
+				{
+					HDC hDC = GetDC(GetDlgItem(hWnd, IDC_MAPPING_OK));
+					SelectObject(hDC, GetStockObject(DC_PEN));
+					SetDCPenColor(hDC, tape.ink_yellow);
+
+					RECT rect;
+					GetClientRect(GetDlgItem(hWnd, IDC_MAPPING_OK), &rect);
+
+					POINT Pt;
+					MoveToEx(hDC, rect.right, rect.bottom, &Pt);
+					LineTo(hDC, rect.left, rect.bottom);
+					LineTo(hDC, rect.left, rect.top);
+					LineTo(hDC, rect.right, rect.top);
+
+					hDC = GetDC(GetDlgItem(hWnd, IDC_MAPPING_RELOAD));
+					SelectObject(hDC, GetStockObject(DC_PEN));
+					SetDCPenColor(hDC, tape.ink_yellow);
+
+					GetClientRect(GetDlgItem(hWnd, IDC_MAPPING_RELOAD), &rect);
+
+					MoveToEx(hDC, rect.left, rect.top, &Pt);
+					LineTo(hDC, rect.right, rect.top);
+					LineTo(hDC, rect.right, rect.bottom);
+					LineTo(hDC, rect.left, rect.bottom);
+
+					::ReleaseDC(hWnd, hDC);
+					break;
+				}
+				default: { FrameRect(DrawMenuStructure->hDC, &DrawMenuStructure->rcItem, tape.hB_yellow); break; }
+				}
+			}
 
 			RECT square = DrawMenuStructure->rcItem;
 			square.left += 1;
 			square.top += 1;
 			square.right -= 1;
 			square.bottom -= 1;
+			RECT square2 = square;
+			square2.top += 1;
+			RECT square3 = square2;
+			square3.left += 1;
+			RECT square4 = square2;
+			square4.top += 1;
 
 			WCHAR wszBuffer[MAX_PATH];
 			WCHAR* buf = wszBuffer;
 			int nCharCount = 0;
 			switch (DrawMenuStructure->CtlID)
 			{
-			case IDC_MAPPING_BTN_DS_1: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DS_1), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_DS_2: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DS_2), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_DS_3: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DS_3), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_DS_4: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DS_4), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_DS_5: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DS_5), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_SRCE_1: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_SRCE_1), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_SRCE_2: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_SRCE_2), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_SRCE_3: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_SRCE_3), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_SRCE_4: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_SRCE_4), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_SRCE_5: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_SRCE_5), wszBuffer, MAX_PATH); break; }
 			case IDC_MAPPING_BTN_LED: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_LED), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_1: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_2: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_3: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_4: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_5: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_6: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_7: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7), wszBuffer, MAX_PATH); break; }
-			case IDC_MAPPING_BTN_VJOY_8: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_1: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_1), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_2: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_2), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_3: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_3), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_4: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_4), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_5: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_5), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_6: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_6), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_7: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_7), wszBuffer, MAX_PATH); break; }
+			case IDC_MAPPING_BTN_DEST_8: { nCharCount = GetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_8), wszBuffer, MAX_PATH); break; }
 			case IDC_MAPPING_IF_MOUSE:
 			{
 				switch (mappingData.Ifmouse)
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_purple); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_purple); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -722,8 +761,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (mappingData.Force)
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_orange); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_orange); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -774,7 +813,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (mappingData.Transitivity)
 				{
-				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"►"); break; }
+				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L">"); break; }
 				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"C"); break; }
 				case 3: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"L"); break; }
 				case 4: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"R"); break; }
@@ -791,39 +830,39 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				}
 				break;
 			}
-			case IDC_MAPPING_DS_2_OR:
+			case IDC_MAPPING_SRCE_2_OR:
 			{
 				switch (mappingData.OrXorNot[0])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_yellow); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_yellow); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
-			case IDC_MAPPING_DS_3_OR:
+			case IDC_MAPPING_SRCE_3_OR:
 			{
 				switch (mappingData.OrXorNot[1])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_yellow); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_yellow); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
-			case IDC_MAPPING_DS_4_NOT:
+			case IDC_MAPPING_SRCE_4_NOT:
 			{
 				switch (mappingData.OrXorNot[2])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_grey); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_grey); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
-			case IDC_MAPPING_DS_5_NOT:
+			case IDC_MAPPING_SRCE_5_NOT:
 			{
 				switch (mappingData.OrXorNot[3])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_grey); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_grey); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"▬", -1, &square4, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -833,23 +872,24 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case IDC_MAPPING_TARGET_4:
 			case IDC_MAPPING_TARGET_5:
 			{
-				if (mappingData.Target[DrawMenuStructure->CtlID - IDC_MAPPING_TARGET_1])
+				switch (mappingData.Target[DrawMenuStructure->CtlID - IDC_MAPPING_TARGET_1])
 				{
-					nCharCount = 1;
-					buf += swprintf_s(buf, MAX_PATH, L"V"); break;
+				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"S"); break; }
+				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"K"); break; }
+				case 3: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"D"); break; }
 				}
 				break;
 			}
-			case IDC_MAPPING_DS_1_DISABLE:
-			case IDC_MAPPING_DS_2_DISABLE:
-			case IDC_MAPPING_DS_3_DISABLE:
-			case IDC_MAPPING_DS_4_DISABLE:
-			case IDC_MAPPING_DS_5_DISABLE:
+			case IDC_MAPPING_SRCE_1_DISABLE:
+			case IDC_MAPPING_SRCE_2_DISABLE:
+			case IDC_MAPPING_SRCE_3_DISABLE:
+			case IDC_MAPPING_SRCE_4_DISABLE:
+			case IDC_MAPPING_SRCE_5_DISABLE:
 			{
-				switch (mappingData.dsDisable[DrawMenuStructure->CtlID - IDC_MAPPING_DS_1_DISABLE])
+				switch (mappingData.srceDisable[DrawMenuStructure->CtlID - IDC_MAPPING_SRCE_1_DISABLE])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); DrawText(DrawMenuStructure->hDC, L"❌", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"❌", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -862,10 +902,11 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case IDC_MAPPING_ONRELEASE_7:
 			case IDC_MAPPING_ONRELEASE_8:
 			{
+				SetTextColor(DrawMenuStructure->hDC, tape.ink_POSTIT);
 				switch (mappingData.OnRelease[DrawMenuStructure->CtlID - IDC_MAPPING_ONRELEASE_1])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); DrawText(DrawMenuStructure->hDC, L"◾", -1, &square3, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"◾", -1, &square3, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -883,7 +924,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				case 1: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"M"); break; }
 				case 2: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"S"); break; }
 				case 3: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"A"); break; }
-				case 4: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"W"); break; }
+				case 4: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"E"); break; }
+				case 5: { nCharCount = 1; buf += swprintf_s(buf, MAX_PATH, L"W"); break; }
 				}
 				break;
 			}
@@ -898,8 +940,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (mappingData.Switch[DrawMenuStructure->CtlID - IDC_MAPPING_SWITCH_1])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); DrawText(DrawMenuStructure->hDC, L"◾", -1, &square3, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"◾", -1, &square3, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -914,24 +956,24 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			switch (mappingData.Overcontrol[DrawMenuStructure->CtlID - IDC_MAPPING_OVERCONTROL_1])
 			{
-			case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); break; }
-			case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+			case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_emerald); DrawText(DrawMenuStructure->hDC, L"◾", -1, &square3, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+			case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"◾", -1, &square3, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 			}
 			break;
 			}
-			case IDC_MAPPING_VJOY_1_DISABLE:
-			case IDC_MAPPING_VJOY_2_DISABLE:
-			case IDC_MAPPING_VJOY_3_DISABLE:
-			case IDC_MAPPING_VJOY_4_DISABLE:
-			case IDC_MAPPING_VJOY_5_DISABLE:
-			case IDC_MAPPING_VJOY_6_DISABLE:
-			case IDC_MAPPING_VJOY_7_DISABLE:
-			case IDC_MAPPING_VJOY_8_DISABLE:
+			case IDC_MAPPING_DEST_1_DISABLE:
+			case IDC_MAPPING_DEST_2_DISABLE:
+			case IDC_MAPPING_DEST_3_DISABLE:
+			case IDC_MAPPING_DEST_4_DISABLE:
+			case IDC_MAPPING_DEST_5_DISABLE:
+			case IDC_MAPPING_DEST_6_DISABLE:
+			case IDC_MAPPING_DEST_7_DISABLE:
+			case IDC_MAPPING_DEST_8_DISABLE:
 			{
-				switch (mappingData.vjDisable[DrawMenuStructure->CtlID - IDC_MAPPING_VJOY_1_DISABLE])
+				switch (mappingData.destDisable[DrawMenuStructure->CtlID - IDC_MAPPING_DEST_1_DISABLE])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); DrawText(DrawMenuStructure->hDC, L"❌", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"❌", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -944,8 +986,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				if (mappingData.Mouse[0] == DrawMenuStructure->CtlID - IDC_MAPPING_MOUSE_01 + 1)
 					switch (mappingData.Mouse[3])
 					{
-					case 0: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); break; }
-					case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+					case 0: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+					case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 					}
 				break;
 			}
@@ -958,8 +1000,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				if (mappingData.Mouse[1] == DrawMenuStructure->CtlID - IDC_MAPPING_MOUSE_11 + 1)
 					switch (mappingData.Mouse[4])
 					{
-					case 0: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); break; }
-					case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+					case 0: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+					case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 					}
 				break;
 			}
@@ -972,8 +1014,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				if (mappingData.Mouse[2] == DrawMenuStructure->CtlID - IDC_MAPPING_MOUSE_21 + 1)
 					switch (mappingData.Mouse[5])
 					{
-					case 0: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); break; }
-					case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+					case 0: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_green); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+					case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 					}
 				break;
 			}
@@ -981,8 +1023,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				switch (mappingData.Mouse[6])
 				{
-				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_purple); break; }
-				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); break; }
+				case 1: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_purple); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
+				case 2: { FillRect(DrawMenuStructure->hDC, &square, tape.hB_blue); DrawText(DrawMenuStructure->hDC, L"⬧", -1, &square2, DT_CENTER | DT_VCENTER | DT_SINGLELINE); break; }
 				}
 				break;
 			}
@@ -1010,23 +1052,29 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				SetBkMode(DrawMenuStructure->hDC, TRANSPARENT);
 				switch (DrawMenuStructure->CtlID)
 				{
-				case IDC_MAPPING_BTN_DS_1:
-				case IDC_MAPPING_BTN_DS_2:
-				case IDC_MAPPING_BTN_DS_3:
-				case IDC_MAPPING_BTN_DS_4:
-				case IDC_MAPPING_BTN_DS_5:
+				case IDC_MAPPING_BTN_SRCE_1:
+				case IDC_MAPPING_BTN_SRCE_2:
+				case IDC_MAPPING_BTN_SRCE_3:
+				case IDC_MAPPING_BTN_SRCE_4:
+				case IDC_MAPPING_BTN_SRCE_5:
 				case IDC_MAPPING_BTN_LED:
-				case IDC_MAPPING_BTN_VJOY_1:
-				case IDC_MAPPING_BTN_VJOY_2:
-				case IDC_MAPPING_BTN_VJOY_3:
-				case IDC_MAPPING_BTN_VJOY_4:
-				case IDC_MAPPING_BTN_VJOY_5:
-				case IDC_MAPPING_BTN_VJOY_6:
-				case IDC_MAPPING_BTN_VJOY_7:
-				case IDC_MAPPING_BTN_VJOY_8:
+				case IDC_MAPPING_BTN_DEST_1:
+				case IDC_MAPPING_BTN_DEST_2:
+				case IDC_MAPPING_BTN_DEST_3:
+				case IDC_MAPPING_BTN_DEST_4:
+				case IDC_MAPPING_BTN_DEST_5:
+				case IDC_MAPPING_BTN_DEST_6:
+				case IDC_MAPPING_BTN_DEST_7:
+				case IDC_MAPPING_BTN_DEST_8:
 				{
 					DrawMenuStructure->rcItem.left -= 7;
 					SelectObject(DrawMenuStructure->hDC, tape.hCombo2);
+					break;
+				}
+				case IDC_MAPPING_OK:
+				{
+					DrawMenuStructure->rcItem.right += 20;
+					SelectObject(DrawMenuStructure->hDC, tape.hCheck3);
 					break;
 				}
 				default:
@@ -1084,142 +1132,190 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 				ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_PICTURE), SW_SHOW);
 				ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_PICTURE2), SW_HIDE);
 				ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_HELP), SW_SHOW);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_RESETCONTENT, 0, 0);
-				for (int i = 0; i < dsButtonID::button_Count; i++)
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_RESETCONTENT, 0, 0);
+				for (int i = 0; i < SrceButtonID::Button_Count; i++)
 				{
-					const WCHAR* str = dsButton::String((dsButtonID)i);
-					if (!mappingData.Target[0])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_ADDSTRING, 0, LPARAM(str));
-					if (!mappingData.Target[1])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_ADDSTRING, 0, LPARAM(str));
-					if (!mappingData.Target[2])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_ADDSTRING, 0, LPARAM(str));
-					if (!mappingData.Target[3])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_ADDSTRING, 0, LPARAM(str));
-					if (!mappingData.Target[4])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_ADDSTRING, 0, LPARAM(str));
+					const WCHAR* str = SourceButton::String((SrceButtonID)i);
+					if (mappingData.Target[0] == 0)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[1] == 0)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[2] == 0)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[3] == 0)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[4] == 0)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
 				}
-				for (int i = 0; i < vJoyButtonID::button_Count; i++)
+				for (int i = SrceButtonID::Sisaxis_None; i < SrceButtonID::Sisaxis_Count; i++)
 				{
-					WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-					if (mappingData.Target[0])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.Target[1])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.Target[2])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.Target[3])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.Target[4])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_ADDSTRING, 0, LPARAM(str));
+					const WCHAR* str = SourceButton::String((SrceButtonID)i);
+					if (mappingData.Target[0] == 1)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[1] == 1)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[2] == 1)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[3] == 1)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[4] == 1)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
+				}
+				for (int i = SrceButtonID::Keyboard_None; i < SrceButtonID::Keyboard_Count; i++)
+				{
+					const WCHAR* str = SourceButton::String((SrceButtonID)i);
+					if (mappingData.Target[0] == 2)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[1] == 2)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[2] == 2)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[3] == 2)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[4] == 2)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
+				}
+				for (int i = 0; i < DestButtonID::Destination_Count; i++)
+				{
+					WCHAR* str = DestinationButton::String((DestButtonID)i);
+					if (mappingData.Target[0] == 3)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[1] == 3)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[2] == 3)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[3] == 3)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.Target[4] == 3)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[0])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[1])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[2])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[3])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[4])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[5])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[6])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					if (!mappingData.ActionType[7])
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 				}
-				for (int i = 0; i < Mapping::mouse_Count; i++)
+				for (int i = 0; i < Mapping::MouseAction_Count; i++)
 				{
 					const WCHAR* str = Mapping::MouseString((MouseActionID)i);
 					if (mappingData.ActionType[0] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[1] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[2] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[3] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[4] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[5] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[6] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[7] == 1)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 				}
-				for (int i = 0; i < Mapping::special_Count; i++)
+				for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 				{
 					const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
 					if (mappingData.ActionType[0] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[1] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[2] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[3] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[4] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[5] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[6] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[7] == 2)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 				}
-				for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+				for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 				{
-					WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
+					WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
 					if (mappingData.ActionType[0] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[1] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[2] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[3] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[4] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[5] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[6] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					if (mappingData.ActionType[7] == 3)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 				}
-				for (int i = 0; i < Mapping::modules_Count; i++)
+				for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+				{
+					WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+					if (mappingData.ActionType[0] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[1] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[2] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[3] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[4] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[5] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[6] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[7] == 4)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
+				}
+				for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 				{
 					const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-					if (mappingData.ActionType[0] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[1] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[2] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[3] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[4] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[5] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[6] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
-					if (mappingData.ActionType[7] == 4)
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[0] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[1] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[2] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[3] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[4] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[5] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[6] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
+					if (mappingData.ActionType[7] == 5)
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 				}
 				SendMessage(hWnd, WM_GRID, 0, 0);
 			}
@@ -1257,20 +1353,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			if (mappingData.Switch[5]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_6), SW_SHOW);
 			if (mappingData.Switch[6]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_7), SW_SHOW);
 			if (mappingData.Switch[7]) ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_SWITCH_8), SW_SHOW);
-
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_SETCURSEL, mappingData.dsID[0], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_SETCURSEL, mappingData.dsID[1], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_SETCURSEL, mappingData.dsID[2], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_SETCURSEL, mappingData.dsID[3], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_SETCURSEL, mappingData.dsID[4], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_SETCURSEL, mappingData.vjID[0], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_SETCURSEL, mappingData.vjID[1], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_SETCURSEL, mappingData.vjID[2], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_SETCURSEL, mappingData.vjID[3], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_SETCURSEL, mappingData.vjID[4], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_SETCURSEL, mappingData.vjID[5], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_SETCURSEL, mappingData.vjID[6], 0);
-			SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_SETCURSEL, mappingData.vjID[7], 0);
+			
+			SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_SETCURSEL, (mappingData.srceID[0] - ((mappingData.Target[0] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[0] == 1) ? SourceButton::Sisaxis_None : 0))), 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_SETCURSEL, (mappingData.srceID[1] - ((mappingData.Target[1] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[1] == 1) ? SourceButton::Sisaxis_None : 0))), 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_SETCURSEL, (mappingData.srceID[2] - ((mappingData.Target[2] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[2] == 1) ? SourceButton::Sisaxis_None : 0))), 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_SETCURSEL, (mappingData.srceID[3] - ((mappingData.Target[3] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[3] == 1) ? SourceButton::Sisaxis_None : 0))), 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_SETCURSEL, (mappingData.srceID[4] - ((mappingData.Target[4] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[4] == 1) ? SourceButton::Sisaxis_None : 0))), 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_SETCURSEL, mappingData.destID[0], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_SETCURSEL, mappingData.destID[1], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_SETCURSEL, mappingData.destID[2], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_SETCURSEL, mappingData.destID[3], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_SETCURSEL, mappingData.destID[4], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_SETCURSEL, mappingData.destID[5], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_SETCURSEL, mappingData.destID[6], 0);
+			SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_SETCURSEL, mappingData.destID[7], 0);
 			SendDlgItemMessage(hWnd, IDC_MAPPING_LED, CB_SETCURSEL, mappingData.Led, 0);
 			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_1, mappingData.NoRelease[0]);
 			CheckDlgButton(hWnd, IDC_MAPPING_NORELEASE_2, mappingData.NoRelease[1]);
@@ -1290,22 +1386,22 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			CheckDlgButton(hWnd, IDC_MAPPING_NLRELEASE_8, mappingData.NlRelease[7]);
 
 			canprint = false;
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_START), WCHARI(20, L"%d", mappingData.Start[0]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_START), WCHARI(20, L"%d", mappingData.Start[1]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_START), WCHARI(20, L"%d", mappingData.Start[2]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_START), WCHARI(20, L"%d", mappingData.Start[3]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_START), WCHARI(20, L"%d", mappingData.Start[4]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_START), WCHARI(20, L"%d", mappingData.Start[5]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_START), WCHARI(20, L"%d", mappingData.Start[6]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_START), WCHARI(20, L"%d", mappingData.Start[7]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_STOP), WCHARI(20, L"%d", mappingData.Stop[0]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_STOP), WCHARI(20, L"%d", mappingData.Stop[1]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_STOP), WCHARI(20, L"%d", mappingData.Stop[2]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_STOP), WCHARI(20, L"%d", mappingData.Stop[3]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_STOP), WCHARI(20, L"%d", mappingData.Stop[4]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_STOP), WCHARI(20, L"%d", mappingData.Stop[5]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_STOP), WCHARI(20, L"%d", mappingData.Stop[6]));
-			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_STOP), WCHARI(20, L"%d", mappingData.Stop[7]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_START), WCHARI(20, L"%d", mappingData.Start[0]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_START), WCHARI(20, L"%d", mappingData.Start[1]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_START), WCHARI(20, L"%d", mappingData.Start[2]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_START), WCHARI(20, L"%d", mappingData.Start[3]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_START), WCHARI(20, L"%d", mappingData.Start[4]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_START), WCHARI(20, L"%d", mappingData.Start[5]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_START), WCHARI(20, L"%d", mappingData.Start[6]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_START), WCHARI(20, L"%d", mappingData.Start[7]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_STOP), WCHARI(20, L"%d", mappingData.Stop[0]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_STOP), WCHARI(20, L"%d", mappingData.Stop[1]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_STOP), WCHARI(20, L"%d", mappingData.Stop[2]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_STOP), WCHARI(20, L"%d", mappingData.Stop[3]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_STOP), WCHARI(20, L"%d", mappingData.Stop[4]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_STOP), WCHARI(20, L"%d", mappingData.Stop[5]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_STOP), WCHARI(20, L"%d", mappingData.Stop[6]));
+			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_STOP), WCHARI(20, L"%d", mappingData.Stop[7]));
 			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_X), WCHARI(20, L"%d", mappingData.Grid[0]));
 			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y), WCHARI(20, L"%d", mappingData.Grid[1]));
 			SetWindowText(GetDlgItem(hWnd, IDC_MAPPING_GRID_W), WCHARI(20, L"%d", mappingData.Grid[2]));
@@ -1346,22 +1442,22 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				if (mappingData.ActionType[i] == 1)
 				{
-					if (mappingData.vjID[i] == mappingData.MOVE_TO_XY || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_XY)
+					if (mappingData.destID[i] == mappingData.MOVE_TO_XY || mappingData.destID[i] == mappingData.SAVE_AND_MOVE_TO_XY)
 					{
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_X));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y));
 					}
-					if (mappingData.vjID[i] == mappingData.MOVE_TO_WH || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_WH)
+					if (mappingData.destID[i] == mappingData.MOVE_TO_WH || mappingData.destID[i] == mappingData.SAVE_AND_MOVE_TO_WH)
 					{
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_W));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_H));
 					}
-					if (mappingData.vjID[i] == mappingData.MOVE_TO_NN || mappingData.vjID[i] == mappingData.SAVE_AND_MOVE_TO_NN)
+					if (mappingData.destID[i] == mappingData.MOVE_TO_NN || mappingData.destID[i] == mappingData.SAVE_AND_MOVE_TO_NN)
 					{
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NW));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_NH));
 					}
-					if (mappingData.vjID[i] == mappingData.MAGNIFY)
+					if (mappingData.destID[i] == mappingData.MAGNIFY)
 					{
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_X));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y));
@@ -1372,7 +1468,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					}
 				}
 				else if (mappingData.ActionType[i] == 2)
-					if (mappingData.vjID[i] == mappingData.SCREENSHOT)
+					if (mappingData.destID[i] == mappingData.SCREENSHOT)
 					{
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_X));
 						Show(GetDlgItem(hWnd, IDC_MAPPING_GRID_Y));
@@ -1383,123 +1479,123 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		}
 		if (mappingData.ActionType[0])
 		{
-			mappingData.vjDisable[0] = false;
+			mappingData.destDisable[0] = false;
 			Modified[Mofified_vjDisable1] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_1_DISABLE, mappingData.vjDisable[0]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_1_DISABLE, mappingData.destDisable[0]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_1_DISABLE));
 		}
 		if (mappingData.ActionType[1])
 		{
-			mappingData.vjDisable[1] = false;
+			mappingData.destDisable[1] = false;
 			Modified[Mofified_vjDisable2] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_2_DISABLE, mappingData.vjDisable[1]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_2_DISABLE, mappingData.destDisable[1]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_2_DISABLE));
 		}
 		if (mappingData.ActionType[2])
 		{
-			mappingData.vjDisable[2] = false;
+			mappingData.destDisable[2] = false;
 			Modified[Mofified_vjDisable3] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_3_DISABLE, mappingData.vjDisable[2]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_3_DISABLE, mappingData.destDisable[2]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_3_DISABLE));
 		}
 		if (mappingData.ActionType[3])
 		{
-			mappingData.vjDisable[3] = false;
+			mappingData.destDisable[3] = false;
 			Modified[Mofified_vjDisable4] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_4_DISABLE, mappingData.vjDisable[3]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_4_DISABLE, mappingData.destDisable[3]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_4_DISABLE));
 		}
 		if (mappingData.ActionType[4])
 		{
-			mappingData.vjDisable[4] = false;
+			mappingData.destDisable[4] = false;
 			Modified[Mofified_vjDisable5] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_5_DISABLE, mappingData.vjDisable[4]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_5_DISABLE, mappingData.destDisable[4]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_5_DISABLE));
 		}
 		if (mappingData.ActionType[5])
 		{
-			mappingData.vjDisable[5] = false;
+			mappingData.destDisable[5] = false;
 			Modified[Mofified_vjDisable6] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_6_DISABLE, mappingData.vjDisable[5]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_6_DISABLE, mappingData.destDisable[5]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_6_DISABLE));
 		}
 		if (mappingData.ActionType[6])
 		{
-			mappingData.vjDisable[6] = false;
+			mappingData.destDisable[6] = false;
 			Modified[Mofified_vjDisable7] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_7_DISABLE, mappingData.vjDisable[6]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_7_DISABLE, mappingData.destDisable[6]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_7_DISABLE));
 		}
 		if (mappingData.ActionType[7])
 		{
-			mappingData.vjDisable[7] = false;
+			mappingData.destDisable[7] = false;
 			Modified[Mofified_vjDisable8] = true;
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE));
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE), false);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_DISABLE), false);
 		}
 		else
 		{
-			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE), true);
-			CheckDlgButton(hWnd, IDC_MAPPING_VJOY_8_DISABLE, mappingData.vjDisable[7]);
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8_DISABLE));
+			EnableWindow(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_DISABLE), true);
+			CheckDlgButton(hWnd, IDC_MAPPING_DEST_8_DISABLE, mappingData.destDisable[7]);
+			Hide(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_DISABLE));
+			Show(GetDlgItem(hWnd, IDC_MAPPING_DEST_8_DISABLE));
 		}
 		break;
 	}
@@ -1513,7 +1609,9 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		if (IsIconic(hWnd) || !IsWindowVisible(m_hDlg))
 			break;
 
-		if (wParam == 1)
+		switch (wParam)
+		{
+		case 1:
 		{
 			now = std::chrono::system_clock::now();
 			if (now - start < std::chrono::milliseconds(3000))
@@ -1536,17 +1634,18 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					ShowWindow(GetDlgItem(hWnd, IDC_MAPPING_Y), SW_SHOW);
 				}
 			}
+			break;
 		}
-		else if (wParam == 2)
+		case 2:
 		{
 			NMBCHOTITEM hot = { 0 };
 			hot.hdr.hwndFrom = hWnd;
 #pragma warning(suppress:26454)
 			hot.hdr.code = BCN_HOTITEMCHANGE;
-			
+
 			RECT win;
 			GetCursorPos(&tape.mousepoint);
-			
+
 			int j = 0;
 			for (int i : mouseoverCB)
 			{
@@ -1562,14 +1661,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					SendMessage(hWnd, WM_NOTIFY, 0, LPARAM(&hot));
 				}
 				j++;
-			
+
 			}
+			break;
+		}
 		}
 		break;
 	}
 	case WM_RBUTTONDOWN:
 	{
-		PostMessage(m_hWnd, WM_TRANSPARENCY, 0, 1);
+		PostMessage(tape.Ds2hWnd, WM_TRANSPARENCY, 0, 1);
 		break;
 	}
 	case WM_LBUTTONDOWN:
@@ -1593,7 +1694,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		if (movable)
 		{
 			RECT win;
-			GetWindowRect(m_hWnd, &win);
+			GetWindowRect(tape.Ds2hWnd, &win);
 			if ((GetKeyState(VK_LBUTTON) & 0x800) == 0)
 			{
 				if (docked == 2)
@@ -1629,7 +1730,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 		}
 		else
-			SetFocus(m_hWnd);
+			SetFocus(tape.Ds2hWnd);
 		break;
 	}
 	case WM_NOTIFY:
@@ -1739,6 +1840,9 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			rect.right = rect.left + 10;
 			rect.bottom = rect.top + 10;
 
+			RECT rect2 = rect;
+			rect2.top += 1;
+
 			switch (((LPNMHDR)lParam)->idFrom)
 			{
 			case IDC_MAPPING_NORELEASE_1:
@@ -1770,11 +1874,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 					case BST_CHECKED:
 					{
 						FillRect(DrawMenuCustom->hdc, &rect, tape.hB_red);
+						DrawText(DrawMenuCustom->hdc, L"◾", -1, &rect2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 						break;
 					}
 					case BST_INDETERMINATE:
 					{
 						FillRect(DrawMenuCustom->hdc, &rect, tape.hB_blue);
+						DrawText(DrawMenuCustom->hdc, L"◾", -1, &rect2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 						break;
 					}
 					}
@@ -1791,35 +1897,73 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	{
 		switch (LOWORD(wParam))
 		{
+
+		case IDC_MAPPING_RELOAD:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+			{
+				if (m_mode == 1 || m_mode == 2)
+				{
+					m_rightClickOk = true;
+					PostMessage(m_hDlg, WM_COMMAND, MAKEWPARAM(IDC_MAPPING_OK, BN_CLICKED), 0);
+				}
+				break;
+			}
+			}
+			break;
+		}
 		case IDC_MAPPING_OK:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				KillTimer(m_hDlg, 2);
-				if (mappingData.dsID[0] == 0 && m_mode != 3)
+				if (mappingData.srceID[0] == 0 && m_mode != 3)
 				{
+					KillTimer(m_hDlg, 1);
 					RECT win;
-					GetWindowRect(m_hWnd, &win);
+					GetWindowRect(tape.Ds2hWnd, &win);
 					MessageBoxPos(hWnd, I18N.MBOX_NoButtonSelected, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
 					return TRUE;
 				}
-				mappingData.Enable = 1;
 				if (m_mode == 1)
 				{
-					SendMessage(m_hWnd, WM_ADDMAPPING, 1, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
-					Mapping m;
-					mDDlg.mappingData = m;
-					Hide();
-					firsttime = false;
-					Show();
+					mappingData.Enable = 1;
+					if (m_rightClickOk)
+					{
+						m_rightClickOk = false;
+						SendMessage(tape.Ds2hWnd, WM_ADDMAPPING, 1, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+						Mapping m;
+						mDDlg.mappingData = m;
+						Hide();
+						firsttime = false;
+						Show();
+					}
+					else
+					{
+						KillTimer(m_hDlg, 1);
+						KillTimer(m_hDlg, 2);
+						PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, 1, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+						m_mode = 0;
+					}
 				}
 				else
 				{
-					KillTimer(m_hDlg, 1);
-					PostMessage(m_hWnd, WM_ADDMAPPING, m_mode, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
-					m_mode = 0;
+					if (m_rightClickOk)
+					{
+						m_rightClickOk = false;
+						SendMessage(tape.Ds2hWnd, WM_ADDMAPPING, 2, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+						Show();
+					}
+					else
+					{
+						KillTimer(m_hDlg, 1);
+						KillTimer(m_hDlg, 2);
+						PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, m_mode, MAKELPARAM((m_isClonedList) ? 2 : 1, m_Tab));
+						m_mode = 0;
+					}
 				}
 				break;
 			}
@@ -1863,20 +2007,19 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				Mapping m;
 				mDDlg.mappingData = m;
-				Hide();
-				Show();
+				InvalidateRect(hWnd, NULL, TRUE);
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_1:
+		case IDC_MAPPING_SRCE_1:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.dsID[0] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.srceID[0] = (unsigned short)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0) + ((mappingData.Target[0] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[0] == 1) ? SourceButton::Sisaxis_None : 0));
 				Modified[Mofified_dsID1] = true;
 				break;
 			}
@@ -1889,20 +2032,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_1));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_1));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_1));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_1));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_2:
+		case IDC_MAPPING_SRCE_2:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.dsID[1] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.srceID[1] = (unsigned short)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0) + ((mappingData.Target[1] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[1] == 1) ? SourceButton::Sisaxis_None : 0));
 				Modified[Mofified_dsID2] = true;
 				break;
 			}
@@ -1915,20 +2058,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_2));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_2));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_2));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_2));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_3:
+		case IDC_MAPPING_SRCE_3:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.dsID[2] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.srceID[2] = (unsigned short)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0) + ((mappingData.Target[2] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[2] == 1) ? SourceButton::Sisaxis_None : 0));
 				Modified[Mofified_dsID3] = true;
 				break;
 			}
@@ -1941,20 +2084,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_3));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_3));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_3));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_3));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_4:
+		case IDC_MAPPING_SRCE_4:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.dsID[3] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.srceID[3] = (unsigned short)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0) + ((mappingData.Target[3] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[3] == 1) ? SourceButton::Sisaxis_None : 0));
 				Modified[Mofified_dsID4] = true;
 				break;
 			}
@@ -1967,20 +2110,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_4));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_4));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_4));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_4));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_5:
+		case IDC_MAPPING_SRCE_5:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.dsID[4] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.srceID[4] = (unsigned short)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0) + ((mappingData.Target[4] == 2) ? SourceButton::Keyboard_None : ((mappingData.Target[4] == 1) ? SourceButton::Sisaxis_None : 0));
 				Modified[Mofified_dsID5] = true;
 				break;
 			}
@@ -1993,8 +2136,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_5));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_5));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_5));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_5));
 				break;
 			}
 			}
@@ -2026,13 +2169,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_1:
+		case IDC_MAPPING_DEST_1:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[0] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[0] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID1] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2046,20 +2189,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_1));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_1));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_1));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_1));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_2:
+		case IDC_MAPPING_DEST_2:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[1] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[1] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID2] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2073,20 +2216,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_2));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_2));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_2));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_2));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_3:
+		case IDC_MAPPING_DEST_3:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[2] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[2] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID3] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2100,20 +2243,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_3));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_3));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_3));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_3));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_4:
+		case IDC_MAPPING_DEST_4:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[3] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[3] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID4] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2127,20 +2270,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_4));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_4));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_4));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_4));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_5:
+		case IDC_MAPPING_DEST_5:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[4] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[4] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID5] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2153,20 +2296,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_5));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_5));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_5));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_5));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_6:
+		case IDC_MAPPING_DEST_6:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[5] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[5] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID6] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2180,20 +2323,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_6));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_6));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_6));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_6));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_7:
+		case IDC_MAPPING_DEST_7:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[6] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[6] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID7] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2207,20 +2350,20 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_7));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_7));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_7));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_7));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_8:
+		case IDC_MAPPING_DEST_8:
 		{
 			switch (HIWORD(wParam))
 			{
 			case CBN_SELCHANGE:
 			{
-				mappingData.vjID[7] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				mappingData.destID[7] = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_vjID8] = true;
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
@@ -2234,8 +2377,8 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			case CBN_CLOSEUP:
 			{
 				m_drawLock = false;
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_8));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_8));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_8));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_8));
 				break;
 			}
 			}
@@ -2247,31 +2390,50 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Target[0] = !mappingData.Target[0];
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_RESETCONTENT, 0, 0);
-				mappingData.dsID[0] = dsButtonID::none;
-				if (mappingData.Target[0])
+				mappingData.Target[0] = (mappingData.Target[0] + 1) % 4;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_RESETCONTENT, 0, 0);
+				if (mappingData.Target[0] == 3)
 				{
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.srceID[0] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[0] == 2)
+				{
+					mappingData.srceID[0] = SrceButtonID::Keyboard_None;
+					for (int i = SrceButtonID::Keyboard_None; i < SrceButtonID::Keyboard_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[0])
+				{
+					mappingData.srceID[0] = SrceButtonID::Sisaxis_None;
+					for (int i = SrceButtonID::Sisaxis_None; i < SrceButtonID::Sisaxis_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					for (int i = 0; i < dsButtonID::button_Count; i++)
+					mappingData.srceID[0] = SrceButtonID::Button_None;
+					for (int i = 0; i < SrceButtonID::Button_Count; i++)
 					{
-						const WCHAR* str = dsButton::String((dsButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_1, CB_ADDSTRING, 0, LPARAM(str));
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_Target1] = true;
 				Modified[Mofified_dsID1] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_1));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_1));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_1));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_1));
 				break;
 			}
 			}
@@ -2283,31 +2445,50 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Target[1] = !mappingData.Target[1];
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_RESETCONTENT, 0, 0);
-				mappingData.dsID[1] = dsButtonID::none;
-				if (mappingData.Target[1])
+				mappingData.Target[1] = (mappingData.Target[1] + 1) % 4;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_RESETCONTENT, 0, 0);
+				if (mappingData.Target[1] == 3)
 				{
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.srceID[1] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[1] == 2)
+				{
+					mappingData.srceID[1] = SrceButtonID::Keyboard_None;
+					for (int i = SrceButtonID::Keyboard_None; i < SrceButtonID::Keyboard_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[1])
+				{
+					mappingData.srceID[1] = SrceButtonID::Sisaxis_None;
+					for (int i = SrceButtonID::Sisaxis_None; i < SrceButtonID::Sisaxis_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					for (int i = 0; i < dsButtonID::button_Count; i++)
+					mappingData.srceID[1] = SrceButtonID::Button_None;
+					for (int i = 0; i < SrceButtonID::Button_Count; i++)
 					{
-						const WCHAR* str = dsButton::String((dsButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_2, CB_ADDSTRING, 0, LPARAM(str));
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_Target2] = true;
 				Modified[Mofified_dsID2] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_2));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_2));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_2));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_2));
 				break;
 			}
 			}
@@ -2319,31 +2500,50 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Target[2] = !mappingData.Target[2];
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_RESETCONTENT, 0, 0);
-				mappingData.dsID[2] = dsButtonID::none;
-				if (mappingData.Target[2])
+				mappingData.Target[2] = (mappingData.Target[2] + 1) % 4;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_RESETCONTENT, 0, 0);
+				if (mappingData.Target[2] == 3)
 				{
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.srceID[2] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[2] == 2)
+				{
+					mappingData.srceID[2] = SrceButtonID::Keyboard_None;
+					for (int i = SrceButtonID::Keyboard_None; i < SrceButtonID::Keyboard_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[2])
+				{
+					mappingData.srceID[2] = SrceButtonID::Sisaxis_None;
+					for (int i = SrceButtonID::Sisaxis_None; i < SrceButtonID::Sisaxis_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					for (int i = 0; i < dsButtonID::button_Count; i++)
+					mappingData.srceID[2] = SrceButtonID::Button_None;
+					for (int i = 0; i < SrceButtonID::Button_Count; i++)
 					{
-						const WCHAR* str = dsButton::String((dsButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_3, CB_ADDSTRING, 0, LPARAM(str));
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_Target3] = true;
 				Modified[Mofified_dsID3] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_3));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_3));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_3));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_3));
 				break;
 			}
 			}
@@ -2355,31 +2555,50 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Target[3] = !mappingData.Target[3];
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_RESETCONTENT, 0, 0);
-				mappingData.dsID[3] = dsButtonID::none;
-				if (mappingData.Target[3])
+				mappingData.Target[3] = (mappingData.Target[3] + 1) % 4;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_RESETCONTENT, 0, 0);
+				if (mappingData.Target[3] == 3)
 				{
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.srceID[3] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[3] == 2)
+				{
+					mappingData.srceID[3] = SrceButtonID::Keyboard_None;
+					for (int i = SrceButtonID::Keyboard_None; i < SrceButtonID::Keyboard_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[3])
+				{
+					mappingData.srceID[3] = SrceButtonID::Sisaxis_None;
+					for (int i = SrceButtonID::Sisaxis_None; i < SrceButtonID::Sisaxis_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					for (int i = 0; i < dsButtonID::button_Count; i++)
+					mappingData.srceID[3] = SrceButtonID::Button_None;
+					for (int i = 0; i < SrceButtonID::Button_Count; i++)
 					{
-						const WCHAR* str = dsButton::String((dsButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_4, CB_ADDSTRING, 0, LPARAM(str));
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_Target4] = true;
 				Modified[Mofified_dsID4] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_4));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_4));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_4));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_4));
 				break;
 			}
 			}
@@ -2391,43 +2610,62 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.Target[4] = !mappingData.Target[4];
-				SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_RESETCONTENT, 0, 0);
-				mappingData.dsID[4] = dsButtonID::none;
-				if (mappingData.Target[4])
+				mappingData.Target[4] = (mappingData.Target[4] + 1) % 4;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_RESETCONTENT, 0, 0);
+				if (mappingData.Target[4] == 3)
 				{
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.srceID[4] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.Target[4] == 2)
+				{
+					mappingData.srceID[4] = SrceButtonID::Keyboard_None;
+					for (int i = SrceButtonID::Keyboard_None; i < SrceButtonID::Keyboard_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if(mappingData.Target[4])
+				{
+					mappingData.srceID[4] = SrceButtonID::Sisaxis_None;
+					for (int i = SrceButtonID::Sisaxis_None; i < SrceButtonID::Sisaxis_Count; i++)
+					{
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					for (int i = 0; i < dsButtonID::button_Count; i++)
+					mappingData.srceID[4] = SrceButtonID::Button_None;
+					for (int i = 0; i < SrceButtonID::Button_Count; i++)
 					{
-						const WCHAR* str = dsButton::String((dsButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_DS_5, CB_ADDSTRING, 0, LPARAM(str));
+						const WCHAR* str = SourceButton::String((SrceButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_SRCE_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_Target5] = true;
 				Modified[Mofified_dsID5] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_5));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_5));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_5));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_SRCE_5));
 				break;
 			}
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_1_DISABLE:
+		case IDC_MAPPING_SRCE_1_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				mappingData.dsDisable[0] = (mappingData.dsDisable[0] + 1) % 3;
+				mappingData.srceDisable[0] = (mappingData.srceDisable[0] + 1) % 3;
 				Modified[Mofified_dsDisable1] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2436,13 +2674,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_2_DISABLE:
+		case IDC_MAPPING_SRCE_2_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				mappingData.dsDisable[1] = (mappingData.dsDisable[1] + 1) % 3;
+				mappingData.srceDisable[1] = (mappingData.srceDisable[1] + 1) % 3;
 				Modified[Mofified_dsDisable2] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2451,13 +2689,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_3_DISABLE:
+		case IDC_MAPPING_SRCE_3_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				mappingData.dsDisable[2] = (mappingData.dsDisable[2] + 1) % 3;
+				mappingData.srceDisable[2] = (mappingData.srceDisable[2] + 1) % 3;
 				Modified[Mofified_dsDisable3] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2466,13 +2704,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_4_DISABLE:
+		case IDC_MAPPING_SRCE_4_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				mappingData.dsDisable[3] = (mappingData.dsDisable[3] + 1) % 3;
+				mappingData.srceDisable[3] = (mappingData.srceDisable[3] + 1) % 3;
 				Modified[Mofified_dsDisable4] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2481,13 +2719,13 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_5_DISABLE:
+		case IDC_MAPPING_SRCE_5_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
-				mappingData.dsDisable[4] = (mappingData.dsDisable[4] + 1) % 3;
+				mappingData.srceDisable[4] = (mappingData.srceDisable[4] + 1) % 3;
 				Modified[Mofified_dsDisable5] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2496,16 +2734,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_1_DISABLE:
+		case IDC_MAPPING_DEST_1_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[0])
-					mappingData.vjDisable[0] = false;
+					mappingData.destDisable[0] = 0;
 				else
-					mappingData.vjDisable[0] = (mappingData.vjDisable[0] + 1) % 3;
+					mappingData.destDisable[0] = (mappingData.destDisable[0] + 1) % 3;
 				Modified[Mofified_vjDisable1] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2514,16 +2752,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_2_DISABLE:
+		case IDC_MAPPING_DEST_2_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[1])
-					mappingData.vjDisable[1] = false;
+					mappingData.destDisable[1] = 0;
 				else
-					mappingData.vjDisable[1] = (mappingData.vjDisable[1] + 1) % 3;
+					mappingData.destDisable[1] = (mappingData.destDisable[1] + 1) % 3;
 				Modified[Mofified_vjDisable2] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2532,16 +2770,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_3_DISABLE:
+		case IDC_MAPPING_DEST_3_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[2])
-					mappingData.vjDisable[2] = false;
+					mappingData.destDisable[2] = 0;
 				else
-					mappingData.vjDisable[2] = (mappingData.vjDisable[2] + 1) % 3;
+					mappingData.destDisable[2] = (mappingData.destDisable[2] + 1) % 3;
 				Modified[Mofified_vjDisable3] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2550,16 +2788,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_4_DISABLE:
+		case IDC_MAPPING_DEST_4_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[3])
-					mappingData.vjDisable[3] = false;
+					mappingData.destDisable[3] = 0;
 				else
-					mappingData.vjDisable[3] = (mappingData.vjDisable[3] + 1) % 3;
+					mappingData.destDisable[3] = (mappingData.destDisable[3] + 1) % 3;
 				Modified[Mofified_vjDisable4] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2568,16 +2806,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_5_DISABLE:
+		case IDC_MAPPING_DEST_5_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[4])
-					mappingData.vjDisable[4] = false;
+					mappingData.destDisable[4] = 0;
 				else
-					mappingData.vjDisable[4] = (mappingData.vjDisable[4] + 1) % 3;
+					mappingData.destDisable[4] = (mappingData.destDisable[4] + 1) % 3;
 				Modified[Mofified_vjDisable5] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2586,16 +2824,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_6_DISABLE:
+		case IDC_MAPPING_DEST_6_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[5])
-					mappingData.vjDisable[5] = false;
+					mappingData.destDisable[5] = 0;
 				else
-					mappingData.vjDisable[5] = (mappingData.vjDisable[5] + 1) % 3;
+					mappingData.destDisable[5] = (mappingData.destDisable[5] + 1) % 3;
 				Modified[Mofified_vjDisable6] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2604,16 +2842,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_7_DISABLE:
+		case IDC_MAPPING_DEST_7_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[6])
-					mappingData.vjDisable[6] = false;
+					mappingData.destDisable[6] = 0;
 				else
-					mappingData.vjDisable[6] = (mappingData.vjDisable[6] + 1) % 3;
+					mappingData.destDisable[6] = (mappingData.destDisable[6] + 1) % 3;
 				Modified[Mofified_vjDisable7] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2622,16 +2860,16 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_8_DISABLE:
+		case IDC_MAPPING_DEST_8_DISABLE:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
 			{
 				if (mappingData.ActionType[7])
-					mappingData.vjDisable[7] = false;
+					mappingData.destDisable[7] = 0;
 				else
-					mappingData.vjDisable[7] = (mappingData.vjDisable[7] + 1) % 3;
+					mappingData.destDisable[7] = (mappingData.destDisable[7] + 1) % 3;
 				Modified[Mofified_vjDisable8] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
@@ -2640,7 +2878,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_2_OR:
+		case IDC_MAPPING_SRCE_2_OR:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -2654,7 +2892,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_3_OR:
+		case IDC_MAPPING_SRCE_3_OR:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -2668,7 +2906,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_4_NOT:
+		case IDC_MAPPING_SRCE_4_NOT:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -2682,7 +2920,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_DS_5_NOT:
+		case IDC_MAPPING_SRCE_5_NOT:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3158,7 +3396,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_1_START:
+		case IDC_MAPPING_DEST_1_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3174,7 +3412,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_2_START:
+		case IDC_MAPPING_DEST_2_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3190,7 +3428,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_3_START:
+		case IDC_MAPPING_DEST_3_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3206,7 +3444,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_4_START:
+		case IDC_MAPPING_DEST_4_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3222,7 +3460,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_5_START:
+		case IDC_MAPPING_DEST_5_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3238,7 +3476,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_6_START:
+		case IDC_MAPPING_DEST_6_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3254,7 +3492,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_7_START:
+		case IDC_MAPPING_DEST_7_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3270,7 +3508,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_8_START:
+		case IDC_MAPPING_DEST_8_START:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3286,7 +3524,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_1_STOP:
+		case IDC_MAPPING_DEST_1_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3302,7 +3540,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_2_STOP:
+		case IDC_MAPPING_DEST_2_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3318,7 +3556,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_3_STOP:
+		case IDC_MAPPING_DEST_3_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3334,7 +3572,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_4_STOP:
+		case IDC_MAPPING_DEST_4_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3350,7 +3588,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_5_STOP:
+		case IDC_MAPPING_DEST_5_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3366,7 +3604,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_6_STOP:
+		case IDC_MAPPING_DEST_6_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3382,7 +3620,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_7_STOP:
+		case IDC_MAPPING_DEST_7_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3398,7 +3636,7 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_VJOY_8_STOP:
+		case IDC_MAPPING_DEST_8_STOP:
 		{
 			switch (HIWORD(wParam))
 			{
@@ -3420,67 +3658,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[0] = (mappingData.ActionType[0] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[0] = (mappingData.ActionType[0] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[0] == 1)
 				{
-					mappingData.vjID[0] = Mapping::mouse_none;
-					mappingData.vjDisable[0] = false;
+					mappingData.destID[0] = Mapping::MouseAction_None;
+					mappingData.destDisable[0] = false;
 					Modified[Mofified_vjDisable1] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[0] == 2)
 				{
-					mappingData.vjID[0] = Mapping::special_none;
-					mappingData.vjDisable[0] = false;
+					mappingData.destID[0] = Mapping::SpecialAction_None;
+					mappingData.destDisable[0] = false;
 					Modified[Mofified_vjDisable1] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[0] == 3)
 				{
-					mappingData.vjID[0] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[0] = false;
+					mappingData.destID[0] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[0] = false;
 					Modified[Mofified_vjDisable1] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[0] == 4)
 				{
-					mappingData.vjID[0] = Mapping::modules_none;
-					mappingData.vjDisable[0] = false;
+					mappingData.destID[0] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[0] = false;
 					Modified[Mofified_vjDisable1] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[0] == 5)
+				{
+					mappingData.destID[0] = Mapping::ModulesAction_None;
+					mappingData.destDisable[0] = false;
+					Modified[Mofified_vjDisable1] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[0] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[0] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_1, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_1, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType1] = true;
 				Modified[Mofified_vjID1] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_1));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_1));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_1));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_1));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3493,67 +3742,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[1] = (mappingData.ActionType[1] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[1] = (mappingData.ActionType[1] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[1] == 1)
 				{
-					mappingData.vjID[1] = Mapping::mouse_none;
-					mappingData.vjDisable[1] = false;
+					mappingData.destID[1] = Mapping::MouseAction_None;
+					mappingData.destDisable[1] = false;
 					Modified[Mofified_vjDisable2] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[1] == 2)
 				{
-					mappingData.vjID[1] = Mapping::special_none;
-					mappingData.vjDisable[1] = false;
+					mappingData.destID[1] = Mapping::SpecialAction_None;
+					mappingData.destDisable[1] = false;
 					Modified[Mofified_vjDisable2] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[1] == 3)
 				{
-					mappingData.vjID[1] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[1] = false;
+					mappingData.destID[1] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[1] = false;
 					Modified[Mofified_vjDisable2] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[1] == 4)
 				{
-					mappingData.vjID[1] = Mapping::modules_none;
-					mappingData.vjDisable[1] = false;
+					mappingData.destID[1] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[1] = false;
 					Modified[Mofified_vjDisable2] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[1] == 5)
+				{
+					mappingData.destID[1] = Mapping::ModulesAction_None;
+					mappingData.destDisable[1] = false;
+					Modified[Mofified_vjDisable2] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[1] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[1] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_2, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_2, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType2] = true;
 				Modified[Mofified_vjID2] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_2));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_2));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_2));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_2));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3566,67 +3826,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[2] = (mappingData.ActionType[2] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[2] = (mappingData.ActionType[2] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[2] == 1)
 				{
-					mappingData.vjID[2] = Mapping::mouse_none;
-					mappingData.vjDisable[2] = false;
+					mappingData.destID[2] = Mapping::MouseAction_None;
+					mappingData.destDisable[2] = false;
 					Modified[Mofified_vjDisable3] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[2] == 2)
 				{
-					mappingData.vjID[2] = Mapping::special_none;
-					mappingData.vjDisable[2] = false;
+					mappingData.destID[2] = Mapping::SpecialAction_None;
+					mappingData.destDisable[2] = false;
 					Modified[Mofified_vjDisable3] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[2] == 3)
 				{
-					mappingData.vjID[2] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[2] = false;
+					mappingData.destID[2] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[2] = false;
 					Modified[Mofified_vjDisable3] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[2] == 4)
 				{
-					mappingData.vjID[2] = Mapping::modules_none;
-					mappingData.vjDisable[2] = false;
+					mappingData.destID[2] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[2] = false;
 					Modified[Mofified_vjDisable3] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[2] == 5)
+				{
+					mappingData.destID[2] = Mapping::ModulesAction_None;
+					mappingData.destDisable[2] = false;
+					Modified[Mofified_vjDisable3] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[2] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[2] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_3, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_3, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType3] = true;
 				Modified[Mofified_vjID3] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_3));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_3));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_3));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_3));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3639,67 +3910,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[3] = (mappingData.ActionType[3] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[3] = (mappingData.ActionType[3] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[3] == 1)
 				{
-					mappingData.vjID[3] = Mapping::mouse_none;
-					mappingData.vjDisable[3] = false;
+					mappingData.destID[3] = Mapping::MouseAction_None;
+					mappingData.destDisable[3] = false;
 					Modified[Mofified_vjDisable4] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[3] == 2)
 				{
-					mappingData.vjID[3] = Mapping::special_none;
-					mappingData.vjDisable[3] = false;
+					mappingData.destID[3] = Mapping::SpecialAction_None;
+					mappingData.destDisable[3] = false;
 					Modified[Mofified_vjDisable4] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[3] == 3)
 				{
-					mappingData.vjID[3] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[3] = false;
+					mappingData.destID[3] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[3] = false;
 					Modified[Mofified_vjDisable4] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[3] == 4)
 				{
-					mappingData.vjID[3] = Mapping::modules_none;
-					mappingData.vjDisable[3] = false;
+					mappingData.destID[3] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[3] = false;
 					Modified[Mofified_vjDisable4] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[3] == 5)
+				{
+					mappingData.destID[3] = Mapping::ModulesAction_None;
+					mappingData.destDisable[3] = false;
+					Modified[Mofified_vjDisable4] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[3] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[3] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_4, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_4, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType4] = true;
 				Modified[Mofified_vjID4] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_4));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_4));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_4));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_4));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3712,67 +3994,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[4] = (mappingData.ActionType[4] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[4] = (mappingData.ActionType[4] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[4] == 1)
 				{
-					mappingData.vjID[4] = Mapping::mouse_none;
-					mappingData.vjDisable[4] = false;
+					mappingData.destID[4] = Mapping::MouseAction_None;
+					mappingData.destDisable[4] = false;
 					Modified[Mofified_vjDisable5] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[4] == 2)
 				{
-					mappingData.vjID[4] = Mapping::special_none;
-					mappingData.vjDisable[4] = false;
+					mappingData.destID[4] = Mapping::SpecialAction_None;
+					mappingData.destDisable[4] = false;
 					Modified[Mofified_vjDisable5] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[4] == 3)
 				{
-					mappingData.vjID[4] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[4] = false;
+					mappingData.destID[4] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[4] = false;
 					Modified[Mofified_vjDisable5] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[4] == 4)
 				{
-					mappingData.vjID[4] = Mapping::modules_none;
-					mappingData.vjDisable[4] = false;
+					mappingData.destID[4] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[4] = false;
 					Modified[Mofified_vjDisable5] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[4] == 5)
+				{
+					mappingData.destID[4] = Mapping::ModulesAction_None;
+					mappingData.destDisable[4] = false;
+					Modified[Mofified_vjDisable5] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[4] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[4] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_5, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_5, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType5] = true;
 				Modified[Mofified_vjID5] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_5));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_5));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_5));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_5));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3785,67 +4078,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[5] = (mappingData.ActionType[5] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[5] = (mappingData.ActionType[5] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[5] == 1)
 				{
-					mappingData.vjID[5] = Mapping::mouse_none;
-					mappingData.vjDisable[5] = false;
+					mappingData.destID[5] = Mapping::MouseAction_None;
+					mappingData.destDisable[5] = false;
 					Modified[Mofified_vjDisable6] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[5] == 2)
 				{
-					mappingData.vjID[5] = Mapping::special_none;
-					mappingData.vjDisable[5] = false;
+					mappingData.destID[5] = Mapping::SpecialAction_None;
+					mappingData.destDisable[5] = false;
 					Modified[Mofified_vjDisable6] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[5] == 3)
 				{
-					mappingData.vjID[5] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[5] = false;
+					mappingData.destID[5] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[5] = false;
 					Modified[Mofified_vjDisable6] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[5] == 4)
 				{
-					mappingData.vjID[5] = Mapping::modules_none;
-					mappingData.vjDisable[5] = false;
+					mappingData.destID[5] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[5] = false;
 					Modified[Mofified_vjDisable6] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[5] == 5)
+				{
+					mappingData.destID[5] = Mapping::ModulesAction_None;
+					mappingData.destDisable[5] = false;
+					Modified[Mofified_vjDisable6] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[5] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[5] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_6, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_6, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType6] = true;
 				Modified[Mofified_vjID6] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_6));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_6));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_6));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_6));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3858,67 +4162,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[6] = (mappingData.ActionType[6] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[6] = (mappingData.ActionType[6] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[6] == 1)
 				{
-					mappingData.vjID[6] = Mapping::mouse_none;
-					mappingData.vjDisable[6] = false;
+					mappingData.destID[6] = Mapping::MouseAction_None;
+					mappingData.destDisable[6] = false;
 					Modified[Mofified_vjDisable7] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[6] == 2)
 				{
-					mappingData.vjID[6] = Mapping::special_none;
-					mappingData.vjDisable[6] = false;
+					mappingData.destID[6] = Mapping::SpecialAction_None;
+					mappingData.destDisable[6] = false;
 					Modified[Mofified_vjDisable7] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[6] == 3)
 				{
-					mappingData.vjID[6] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[6] = false;
+					mappingData.destID[6] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[6] = false;
 					Modified[Mofified_vjDisable7] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[6] == 4)
 				{
-					mappingData.vjID[6] = Mapping::modules_none;
-					mappingData.vjDisable[6] = false;
+					mappingData.destID[6] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[6] = false;
 					Modified[Mofified_vjDisable7] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[6] == 5)
+				{
+					mappingData.destID[6] = Mapping::ModulesAction_None;
+					mappingData.destDisable[6] = false;
+					Modified[Mofified_vjDisable7] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[6] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[6] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_7, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_7, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType7] = true;
 				Modified[Mofified_vjID7] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_7));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_7));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_7));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_7));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -3931,67 +4246,78 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			{
 			case BN_CLICKED:
 			{
-				mappingData.ActionType[7] = (mappingData.ActionType[7] + 1) % 5;
-				SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_RESETCONTENT, 0, 0);
+				mappingData.ActionType[7] = (mappingData.ActionType[7] + 1) % 6;
+				SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_RESETCONTENT, 0, 0);
 				if (mappingData.ActionType[7] == 1)
 				{
-					mappingData.vjID[7] = Mapping::mouse_none;
-					mappingData.vjDisable[7] = false;
+					mappingData.destID[7] = Mapping::MouseAction_None;
+					mappingData.destDisable[7] = false;
 					Modified[Mofified_vjDisable8] = true;
-					for (int i = 0; i < Mapping::mouse_Count; i++)
+					for (int i = 0; i < Mapping::MouseAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::MouseString((MouseActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[7] == 2)
 				{
-					mappingData.vjID[7] = Mapping::special_none;
-					mappingData.vjDisable[7] = false;
+					mappingData.destID[7] = Mapping::SpecialAction_None;
+					mappingData.destDisable[7] = false;
 					Modified[Mofified_vjDisable8] = true;
-					for (int i = 0; i < Mapping::special_Count; i++)
+					for (int i = 0; i < Mapping::SpecialAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::SpecialString((SpecialActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[7] == 3)
 				{
-					mappingData.vjID[7] = vJoyAxisMoveID::axismove_none;
-					mappingData.vjDisable[7] = false;
+					mappingData.destID[7] = DestAxisMoveID::AxisMove_None;
+					mappingData.destDisable[7] = false;
 					Modified[Mofified_vjDisable8] = true;
-					for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
+					for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
 					{
-						WCHAR* str = vJoyButton::StringAxis((vJoyAxisMoveID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::StringAxis((DestAxisMoveID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else if (mappingData.ActionType[7] == 4)
 				{
-					mappingData.vjID[7] = Mapping::modules_none;
-					mappingData.vjDisable[7] = false;
+					mappingData.destID[7] = DestAfterEffectID::AfterEffect_None;
+					mappingData.destDisable[7] = false;
 					Modified[Mofified_vjDisable8] = true;
-					for (int i = 0; i < Mapping::modules_Count; i++)
+					for (int i = 0; i < DestAfterEffectID::AfterEffect_Count; i++)
+					{
+						WCHAR* str = DestinationButton::StringEffect((DestAfterEffectID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
+					}
+				}
+				else if (mappingData.ActionType[7] == 5)
+				{
+					mappingData.destID[7] = Mapping::ModulesAction_None;
+					mappingData.destDisable[7] = false;
+					Modified[Mofified_vjDisable8] = true;
+					for (int i = 0; i < Mapping::ModulesAction_Count; i++)
 					{
 						const WCHAR* str = Mapping::ModulesString((ModulesActionID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				else
 				{
-					mappingData.vjID[7] = vJoyButtonID::none;
-					for (int i = 0; i < vJoyButtonID::button_Count; i++)
+					mappingData.destID[7] = DestButtonID::Destination_None;
+					for (int i = 0; i < DestButtonID::Destination_Count; i++)
 					{
-						WCHAR* str = vJoyButton::String((vJoyButtonID)i);
-						SendDlgItemMessage(hWnd, IDC_MAPPING_VJOY_8, CB_ADDSTRING, 0, LPARAM(str));
+						WCHAR* str = DestinationButton::String((DestButtonID)i);
+						SendDlgItemMessage(hWnd, IDC_MAPPING_DEST_8, CB_ADDSTRING, 0, LPARAM(str));
 					}
 				}
 				Modified[Mofified_ActionType8] = true;
 				Modified[Mofified_vjID8] = true;
 				Hide(GetDlgItem(hWnd, LOWORD(wParam)));
 				Show(GetDlgItem(hWnd, LOWORD(wParam)));
-				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_8));
-				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_VJOY_8));
+				Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_8));
+				Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DEST_8));
 				SendMessage(hWnd, WM_GRID, 0, 0);
 				break;
 			}
@@ -4882,54 +5208,52 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_DS_1:
+		case IDC_MAPPING_BTN_SRCE_1:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DS_1), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_SRCE_1), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_DS_2:
+		case IDC_MAPPING_BTN_SRCE_2:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DS_2), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_SRCE_2), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_DS_3:
+		case IDC_MAPPING_BTN_SRCE_3:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DS_3), TRUE);
-				break;
-			}
-			Hide(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_2));
-			Show(GetDlgItem(hWnd, IDC_MAPPING_BTN_DS_2));
-			break;
-		}
-		case IDC_MAPPING_BTN_DS_4:
-		{
-			switch (HIWORD(wParam))
-			{
-			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DS_4), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_SRCE_3), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_DS_5:
+		case IDC_MAPPING_BTN_SRCE_4:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DS_5), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_SRCE_4), TRUE);
+				break;
+			}
+			break;
+		}
+		case IDC_MAPPING_BTN_SRCE_5:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_SRCE_5), TRUE);
 				break;
 			}
 			break;
@@ -4944,82 +5268,82 @@ INT_PTR MappingDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_1:
+		case IDC_MAPPING_BTN_DEST_1:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_1), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_1), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_2:
+		case IDC_MAPPING_BTN_DEST_2:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_2), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_2), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_3:
+		case IDC_MAPPING_BTN_DEST_3:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_3), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_3), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_4:
+		case IDC_MAPPING_BTN_DEST_4:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_4), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_4), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_5:
+		case IDC_MAPPING_BTN_DEST_5:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_5), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_5), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_6:
+		case IDC_MAPPING_BTN_DEST_6:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_6), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_6), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_7:
+		case IDC_MAPPING_BTN_DEST_7:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_7), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_7), TRUE);
 				break;
 			}
 			break;
 		}
-		case IDC_MAPPING_BTN_VJOY_8:
+		case IDC_MAPPING_BTN_DEST_8:
 		{
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_VJOY_8), TRUE);
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_MAPPING_DEST_8), TRUE);
 				break;
 			}
 			break;
@@ -5070,35 +5394,35 @@ BOOL MappingDataDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 void MappingDataDlg::SetTransparency(bool transparencyon)
 {
 	if (transparencyon)
-		SetWindowTransparent(m_hDlg, true, 60);
+		SetWindowTransparent(m_hDlg, true, tape.Opacity);
 	else
 		SetWindowTransparent(m_hDlg, false, NULL);
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_1));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_1));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_2));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_2));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_3));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_3));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_4));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_4));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_5));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DS_5));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_1));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_1));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_2));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_2));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_3));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_3));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_4));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_4));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_5));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_SRCE_5));
 	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_LED));
 	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_LED));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_1));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_1));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_2));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_2));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_3));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_3));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_4));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_4));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_5));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_5));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_6));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_6));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_7));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_7));
-	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_8));
-	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_VJOY_8));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_1));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_1));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_2));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_2));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_3));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_3));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_4));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_4));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_5));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_5));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_6));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_6));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_7));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_7));
+	Hide(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_8));
+	Show(GetDlgItem(m_hDlg, IDC_MAPPING_BTN_DEST_8));
 }

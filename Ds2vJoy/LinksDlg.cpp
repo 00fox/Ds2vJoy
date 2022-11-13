@@ -9,10 +9,10 @@ LinksDlg::~LinksDlg()
 {
 }
 
-void LinksDlg::Init(HINSTANCE hInst, HWND hWnd)
+void LinksDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_LINKS), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_LINKS), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_TEXT1), WM_SETFONT, WPARAM(tape.hStatic), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_TEXT2), WM_SETFONT, WPARAM(tape.hStatic), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_WEBURL0), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
@@ -27,16 +27,21 @@ void LinksDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_WEBURL9), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_TEXT3), WM_SETFONT, WPARAM(tape.hStatic), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_TEXT4), WM_SETFONT, WPARAM(tape.hStatic), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP0NAME), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP1NAME), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP2NAME), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP3NAME), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP4NAME), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
-	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP5NAME), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP0LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP1LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP2LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP3LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP4LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP5LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP6LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP7LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP8LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
+	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_APP9LOC), WM_SETFONT, WPARAM(tape.hEdit2), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_DS2VJOY), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_VJOY), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_WEBVIEW2), WM_SETFONT, WPARAM(tape.hLinks), TRUE);
@@ -84,7 +89,6 @@ void LinksDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_HIDCERBERUS), LM_GETITEM, 0, (LPARAM)&item);
 	wcscpy_s(item.szUrl, L_MAX_URL_LENGTH, I18N.LINKS_URL_HIDCERBERUS);
 	SendMessage(GetDlgItem(m_hDlg, IDC_LINKS_HIDCERBERUS), LM_SETITEM, 0, (LPARAM)&item);
-	Hide();
 }
 
 void LinksDlg::_InitDialog(HWND hWnd)
@@ -106,16 +110,21 @@ void LinksDlg::_ShowWindow(HWND hWnd)
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_WEBURL7), tape.WebURL[7]);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_WEBURL8), tape.WebURL[8]);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_WEBURL9), tape.WebURL[9]);
+	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP0NAME), tape.App0Name);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP1NAME), tape.App1Name);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP2NAME), tape.App2Name);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP3NAME), tape.App3Name);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP4NAME), tape.App4Name);
-	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP5NAME), tape.App5Name);
+	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP0LOC), tape.App0Location);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP1LOC), tape.App1Location);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP2LOC), tape.App2Location);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP3LOC), tape.App3Location);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP4LOC), tape.App4Location);
 	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP5LOC), tape.App5Location);
+	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP6LOC), tape.App6Location);
+	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP7LOC), tape.App7Location);
+	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP8LOC), tape.App8Location);
+	SetWindowText(GetDlgItem(hWnd, IDC_LINKS_APP9LOC), tape.App9Location);
 }
 
 INT_PTR CALLBACK LinksDlg::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -145,25 +154,91 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CTLCOLORDLG:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_DLG);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_DLG);
+		SetTextColor(hdcStatic, tape.ink_DLG);
 		return (LRESULT)tape.hB_DLG;
+	}
+	case WM_CTLCOLORMSGBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		SetTextColor(hdcStatic, tape.ink_MSGBOX);
+		return (LRESULT)tape.hB_MSGBOX;
+	}
+	case WM_CTLCOLORBTN:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_BTN);
+		SetBkMode(hdcStatic, OPAQUE);
+		SetBkColor(hdcStatic, tape.Bk_BTN);
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_STATIC);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, tape.Bk_STATIC);
-		return (LRESULT)tape.hB_STATIC;
+		switch (GetDlgCtrlID((HWND)lParam))
+		{
+		case IDC_LINKS_DS2VJOY:
+		case IDC_LINKS_VJOY:
+		case IDC_LINKS_WEBVIEW2:
+		case IDC_LINKS_VIGEMBUS:
+		case IDC_LINKS_VIGEMCLIENT:
+		case IDC_LINKS_HIDGUARDIAN:
+		case IDC_LINKS_HIDCERBERUS:
+		case IDC_LINKS_TEXT1:
+		case IDC_LINKS_TEXT2:
+		case IDC_LINKS_TEXT3:
+		case IDC_LINKS_TEXT4:
+		{
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_DARK);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC);
+				return (LRESULT)tape.hB_BackGround;
+			}
+			break;
+		}
+		}
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_EDIT);
+		SetBkMode((HDC)wParam, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_EDIT_DARK2;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT);
+			return (LRESULT)tape.hB_EDIT;
+		}
+	}
+	case WM_CTLCOLORLISTBOX:
+	{
+		HDC hdcStatic = (HDC)wParam;
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_EDIT;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
 	}
 	case WM_PAINT:
 	{
@@ -174,8 +249,10 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_BackGround);
-
+			if (tape.DarkTheme)
+				FillRect(hDC, &rect, tape.hB_BackGround_DARK);
+			else
+				FillRect(hDC, &rect, tape.hB_BackGround);
 			::ReleaseDC(hWnd, hDC);
 			EndPaint(hWnd, &ps);
 		}
@@ -381,6 +458,23 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
+		case IDC_LINKS_APP0NAME:
+		{
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+				WCHAR buf[MAX_PATH];
+				GetWindowText((HWND)lParam, buf, MAX_PATH);
+				if (lstrcmpW(tape.App0Name, buf) != 0)
+				{
+					tape.setAppName(buf, 0);
+					tape.Save(tape.Setting_App0Name);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
+				}
+				break;
+			}
+			break;
+		}
 		case IDC_LINKS_APP1NAME:
 		{
 			switch (HIWORD(wParam))
@@ -392,7 +486,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppName(buf, 1);
 					tape.Save(tape.Setting_App1Name);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -409,7 +503,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppName(buf, 2);
 					tape.Save(tape.Setting_App2Name);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -426,7 +520,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppName(buf, 3);
 					tape.Save(tape.Setting_App3Name);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -443,24 +537,24 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppName(buf, 4);
 					tape.Save(tape.Setting_App4Name);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
 			break;
 		}
-		case IDC_LINKS_APP5NAME:
+		case IDC_LINKS_APP0LOC:
 		{
 			switch (HIWORD(wParam))
 			{
 			case EN_UPDATE:
 				WCHAR buf[MAX_PATH];
 				GetWindowText((HWND)lParam, buf, MAX_PATH);
-				if (lstrcmpW(tape.App5Name, buf) != 0)
+				if (lstrcmpW(tape.App0Location, buf) != 0)
 				{
-					tape.setAppName(buf, 5);
-					tape.Save(tape.Setting_App5Name);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					tape.setAppLocation(buf, 0);
+					tape.Save(tape.Setting_App0Location);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -477,7 +571,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppLocation(buf, 1);
 					tape.Save(tape.Setting_App1Location);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -494,7 +588,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppLocation(buf, 2);
 					tape.Save(tape.Setting_App2Location);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -511,7 +605,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppLocation(buf, 3);
 					tape.Save(tape.Setting_App3Location);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -528,7 +622,7 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppLocation(buf, 4);
 					tape.Save(tape.Setting_App4Location);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}
@@ -545,7 +639,75 @@ INT_PTR LinksDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					tape.setAppLocation(buf, 5);
 					tape.Save(tape.Setting_App5Location);
-					PostMessage(m_hWnd, WM_CREATE_MENU, 0, 0);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
+				}
+				break;
+			}
+			break;
+		}
+		case IDC_LINKS_APP6LOC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+				WCHAR buf[MAX_PATH];
+				GetWindowText((HWND)lParam, buf, MAX_PATH);
+				if (lstrcmpW(tape.App6Location, buf) != 0)
+				{
+					tape.setAppLocation(buf, 6);
+					tape.Save(tape.Setting_App6Location);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
+				}
+				break;
+			}
+			break;
+		}
+		case IDC_LINKS_APP7LOC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+				WCHAR buf[MAX_PATH];
+				GetWindowText((HWND)lParam, buf, MAX_PATH);
+				if (lstrcmpW(tape.App7Location, buf) != 0)
+				{
+					tape.setAppLocation(buf, 7);
+					tape.Save(tape.Setting_App7Location);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
+				}
+				break;
+			}
+			break;
+		}
+		case IDC_LINKS_APP8LOC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+				WCHAR buf[MAX_PATH];
+				GetWindowText((HWND)lParam, buf, MAX_PATH);
+				if (lstrcmpW(tape.App8Location, buf) != 0)
+				{
+					tape.setAppLocation(buf, 8);
+					tape.Save(tape.Setting_App8Location);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
+				}
+				break;
+			}
+			break;
+		}
+		case IDC_LINKS_APP9LOC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case EN_UPDATE:
+				WCHAR buf[MAX_PATH];
+				GetWindowText((HWND)lParam, buf, MAX_PATH);
+				if (lstrcmpW(tape.App9Location, buf) != 0)
+				{
+					tape.setAppLocation(buf, 9);
+					tape.Save(tape.Setting_App9Location);
+					PostMessage(tape.Ds2hWnd, WM_CREATE_MENU, 0, 0);
 				}
 				break;
 			}

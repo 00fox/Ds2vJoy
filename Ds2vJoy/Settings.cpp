@@ -3,6 +3,129 @@
 
 Settings::Settings()
 {
+	hIconTray[0] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_110));
+	hIconTray[1] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_111));
+	hIconTray[2] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_112));
+	hIconTray[3] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_113));
+	hIconTray[4] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_114));
+	hIconTray[5] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_120));
+	hIconTray[6] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_121));
+	hIconTray[7] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_122));
+	hIconTray[8] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_123));
+	hIconTray[9] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_124));
+	hIconTray[10] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_130));
+	hIconTray[11] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_131));
+	hIconTray[12] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_132));
+	hIconTray[13] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_133));
+	hIconTray[14] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_134));
+	hIconTray[15] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_140));
+	hIconTray[16] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_141));
+	hIconTray[17] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_142));
+	hIconTray[18] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_143));
+	hIconTray[19] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_144));
+	hIconTray[20] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_150));
+	hIconTray[21] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_151));
+	hIconTray[22] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_152));
+	hIconTray[23] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_153));
+	hIconTray[24] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_154));
+	hIconTray[25] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_160));
+	hIconTray[26] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_161));
+	hIconTray[27] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_162));
+	hIconTray[28] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_163));
+	hIconTray[29] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_164));
+	hIconTray[30] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_170));
+	hIconTray[31] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_171));
+	hIconTray[32] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_172));
+	hIconTray[33] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_173));
+	hIconTray[34] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_174));
+	hIconTray[35] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_180));
+	hIconTray[36] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_181));
+	hIconTray[37] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_182));
+	hIconTray[38] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_183));
+	hIconTray[39] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_184));
+
+	hIconTray[40] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_210));
+	hIconTray[41] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_211));
+	hIconTray[42] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_212));
+	hIconTray[43] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_213));
+	hIconTray[44] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_214));
+	hIconTray[45] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_220));
+	hIconTray[46] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_221));
+	hIconTray[47] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_222));
+	hIconTray[48] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_223));
+	hIconTray[49] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_224));
+	hIconTray[50] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_230));
+	hIconTray[51] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_231));
+	hIconTray[52] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_232));
+	hIconTray[53] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_233));
+	hIconTray[54] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_234));
+	hIconTray[55] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_240));
+	hIconTray[56] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_241));
+	hIconTray[57] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_242));
+	hIconTray[58] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_243));
+	hIconTray[59] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_244));
+	hIconTray[60] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_250));
+	hIconTray[61] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_251));
+	hIconTray[62] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_252));
+	hIconTray[63] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_253));
+	hIconTray[64] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_254));
+	hIconTray[65] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_260));
+	hIconTray[66] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_261));
+	hIconTray[67] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_262));
+	hIconTray[68] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_263));
+	hIconTray[69] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_264));
+	hIconTray[70] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_270));
+	hIconTray[71] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_271));
+	hIconTray[72] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_272));
+	hIconTray[73] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_273));
+	hIconTray[74] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_274));
+	hIconTray[75] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_280));
+	hIconTray[76] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_281));
+	hIconTray[77] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_282));
+	hIconTray[78] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_283));
+	hIconTray[79] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_284));
+
+	hIconTray[80] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_310));
+	hIconTray[81] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_311));
+	hIconTray[82] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_312));
+	hIconTray[83] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_313));
+	hIconTray[84] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_314));
+	hIconTray[85] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_320));
+	hIconTray[86] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_321));
+	hIconTray[87] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_322));
+	hIconTray[88] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_323));
+	hIconTray[89] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_324));
+	hIconTray[90] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_330));
+	hIconTray[91] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_331));
+	hIconTray[92] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_332));
+	hIconTray[93] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_333));
+	hIconTray[94] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_334));
+	hIconTray[95] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_340));
+	hIconTray[96] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_341));
+	hIconTray[97] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_342));
+	hIconTray[98] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_343));
+	hIconTray[99] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_344));
+	hIconTray[100] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_350));
+	hIconTray[101] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_351));
+	hIconTray[102] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_352));
+	hIconTray[103] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_353));
+	hIconTray[104] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_354));
+	hIconTray[105] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_360));
+	hIconTray[106] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_361));
+	hIconTray[107] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_362));
+	hIconTray[108] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_363));
+	hIconTray[109] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_364));
+	hIconTray[110] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_370));
+	hIconTray[111] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_371));
+	hIconTray[112] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_372));
+	hIconTray[113] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_373));
+	hIconTray[114] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_374));
+	hIconTray[115] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_380));
+	hIconTray[116] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_381));
+	hIconTray[117] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_382));
+	hIconTray[118] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_383));
+	hIconTray[119] = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DS2VJOY_384));
+
 	hMagnification = LoadLibrary(L"Magnification.dll");
 	if (hMagnification != nullptr)
 		MagnificationSmoothing = (hMagSetSmoothing)GetProcAddress(tape.hMagnification, "MagSetFullscreenUseBitmapSmoothing");
@@ -10,50 +133,20 @@ Settings::Settings()
 
 Settings::~Settings()
 {
-	DeleteObject(hB_BackGround);
-	DeleteObject(hB_CLONE_BackGround);
-	DeleteObject(hB_DLG);
-	DeleteObject(hB_MSGBOX);
-	DeleteObject(hB_SCROLLBAR);
-	DeleteObject(hB_BTN);
-	DeleteObject(hB_BTN_Border);
-	DeleteObject(hB_Not_Installed);
-	DeleteObject(hB_Running);
-	DeleteObject(hB_Stopped);
-	DeleteObject(hB_Paused);
-	DeleteObject(hB_STATIC);
-	DeleteObject(hB_STATIC_Mouse1);
-	DeleteObject(hB_STATIC_Mouse2);
-	DeleteObject(hB_POSTIT);
-	DeleteObject(hB_POSTIT_Rand0);
-	DeleteObject(hB_POSTIT_Rand1);
-	DeleteObject(hB_POSTIT_Rand2);
-	DeleteObject(hB_POSTIT_Rand3);
-	DeleteObject(hB_EDIT);
-	DeleteObject(hB_LIST);
-	DeleteObject(hB_LIST_HIGHLIGHT);
-	DeleteObject(hB_LIST_Disable1);
-	DeleteObject(hB_LIST_Disable2);
-	DeleteObject(hB_LIST_Disabled);
-	DeleteObject(hB_MENU);
-	DeleteObject(hB_MENU_CLONE);
-	DeleteObject(hB_MENU_SELECTED);
-	DeleteObject(hB_MENU_HIGHLIGHT);
-	DeleteObject(hB_CHECKBOX_UNCHECKED);
-	DeleteObject(hB_CHECKBOX_CHECKED);
-	DeleteObject(hB_CHECKBOX_INDETERMINATE);
-	DeleteObject(hB_WEB_BackGround);
 	DeleteObject(hB_neutral);
-	DeleteObject(hB_black);
-	DeleteObject(hB_white);
-	DeleteObject(hB_grey);
-	DeleteObject(hB_red);
-	DeleteObject(hB_orange);
-	DeleteObject(hB_yellow);
+	DeleteObject(hB_deepGrey);
+	DeleteObject(hB_black);	
+	DeleteObject(hB_blue_black);
+	DeleteObject(hB_grey);	
+	DeleteObject(hB_red);	
+	DeleteObject(hB_orange);	
+	DeleteObject(hB_yellow);	
 	DeleteObject(hB_emerald);
-	DeleteObject(hB_green);
-	DeleteObject(hB_blue);
-	DeleteObject(hB_purple);
+	DeleteObject(hB_green);	
+	DeleteObject(hB_blue);	
+	DeleteObject(hB_purple);	
+	DeleteObject(hB_white);	
+	DeleteObject(hB_blue_white);
 	DeleteObject(hB_bright_grey);
 	DeleteObject(hB_bright_red);
 	DeleteObject(hB_bright_orange);
@@ -62,31 +155,61 @@ Settings::~Settings()
 	DeleteObject(hB_bright_green);
 	DeleteObject(hB_bright_blue);
 	DeleteObject(hB_bright_purple);
-	DeleteObject(hB_WEB_BackGround);
-	
+	DeleteObject(hB_DLG);	
+	DeleteObject(hB_DLG_DARK);
+	DeleteObject(hB_BTN_Border);
+	DeleteObject(hB_BTN_Border_DARK);
+	DeleteObject(hB_Not_Installed);
+	DeleteObject(hB_Running);
+	DeleteObject(hB_Stopped);
+	DeleteObject(hB_Paused);	
+	DeleteObject(hB_STATIC_Mouse1);
+	DeleteObject(hB_STATIC_Mouse2);
+	DeleteObject(hB_POSTIT);	
+	DeleteObject(hB_POSTIT_Rand0);
+	DeleteObject(hB_POSTIT_Rand1);
+	DeleteObject(hB_POSTIT_Rand3);
+	DeleteObject(hB_EDIT);
+	DeleteObject(hB_EDIT_BORDER);
+	DeleteObject(hB_EDIT_DARK3);
+	DeleteObject(hB_LIST_HIGHLIGHT);
+	DeleteObject(hB_LIST_Disabled);
+	DeleteObject(hB_LIST_Disabled_DARK);
+	DeleteObject(hB_LIST_Disable1);
+	DeleteObject(hB_LIST_Disable1_DARK);
+	DeleteObject(hB_LIST_Disable2);
+	DeleteObject(hB_LIST_Header);
+	DeleteObject(hB_MENU_CLONE);
+	DeleteObject(hB_MENU_SELECTED);
+	DeleteObject(hB_CHECKBOX_UNCHECKED);
+	DeleteObject(hB_CHECKBOX_DARK);
+		
 	DeleteObject(hLog);
+	DeleteObject(hSerial);
 	DeleteObject(hNotepad);
 	DeleteObject(hStatus);
-	DeleteObject(hTab1);
+	DeleteObject(hTab);
+	DeleteObject(hTab2);
 	DeleteObject(hPostIt);
 	DeleteObject(hLegend);
 	DeleteObject(hLegend2);
 	DeleteObject(hLegend3);
 	DeleteObject(hLegend4);
 	DeleteObject(hEdit);
+	DeleteObject(hEdit2);
+	DeleteObject(hEdit3);
+	DeleteObject(hStatic);
+	DeleteObject(hStatic2);
+	DeleteObject(hStatic3);
 	DeleteObject(hCheck2);
 	DeleteObject(hCheck3);
 	DeleteObject(hCombo);
 	DeleteObject(hCombo2);
-	DeleteObject(hEdit2);
-	DeleteObject(hEdit3);
 	DeleteObject(hButton);
 	DeleteObject(hButton2);
-	DeleteObject(hStatic);
-	DeleteObject(hMenus);
-	DeleteObject(hLinks);
+	DeleteObject(hMenu);
+	DeleteObject(hMenu2);
 	DeleteObject(hList);
-	DeleteObject(hStats);
 	DeleteObject(hTopMost);
 	DeleteObject(hAbout);
 	DeleteObject(hTooltip);
@@ -96,19 +219,7 @@ Settings::~Settings()
 		FreeLibrary(hMagnification);
 }
 
-void Settings::Init(HINSTANCE hInst, HWND hWnd)
-{
-	Ds2hWnd = hWnd;
-	Ds2hInst = hInst;
-}
-
-BOOL Settings::Open(WCHAR* file)
-{
-	wcscpy_s(m_file, wcslen(file) + 1, file);
-	return TRUE;
-}
-
-BOOL Settings::OpenIni(WCHAR* inifile)
+BOOL Settings::Init(WCHAR* inifile)
 {
 	WCHAR path[MAX_PATH + 1];
 	if (0 != GetModuleFileName(NULL, path, MAX_PATH))
@@ -123,12 +234,18 @@ BOOL Settings::OpenIni(WCHAR* inifile)
 	return FALSE;
 }
 
+void Settings::LoadLanguage()
+{
+	setCountry(GetPrivateProfileInt(TEXT("Profile"), TEXT("Country"), 0, m_file));
+	::LoadLanguage();
+}
+
 void Settings::Load(int category)
 {
 	if (m_file[0] == 0)
 		return;
 
-	if (category != Setting_Category_Create && category != Setting_Category_Update)
+	if (category != SettingCategory_Create && category != SettingCategory_Update)
 	{
 		Profile = GetPrivateProfileInt(TEXT("Profile"), TEXT("Profile"), 0, m_file);
 		if (Profile == 0)
@@ -144,14 +261,14 @@ void Settings::Load(int category)
 			for (int i = 1; i < 4; i++)
 			{
 				Profile = i;
-				Load(Setting_Category_Create);
+				Load(SettingCategory_Create);
 				Save(Setting_All);
 				SendMessage(Ds2hWnd, WM_RESET, 0, 0);
 			}
 			Profile = 1;
 			Save(Setting_Profile);
 			Save(Setting_GiveMapping);
-			Load(Setting_Category_Mapping);
+			Load(SettingCategory_Mapping);
 			return;
 		}
 	}
@@ -159,11 +276,13 @@ void Settings::Load(int category)
 
 	swprintf_s(Settingstxt, 20, L"%dSettings", Profile);
 	swprintf_s(Mappingtxt, 20, L"%dMapping", Profile);
-	swprintf_s(ViGEmtxt, 20, L"%dViGEm", Profile);
-	swprintf_s(Keymaptxt, 20, L"%dKeymap", Profile);
 	swprintf_s(RapidFiretxt, 20, L"%dRapidFire", Profile);
+	swprintf_s(Keymaptxt, 20, L"%dKeymap", Profile);
+	swprintf_s(XOutputtxt, 20, L"%dXOutput", Profile);
 	swprintf_s(Guardiantxt, 20, L"%dGuardian", Profile);
 	swprintf_s(Webtxt, 20, L"%dWeb", Profile);
+	/////////////////////
+	swprintf_s(ViGEmtxt, 20, L"%dViGEm", Profile);
 
 	int VersionDateCheck = max(0, GetPrivateProfileInt(TEXT("Profile"), TEXT("VersionDate"), 0, m_file));
 
@@ -171,7 +290,7 @@ void Settings::Load(int category)
 	{
 		RECT win;
 		GetWindowRect(Ds2hWnd, &win);
-		MessageBoxPos(Ds2hWnd, L"Your .ini file is too old\nto be updated with this version,\nuse 20211210-1 before this one", I18N.MBOX_ErrTitle, MB_ICONERROR, win.left, win.top + 30);
+		MessageBoxPos(Ds2hWnd, L"Your .ini file is too old\nto be updated with this version,\nuse 20211210-1 then 20220328-1 before this one", I18N.MBOX_ErrTitle, MB_ICONERROR, win.left, win.top + 30);
 		BreakAndExit = true;
 		return;
 	}
@@ -184,23 +303,41 @@ void Settings::Load(int category)
 		return;
 	}
 
-	if (category == Setting_Category_All && category != Setting_Category_Create && category != Setting_Category_Update)
+	if (category == SettingCategory_All && category != SettingCategory_Create && category != SettingCategory_Update)
 	{
 		if (VersionDateCheck < VersionDate)
 		{
 			unsigned char ProfileNumberSaved = Profile;
 			for (int i = 1; i < 4; i++)
 			{
+				if (i == 2) { FirstPass = false; }
 				SendMessage(Ds2hWnd, WM_RESET, 0, 0);
 				Profile = i;
-				Load(Setting_Category_Update);
+				Load(SettingCategory_Update);
 				Save(Setting_Update);
 			}
 			Profile = ProfileNumberSaved;
 			Save(Setting_Profile);
 			Save(Setting_Version);
 			SendMessage(Ds2hWnd, WM_RESET, 0, 0);
-			Load(Setting_Category_All);
+			FirstPass = true;
+			Load(SettingCategory_All);
+			if (VersionDateCheck < 202204111)
+			{
+				WritePrivateProfileString(TEXT("Profile"), TEXT("dsSerial"), NULL, m_file);
+				WritePrivateProfileString(TEXT("Tray"), TEXT("ViGEmPaused"), NULL, m_file);
+				WritePrivateProfileString(TEXT("Guardian"), TEXT("vJoyShutDown"), NULL, m_file);
+				WritePrivateProfileString(TEXT("1ViGEm"), NULL, NULL, m_file);
+				WritePrivateProfileString(TEXT("2ViGEm"), NULL, NULL, m_file);
+				WritePrivateProfileString(TEXT("3ViGEm"), NULL, NULL, m_file);
+				WritePrivateProfileString(TEXT("1Settings"), TEXT("PreferredDS"), NULL, m_file);
+				WritePrivateProfileString(TEXT("2Settings"), TEXT("PreferredDS"), NULL, m_file);
+				WritePrivateProfileString(TEXT("3Settings"), TEXT("PreferredDS"), NULL, m_file);
+				WritePrivateProfileString(TEXT("1Settings"), TEXT("vJoyDeviceID"), NULL, m_file);
+				WritePrivateProfileString(TEXT("2Settings"), TEXT("vJoyDeviceID"), NULL, m_file);
+				WritePrivateProfileString(TEXT("3Settings"), TEXT("vJoyDeviceID"), NULL, m_file);
+				WritePrivateProfileString(TEXT("Links"), TEXT("App5Name"), NULL, m_file);
+			}
 			return;
 		}
 	}
@@ -209,29 +346,146 @@ void Settings::Load(int category)
 	bool Update = false;
 	switch (category)
 	{
-	case Setting_Category_Create:
+	case SettingCategory_Create:
 	{
 		Create = true;
 		[[fallthrough]];
 	}
-	case Setting_Category_Update:
+	case SettingCategory_Update:
 	{
 		if (!Create)
 			Update = true;
-		category = Setting_Category_All;
+		category = SettingCategory_All;
 		[[fallthrough]];
 	}
-	case Setting_Category_All:
+	case SettingCategory_All:
 		[[fallthrough]];
-	case Setting_Category_Profile:
+	case SettingCategory_Profile:
 	{
 		TopMost = (GetPrivateProfileInt(TEXT("Profile"), TEXT("TopMost"), 0, m_file) == 1) ? true : false;
 		Transparency = (GetPrivateProfileInt(TEXT("Profile"), TEXT("Transparency"), 0, m_file) == 1) ? true : false;
+		if (VersionDateCheck < 202204111)
+			vJoyShutDown = (GetPrivateProfileInt(L"Guardian", TEXT("vJoyShutDown"), 0, m_file) == 1) ? true : false;
+		else
+			vJoyShutDown = (GetPrivateProfileInt(L"Profile", TEXT("vJoyShutDown"), 0, m_file) == 1) ? true : false;
 		Tasktray = (GetPrivateProfileInt(TEXT("Profile"), TEXT("Tasktray"), 0, m_file) == 1) ? true : false;
 		CloseMinimize = (GetPrivateProfileInt(TEXT("Profile"), TEXT("CloseMinimize"), 0, m_file) == 1) ? true : false;
 		DisconnectBT = (GetPrivateProfileInt(TEXT("Profile"), TEXT("DisconnectBT"), 0, m_file) == 1) ? true : false;
 		LowBattAlert = (GetPrivateProfileInt(TEXT("Profile"), TEXT("LowBattAlert"), 1, m_file) == 1) ? true : false;
-		GetPrivateProfileString(L"Profile", L"dsSerial", L"", dsSerial, sizeof(dsSerial) / sizeof(dsSerial[0]), m_file);
+		if (VersionDateCheck < 202204111)
+			GetPrivateProfileString(L"Profile", L"dsSerial", L"", Serial, sizeof(Serial) / sizeof(Serial[0]), m_file);
+		else
+			GetPrivateProfileString(L"Profile", L"Serial", L"", Serial, sizeof(Serial) / sizeof(Serial[0]), m_file);
+		GetPrivateProfileString(L"Profile", L"Device1", L"", Device1, sizeof(Device1) / sizeof(Device1[0]), m_file);
+		GetPrivateProfileString(L"Profile", L"Device2", L"", Device2, sizeof(Device2) / sizeof(Device2[0]), m_file);
+
+		{
+			WCHAR buf[MAX_PATH] = { 0 };
+			byte dispatchInit[SrceDispatchID::Dispatch_Count] = { 0 };					//XBOX
+			dispatchInit[SrceDispatchID::Dispatch_LX] = SrceDIAxisID::DIAxisID_1_X;
+			dispatchInit[SrceDispatchID::Dispatch_LY] = SrceDIAxisID::DIAxisID_1_Y;
+			dispatchInit[SrceDispatchID::Dispatch_RX] = SrceDIAxisID::DIAxisID_1_RX;
+			dispatchInit[SrceDispatchID::Dispatch_RY] = SrceDIAxisID::DIAxisID_1_RY;
+			dispatchInit[SrceDispatchID::Dispatch_L2TR] = SrceDIAxisID::DIAxisID_1_Z;
+			dispatchInit[SrceDispatchID::Dispatch_R2TR] = SrceDIAxisID::DIAxisID_1_RZ;
+			dispatchInit[SrceDispatchID::Dispatch_DPAD] = SrceDIPOVID::DIPOVID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_SQUARE] = SrceDIButtonID::DIButtonID_1_3;
+			dispatchInit[SrceDispatchID::Dispatch_CROSS] = SrceDIButtonID::DIButtonID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_CIRCLE] = SrceDIButtonID::DIButtonID_1_2;
+			dispatchInit[SrceDispatchID::Dispatch_TRIANGLE] = SrceDIButtonID::DIButtonID_1_4;
+			dispatchInit[SrceDispatchID::Dispatch_L1] = SrceDIButtonID::DIButtonID_1_5;
+			dispatchInit[SrceDispatchID::Dispatch_R1] = SrceDIButtonID::DIButtonID_1_6;
+			dispatchInit[SrceDispatchID::Dispatch_SHARE] = SrceDIButtonID::DIButtonID_1_7;
+			dispatchInit[SrceDispatchID::Dispatch_OPTIONS] = SrceDIButtonID::DIButtonID_1_8;
+			dispatchInit[SrceDispatchID::Dispatch_L3] = SrceDIButtonID::DIButtonID_1_10;
+			dispatchInit[SrceDispatchID::Dispatch_R3] = SrceDIButtonID::DIButtonID_1_11;
+			dispatchInit[SrceDispatchID::Dispatch_PS] = SrceDIButtonID::DIButtonID_1_9;
+			std::wstring dispatchInitStr = L"";
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+				dispatchInitStr += std::to_wstring(dispatchInit[i]) + L",";
+
+			GetPrivateProfileString(L"Profile", L"diDispatch1", dispatchInitStr.c_str(), buf, sizeof(buf) / sizeof(buf[0]), m_file);
+			std::wstringstream ss(buf);
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			{
+				std::wstring substr;
+				getline(ss, substr, L',');
+				setDispatch(i, _wtoi(substr.c_str()), 1);
+			}
+		}
+		{
+			WCHAR buf[MAX_PATH] = { 0 };
+			byte dispatchInit[SrceDispatchID::Dispatch_Count] = { 0 };					//PS3
+			dispatchInit[SrceDispatchID::Dispatch_LX] = SrceDIAxisID::DIAxisID_1_X;
+			dispatchInit[SrceDispatchID::Dispatch_LY] = SrceDIAxisID::DIAxisID_1_Y;
+			dispatchInit[SrceDispatchID::Dispatch_RX] = SrceDIAxisID::DIAxisID_1_Z;
+			dispatchInit[SrceDispatchID::Dispatch_RY] = SrceDIAxisID::DIAxisID_1_RX;
+			dispatchInit[SrceDispatchID::Dispatch_DPAD] = SrceDIPOVID::DIPOVID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_SQUARE] = SrceDIButtonID::DIButtonID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_CROSS] = SrceDIButtonID::DIButtonID_1_2;
+			dispatchInit[SrceDispatchID::Dispatch_CIRCLE] = SrceDIButtonID::DIButtonID_1_3;
+			dispatchInit[SrceDispatchID::Dispatch_TRIANGLE] = SrceDIButtonID::DIButtonID_1_4;
+			dispatchInit[SrceDispatchID::Dispatch_L1] = SrceDIButtonID::DIButtonID_1_5;
+			dispatchInit[SrceDispatchID::Dispatch_R1] = SrceDIButtonID::DIButtonID_1_6;
+			dispatchInit[SrceDispatchID::Dispatch_L2] = SrceDIButtonID::DIButtonID_1_7;
+			dispatchInit[SrceDispatchID::Dispatch_R2] = SrceDIButtonID::DIButtonID_1_8;
+			dispatchInit[SrceDispatchID::Dispatch_SHARE] = SrceDIButtonID::DIButtonID_1_9;
+			dispatchInit[SrceDispatchID::Dispatch_OPTIONS] = SrceDIButtonID::DIButtonID_1_10;
+			dispatchInit[SrceDispatchID::Dispatch_L3] = SrceDIButtonID::DIButtonID_1_11;
+			dispatchInit[SrceDispatchID::Dispatch_R3] = SrceDIButtonID::DIButtonID_1_12;
+			dispatchInit[SrceDispatchID::Dispatch_PS] = SrceDIButtonID::DIButtonID_1_13;
+			std::wstring dispatchInitStr = L"";
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+				dispatchInitStr += std::to_wstring(dispatchInit[i]) + L",";
+
+			GetPrivateProfileString(L"Profile", L"diDispatch2", dispatchInitStr.c_str(), buf, sizeof(buf) / sizeof(buf[0]), m_file);
+			std::wstringstream ss(buf);
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			{
+				std::wstring substr;
+				getline(ss, substr, L',');
+				setDispatch(i, _wtoi(substr.c_str()), 2);
+			}
+		}
+		{
+			WCHAR buf[MAX_PATH] = { 0 };
+			byte dispatchInit[SrceDispatchID::Dispatch_Count] = { 0 };					//PS5
+			dispatchInit[SrceDispatchID::Dispatch_LX] = SrceDIAxisID::DIAxisID_1_X;
+			dispatchInit[SrceDispatchID::Dispatch_LY] = SrceDIAxisID::DIAxisID_1_Y;
+			dispatchInit[SrceDispatchID::Dispatch_RX] = SrceDIAxisID::DIAxisID_1_Z;
+			dispatchInit[SrceDispatchID::Dispatch_RY] = SrceDIAxisID::DIAxisID_1_RZ;
+			dispatchInit[SrceDispatchID::Dispatch_L2TR] = SrceDIAxisID::DIAxisID_1_RX;
+			dispatchInit[SrceDispatchID::Dispatch_R2TR] = SrceDIAxisID::DIAxisID_1_RY;
+			dispatchInit[SrceDispatchID::Dispatch_DPAD] = SrceDIPOVID::DIPOVID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_SQUARE] = SrceDIButtonID::DIButtonID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_CROSS] = SrceDIButtonID::DIButtonID_1_2;
+			dispatchInit[SrceDispatchID::Dispatch_CIRCLE] = SrceDIButtonID::DIButtonID_1_3;
+			dispatchInit[SrceDispatchID::Dispatch_TRIANGLE] = SrceDIButtonID::DIButtonID_1_4;
+			dispatchInit[SrceDispatchID::Dispatch_L1] = SrceDIButtonID::DIButtonID_1_5;
+			dispatchInit[SrceDispatchID::Dispatch_R1] = SrceDIButtonID::DIButtonID_1_6;
+			dispatchInit[SrceDispatchID::Dispatch_L2] = SrceDIButtonID::DIButtonID_1_7;
+			dispatchInit[SrceDispatchID::Dispatch_R2] = SrceDIButtonID::DIButtonID_1_8;
+			dispatchInit[SrceDispatchID::Dispatch_SHARE] = SrceDIButtonID::DIButtonID_1_9;
+			dispatchInit[SrceDispatchID::Dispatch_OPTIONS] = SrceDIButtonID::DIButtonID_1_10;
+			dispatchInit[SrceDispatchID::Dispatch_L3] = SrceDIButtonID::DIButtonID_1_11;
+			dispatchInit[SrceDispatchID::Dispatch_R3] = SrceDIButtonID::DIButtonID_1_12;
+			dispatchInit[SrceDispatchID::Dispatch_PS] = SrceDIButtonID::DIButtonID_1_13;
+			dispatchInit[SrceDispatchID::Dispatch_TOUCH] = SrceDIButtonID::DIButtonID_1_14;
+			dispatchInit[SrceDispatchID::Dispatch_MUTE] = SrceDIButtonID::DIButtonID_1_15;
+			std::wstring dispatchInitStr = L"";
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+				dispatchInitStr += std::to_wstring(dispatchInit[i]) + L",";
+
+			GetPrivateProfileString(L"Profile", L"diDispatch3", dispatchInitStr.c_str(), buf, sizeof(buf) / sizeof(buf[0]), m_file);
+			std::wstringstream ss(buf);
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			{
+				std::wstring substr;
+				getline(ss, substr, L',');
+				setDispatch(i, _wtoi(substr.c_str()), 3);
+			}
+		}
+
 		BlackLedOnExit = (GetPrivateProfileInt(TEXT("Profile"), TEXT("BlackLedOnExit"), 1, m_file) == 1) ? true : false;
 		MappingViewMode = (GetPrivateProfileInt(TEXT("Profile"), TEXT("MappingViewMode"), 0, m_file) == 1) ? true : false;
 		CloneViewMode = (GetPrivateProfileInt(TEXT("Profile"), TEXT("CloneViewMode"), 0, m_file) == 1) ? true : false;
@@ -247,35 +501,49 @@ void Settings::Load(int category)
 			getline(ss, substr, L',');
 			NotepadFontW = _wtoi(substr.c_str());
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Tray:
+	case SettingCategory_Tray:
 	{
 		MappingPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("MappingPaused"), 0, m_file) == 1) ? true : false;
 		RapidFirePaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("RapidFirePaused"), 0, m_file) == 1) ? true : false;
 		KeymapPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("KeymapPaused"), 0, m_file) == 1) ? true : false;
 		vJoyPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("vJoyPaused"), 0, m_file) == 1) ? true : false;
-		ViGEmPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("ViGEmPaused"), 0, m_file) == 1) ? true : false;
+		///////////////////
+		if (VersionDateCheck < 202204111)
+			XOutputPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("ViGEmPaused"), 0, m_file) == 1) ? true : false;
+		else
+			XOutputPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("XOutputPaused"), 0, m_file) == 1) ? true : false;
 		GuardianPaused = (GetPrivateProfileInt(TEXT("Tray"), TEXT("GuardianPaused"), 0, m_file) == 1) ? true : false;
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Settings:
+	case SettingCategory_Settings:
 	{
 		setOpacity(GetPrivateProfileInt(Settingstxt, TEXT("Opacity"), 60, m_file));
-		setPreferredDS(GetPrivateProfileInt(Settingstxt, TEXT("PreferredDS"), 0, m_file));
-		MouseActive = (GetPrivateProfileInt(Settingstxt, TEXT("MouseActive"), 0, m_file) == 1) ? true : false;
+		if (VersionDateCheck < 202204111)
+			setPreferredSource(GetPrivateProfileInt(Settingstxt, TEXT("PreferredDS"), 0, m_file));
+		else
+			setPreferredSource(GetPrivateProfileInt(Settingstxt, TEXT("PreferredSource"), 0, m_file));
+		setMouseActive(GetPrivateProfileInt(Settingstxt, TEXT("MouseActive"), 0, m_file));
 		KeyboardActive = (GetPrivateProfileInt(Settingstxt, TEXT("KeyboardActive"), 0, m_file) == 1) ? true : false;
-		setvJoyDeviceID(GetPrivateProfileInt(Settingstxt, TEXT("vJoyDeviceID"), 1, m_file));
-		setThreshold(GetPrivateProfileInt(Settingstxt, TEXT("Threshold"), 8, m_file));
+		if (VersionDateCheck < 202204111)
+			setvJoyDevice(GetPrivateProfileInt(Settingstxt, TEXT("vJoyDeviceID"), 0, m_file));
+		else
+			setvJoyDevice(GetPrivateProfileInt(Settingstxt, TEXT("vJoyDevice"), 0, m_file));
+		setXInputDevice(GetPrivateProfileInt(Settingstxt, TEXT("XInputDevice"), 0, m_file));
+		MouseCanBypass = (GetPrivateProfileInt(Settingstxt, TEXT("MouseCanBypass"), 0, m_file) == 1) ? true : false;
+		setTriggersMode(GetPrivateProfileInt(Settingstxt, TEXT("TriggersMode"), 0, m_file));
 		setSimultaneous(GetPrivateProfileInt(Settingstxt, TEXT("Simultaneous"), 40, m_file));
 		setLongPress(GetPrivateProfileInt(Settingstxt, TEXT("LongPress"), 255, m_file));
 		setVeryLongPress(GetPrivateProfileInt(Settingstxt, TEXT("VeryLongPress"), 3287, m_file));
-		MouseCanBypass = (GetPrivateProfileInt(Settingstxt, TEXT("MouseCanBypass"), 0, m_file) == 1) ? true : false;
-		setTriggersMode(GetPrivateProfileInt(Settingstxt, TEXT("TriggersMode"), 0, m_file));
+		if (VersionDateCheck < 202204111)
+			setThreshold((GetPrivateProfileInt(Settingstxt, TEXT("Threshold"), 8, m_file)) * 257);
+		else
+			setThreshold(GetPrivateProfileInt(Settingstxt, TEXT("Threshold"), 2056, m_file));
 		DarkTheme = (GetPrivateProfileInt(Settingstxt, TEXT("DarkTheme"), 0, m_file) == 1) ? true : false;
 		setTouchPadButton(GetPrivateProfileInt(Settingstxt, TEXT("TouchPadButton"), 0, m_file));
 		setSplitTouch();
@@ -284,6 +552,45 @@ void Settings::Load(int category)
 		setLED(GetPrivateProfileInt(Settingstxt, TEXT("LED_Color"), 0xFF0000, m_file));
 		setWaveSpeed(GetPrivateProfileInt(Settingstxt, TEXT("WaveSpeed"), 130, m_file));
 		setTabMapping(GetPrivateProfileInt(Settingstxt, TEXT("TabMapping"), 0, m_file));
+
+		{
+			WCHAR buf[MAX_PATH] = { 0 };
+			byte dispatchInit[SrceDispatchID::Dispatch_Count] = { 0 };
+			dispatchInit[SrceDispatchID::Dispatch_LX] =			SrceDIAxisID::DIAxisID_1_X;
+			dispatchInit[SrceDispatchID::Dispatch_LY] =			SrceDIAxisID::DIAxisID_1_Y;
+			dispatchInit[SrceDispatchID::Dispatch_RX] =			SrceDIAxisID::DIAxisID_1_Z;
+			dispatchInit[SrceDispatchID::Dispatch_RY] =			SrceDIAxisID::DIAxisID_1_RZ;
+			dispatchInit[SrceDispatchID::Dispatch_L2TR] =		SrceDIAxisID::DIAxisID_1_RX;
+			dispatchInit[SrceDispatchID::Dispatch_R2TR] =		SrceDIAxisID::DIAxisID_1_RY;
+			dispatchInit[SrceDispatchID::Dispatch_DPAD] =		SrceDIPOVID::DIPOVID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_SQUARE] =		SrceDIButtonID::DIButtonID_1_1;
+			dispatchInit[SrceDispatchID::Dispatch_CROSS] =		SrceDIButtonID::DIButtonID_1_2;
+			dispatchInit[SrceDispatchID::Dispatch_CIRCLE] =		SrceDIButtonID::DIButtonID_1_3;
+			dispatchInit[SrceDispatchID::Dispatch_TRIANGLE] =	SrceDIButtonID::DIButtonID_1_4;
+			dispatchInit[SrceDispatchID::Dispatch_L1] =			SrceDIButtonID::DIButtonID_1_5;
+			dispatchInit[SrceDispatchID::Dispatch_R1] =			SrceDIButtonID::DIButtonID_1_6;
+			dispatchInit[SrceDispatchID::Dispatch_L2] =			SrceDIButtonID::DIButtonID_1_7;
+			dispatchInit[SrceDispatchID::Dispatch_R2] =			SrceDIButtonID::DIButtonID_1_8;
+			dispatchInit[SrceDispatchID::Dispatch_SHARE] =		SrceDIButtonID::DIButtonID_1_9;
+			dispatchInit[SrceDispatchID::Dispatch_OPTIONS] =	SrceDIButtonID::DIButtonID_1_10;
+			dispatchInit[SrceDispatchID::Dispatch_L3] =			SrceDIButtonID::DIButtonID_1_11;
+			dispatchInit[SrceDispatchID::Dispatch_R3] =			SrceDIButtonID::DIButtonID_1_12;
+			dispatchInit[SrceDispatchID::Dispatch_PS] =			SrceDIButtonID::DIButtonID_1_13;
+			dispatchInit[SrceDispatchID::Dispatch_TOUCH] =		SrceDIButtonID::DIButtonID_1_14;
+			dispatchInit[SrceDispatchID::Dispatch_MUTE] =		SrceDIButtonID::DIButtonID_1_15;
+			std::wstring dispatchInitStr = L"";
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+				dispatchInitStr += std::to_wstring(dispatchInit[i]) + L",";
+
+			GetPrivateProfileString(Settingstxt, L"diDispatch", dispatchInitStr.c_str(), buf, sizeof(buf) / sizeof(buf[0]), m_file);
+			std::wstringstream ss(buf);
+			for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			{
+				std::wstring substr;
+				getline(ss, substr, L',');
+				setDispatch(i, _wtoi(substr.c_str()));
+			}
+		}
 
 		{
 			WCHAR buf[MAX_PATH] = { 0 };
@@ -299,7 +606,7 @@ void Settings::Load(int category)
 
 		{
 			WCHAR buf[MAX_PATH] = { 0 };
-			GetPrivateProfileString(Settingstxt, L"Reminder", L"0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0", buf, sizeof(buf) / sizeof(buf[0]), m_file);
+			GetPrivateProfileString(Settingstxt, L"Reminder",L"0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0", buf, sizeof(buf) / sizeof(buf[0]), m_file);
 			std::wstringstream ss(buf);
 			for (int i = 0; i < 32; i++)
 			{
@@ -321,11 +628,11 @@ void Settings::Load(int category)
 			}
 		}
 
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Mapping:
+	case SettingCategory_Mapping:
 	{
 		if (!Create)
 		{
@@ -358,7 +665,7 @@ void Settings::Load(int category)
 						}
 
 						Mapping btn;
-						for (int i = 0; i < MappingName::Mapping_Count; i++)
+						for (int i = 0; i < MappingName::MappingName_Count; i++)
 						{
 							key = value;
 							value = wcschr(key, L',');
@@ -378,18 +685,100 @@ void Settings::Load(int category)
 							case Mapping_Pause: { btn.Pause = max(0, min(3, _wtoi(key))); break; }
 							case Mapping_Transitivity: { btn.Transitivity = max(0, min(2, _wtoi(key))); break; }
 							case Mapping_Toggle: { btn.Toggle = max(0, min(2, _wtoi(key))); break; }
-							case Mapping_Target: { for (int i = 0; i < 5; i++) { btn.Target[i] = CheckboxString(key, i) == 1; } break; }
-							case Mapping_dsID: { for (int i = 0; i < 5; i++) { btn.dsID[i] = max(0, min((btn.Target[i]) ? vJoyButtonID::button_Count : dsButtonID::button_Count, dsIDString(key, i))); } break; }
+							case Mapping_Target: { for (int i = 0; i < 5; i++) { btn.Target[i] = max(0, min(3, CheckboxString(key, i))); } break; }
+							case Mapping_dsID:
+							{
+								for (int i = 0; i < 5; i++)
+								{
+									if (VersionDateCheck < 202204111)
+									{
+										if (btn.Target[i] == 1)
+										{
+											btn.Target[i] = 3;
+											btn.srceID[i] = max(DestButtonID::Destination_None, min(DestButtonID::Destination_Count, dsIDString(key, i)));
+											if (btn.srceID[i] > 24)
+												btn.srceID[i] += 24;
+											else if (btn.srceID[i] > 16)
+												btn.srceID[i] += 8;
+										}
+										else
+										{
+											if (dsIDString(key, i) >= 89)
+												btn.srceID[i] = max(SrceButtonID::Keyboard_None, min(SrceButtonID::Keyboard_Count, (dsIDString(key, i) + SrceButtonID::KID_F1 - 89)));
+											else if (dsIDString(key, i) >= 80)
+												btn.srceID[i] = max(SrceButtonID::Keyboard_None, min(SrceButtonID::Keyboard_Count, (dsIDString(key, i) + SrceButtonID::MOUSE_LEFT - 80)));
+											else if (dsIDString(key, i) >= 78)
+												btn.srceID[i] = max(SrceButtonID::Keyboard_None, min(SrceButtonID::Keyboard_Count, (dsIDString(key, i) + SrceButtonID::MOUSE_AXEX - 78)));
+											else if (dsIDString(key, i) == 77)
+												btn.srceID[i] = SrceButtonID::BATTERY;
+											else if (dsIDString(key, i) > 28 && dsIDString(key, i) < 77)
+												btn.srceID[i] = dsIDString(key, i) - 3;
+											else if (dsIDString(key, i) == 26)
+												btn.srceID[i] = SrceButtonID::EMPTY;
+											else if (dsIDString(key, i) == 27)
+												btn.srceID[i] = SrceButtonID::MIDDLE;
+											else if (dsIDString(key, i) == 28)
+												btn.srceID[i] = SrceButtonID::FULL;
+											else
+												btn.srceID[i] = max(SrceButtonID::Button_None, min(SrceButtonID::Button_Count, dsIDString(key, i)));
+										}
+
+									}
+									else
+									{
+										switch (btn.Target[i])
+										{
+										case 0: { btn.srceID[i] = max(SrceButtonID::Button_None, min(SrceButtonID::Button_Count, dsIDString(key, i))); break; }
+										case 1: { btn.srceID[i] = max(SrceButtonID::Sisaxis_None, min(SrceButtonID::Sisaxis_Count, dsIDString(key, i) + SourceButton::Sisaxis_None)); break; }
+										case 2: { btn.srceID[i] = max(SrceButtonID::Keyboard_None, min(SrceButtonID::Keyboard_Count, dsIDString(key, i) + SourceButton::Keyboard_None)); break; }
+										case 3: { btn.srceID[i] = max(DestButtonID::Destination_None, min(DestButtonID::Destination_Count, dsIDString(key, i))); break; }
+										}
+									}
+								}
+								break;
+							}
 							case Mapping_OrXorNot: { for (int i = 0; i < 4; i++) { btn.OrXorNot[i] = max(0, min(2, CheckboxString(key, i))); } break; }
-							case Mapping_dsDisable: { for (int i = 0; i < 5; i++) { btn.dsDisable[i] = max(0, min(2, CheckboxString(key, i))); } break; }
-							case Mapping_ActionType: { for (int i = 0; i < 8; i++) { btn.ActionType[i] = max(0, min(4, CheckboxString(key, i, true))); } break; }
-							case Mapping_vjID: { for (int i = 0; i < 8; i++) { btn.vjID[i] = max(0, min((btn.ActionType[i]) ? ((btn.ActionType[i] == 1) ? Mapping::mouse_Count : ((btn.ActionType[i] == 2) ? Mapping::special_Count : ((btn.ActionType[i] == 3) ? vJoyAxisMoveID::axismove_Count : Mapping::modules_Count))) : vJoyButtonID::button_Count, vjIDString(key, i))); } break; }
+							case Mapping_dsDisable: { for (int i = 0; i < 5; i++) { btn.srceDisable[i] = max(0, min(2, CheckboxString(key, i))); } break; }
+							case Mapping_ActionType: {
+								for (int i = 0; i < 8; i++)
+								{
+									btn.ActionType[i] = max(0, min(5, CheckboxString(key, i, true)));
+									if (VersionDateCheck < 202208151)
+										if (btn.ActionType[i] == 4)
+											btn.ActionType[i] = 5;
+								}
+								break;
+							}
+							case Mapping_vjID: {
+								for (int i = 0; i < 8; i++)
+								{
+									btn.destID[i] = max(0, min((btn.ActionType[i]) ? ((btn.ActionType[i] == 1) ? Mapping::MouseAction_Count : ((btn.ActionType[i] == 2) ? Mapping::SpecialAction_Count : ((btn.ActionType[i] == 3) ? DestAxisMoveID::AxisMove_Count : ((btn.ActionType[i] == 4) ? DestAfterEffectID::AfterEffect_Count : Mapping::ModulesAction_Count)))) : DestButtonID::Destination_Count, vjIDString(key, i)));
+									if (VersionDateCheck < 202204111)
+									{
+										if (btn.ActionType[i] == 0)
+										{
+											if (btn.destID[i] > 24)
+												btn.destID[i] += 24;
+											else if (btn.destID[i] > 16)
+												btn.destID[i] += 8;
+										}
+										else if (btn.ActionType[i] == 2)
+										{
+											if (btn.destID[i] > 30)
+												btn.destID[i] += 6;
+											if (btn.destID[i] == 61)
+												btn.destID[i] = 62;
+										}
+									}
+								}
+								break;
+							}
 							case Mapping_Overcontrol: { for (int i = 0; i < 8; i++) { btn.Overcontrol[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_Switch: { for (int i = 0; i < 8; i++) { btn.Switch[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_OnRelease: { for (int i = 0; i < 8; i++) { btn.OnRelease[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_NoRelease: { for (int i = 0; i < 8; i++) { btn.NoRelease[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_NlRelease: { for (int i = 0; i < 8; i++) { btn.NlRelease[i] = max(0, min(2, CheckboxString(key, i))); } break; }
-							case Mapping_vjDisable: { for (int i = 0; i < 8; i++) { btn.vjDisable[i] = max(0, min(2, CheckboxString(key, i))); } break; }
+							case Mapping_vjDisable: { for (int i = 0; i < 8; i++) { btn.destDisable[i] = max(0, min(2, CheckboxString(key, i))); } break; }
 							case Mapping_Mouse:
 							{
 								btn.Mouse[0] = max(0, min(5, MouseString(key, 0)));
@@ -439,11 +828,11 @@ void Settings::Load(int category)
 				delete[] buf;
 			}
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_RapidFire:
+	case SettingCategory_RapidFire:
 	{
 		if (!Create)
 		{
@@ -475,8 +864,8 @@ void Settings::Load(int category)
 							continue;
 						}
 
-						int mapdata[RapidFireName::RapidFire_Count] = { 0 };
-						for (int i = 0; i < RapidFireName::RapidFire_Count; i++)
+						int mapdata[RapidFireName::RapidFireName_Count] = { 0 };
+						for (int i = 0; i < RapidFireName::RapidFireName_Count; i++)
 						{
 							key = value;
 							value = wcschr(key, L',');
@@ -493,6 +882,17 @@ void Settings::Load(int category)
 						rf.Enable = mapdata[RapidFireName::RapidFire_Enable];
 						rf.ButtonID = mapdata[RapidFireName::RapidFire_Button];
 						rf.ButtonID2 = mapdata[RapidFireName::RapidFire_Button2];
+						if (VersionDateCheck < 202204111)
+						{
+							if (rf.ButtonID > 24)
+								rf.ButtonID += 24;
+							else if (rf.ButtonID > 16)
+								rf.ButtonID += 8;
+							if (rf.ButtonID2 > 24)
+								rf.ButtonID2 += 24;
+							else if (rf.ButtonID2 > 16)
+								rf.ButtonID2 += 8;
+						}
 						rf.Firsttime = mapdata[RapidFireName::RapidFire_FirstTime];
 						rf.Releasetime = mapdata[RapidFireName::RapidFire_Release];
 						rf.Presstime = mapdata[RapidFireName::RapidFire_PressTime];
@@ -504,11 +904,11 @@ void Settings::Load(int category)
 				delete[] buf;
 			}
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Keymap:
+	case SettingCategory_Keymap:
 	{
 		if (!Create)
 		{
@@ -535,12 +935,19 @@ void Settings::Load(int category)
 						*value++ = 0;
 						Keymap keymap;
 						int btnid = _wtoi(key);
-						if (btnid < vJoyButtonID::none || btnid >= vJoyButtonID::button_Count)
+						if (btnid < DestButtonID::Destination_None || btnid >= DestButtonID::Destination_Count)
 						{
 							key = head;
 							continue;
 						}
 						keymap.ButtonID = btnid;
+						if (VersionDateCheck < 202204111)
+						{
+							if (keymap.ButtonID > 24)
+								keymap.ButtonID += 24;
+							else if (keymap.ButtonID > 16)
+								keymap.ButtonID += 8;
+						}
 
 						key = value;
 						value = wcschr(key, L',');
@@ -616,15 +1023,25 @@ void Settings::Load(int category)
 				delete[] buf;
 			}
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_ViGEm:
+	case SettingCategory_XOutput:
 	{
-		ViGEmActive = (GetPrivateProfileInt(ViGEmtxt, TEXT("ViGEmActive"), 0, m_file) == 1) ? true : false;
-		vJoyActive = (GetPrivateProfileInt(ViGEmtxt, TEXT("vJoyActive"), 0, m_file) == 1) ? true : false;
-		setDesiredVirtualPad(GetPrivateProfileInt(ViGEmtxt, TEXT("DesiredVirtualPad"), 1, m_file));
+		///////////////////////
+		if (VersionDateCheck < 202204111)
+		{
+			XOutputActive = (GetPrivateProfileInt(ViGEmtxt, TEXT("ViGEmActive"), 0, m_file) == 1) ? true : false;
+			vJoyActive = (GetPrivateProfileInt(ViGEmtxt, TEXT("vJoyActive"), 0, m_file) == 1) ? true : false;
+			setDesiredVirtualPad(GetPrivateProfileInt(ViGEmtxt, TEXT("DesiredVirtualPad"), 1, m_file));
+		}
+		else
+		{
+			XOutputActive = (GetPrivateProfileInt(XOutputtxt, TEXT("XOutputActive"), 0, m_file) == 1) ? true : false;
+			vJoyActive = (GetPrivateProfileInt(XOutputtxt, TEXT("vJoyActive"), 0, m_file) == 1) ? true : false;
+			setDesiredVirtualPad(GetPrivateProfileInt(XOutputtxt, TEXT("DesiredVirtualPad"), 1, m_file));
+		}
 
 		{
 			const int n = 128 * 1024;
@@ -632,18 +1049,14 @@ void Settings::Load(int category)
 			if (buf == 0)
 			{
 				MessageBoxPos(Ds2hWnd, L"Not enough memory\nto load vigem,\nany modification\nwill be lost on exit.", L"Careful", MB_OK, 0, 0, 180);
-				cansavevigem = false;
+				cansavexoutput = false;
 			}
 			else
 			{
-				int totalvalues_X360 = 0;
-				int dstotalvalues_X360 = 0;
 				int vjtotalvalues_X360 = 0;
-				int totalvalues_DS4 = 0;
-				int dstotalvalues_DS4 = 0;
 				int vjtotalvalues_DS4 = 0;
 				WCHAR* head = buf;
-				int ret = GetPrivateProfileSectionW(ViGEmtxt, buf, n, m_file);
+				int ret = GetPrivateProfileSectionW((VersionDateCheck < 202204111) ? ViGEmtxt : XOutputtxt, buf, n, m_file); //////////////////
 				if (ret > 0 && ret - 2 != n)
 				{
 					WCHAR* key = head, * value;
@@ -654,7 +1067,11 @@ void Settings::Load(int category)
 						if (value == 0)
 							break;
 						*value++ = 0;
-						int j = _wtoi(key);
+						int j = 0;
+						if (!wcscmp(key, L"DS4"))
+							j = 1;
+						else if (!wcscmp(key, L"X360"))
+							j = 2;
 						if (j < 1)
 						{
 							key = head;
@@ -672,12 +1089,24 @@ void Settings::Load(int category)
 								continue;
 							switch (j)
 							{
-							case 1: { totalvalues_X360++; target_X360[i] = (bool)k; break; }
-							case 2: { dstotalvalues_X360++; dstarget_X360[i] = (byte)k; break; }
-							case 3: { vjtotalvalues_X360++; vjtarget_X360[i] = (byte)k; break; }
-							case 4: { totalvalues_DS4++; target_DS4[i] = (bool)k; break; }
-							case 5: { dstotalvalues_DS4++; dstarget_DS4[i] = (byte)k; break; }
-							case 6: { vjtotalvalues_DS4++; vjtarget_DS4[i] = (byte)k; break; }
+							case 1: { vjtotalvalues_DS4++; target_DS4[i] = (byte)k;
+								if (VersionDateCheck < 202204111)
+								{
+									if (target_DS4[i] > 24)
+										target_DS4[i] += 24;
+									else if (target_DS4[i] > 16)
+										target_DS4[i] += 8;
+								}
+								break; }
+							case 2: { vjtotalvalues_X360++; target_X360[i] = (byte)k;
+								if (VersionDateCheck < 202204111)
+								{
+									if (target_X360[i] > 24)
+										target_X360[i] += 24;
+									else if (target_X360[i] > 16)
+										target_X360[i] += 8;
+								}
+								break; }
 							}
 							if (value == 0)
 								break;
@@ -685,133 +1114,74 @@ void Settings::Load(int category)
 						key = head;
 					}
 				}
-				if (totalvalues_X360 == 0)
-					for (int i = 0; i < 24; i++) { target_X360[i] = false; };
-				if (dstotalvalues_X360 == 0)
-				{
-					dstarget_X360[0] = dsButtonID::L3;
-					dstarget_X360[1] = dsButtonID::DPAD_LEFT;
-					dstarget_X360[2] = dsButtonID::DPAD_UP;
-					dstarget_X360[3] = dsButtonID::DPAD_RIGHT;
-					dstarget_X360[4] = dsButtonID::DPAD_DOWN;
-					dstarget_X360[5] = dsButtonID::SHARE;
-					dstarget_X360[6] = dsButtonID::OPTIONS;
-					dstarget_X360[7] = dsButtonID::SQUARE;
-					dstarget_X360[8] = dsButtonID::TRIANGLE;
-					dstarget_X360[9] = dsButtonID::CIRCLE;
-					dstarget_X360[10] = dsButtonID::CROSS;
-					dstarget_X360[11] = dsButtonID::R3;
-					dstarget_X360[12] = dsButtonID::PS;
-					dstarget_X360[13] = dsButtonID::TOUCH;
-					dstarget_X360[14] = dsButtonID::L1;
-					dstarget_X360[15] = dsButtonID::R1;
-					dstarget_X360[16] = dsButtonID::L2;
-					dstarget_X360[17] = dsButtonID::R2;
-					dstarget_X360[18] = dsButtonID::L2TRIGGER;
-					dstarget_X360[19] = dsButtonID::R2TRIGGER;
-					dstarget_X360[20] = dsButtonID::LX;
-					dstarget_X360[21] = dsButtonID::LYINV;
-					dstarget_X360[22] = dsButtonID::RX;
-					dstarget_X360[23] = dsButtonID::RYINV;
-				}
 				if (vjtotalvalues_X360 == 0)
 				{
-					vjtarget_X360[0] = vJoyButtonID::Button1;
-					vjtarget_X360[1] = vJoyButtonID::Button2;
-					vjtarget_X360[2] = vJoyButtonID::Button3;
-					vjtarget_X360[3] = vJoyButtonID::Button4;
-					vjtarget_X360[4] = vJoyButtonID::Button5;
-					vjtarget_X360[5] = vJoyButtonID::Button6;
-					vjtarget_X360[6] = vJoyButtonID::Button7;
-					vjtarget_X360[7] = vJoyButtonID::Button8;
-					vjtarget_X360[8] = vJoyButtonID::Button9;
-					vjtarget_X360[9] = vJoyButtonID::Button10;
-					vjtarget_X360[10] = vJoyButtonID::Button11;
-					vjtarget_X360[11] = vJoyButtonID::Button12;
-					vjtarget_X360[12] = vJoyButtonID::Button13;
-					vjtarget_X360[13] = vJoyButtonID::none;
-					vjtarget_X360[14] = vJoyButtonID::Button16;
-					vjtarget_X360[15] = vJoyButtonID::Button17;
-					vjtarget_X360[16] = vJoyButtonID::none;
-					vjtarget_X360[17] = vJoyButtonID::none;
-					vjtarget_X360[18] = vJoyButtonID::RXTR;
-					vjtarget_X360[19] = vJoyButtonID::RYTR;
-					vjtarget_X360[20] = vJoyButtonID::X;
-					vjtarget_X360[21] = vJoyButtonID::YINV;
-					vjtarget_X360[22] = vJoyButtonID::Z;
-					vjtarget_X360[23] = vJoyButtonID::RZINV;
-				}
-				if (totalvalues_DS4 == 0)
-					for (int i = 0; i < 24; i++) { target_DS4[i] = false; };
-				if (dstotalvalues_DS4 == 0)
-				{
-					dstarget_DS4[0] = dsButtonID::L3;
-					dstarget_DS4[1] = dsButtonID::DPAD_LEFT;
-					dstarget_DS4[2] = dsButtonID::DPAD_UP;
-					dstarget_DS4[3] = dsButtonID::DPAD_RIGHT;
-					dstarget_DS4[4] = dsButtonID::DPAD_DOWN;
-					dstarget_DS4[5] = dsButtonID::SHARE;
-					dstarget_DS4[6] = dsButtonID::OPTIONS;
-					dstarget_DS4[7] = dsButtonID::SQUARE;
-					dstarget_DS4[8] = dsButtonID::TRIANGLE;
-					dstarget_DS4[9] = dsButtonID::CIRCLE;
-					dstarget_DS4[10] = dsButtonID::CROSS;
-					dstarget_DS4[11] = dsButtonID::R3;
-					dstarget_DS4[12] = dsButtonID::PS;
-					dstarget_DS4[13] = dsButtonID::TOUCH;
-					dstarget_DS4[14] = dsButtonID::L1;
-					dstarget_DS4[15] = dsButtonID::R1;
-					dstarget_DS4[16] = dsButtonID::L2;
-					dstarget_DS4[17] = dsButtonID::R2;
-					dstarget_DS4[18] = dsButtonID::L2TRIGGER;
-					dstarget_DS4[19] = dsButtonID::R2TRIGGER;
-					dstarget_DS4[20] = dsButtonID::LX;
-					dstarget_DS4[21] = dsButtonID::LY;
-					dstarget_DS4[22] = dsButtonID::RX;
-					dstarget_DS4[23] = dsButtonID::RY;
+					target_X360[0] = DestButtonID::Button1;
+					target_X360[1] = DestButtonID::Button2;
+					target_X360[2] = DestButtonID::Button3;
+					target_X360[3] = DestButtonID::Button4;
+					target_X360[4] = DestButtonID::Button5;
+					target_X360[5] = DestButtonID::Button6;
+					target_X360[6] = DestButtonID::Button7;
+					target_X360[7] = DestButtonID::Button8;
+					target_X360[8] = DestButtonID::Button9;
+					target_X360[9] = DestButtonID::Button10;
+					target_X360[10] = DestButtonID::Button11;
+					target_X360[11] = DestButtonID::Button12;
+					target_X360[12] = DestButtonID::Button13;
+					target_X360[13] = DestButtonID::Destination_None;
+					target_X360[14] = DestButtonID::Button16;
+					target_X360[15] = DestButtonID::Button17;
+					target_X360[16] = DestButtonID::Destination_None;
+					target_X360[17] = DestButtonID::Destination_None;
+					target_X360[18] = DestButtonID::RXTR;
+					target_X360[19] = DestButtonID::RYTR;
+					target_X360[20] = DestButtonID::X;
+					target_X360[21] = DestButtonID::Y;
+					target_X360[22] = DestButtonID::Z;
+					target_X360[23] = DestButtonID::RZ;
 				}
 				if (vjtotalvalues_DS4 == 0)
 				{
-					vjtarget_DS4[0] = vJoyButtonID::Button1;
-					vjtarget_DS4[1] = vJoyButtonID::Button2;
-					vjtarget_DS4[2] = vJoyButtonID::Button3;
-					vjtarget_DS4[3] = vJoyButtonID::Button4;
-					vjtarget_DS4[4] = vJoyButtonID::Button5;
-					vjtarget_DS4[5] = vJoyButtonID::Button6;
-					vjtarget_DS4[6] = vJoyButtonID::Button7;
-					vjtarget_DS4[7] = vJoyButtonID::Button8;
-					vjtarget_DS4[8] = vJoyButtonID::Button9;
-					vjtarget_DS4[9] = vJoyButtonID::Button10;
-					vjtarget_DS4[10] = vJoyButtonID::Button11;
-					vjtarget_DS4[11] = vJoyButtonID::Button12;
-					vjtarget_DS4[12] = vJoyButtonID::Button13;
-					vjtarget_DS4[13] = vJoyButtonID::Button14;
-					vjtarget_DS4[14] = vJoyButtonID::Button16;
-					vjtarget_DS4[15] = vJoyButtonID::Button17;
-					vjtarget_DS4[16] = vJoyButtonID::Button18;
-					vjtarget_DS4[17] = vJoyButtonID::Button19;
-					vjtarget_DS4[18] = vJoyButtonID::RXTR;
-					vjtarget_DS4[19] = vJoyButtonID::RYTR;
-					vjtarget_DS4[20] = vJoyButtonID::X;
-					vjtarget_DS4[21] = vJoyButtonID::Y;
-					vjtarget_DS4[22] = vJoyButtonID::Z;
-					vjtarget_DS4[23] = vJoyButtonID::RZ;
+					target_DS4[0] = DestButtonID::Button1;
+					target_DS4[1] = DestButtonID::Button2;
+					target_DS4[2] = DestButtonID::Button3;
+					target_DS4[3] = DestButtonID::Button4;
+					target_DS4[4] = DestButtonID::Button5;
+					target_DS4[5] = DestButtonID::Button6;
+					target_DS4[6] = DestButtonID::Button7;
+					target_DS4[7] = DestButtonID::Button8;
+					target_DS4[8] = DestButtonID::Button9;
+					target_DS4[9] = DestButtonID::Button10;
+					target_DS4[10] = DestButtonID::Button11;
+					target_DS4[11] = DestButtonID::Button12;
+					target_DS4[12] = DestButtonID::Button13;
+					target_DS4[13] = DestButtonID::Button14;
+					target_DS4[14] = DestButtonID::Button16;
+					target_DS4[15] = DestButtonID::Button17;
+					target_DS4[16] = DestButtonID::Button18;
+					target_DS4[17] = DestButtonID::Button19;
+					target_DS4[18] = DestButtonID::RXTR;
+					target_DS4[19] = DestButtonID::RYTR;
+					target_DS4[20] = DestButtonID::X;
+					target_DS4[21] = DestButtonID::Y;
+					target_DS4[22] = DestButtonID::Z;
+					target_DS4[23] = DestButtonID::RZ;
 				}
 				delete[] buf;
 			}
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Guardian:
+	case SettingCategory_Guardian:
 	{
-		vJoyShutDown = (GetPrivateProfileInt(L"Guardian", TEXT("vJoyShutDown"), 0, m_file) == 1) ? true : false;
 		RemoveBlacklist = (GetPrivateProfileInt(L"Guardian", TEXT("RemoveBlacklist"), 1, m_file) == 1) ? true : false;
 		PurgeWhitelist = (GetPrivateProfileInt(L"Guardian", TEXT("PurgeWhitelist"), 1, m_file) == 1) ? true : false;
-		GetPrivateProfileString(L"Guardian", L"dsHID1", LR"(HID\VID_054C&PID_0BA0&MI_03)", dsHID1, sizeof(dsHID1) / sizeof(dsHID1[0]), m_file);
-		GetPrivateProfileString(L"Guardian", L"dsHID2", LR"(HID\VID_054C&PID_0CE6&MI_03)", dsHID2, sizeof(dsHID2) / sizeof(dsHID2[0]), m_file);
-		GetPrivateProfileString(L"Guardian", L"dsHID3", L"", dsHID3, sizeof(dsHID3) / sizeof(dsHID3[0]), m_file);
+		GetPrivateProfileString(L"Guardian", L"dsHID1", LR"(HID\VID_054C&PID_0BA0&MI_03)", dsHID[0], sizeof(dsHID[0]) / sizeof(dsHID[0][0]), m_file);
+		GetPrivateProfileString(L"Guardian", L"dsHID2", LR"(HID\VID_054C&PID_0CE6&MI_03)", dsHID[1], sizeof(dsHID[1]) / sizeof(dsHID[1][0]), m_file);
+		GetPrivateProfileString(L"Guardian", L"dsHID3", L"", dsHID[2], sizeof(dsHID[2]) / sizeof(dsHID[2][0]), m_file);
 		GetPrivateProfileString(L"Guardian", L"Exe1Name", L"RemotePlay.exe", Exe1Name, sizeof(Exe1Name) / sizeof(Exe1Name[0]), m_file);
 		GetPrivateProfileString(L"Guardian", L"Exe2Name", L"", Exe2Name, sizeof(Exe2Name) / sizeof(Exe2Name[0]), m_file);
 		GetPrivateProfileString(L"Guardian", L"Exe3Name", L"", Exe3Name, sizeof(Exe3Name) / sizeof(Exe3Name[0]), m_file);
@@ -827,14 +1197,14 @@ void Settings::Load(int category)
 		Exe3NameEnable = (GetPrivateProfileInt(Guardiantxt, TEXT("Exe3NameEnable"), 0, m_file) == 1) ? true : false;
 		Exe4NameEnable = (GetPrivateProfileInt(Guardiantxt, TEXT("Exe4NameEnable"), 0, m_file) == 1) ? true : false;
 		Exe5NameEnable = (GetPrivateProfileInt(Guardiantxt, TEXT("Exe5NameEnable"), 0, m_file) == 1) ? true : false;
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Web:
+	case SettingCategory_Web:
 	{
 		setWebRefreshTime(GetPrivateProfileInt(L"Web", TEXT("WebRefreshTime"), 20, m_file));
-		setDefaultZoomValue(GetPrivateProfileInt(L"Web", TEXT("DefaultZoomValue"), 47, m_file));
+		setDefaultZoomValue(GetPrivateProfileInt(L"Web", TEXT("DefaultZoomValue"), 470, m_file));
 		RawBounds = (GetPrivateProfileInt(L"Web", TEXT("RawBounds"), 0, m_file) == 1) ? true : false;
 		setDarkMode(GetPrivateProfileInt(L"Web", TEXT("DarkMode"), 1, m_file));
 		{
@@ -872,11 +1242,11 @@ void Settings::Load(int category)
 		GetPrivateProfileString(L"Web", L"WebURL8", L"", WebURL[7], sizeof(WebURL[7]) / sizeof(WebURL[7][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL9", L"", WebURL[8], sizeof(WebURL[8]) / sizeof(WebURL[8][0]), m_file);
 		GetPrivateProfileString(L"Web", L"WebURL10", L"", WebURL[9], sizeof(WebURL[9]) / sizeof(WebURL[9][0]), m_file);
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_WebScript:
+	case SettingCategory_WebScript:
 	{
 		if (!Create)
 		{
@@ -918,27 +1288,60 @@ void Settings::Load(int category)
 				delete[] buf;
 			}
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Links:
+	case SettingCategory_Links:
 	{
-		GetPrivateProfileString(L"Links", L"App1Name", L"Avoid", App1Name, sizeof(App1Name) / sizeof(App1Name[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App2Name", L"Prefer", App2Name, sizeof(App2Name) / sizeof(App2Name[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App1Location", LR"(C:\Windows\System32\cmd.exe /C "joy.cpl")", App1Location, sizeof(App1Location) / sizeof(App1Location[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App2Location", LR"(rundll32.exe shell32.dll,Control_RunDLL joy.cpl)", App2Location, sizeof(App2Location) / sizeof(App2Location[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App3Name", L"", App3Name, sizeof(App3Name) / sizeof(App3Name[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App4Name", L"", App4Name, sizeof(App4Name) / sizeof(App4Name[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App5Name", L"", App5Name, sizeof(App5Name) / sizeof(App5Name[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App3Location", L"", App3Location, sizeof(App3Location) / sizeof(App3Location[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App4Location", L"", App4Location, sizeof(App4Location) / sizeof(App4Location[0]), m_file);
-		GetPrivateProfileString(L"Links", L"App5Location", L"", App5Location, sizeof(App5Location) / sizeof(App5Location[0]), m_file);
-		if (category != Setting_Category_All)
+		if (VersionDateCheck < 202204111)
+		{
+			if (FirstPass)
+			{
+				GetPrivateProfileString(L"Links", L"App1Name", L"Avoid", App0Name, sizeof(App0Name) / sizeof(App0Name[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App2Name", L"Prefer", App1Name, sizeof(App1Name) / sizeof(App1Name[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App3Name", L"", App2Name, sizeof(App2Name) / sizeof(App2Name[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App4Name", L"", App3Name, sizeof(App3Name) / sizeof(App3Name[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App5Name", L"", App4Name, sizeof(App4Name) / sizeof(App4Name[0]), m_file);
+			}
+		}
+		else
+		{
+			GetPrivateProfileString(L"Links", L"App0Name", L"Avoid", App0Name, sizeof(App0Name) / sizeof(App0Name[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App1Name", L"Prefer", App1Name, sizeof(App1Name) / sizeof(App1Name[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App2Name", L"", App2Name, sizeof(App2Name) / sizeof(App2Name[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App3Name", L"", App3Name, sizeof(App3Name) / sizeof(App3Name[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App4Name", L"", App4Name, sizeof(App4Name) / sizeof(App4Name[0]), m_file);
+		}
+		if (VersionDateCheck < 202204111)
+		{
+			if (FirstPass)
+			{
+				GetPrivateProfileString(L"Links", L"App1Location", LR"(C:\Windows\System32\cmd.exe /C "joy.cpl")", App0Location, sizeof(App0Location) / sizeof(App0Location[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App2Location", LR"(rundll32.exe shell32.dll,Control_RunDLL joy.cpl)", App1Location, sizeof(App1Location) / sizeof(App1Location[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App3Location", L"", App2Location, sizeof(App2Location) / sizeof(App2Location[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App4Location", L"", App3Location, sizeof(App3Location) / sizeof(App3Location[0]), m_file);
+				GetPrivateProfileString(L"Links", L"App5Location", L"", App4Location, sizeof(App4Location) / sizeof(App4Location[0]), m_file);
+			}
+		}
+		else
+		{
+			GetPrivateProfileString(L"Links", L"App0Location", LR"(C:\Windows\System32\cmd.exe /C "joy.cpl")", App0Location, sizeof(App0Location) / sizeof(App0Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App1Location", LR"(rundll32.exe shell32.dll,Control_RunDLL joy.cpl)", App1Location, sizeof(App1Location) / sizeof(App1Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App2Location", L"", App2Location, sizeof(App2Location) / sizeof(App2Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App3Location", L"", App3Location, sizeof(App3Location) / sizeof(App3Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App4Location", L"", App4Location, sizeof(App4Location) / sizeof(App4Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App5Location", L"", App5Location, sizeof(App5Location) / sizeof(App5Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App6Location", L"", App6Location, sizeof(App6Location) / sizeof(App6Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App7Location", L"", App7Location, sizeof(App7Location) / sizeof(App7Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App8Location", L"", App8Location, sizeof(App8Location) / sizeof(App8Location[0]), m_file);
+			GetPrivateProfileString(L"Links", L"App9Location", L"", App9Location, sizeof(App9Location) / sizeof(App9Location[0]), m_file);
+		}
+		if (category != SettingCategory_All)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_Category_Notepad:
+	case SettingCategory_Notepad:
 	{
 		if (!Create)
 		{
@@ -982,7 +1385,7 @@ void Settings::Load(int category)
 				delete[] buf;
 			}
 		}
-		if (category != Setting_Category_All)
+		if (category != SettingCategory_All)
 			break;
 	}
 	}
@@ -992,9 +1395,9 @@ void Settings::Save(int item)
 {
 	swprintf_s(Settingstxt, 20, L"%dSettings", Profile);
 	swprintf_s(Mappingtxt, 20, L"%dMapping", Profile);
-	swprintf_s(ViGEmtxt, 20, L"%dViGEm", Profile);
-	swprintf_s(Keymaptxt, 20, L"%dKeymap", Profile);
 	swprintf_s(RapidFiretxt, 20, L"%dRapidFire", Profile);
+	swprintf_s(Keymaptxt, 20, L"%dKeymap", Profile);
+	swprintf_s(XOutputtxt, 20, L"%dXOutput", Profile);
 	swprintf_s(Guardiantxt, 20, L"%dGuardian", Profile);
 	swprintf_s(Webtxt, 20, L"%dWeb", Profile);
 
@@ -1021,6 +1424,17 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
+	case Setting_Country:
+	{
+		if (!Update)
+		{
+			swprintf_s(buffer, MAX_PATH, L"%d", Country);
+			WritePrivateProfileString(TEXT("Profile"), TEXT("Country"), buffer, m_file);
+		}
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
 	case Setting_Profile:
 	{
 		swprintf_s(buffer, MAX_PATH, L"%d", Profile);
@@ -1039,6 +1453,13 @@ void Settings::Save(int item)
 	case Setting_Transparency:
 	{
 		WritePrivateProfileString(TEXT("Profile"), TEXT("Transparency"), (Transparency) ? L"1" : L"0", m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_vJoyShutDown:
+	{
+		WritePrivateProfileString(TEXT("Profile"), TEXT("vJoyShutDown"), (vJoyShutDown) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1071,9 +1492,53 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_dsSerial:
+	case Setting_Serial:
 	{
-		WritePrivateProfileString(TEXT("Profile"), TEXT("dsSerial"), dsSerial, m_file);
+		WritePrivateProfileString(TEXT("Profile"), TEXT("Serial"), Serial, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_Device1:
+	{
+		WritePrivateProfileString(TEXT("Profile"), TEXT("Device1"), Device1, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_Device2:
+	{
+		WritePrivateProfileString(TEXT("Profile"), TEXT("Device2"), Device2, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_Dispatch1:
+	{
+		std::wstring dispatchInitStr = L"";
+		for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			dispatchInitStr += std::to_wstring(diDispatch1[i]) + L",";
+		WritePrivateProfileString(TEXT("Profile"), TEXT("diDispatch1"), dispatchInitStr.c_str(), m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_Dispatch2:
+	{
+		std::wstring dispatchInitStr = L"";
+		for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			dispatchInitStr += std::to_wstring(diDispatch2[i]) + L",";
+		WritePrivateProfileString(TEXT("Profile"), TEXT("diDispatch2"), dispatchInitStr.c_str(), m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_Dispatch3:
+	{
+		std::wstring dispatchInitStr = L"";
+		for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			dispatchInitStr += std::to_wstring(diDispatch3[i]) + L",";
+		WritePrivateProfileString(TEXT("Profile"), TEXT("diDispatch3"), dispatchInitStr.c_str(), m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1135,9 +1600,9 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_ViGEmPaused:
+	case Setting_XOutputPaused:
 	{
-		WritePrivateProfileString(TEXT("Tray"), TEXT("ViGEmPaused"), (ViGEmPaused) ? L"1" : L"0", m_file);
+		WritePrivateProfileString(TEXT("Tray"), TEXT("XOutputPaused"), (XOutputPaused) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1145,13 +1610,6 @@ void Settings::Save(int item)
 	case Setting_GuardianPaused:
 	{
 		WritePrivateProfileString(TEXT("Tray"), TEXT("GuardianPaused"), (GuardianPaused) ? L"1" : L"0", m_file);
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_vJoyShutDown:
-	{
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("vJoyShutDown"), (vJoyShutDown) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1172,21 +1630,21 @@ void Settings::Save(int item)
 	}
 	case Setting_dsHID1:
 	{
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID1"), dsHID1, m_file);
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID1"), dsHID[0], m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
 	}
 	case Setting_dsHID2:
 	{
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID2"), dsHID2, m_file);
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID2"), dsHID[1], m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
 	}
 	case Setting_dsHID3:
 	{
-		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID3"), dsHID3, m_file);
+		WritePrivateProfileString(TEXT("Guardian"), TEXT("dsHID3"), dsHID[2], m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1236,7 +1694,7 @@ void Settings::Save(int item)
 	}
 	case Setting_DefaultZoomValue:
 	{
-		swprintf_s(buffer, MAX_PATH, L"%d", int(DefaultZoomValue * 100));
+		swprintf_s(buffer, MAX_PATH, L"%d", int(DefaultZoomValue * 1000));
 		WritePrivateProfileString(TEXT("Web"), TEXT("DefaultZoomValue"), buffer, m_file);
 		if (item != Setting_All)
 			break;
@@ -1399,6 +1857,13 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
+	case Setting_App0Name:
+	{
+		WritePrivateProfileString(TEXT("Links"), TEXT("App0Name"), App0Name, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
 	case Setting_App1Name:
 	{
 		WritePrivateProfileString(TEXT("Links"), TEXT("App1Name"), App1Name, m_file);
@@ -1427,9 +1892,9 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_App5Name:
+	case Setting_App0Location:
 	{
-		WritePrivateProfileString(TEXT("Links"), TEXT("App5Name"), App5Name, m_file);
+		WritePrivateProfileString(TEXT("Links"), TEXT("App0Location"), App0Location, m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1465,6 +1930,34 @@ void Settings::Save(int item)
 	case Setting_App5Location:
 	{
 		WritePrivateProfileString(TEXT("Links"), TEXT("App5Location"), App5Location, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_App6Location:
+	{
+		WritePrivateProfileString(TEXT("Links"), TEXT("App6Location"), App6Location, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_App7Location:
+	{
+		WritePrivateProfileString(TEXT("Links"), TEXT("App7Location"), App6Location, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_App8Location:
+	{
+		WritePrivateProfileString(TEXT("Links"), TEXT("App8Location"), App8Location, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_App9Location:
+	{
+		WritePrivateProfileString(TEXT("Links"), TEXT("App9Location"), App9Location, m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1527,10 +2020,10 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_PreferredDS:
+	case Setting_PreferredSource:
 	{
-		swprintf_s(buffer, MAX_PATH, L"%d", PreferredDS);
-		WritePrivateProfileString(Settingstxt, TEXT("PreferredDS"), buffer, m_file);
+		swprintf_s(buffer, MAX_PATH, L"%d", PreferredSource);
+		WritePrivateProfileString(Settingstxt, TEXT("PreferredSource"), buffer, m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1551,10 +2044,18 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_vJoyDeviceID:
+	case Setting_vJoyDevice:
 	{
-		swprintf_s(buffer, MAX_PATH, L"%d", vJoyDeviceID);
-		WritePrivateProfileString(Settingstxt, TEXT("vJoyDeviceID"), buffer, m_file);
+		swprintf_s(buffer, MAX_PATH, L"%d", vJoyDevice);
+		WritePrivateProfileString(Settingstxt, TEXT("vJoyDevice"), buffer, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_XInputDevice:
+	{
+		swprintf_s(buffer, MAX_PATH, L"%d", XInputDevice);
+		WritePrivateProfileString(Settingstxt, TEXT("XInputDevice"), buffer, m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1602,6 +2103,16 @@ void Settings::Save(int item)
 	{
 		swprintf_s(buffer, MAX_PATH, L"%d", TriggersMode);
 		WritePrivateProfileString(Settingstxt, TEXT("TriggersMode"), buffer, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_Dispatch:
+	{
+		std::wstring dispatchInitStr = L"";
+		for (int i = 0; i < SrceDispatchID::Dispatch_Count; i++)
+			dispatchInitStr += std::to_wstring(diDispatch[i]) + L",";
+		WritePrivateProfileString(Settingstxt, TEXT("diDispatch"), dispatchInitStr.c_str(), m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1705,52 +2216,61 @@ void Settings::Save(int item)
 			{
 				head += swprintf_s(head, 1024, L"%d=", i + 1);
 				Mapping* btn = &Mappingdata[i];
-				for (int j = 0; j < MappingName::Mapping_Count; j++)
+				for (int j = 0; j < MappingName::MappingName_Count; j++)
 					switch (j)
 					{
-					case Mapping_Enable:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Enable); break;
-					case Mapping_Tab:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Tab); break;
-					case Mapping_Ifmouse:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Ifmouse); break;
-					case Mapping_Force:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Force); break;
-					case Mapping_Short:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Short); break;
-					case Mapping_Double:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Double); break;
-					case Mapping_Long:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Long); break;
-					case Mapping_Led:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Led); break;
-					case Mapping_Macro:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Macro); break;
-					case Mapping_Pause:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Pause); break;
-					case Mapping_Transitivity:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Transitivity); break;
-					case Mapping_Toggle:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Toggle); break;
-					case Mapping_Target:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Target[0], btn->Target[1], btn->Target[2], btn->Target[3], btn->Target[4], 0, 0, 0)); break;
-					case Mapping_dsID:head += swprintf_s(head, MAX_PATH, L"%s,", dsIDToString(btn->dsID[0], btn->dsID[1], btn->dsID[2], btn->dsID[3], btn->dsID[4])); break;
-					case Mapping_OrXorNot:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->OrXorNot[0], btn->OrXorNot[1], btn->OrXorNot[2], btn->OrXorNot[3], 0, 0, 0, 0)); break;
-					case Mapping_dsDisable:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->dsDisable[0], btn->dsDisable[1], btn->dsDisable[2], btn->dsDisable[3], btn->dsDisable[4], 0, 0, 0)); break;
-					case Mapping_ActionType:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->ActionType[0], btn->ActionType[1], btn->ActionType[2], btn->ActionType[3], btn->ActionType[4], btn->ActionType[5], btn->ActionType[6], btn->ActionType[7], true)); break;
-					case Mapping_Overcontrol:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Overcontrol[0], btn->Overcontrol[1], btn->Overcontrol[2], btn->Overcontrol[3], btn->Overcontrol[4], btn->Overcontrol[5], btn->Overcontrol[6], btn->Overcontrol[7])); break;
-					case Mapping_Switch:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Switch[0], btn->Switch[1], btn->Switch[2], btn->Switch[3], btn->Switch[4], btn->Switch[5], btn->Switch[6], btn->Switch[7])); break;
-					case Mapping_vjID:head += swprintf_s(head, MAX_PATH, L"%s,", vjIDToString(btn->vjID[0], btn->vjID[1], btn->vjID[2], btn->vjID[3], btn->vjID[4], btn->vjID[5], btn->vjID[6], btn->vjID[7])); break;
-					case Mapping_OnRelease:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->OnRelease[0], btn->OnRelease[1], btn->OnRelease[2], btn->OnRelease[3], btn->OnRelease[4], btn->OnRelease[5], btn->OnRelease[6], btn->OnRelease[7])); break;
-					case Mapping_NoRelease:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->NoRelease[0], btn->NoRelease[1], btn->NoRelease[2], btn->NoRelease[3], btn->NoRelease[4], btn->NoRelease[5], btn->NoRelease[6], btn->NoRelease[7])); break;
-					case Mapping_NlRelease:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->NlRelease[0], btn->NlRelease[1], btn->NlRelease[2], btn->NlRelease[3], btn->NlRelease[4], btn->NlRelease[5], btn->NlRelease[6], btn->NlRelease[7])); break;
-					case Mapping_vjDisable:head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->vjDisable[0], btn->vjDisable[1], btn->vjDisable[2], btn->vjDisable[3], btn->vjDisable[4], btn->vjDisable[5], btn->vjDisable[6], btn->vjDisable[7])); break;
-					case Mapping_Mouse:head += swprintf_s(head, MAX_PATH, L"%s,", MouseToString(btn->Mouse[0], btn->Mouse[1], btn->Mouse[2], btn->Mouse[3], btn->Mouse[4], btn->Mouse[5], btn->Mouse[6])); break;
-					case Mapping_Grid:head += swprintf_s(head, MAX_PATH, L"%s,", GridToString(btn->Grid[0], btn->Grid[1], btn->Grid[2], btn->Grid[3], btn->Grid[4], btn->Grid[5])); break;
-					case Mapping_Start1:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[0]); break;
-					case Mapping_Start2:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[1]); break;
-					case Mapping_Start3:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[2]); break;
-					case Mapping_Start4:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[3]); break;
-					case Mapping_Start5:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[4]); break;
-					case Mapping_Start6:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[5]); break;
-					case Mapping_Start7:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[6]); break;
-					case Mapping_Start8:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Start[7]); break;
-					case Mapping_Stop1:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[0]); break;
-					case Mapping_Stop2:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[1]); break;
-					case Mapping_Stop3:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[2]); break;
-					case Mapping_Stop4:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[3]); break;
-					case Mapping_Stop5:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[4]); break;
-					case Mapping_Stop6:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[5]); break;
-					case Mapping_Stop7:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[6]); break;
-					case Mapping_Stop8:head += swprintf_s(head, MAX_PATH, L"%d,", btn->Stop[7]); break;
-					case Mapping_Notice:head += swprintf_s(head, MAX_PATH, L"%s,", btn->Notice); break;
+					case Mapping_Enable: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Enable); break; }
+					case Mapping_Tab: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Tab); break; }
+					case Mapping_Ifmouse: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Ifmouse); break; }
+					case Mapping_Force: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Force); break; }
+					case Mapping_Short: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Short); break; }
+					case Mapping_Double: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Double); break; }
+					case Mapping_Long: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Long); break; }
+					case Mapping_Led: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Led); break; }
+					case Mapping_Macro: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Macro); break; }
+					case Mapping_Pause: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Pause); break; }
+					case Mapping_Transitivity: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Transitivity); break; }
+					case Mapping_Toggle: { head += swprintf_s(head, MAX_PATH, L"%d,", btn->Toggle); break; }
+					case Mapping_Target: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Target[0], btn->Target[1], btn->Target[2], btn->Target[3], btn->Target[4], 0, 0, 0)); break; }
+					case Mapping_dsID:
+					{
+						if (btn->Target[0] == 1)
+							head += swprintf_s(head, MAX_PATH, L"%s,", dsIDToString(max(0, btn->srceID[0] - SourceButton::Sisaxis_None), max(0, btn->srceID[1] - SourceButton::Sisaxis_None), max(0, btn->srceID[2] - SourceButton::Sisaxis_None), max(0, btn->srceID[3] - SourceButton::Sisaxis_None), max(0, btn->srceID[4] - SourceButton::Sisaxis_None)));
+						else if (btn->Target[0] == 2)
+							head += swprintf_s(head, MAX_PATH, L"%s,", dsIDToString(max(0, btn->srceID[0] - SourceButton::Keyboard_None), max(0, btn->srceID[1] - SourceButton::Keyboard_None), max(0, btn->srceID[2] - SourceButton::Keyboard_None), max(0, btn->srceID[3] - SourceButton::Keyboard_None), max(0, btn->srceID[4] - SourceButton::Keyboard_None)));
+						else
+							head += swprintf_s(head, MAX_PATH, L"%s,", dsIDToString(btn->srceID[0], btn->srceID[1], btn->srceID[2], btn->srceID[3], btn->srceID[4]));
+						break;
+					}
+					case Mapping_OrXorNot: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->OrXorNot[0], btn->OrXorNot[1], btn->OrXorNot[2], btn->OrXorNot[3], 0, 0, 0, 0)); break; }
+					case Mapping_dsDisable: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->srceDisable[0], btn->srceDisable[1], btn->srceDisable[2], btn->srceDisable[3], btn->srceDisable[4], 0, 0, 0)); break; }
+					case Mapping_ActionType: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->ActionType[0], btn->ActionType[1], btn->ActionType[2], btn->ActionType[3], btn->ActionType[4], btn->ActionType[5], btn->ActionType[6], btn->ActionType[7], true)); break; }
+					case Mapping_Overcontrol: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Overcontrol[0], btn->Overcontrol[1], btn->Overcontrol[2], btn->Overcontrol[3], btn->Overcontrol[4], btn->Overcontrol[5], btn->Overcontrol[6], btn->Overcontrol[7])); break; }
+					case Mapping_Switch: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->Switch[0], btn->Switch[1], btn->Switch[2], btn->Switch[3], btn->Switch[4], btn->Switch[5], btn->Switch[6], btn->Switch[7])); break; }
+					case Mapping_vjID: { head += swprintf_s(head, MAX_PATH, L"%s,", vjIDToString(btn->destID[0], btn->destID[1], btn->destID[2], btn->destID[3], btn->destID[4], btn->destID[5], btn->destID[6], btn->destID[7])); break; }
+					case Mapping_OnRelease: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->OnRelease[0], btn->OnRelease[1], btn->OnRelease[2], btn->OnRelease[3], btn->OnRelease[4], btn->OnRelease[5], btn->OnRelease[6], btn->OnRelease[7])); break; }
+					case Mapping_NoRelease: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->NoRelease[0], btn->NoRelease[1], btn->NoRelease[2], btn->NoRelease[3], btn->NoRelease[4], btn->NoRelease[5], btn->NoRelease[6], btn->NoRelease[7])); break; }
+					case Mapping_NlRelease: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->NlRelease[0], btn->NlRelease[1], btn->NlRelease[2], btn->NlRelease[3], btn->NlRelease[4], btn->NlRelease[5], btn->NlRelease[6], btn->NlRelease[7])); break; }
+					case Mapping_vjDisable: { head += swprintf_s(head, MAX_PATH, L"%s,", CheckboxToString(btn->destDisable[0], btn->destDisable[1], btn->destDisable[2], btn->destDisable[3], btn->destDisable[4], btn->destDisable[5], btn->destDisable[6], btn->destDisable[7])); break; }
+					case Mapping_Mouse: { head += swprintf_s(head, MAX_PATH, L"%s,", MouseToString(btn->Mouse[0], btn->Mouse[1], btn->Mouse[2], btn->Mouse[3], btn->Mouse[4], btn->Mouse[5], btn->Mouse[6])); break; }
+					case Mapping_Grid: { head += swprintf_s(head, MAX_PATH, L"%s,", GridToString(btn->Grid[0], btn->Grid[1], btn->Grid[2], btn->Grid[3], btn->Grid[4], btn->Grid[5])); break; }
+					case Mapping_Start1: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[0]); break; }
+					case Mapping_Start2: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[1]); break; }
+					case Mapping_Start3: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[2]); break; }
+					case Mapping_Start4: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[3]); break; }
+					case Mapping_Start5: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[4]); break; }
+					case Mapping_Start6: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[5]); break; }
+					case Mapping_Start7: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[6]); break; }
+					case Mapping_Start8: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Start[7]); break; }
+					case Mapping_Stop1: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[0]); break; }
+					case Mapping_Stop2: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[1]); break; }
+					case Mapping_Stop3: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[2]); break; }
+					case Mapping_Stop4: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[3]); break; }
+					case Mapping_Stop5: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[4]); break; }
+					case Mapping_Stop6: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[5]); break; }
+					case Mapping_Stop7: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[6]); break; }
+					case Mapping_Stop8: { head += swprintf_s(head, MAX_PATH, L"%lld,", btn->Stop[7]); break; }
+					case Mapping_Notice: { head += swprintf_s(head, MAX_PATH, L"%s,", btn->Notice); break; }
 					}
 				head++;
 			}
@@ -1774,7 +2294,7 @@ void Settings::Save(int item)
 			size_t length = RapidFiredata.size();
 			for (int i = 0; i < length; i++)
 			{
-				int mapdata[RapidFireName::RapidFire_Count] = { 0 };
+				int mapdata[RapidFireName::RapidFireName_Count] = { 0 };
 				RapidFire* rf = &RapidFiredata[i];
 				mapdata[RapidFireName::RapidFire_Enable] = rf->Enable;
 				mapdata[RapidFireName::RapidFire_Button] = rf->ButtonID;
@@ -1784,7 +2304,7 @@ void Settings::Save(int item)
 				mapdata[RapidFireName::RapidFire_PressTime] = rf->Presstime;
 
 				head += swprintf_s(head, 1024, L"%d=", i + 1);
-				for (int j = 0; j < RapidFireName::RapidFire_Count; j++)
+				for (int j = 0; j < RapidFireName::RapidFireName_Count; j++)
 					head += swprintf_s(head, 1024, L"%d,", mapdata[j]);
 				head++;
 			}
@@ -1831,16 +2351,16 @@ void Settings::Save(int item)
 			break;
 		[[fallthrough]];
 	}
-	case Setting_ViGEmActive:
+	case Setting_XOutputActive:
 	{
-		WritePrivateProfileString(ViGEmtxt, TEXT("ViGEmActive"), (ViGEmActive) ? L"1" : L"0", m_file);
+		WritePrivateProfileString(XOutputtxt, TEXT("XOutputActive"), (XOutputActive) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
 	}
 	case Setting_vJoyActive:
 	{
-		WritePrivateProfileString(ViGEmtxt, TEXT("vJoyActive"), (vJoyActive) ? L"1" : L"0", m_file);
+		WritePrivateProfileString(XOutputtxt, TEXT("vJoyActive"), (vJoyActive) ? L"1" : L"0", m_file);
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1848,7 +2368,26 @@ void Settings::Save(int item)
 	case Setting_DesiredVirtualPad:
 	{
 		swprintf_s(buffer, MAX_PATH, L"%d", DesiredVirtualPad);
-		WritePrivateProfileString(ViGEmtxt, TEXT("DesiredVirtualPad"), buffer, m_file);
+		WritePrivateProfileString(XOutputtxt, TEXT("DesiredVirtualPad"), buffer, m_file);
+		if (item != Setting_All)
+			break;
+		[[fallthrough]];
+	}
+	case Setting_target_DS4:
+	{
+		const int n = 128* 1024;
+		WCHAR* buf = new WCHAR[n];
+		if (buf == 0 || !cansavexoutput)
+			MessageBoxPos(Ds2hWnd, L"XOutput DS4\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
+		else
+		{
+			memset(buf, 0, n * sizeof(WCHAR));
+			WCHAR* head = buf;
+			for (int i = 0; i < 24; i++)
+				head += swprintf_s(head, 1024, L"%d,", target_DS4[i]);
+			WritePrivateProfileString(XOutputtxt, TEXT("DS4"), buf, m_file);
+			delete[] buf;
+		}
 		if (item != Setting_All)
 			break;
 		[[fallthrough]];
@@ -1857,110 +2396,15 @@ void Settings::Save(int item)
 	{
 		const int n = 128 * 1024;
 		WCHAR* buf = new WCHAR[n];
-		if (buf == 0 || !cansavevigem)
-			MessageBoxPos(Ds2hWnd, L"ViGEm X360\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
+		if (buf == 0 || !cansavexoutput)
+			MessageBoxPos(Ds2hWnd, L"XOutput X360\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
 		else
 		{
 			memset(buf, 0, n * sizeof(WCHAR));
 			WCHAR* head = buf;
 			for (int i = 0; i < 24; i++)
 				head += swprintf_s(head, 1024, L"%d,", target_X360[i]);
-			WritePrivateProfileString(ViGEmtxt, TEXT("1"), buf, m_file);
-			delete[] buf;
-		}
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_dstarget_X360:
-	{
-		const int n = 128 * 1024;
-		WCHAR* buf = new WCHAR[n];
-		if (buf == 0 || !cansavevigem)
-			MessageBoxPos(Ds2hWnd, L"ViGEm X360\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
-		else
-		{
-			memset(buf, 0, n * sizeof(WCHAR));
-			WCHAR* head = buf;
-			for (int i = 0; i < 24; i++)
-				head += swprintf_s(head, 1024, L"%d,", dstarget_X360[i]);
-			WritePrivateProfileString(ViGEmtxt, TEXT("2"), buf, m_file);
-			delete[] buf;
-		}
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_vjtarget_X360:
-	{
-		const int n = 128 * 1024;
-		WCHAR* buf = new WCHAR[n];
-		if (buf == 0 || !cansavevigem)
-			MessageBoxPos(Ds2hWnd, L"ViGEm X360\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
-		else
-		{
-			memset(buf, 0, n * sizeof(WCHAR));
-			WCHAR* head = buf;
-			for (int i = 0; i < 24; i++)
-				head += swprintf_s(head, 1024, L"%d,", vjtarget_X360[i]);
-			WritePrivateProfileString(ViGEmtxt, TEXT("3"), buf, m_file);
-			delete[] buf;
-		}
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_target_DS4:
-	{
-		const int n = 128 * 1024;
-		WCHAR* buf = new WCHAR[n];
-		if (buf == 0 || !cansavevigem)
-			MessageBoxPos(Ds2hWnd, L"ViGEm DS4\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
-		else
-		{
-			memset(buf, 0, n * sizeof(WCHAR));
-			WCHAR* head = buf;
-			for (int i = 0; i < 24; i++)
-				head += swprintf_s(head, 1024, L"%d,", target_DS4[i]);
-			WritePrivateProfileString(ViGEmtxt, TEXT("4"), buf, m_file);
-			delete[] buf;
-		}
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_dstarget_DS4:
-	{
-		const int n = 128 * 1024;
-		WCHAR* buf = new WCHAR[n];
-		if (buf == 0 || !cansavevigem)
-			MessageBoxPos(Ds2hWnd, L"ViGEm DS4\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
-		else
-		{
-			memset(buf, 0, n * sizeof(WCHAR));
-			WCHAR* head = buf;
-			for (int i = 0; i < 24; i++)
-				head += swprintf_s(head, 1024, L"%d,", dstarget_DS4[i]);
-			WritePrivateProfileString(ViGEmtxt, TEXT("5"), buf, m_file);
-			delete[] buf;
-		}
-		if (item != Setting_All)
-			break;
-		[[fallthrough]];
-	}
-	case Setting_vjtarget_DS4:
-	{
-		const int n = 128* 1024;
-		WCHAR* buf = new WCHAR[n];
-		if (buf == 0 || !cansavevigem)
-			MessageBoxPos(Ds2hWnd, L"ViGEm DS4\nwas not saved.", L"Warning", MB_OK, 0, 0, 180);
-		else
-		{
-			memset(buf, 0, n * sizeof(WCHAR));
-			WCHAR* head = buf;
-			for (int i = 0; i < 24; i++)
-				head += swprintf_s(head, 1024, L"%d,", vjtarget_DS4[i]);
-			WritePrivateProfileString(ViGEmtxt, TEXT("6"), buf, m_file);
+			WritePrivateProfileString(XOutputtxt, TEXT("X360"), buf, m_file);
 			delete[] buf;
 		}
 		if (item != Setting_All)
@@ -2075,134 +2519,41 @@ void Settings::Save(int item)
 	}
 }
 
-void Settings::setProfile(int i)
+void Settings::setCountry(int land)
 {
-	if (i > 0 && i < 4)
-		Profile = i;
+	if (land >= 0 && land < Country_Count)
+		Country = land;
 	else
-		Profile = 1;
+		Country = 0;
 }
 
-void Settings::setOpacity(int i)
+void Settings::setvJoyDevice(int id)
 {
-	if (i > 19 && i < 101)
-		Opacity = i;
+	if (id >= 0 && id < 16)
+		vJoyDevice = id;
 	else
-		Opacity = 60;
+		vJoyDevice = 0;
 }
 
-void Settings::setTabMapping(int i)
+void Settings::setXInputDevice(int id)
 {
-	if (i >= 0 && i < 9)
-		TabMapping = i;
+	if (id >= 0 && id < 4)
+		XInputDevice = id;
 	else
-		TabMapping = 0;
+		XInputDevice = 0;
 }
 
-void Settings::setPreferredDS(int i)
+void Settings::setSerial(const WCHAR* buf)
 {
-	if (i >= 0 && i < 3)
-		PreferredDS = (unsigned char)i;
+	wcscpy_s(Serial, wcslen(buf) + 1, buf);
+}
+
+void Settings::setDevice(const WCHAR* buf, unsigned char device)
+{
+	if (device)
+		wcscpy_s(Device2, wcslen(buf) + 1, buf);
 	else
-		PreferredDS = 0;
-}
-
-void Settings::setTabMode(int i, int mode)
-{
-	if (mode >= 0 && mode < 9)
-		Mode[i] = (unsigned char)mode;
-	else
-		Mode[i] = 0;
-}
-
-void Settings::setReminder(int i, int reminder)
-{
-	if (reminder >= 0 && reminder < 2)
-		Reminder[i] = reminder;
-	else
-		Reminder[i] = 0;
-}
-
-void Settings::setStats(int i, int stat)
-{
-	if (stat >= 0 && stat < 65536)
-		Stat[i] = stat;
-	else
-		Stat[i] = 0;
-}
-
-void Settings::setThreshold(int i)
-{
-	if (i >= 0 && i <= 128)
-		Threshold = i;
-	else
-		Threshold = 8;
-}
-
-void Settings::setSimultaneous(int i)
-{
-	if (i > 0 && i < 10000)
-		Simultaneous = i;
-	else
-		Simultaneous = 40;
-}
-
-void Settings::setLongPress(int i)
-{
-	if (i > 0 && i < 10000)
-		LongPress = i;
-	else
-		LongPress = 255;
-}
-
-void Settings::setVeryLongPress(int i)
-{
-	if (i > 0 && i < 10000)
-		VeryLongPress = i;
-	else
-		VeryLongPress = 3287;
-}
-
-void Settings::setDefaultZoomValue(int i)
-{
-	DefaultZoomValue = max(25, min(500, i)) / 100;
-}
-
-void Settings::setDarkMode(int i)
-{
-	DarkMode = max(0, min(3, i)) ;
-}
-
-void Settings::setWebRefreshTime(int i)
-{
-	if (i > 0 && i < 10000)
-		WebRefreshTime = i;
-	else
-		WebRefreshTime = 20;
-}
-
-void Settings::setDesiredVirtualPad(int i)
-{
-	if (i > 0 && i < 3)
-		DesiredVirtualPad = i;
-	else
-		DesiredVirtualPad = 2;
-}
-
-void Settings::setvJoyDeviceID(int id)
-{
-	if (id > 0 && id < 17)
-		vJoyDeviceID = id;
-	else
-		vJoyDeviceID = 1;
-}
-
-void Settings::setSplitTouch()
-{
-	if (TouchPadButton && TouchPadButton <= 128)
-		SplitTouch = true;
-	else
-		SplitTouch = false;
+		wcscpy_s(Device1, wcslen(buf) + 1, buf);
 }
 
 void Settings::setTouchPadButton(byte n)
@@ -2229,56 +2580,19 @@ void Settings::setTouchCol(int i)
 		TouchCol = 1;
 }
 
-void Settings::setLED(unsigned long i)
+void Settings::setLED(unsigned int i)
 {
 	if (i >= 0 && i <= 0xFFFFFF)
 		LED_Color = i;
-}
-
-void Settings::setTriggersMode(int i)
-{
-	if (i >= 0 && i < 4)
-		TriggersMode = i;
-	else
-		TriggersMode = 0;
-}
-
-void Settings::setWaveSpeed(int i)
-{
-	if (i >= 0 && i < 167)
-		WaveSpeed = i;
-	else
-		WaveSpeed = 130;
-}
-
-const WCHAR* Settings::getSerial()
-{
-	return dsSerial;
-}
-
-void Settings::setSerial(const WCHAR* buf)
-{
-	wcscpy_s(dsSerial, wcslen(buf) + 1, buf);
-}
-
-const std::wstring Settings::getHID(int ds)
-{
-	switch (ds)
-	{
-	case 1: return dsHID1;
-	case 2: return dsHID2;
-	case 3: return dsHID3;
-	default: return L"";
-	}
 }
 
 void Settings::setPID(const WCHAR* buf, int ds)
 {
 	switch (ds)
 	{
-	case 1: { wcscpy_s(dsHID1, wcslen(buf) + 1, buf);break; }
-	case 2: { wcscpy_s(dsHID2, wcslen(buf) + 1, buf);break; }
-	case 3: { wcscpy_s(dsHID3, wcslen(buf) + 1, buf);break; }
+	case 1: { wcscpy_s(dsHID[0], wcslen(buf) + 1, buf);break; }
+	case 2: { wcscpy_s(dsHID[1], wcslen(buf) + 1, buf);break; }
+	case 3: { wcscpy_s(dsHID[2], wcslen(buf) + 1, buf);break; }
 	}
 }
 
@@ -2315,11 +2629,11 @@ void Settings::setAppName(const WCHAR* buf, int app)
 {
 	switch (app)
 	{
+	case 0: { wcscpy_s(App0Name, wcslen(buf) + 1, buf);break; }
 	case 1: { wcscpy_s(App1Name, wcslen(buf) + 1, buf);break; }
 	case 2: { wcscpy_s(App2Name, wcslen(buf) + 1, buf);break; }
 	case 3: { wcscpy_s(App3Name, wcslen(buf) + 1, buf);break; }
 	case 4: { wcscpy_s(App4Name, wcslen(buf) + 1, buf);break; }
-	case 5: { wcscpy_s(App5Name, wcslen(buf) + 1, buf);break; }
 	}
 }
 
@@ -2327,20 +2641,244 @@ void Settings::setAppLocation(const WCHAR* buf, int app)
 {
 	switch (app)
 	{
+	case 0: { wcscpy_s(App0Location, wcslen(buf) + 1, buf);break; }
 	case 1: { wcscpy_s(App1Location, wcslen(buf) + 1, buf);break; }
 	case 2: { wcscpy_s(App2Location, wcslen(buf) + 1, buf);break; }
 	case 3: { wcscpy_s(App3Location, wcslen(buf) + 1, buf);break; }
 	case 4: { wcscpy_s(App4Location, wcslen(buf) + 1, buf);break; }
 	case 5: { wcscpy_s(App5Location, wcslen(buf) + 1, buf);break; }
+	case 6: { wcscpy_s(App6Location, wcslen(buf) + 1, buf);break; }
+	case 7: { wcscpy_s(App7Location, wcslen(buf) + 1, buf);break; }
+	case 8: { wcscpy_s(App8Location, wcslen(buf) + 1, buf);break; }
+	case 9: { wcscpy_s(App9Location, wcslen(buf) + 1, buf);break; }
 	}
 }
 
-WCHAR* Settings::CheckboxToString(byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, bool eightCases)
+void Settings::setProfile(int i)
+{
+	if (i > 0 && i < 4)
+		Profile = i;
+	else
+		Profile = 1;
+}
+
+void Settings::setOpacity(int i)
+{
+	if (i > 19 && i < 101)
+		Opacity = i;
+	else
+		Opacity = 60;
+}
+
+void Settings::setPreferredSource(int i)
+{
+	if (i >= 0 && i < 5)
+		PreferredSource = (unsigned char)i;
+	else
+		PreferredSource = 0;
+}
+
+void Settings::setMouseActive(int i)
+{
+	if (i >= 0 && i < 3)
+		MouseActive = (unsigned char)i;
+	else
+		MouseActive = 0;
+}
+
+void Settings::setTriggersMode(int i)
+{
+	if (i >= 0 && i < 4)
+		TriggersMode = i;
+	else
+		TriggersMode = 0;
+}
+
+void Settings::setThreshold(int i)
+{
+	if (i >= 0 && i <= 32767)
+		Threshold = i;
+	else
+		Threshold = 2056;
+}
+
+void Settings::setSimultaneous(int i)
+{
+	if (i > 0 && i < 10000)
+		Simultaneous = i;
+	else
+		Simultaneous = 40;
+}
+
+void Settings::setLongPress(int i)
+{
+	if (i > 0 && i < 10000)
+		LongPress = i;
+	else
+		LongPress = 255;
+}
+
+void Settings::setVeryLongPress(int i)
+{
+	if (i > 0 && i < 10000)
+		VeryLongPress = i;
+	else
+		VeryLongPress = 3287;
+}
+
+void Settings::setWebRefreshTime(int i)
+{
+	if (i > 0 && i < 10000)
+		WebRefreshTime = i;
+	else
+		WebRefreshTime = 20;
+}
+
+void Settings::setSplitTouch()
+{
+	if (TouchPadButton && TouchPadButton <= 128)
+		SplitTouch = true;
+	else
+		SplitTouch = false;
+}
+
+void Settings::setWaveSpeed(int i)
+{
+	if (i >= 0 && i < 167)
+		WaveSpeed = i;
+	else
+		WaveSpeed = 130;
+}
+
+void Settings::setDispatch(int i, int value, unsigned char layout)
+{
+	if (i >= SrceDispatchID::Dispatch_LX && i <= SrceDispatchID::Dispatch_SL1)
+	{
+		if (value >= SrceDIAxisID::DIAxisID_none && value < SrceDIAxisID::DIAxisID_Count)
+		{
+			switch (layout)
+			{
+			case 0: { diDispatch[i] = value; break; }
+			case 1: { diDispatch1[i] = value; break; }
+			case 2: { diDispatch2[i] = value; break; }
+			case 3: { diDispatch3[i] = value; break; }
+			}
+		}
+		else
+		{
+			switch (layout)
+			{
+			case 0: { diDispatch[i] = SrceDIAxisID::DIAxisID_none; break; }
+			case 1: { diDispatch1[i] = SrceDIAxisID::DIAxisID_none; break; }
+			case 2: { diDispatch2[i] = SrceDIAxisID::DIAxisID_none; break; }
+			case 3: { diDispatch3[i] = SrceDIAxisID::DIAxisID_none; break; }
+			}
+		}
+	}
+	else if (i >= SrceDispatchID::Dispatch_DPAD && i <= SrceDispatchID::Dispatch_DPAD4)
+	{
+		if (value >= SrceDIPOVID::DIPOVID_none && value < SrceDIPOVID::DIPOVID_Count)
+		{
+			switch (layout)
+			{
+			case 0: { diDispatch[i] = value; break; }
+			case 1: { diDispatch1[i] = value; break; }
+			case 2: { diDispatch2[i] = value; break; }
+			case 3: { diDispatch3[i] = value; break; }
+			}
+		}
+		else
+		{
+			switch (layout)
+			{
+			case 0: { diDispatch[i] = SrceDIPOVID::DIPOVID_none; break; }
+			case 1: { diDispatch1[i] = SrceDIPOVID::DIPOVID_none; break; }
+			case 2: { diDispatch2[i] = SrceDIPOVID::DIPOVID_none; break; }
+			case 3: { diDispatch3[i] = SrceDIPOVID::DIPOVID_none; break; }
+			}
+		}
+	}
+	else if (i >= SrceDispatchID::Dispatch_SQUARE && i <= SrceDispatchID::Dispatch_BUTTON32)
+	{
+		if (value >= SrceDIButtonID::DIButtonID_none && value < SrceDIButtonID::DIButtonID_Count)
+		{
+			switch (layout)
+			{
+			case 0: { diDispatch[i] = value; break; }
+			case 1: { diDispatch1[i] = value; break; }
+			case 2: { diDispatch2[i] = value; break; }
+			case 3: { diDispatch3[i] = value; break; }
+			}
+		}
+		else
+		{
+			switch (layout)
+			{
+			case 0: { diDispatch[i] = SrceDIButtonID::DIButtonID_none; break; }
+			case 1: { diDispatch1[i] = SrceDIButtonID::DIButtonID_none; break; }
+			case 2: { diDispatch2[i] = SrceDIButtonID::DIButtonID_none; break; }
+			case 3: { diDispatch3[i] = SrceDIButtonID::DIButtonID_none; break; }
+			}
+		}
+	}
+}
+
+void Settings::setTabMapping(int i)
+{
+	if (i >= 0 && i < 9)
+		TabMapping = i;
+	else
+		TabMapping = 0;
+}
+
+void Settings::setTabMode(int i, int mode)
+{
+	if (mode >= 0 && mode < 9)
+		Mode[i] = (unsigned char)mode;
+	else
+		Mode[i] = 0;
+}
+
+void Settings::setStats(int i, int stat)
+{
+	if (stat >= 0 && stat < 65536)
+		Stat[i] = stat;
+	else
+		Stat[i] = 0;
+}
+
+void Settings::setReminder(int i, int reminder)
+{
+	if (reminder >= 0 && reminder < 2)
+		Reminder[i] = reminder;
+	else
+		Reminder[i] = 0;
+}
+
+void Settings::setDesiredVirtualPad(int i)
+{
+	if (i > 0 && i < 3)
+		DesiredVirtualPad = i;
+	else
+		DesiredVirtualPad = 1;
+}
+
+void Settings::setDefaultZoomValue(int i)
+{
+	DefaultZoomValue = float(max(250, min(5000, i))) / 1000;
+}
+
+void Settings::setDarkMode(int i)
+{
+	DarkMode = max(0, min(3, i));
+}
+
+WCHAR* Settings::CheckboxToString(byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, bool eightOverFour)
 {
 	int packit = 0;
 	int packit2 = 0;
 
-	if (eightCases)
+	if (eightOverFour)
 	{
 		packit2 |= v8;
 		packit2 |= (v7 << 3);
@@ -2371,7 +2909,7 @@ WCHAR* Settings::CheckboxToString(byte v1, byte v2, byte v3, byte v4, byte v5, b
 	buf[0] = 0;
 	WCHAR* head = buf;
 
-	if (eightCases)
+	if (eightOverFour)
 		head += swprintf_s(head, MAX_PATH, L"%03hX%03hX", packit, packit2);
 	else
 		head += swprintf_s(head, MAX_PATH, L"%04hX", packit);
@@ -2449,16 +2987,16 @@ WCHAR* Settings::KeymapToString(std::vector<BYTE> vk)
 	return buf;
 }
 
-unsigned short Settings::CheckboxString(std::wstring checkboxesstring, unsigned char idx, bool eightCases)
+unsigned short Settings::CheckboxString(std::wstring checkboxesstring, unsigned char idx, bool eightOverFour)
 {
 	if (checkboxesstring == L"")
 		return 0;
-	if (checkboxesstring.length() < 4 || (eightCases && checkboxesstring.length() < 6))
+	if (checkboxesstring.length() < 4 || (eightOverFour && checkboxesstring.length() < 6))
 		return 0;
 
 	int pakitstoi = std::stoi(checkboxesstring, nullptr, 16);
 
-	if (eightCases)
+	if (eightOverFour)
 	{
 		switch (idx)
 		{
@@ -2595,4 +3133,81 @@ std::vector<BYTE> Settings::KeymapString(std::wstring keymapstring)
 		vk.push_back((BYTE)std::stoll(keymapstring.std::wstring::substr(i * 2, 2), nullptr, 16));
 
 	return vk;
+}
+
+
+const WCHAR* Settings::CountryString(CountryID land)
+{
+	switch (land)
+	{
+	case Country_UNITED_STATES: return L"US";
+	case Country_ALBANIA: return L"AL";
+	case Country_ARMENIA: return L"AM";
+	case Country_AZERBAIJAN: return L"AZ";
+	case Country_BOSNIA: return L"BA";
+	case Country_BULGARIA: return L"BG";
+	case Country_BRAZIL: return L"BR";
+	case Country_BELARUSIAN: return L"BY";
+	case Country_CANADA: return L"CA";
+	case Country_CHEROKEE: return L"CH";
+	case Country_CHINA_SIMPLIFIED: return L"CN";
+	case Country_SERBIA_LATIN: return L"CS";
+	case Country_CZECH_REPUBLIC: return L"CZ";
+	case Country_GERMANY: return L"DE";
+	case Country_DENMARK: return L"DK";
+	case Country_ESTONIA: return L"EE";
+	case Country_SPAIN: return L"ES";
+	case Country_ETHIOPIA: return L"ET";
+	case Country_FINLAND: return L"FI";
+	case Country_FRANCE: return L"FR";
+	case Country_GREAT_BRITAIN: return L"GB";
+	case Country_GEORGIA: return L"GE";
+	case Country_GREECE: return L"GR";
+	case Country_HONG_KONG: return L"HK";
+	case Country_CROATIA: return L"HR";
+	case Country_HUNGARY: return L"HU";
+	case Country_INDONESIA: return L"ID";
+	case Country_IRELAND: return L"IE";
+	case Country_ISRAEL: return L"IL";
+	case Country_INDIA: return L"IN";
+	case Country_PERSIAN: return L"IR";
+	case Country_ICELAND: return L"IS";
+	case Country_ITALY: return L"IT";
+	case Country_JAPAN: return L"JP";
+	case Country_CAMBODIA: return L"KH";
+	case Country_KOREA: return L"KR";
+	case Country_KAZAKHSTAN: return L"KZ";
+	case Country_LAOS: return L"LA";
+	case Country_LITHUANIA: return L"LT";
+	case Country_LUXEMBOURG: return L"LU";
+	case Country_LATVIA: return L"LV";
+	case Country_MACEDONIA: return L"MK";
+	case Country_MALTA: return L"MT";
+	case Country_MEXICO: return L"MX";
+	case Country_MALAYSIA_BRUNEI_SINGAPORE: return L"MY";
+	case Country_NETHERLANDS: return L"NL";
+	case Country_NORWAY: return L"NO";
+	case Country_NEPAL: return L"NP";
+	case Country_NEW_ZEALAND: return L"NZ";
+	case Country_PERU: return L"PE";
+	case Country_FILIPINO: return L"PH";
+	case Country_URDU: return L"PK";
+	case Country_POLAND: return L"PL";
+	case Country_PORTUGAL: return L"PT";
+	case Country_ROMANIA: return L"RO";
+	case Country_SERBIAN_CYRILLIC: return L"RS";
+	case Country_RUSSIA: return L"RU";
+	case Country_SAUDI_ARABIA: return L"SA";
+	case Country_SWEDEN: return L"SE";
+	case Country_SLOVENIA: return L"SI";
+	case Country_SLOVAKIA: return L"SK";
+	case Country_THAILAND: return L"TH";
+	case Country_TURKEY: return L"TR";
+	case Country_TAIWAN: return L"TW";
+	case Country_UKRAINE: return L"UA";
+	case Country_UZBEKISTAN: return L"UZ";
+	case Country_VIETNAMESE: return L"VN";
+	case Country_SOUTH_AFRICA: return L"ZA";
+	default: return I18N.WHICH;
+	}
 }

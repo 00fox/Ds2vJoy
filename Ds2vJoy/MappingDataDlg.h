@@ -4,7 +4,8 @@
 class MappingDataDlg
 {
 public:
-	enum ModifiedMapping {
+	enum ModifiedMapping : byte
+	{
 		Mofified_Ifmouse,
 		Mofified_Force,
 		Mofified_Short,
@@ -127,13 +128,13 @@ public:
 		Mofified_Stop6,
 		Mofified_Stop7,
 		Mofified_Stop8,
-		Mofified_count
+		ModifiedMapping_Count
 	};
 
 	MappingDataDlg();
 	~MappingDataDlg();
 
-	void				Init(HINSTANCE hInst, HWND hWnd);
+	void				Init();
 	void				Open(HWND parent, int mode, int tab);
 	void				Show(HWND hWnd = NULL);
 	void				Hide(HWND hWnd = NULL);
@@ -147,7 +148,7 @@ public:
 	int					m_mode = 0;
 
 	Mapping				mappingData = { };
-	bool				Modified[Mofified_count] = { false };
+	bool				Modified[ModifiedMapping_Count] = { false };
 
 	int					docked = 0;		//0: No, 1: Right, 2: Center, 3: Left
 	int					docked_last = 0;
@@ -160,8 +161,6 @@ private:
 
 	void				_InitDialog(HWND hWnd);
 
-	HWND				m_hWnd = NULL;
-	HINSTANCE			m_hInst = NULL;
 	HWND				m_parent = NULL;
 	HWND				m_lists[14] = { NULL };
 
@@ -179,6 +178,7 @@ private:
 	unsigned char		whohasfocus = 0;
 	bool				m_moveLock = false;
 	bool				m_drawLock = false;
+	bool				m_rightClickOk = false;
 
 	byte				state[8] = { 0 };
 	std::vector<unsigned int>	mouseoverCB = { };

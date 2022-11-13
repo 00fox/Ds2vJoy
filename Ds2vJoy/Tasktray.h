@@ -10,20 +10,20 @@ class Tasktray
 	};
 
 public:
-	enum LedActionID
+	enum TasktrayItem : unsigned char
 	{
-		Tasktray_Item_MappingPaused,
-		Tasktray_Item_RapidFirePaused,
-		Tasktray_Item_vJoyPaused,
-		Tasktray_Item_ViGEmPaused,
-		Tasktray_Item_KeymapPaused,
-		Tasktray_Item_GuardianPaused,
+		TasktrayItem_MappingPaused,
+		TasktrayItem_RapidFirePaused,
+		TasktrayItem_vJoyPaused,
+		TasktrayItem_XOutputPaused,
+		TasktrayItem_KeymapPaused,
+		TasktrayItem_GuardianPaused,
 	};
 
 	Tasktray();
 	~Tasktray();
 
-	void				Init(HINSTANCE hInst, HWND hWnd);
+	void				Init();
 	void				CreateMenu();
 	void				SwapMenuitem(int item = 0);
 	void				Show();
@@ -34,11 +34,11 @@ public:
 	UINT				GetTaskBarLocation(RECT* rectangle);
 	void				GetMenuPosition(struct MenuPosition* test);
 
+	NOTIFYICONDATA		m_nid = { 0 };
+
 private:
-	HWND				m_hWnd = NULL;
 	HMENU				m_menu = NULL;
 
-	NOTIFYICONDATA		m_nid = { 0 };
 	unsigned int		MenuOffset = 3;
 
 	bool				m_flag = false;

@@ -13,32 +13,33 @@ RapidFireDlg::RapidFireDlg()
 
 RapidFireDlg::~RapidFireDlg()
 {
+	RemoveWindowSubclass(m_hList, (SUBCLASSPROC)ListSubclassProc, 1);
 }
 
-void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
+void RapidFireDlg::Init()
 {
-	m_hWnd = hWnd;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_RAPIDFIRE), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 	m_hList = GetDlgItem(m_hDlg, IDC_RAPIDFIRE_LIST);
-	m_hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
+	m_hMenu = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_EDITING));
 	redrawMenu(5);
 
 	SendMessage(m_hList, WM_SETFONT, WPARAM(tape.hList), MAKELPARAM(TRUE, 0));
 
 	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES | LVS_NOCOLUMNHEADER;
+	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
 	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
 
 	HWND header = ListView_GetHeader(m_hList);
 	DWORD dwHeaderStyle = ::GetWindowLong(header, GWL_STYLE);
-	dwHeaderStyle |= HDS_NOSIZING;
+	dwHeaderStyle = dwHeaderStyle & ~HDS_DRAGDROP | HDS_NOSIZING;
 	::SetWindowLong(header, GWL_STYLE, dwHeaderStyle);
 
 	LVCOLUMN col;
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT | LVCFMT_FIXED_WIDTH;
-	col.cx = 114;
-	col.pszText = I18N.vJoyButton;
+	col.cx = 115 + (GetSystemMetrics(SM_CXVSCROLL) + 2);
+	col.pszText = I18N.srceButton;
 	ListView_InsertColumn(m_hList, 0, &col);
 	col.pszText = I18N.Setting;
 	col.cx = 112;
@@ -47,7 +48,7 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	col.cx = 112;
 	ListView_InsertColumn(m_hList, 2, &col);
 	col.pszText = WCHARI(L"");
-	col.cx = 111;
+	col.cx = 112;
 	ListView_InsertColumn(m_hList, 3, &col);
 
 	HWND hTip = ListView_GetToolTips(m_hList);
@@ -60,6 +61,28 @@ void RapidFireDlg::Init(HINSTANCE hInst, HWND hWnd)
 	RECT TipRect = { 5, 1, 2, 2 };
 	SendMessage(hTip, TTM_SETMARGIN, 0, LPARAM(&TipRect));
 	SendMessage(hTip, WM_SETFONT, WPARAM(tape.hTooltip), MAKELPARAM(TRUE, 0));
+	
+	SetWindowSubclass(m_hList, (SUBCLASSPROC)ListSubclassProc, 1, (DWORD_PTR)this);
+}
+
+void RapidFireDlg::PageUp()
+{
+	ListView_Scroll(m_hList, 0, -14);
+}
+
+void RapidFireDlg::PageDown()
+{
+	ListView_Scroll(m_hList, 0, 14);
+}
+
+void RapidFireDlg::PageHome()
+{
+	ListView_Scroll(m_hList, 0, -32765);
+}
+
+void RapidFireDlg::PageEnd()
+{
+	ListView_Scroll(m_hList, 0, 32765);
 }
 
 void RapidFireDlg::redrawMenu(int ntabs)
@@ -94,9 +117,18 @@ void RapidFireDlg::_InitDialog(HWND hWnd)
 
 void RapidFireDlg::_ShowWindow(HWND hWnd)
 {
-	SendMessage(m_hList, LVM_SETBKCOLOR, 0, LPARAM(tape.ink_LIST_BACK));
-	SendMessage(m_hList, LVM_SETTEXTCOLOR, 0, LPARAM(tape.ink_LIST));
-	SendMessage(m_hList, LVM_SETTEXTBKCOLOR, 0, LPARAM(tape.ink_LIST_BACKGROUND));
+	if (tape.DarkTheme)
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK_DARK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST_DARK);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND_DARK);
+	}
+	else
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND);
+	}
 	load();
 	m_active = true;
 }
@@ -125,12 +157,28 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 {
 	switch (message)
 	{
+	case WM_CTLCOLORSCROLLBAR:
+	{
+		HDC hdcStatic = (HDC)wParam;
+		SetTextColor(hdcStatic, tape.ink_SCROLLBAR);
+		SetBkMode(hdcStatic, TRANSPARENT);
+		SetBkColor(hdcStatic, tape.Bk_SCROLLBAR);
+		return (LRESULT)tape.hB_SCROLLBAR;
+	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_LIST);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_LIST;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
 	}
 	case WM_MEASUREITEM:
 	{
@@ -158,7 +206,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			else
 				FillRect(DrawMenuStructure->hDC, &(DrawMenuStructure->rcItem), tape.hB_MENU);
 
-			SelectObject(DrawMenuStructure->hDC, tape.hMenus);
+			SelectObject(DrawMenuStructure->hDC, tape.hMenu);
 			WCHAR wszBuffer[MAX_PATH];
 			int nCharCount = ::GetMenuString((HMENU)DrawMenuStructure->hwndItem, DrawMenuStructure->itemID, wszBuffer, MAX_PATH, MF_BYCOMMAND);
 			if (nCharCount > 0)
@@ -185,7 +233,6 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 		if (wParam == TRUE)
 			std::thread(&RapidFireDlg::_ShowWindow, this, hWnd).detach();
-
 		break;
 	}
 	case WM_INITDIALOG:
@@ -198,7 +245,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		if (m_flag_drag && GetCapture() == hWnd)
 		{
 			EndDrag(LOWORD(lParam), HIWORD(lParam));
-			InvalidateRect(hWnd, NULL, FALSE);
+			InvalidateRect(hWnd, NULL, TRUE);
 		}
 		break;
 	}
@@ -215,113 +262,12 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	}
 	case WM_NOTIFY:
 	{
-		switch (((LPNMHDR)lParam)->code)
-		{
-		case HDN_BEGINTRACK:
-		{
-			SetWindowLong(m_hDlg, 0, TRUE);  // prevent resizing
-			return TRUE;
-		}
-		}
 		switch (((LPNMHDR)lParam)->idFrom)
 		{
 		case IDC_RAPIDFIRE_LIST:
 		{
 			switch (((LPNMHDR)lParam)->code)
 			{
-			case LVN_COLUMNCLICK:
-			{
-				m_active = false;
-				rDDlg.Hide();
-
-				LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
-				unsigned char column = pnmv->iSubItem;
-				if (lasttab == column)
-					tabSortingMethod = !tabSortingMethod;
-				else
-					tabSortingMethod = false;
-				lasttab = column;
-
-				RapidFires newmap;
-				RapidFires newmaptmp;
-				size_t length = tape.RapidFiredata.size();
-				for (size_t i = 0; i < length; i++)
-					newmaptmp.push_back((RapidFire)tape.RapidFiredata[i]);
-
-				length = newmaptmp.size();
-				for (size_t i = 0; i < length; i++)
-				{
-					if (newmaptmp[i].Enable == 2)
-					{
-						newmap.push_back((RapidFire)newmaptmp[i]);
-						newmaptmp.erase(newmaptmp.begin() + i);
-					}
-				}
-
-				while (newmaptmp.size())
-				{
-					int pos = -1;
-
-					long value = 0;
-
-					length = newmaptmp.size();
-					for (size_t i = 0; i < length; i++)
-					{
-						long sortresult = 0;
-
-						std::vector<byte> vjdata;
-						if (newmaptmp[i].ButtonID)
-							vjdata.push_back(newmaptmp[i].ButtonID);
-						if (newmaptmp[i].ButtonID2)
-							vjdata.push_back(newmaptmp[i].ButtonID2);
-						std::sort(vjdata.begin(), vjdata.end());
-						size_t length = 2 - vjdata.size();
-						for (int j = 0; j < length; j++)
-							vjdata.push_back(0);
-
-						switch (column)
-						{
-						case 0:
-						{
-							sortresult |= ((long)vjdata[1] << 0);
-							sortresult |= ((long)vjdata[0] << 8);
-							break;
-						}
-						case 1:
-						{
-							sortresult |= ((long)newmaptmp[i].Firsttime << 0);
-							break;
-						}
-						case 2:
-						{
-							sortresult |= ((long)newmaptmp[i].Releasetime << 0);
-							break;
-						}
-						case 3:
-						{
-							sortresult |= ((long)newmaptmp[i].Presstime << 0);
-							break;
-						}
-						}
-
-						if (pos == -1 || (pos >= 0 && ((tabSortingMethod) ? sortresult > value : sortresult < value)))
-						{
-							pos = (int)i;
-							value = sortresult;
-						}
-					}
-					newmap.push_back((RapidFire)newmaptmp[pos]);
-					newmaptmp.erase(newmaptmp.begin() + pos);
-				}
-
-				tape.RapidFiredata.swap(newmap);
-				tape.Save(tape.Setting_RapidFiredata);
-
-				PostMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, -1);
-
-				m_active = true;
-				break;
-			}
 			case NM_DBLCLK:
 			{
 				editRapidFireDlg();
@@ -343,7 +289,7 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			{
 				if (m_active && !m_flag_drag)
 				{
-					unsigned long newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
+					unsigned int newstate = (((LPNMLISTVIEW)lParam)->uNewState & LVIS_STATEIMAGEMASK);
 					if (newstate != (((LPNMLISTVIEW)lParam)->uOldState & LVIS_STATEIMAGEMASK))
 					{
 						RapidFire* rf = (RapidFire*)((LPNMLISTVIEW)lParam)->lParam;
@@ -383,6 +329,102 @@ INT_PTR RapidFireDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		return FALSE;
 	}
 	return TRUE;
+}
+
+LRESULT CALLBACK RapidFireDlg::ListSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR uIDSubClass, DWORD_PTR RefData)
+{
+	RapidFireDlg* dlg = reinterpret_cast<RapidFireDlg*>(RefData);
+	if (dlg)
+		return dlg->_listSubclassProc(hWnd, message, wParam, lParam);
+
+	return DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CALLBACK RapidFireDlg::_listSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (m_sorting)
+		return 0;
+
+	switch (message)
+	{
+	case WM_NOTIFY:
+	{
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case HDN_ENDDRAG:
+		{
+			InvalidateRect(hWnd, NULL, TRUE);
+			break;
+		}
+		case NM_CUSTOMDRAW:
+		{
+			LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+			switch (DrawListCustom->dwDrawStage)
+			{
+			case CDDS_PREPAINT:
+			{
+				ListView_GetColumnOrderArray(m_hList, 4, &m_columnOrder);
+				m_indexOfSettings = (m_columnOrder[0] == 0) ? m_columnOrder[1] : m_columnOrder[0];
+				return CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYPOSTPAINT;
+			}
+			case CDDS_ITEMPREPAINT:
+			{
+				if (DrawListCustom->uItemState == CDIS_SELECTED)
+					m_actualColumn = DrawListCustom->dwItemSpec;
+
+				if (tape.DarkTheme)
+				{
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.hB_LIST_Header_DARK : tape.hB_LIST_Header2_DARK);
+					SetBkColor(DrawListCustom->hdc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.Bk_LIST_header1_DARK : tape.Bk_LIST_header2_DARK);
+					if (DrawListCustom->dwItemSpec == 0)
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header1_DARK);
+						DrawText(DrawListCustom->hdc, I18N.srceButton, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+					else
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2_DARK);
+						if (DrawListCustom->dwItemSpec == m_indexOfSettings)
+							DrawText(DrawListCustom->hdc, I18N.Setting, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+				}
+				else
+				{
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.hB_LIST_Header : tape.hB_LIST_Header2);
+					SetBkColor(DrawListCustom->hdc, (m_actualColumn == DrawListCustom->dwItemSpec) ? tape.ink_LIST_Header : tape.ink_LIST_scndHeader);
+					if (DrawListCustom->dwItemSpec == 0)
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header1);
+						DrawText(DrawListCustom->hdc, I18N.srceButton, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+					else
+					{
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2);
+						if (DrawListCustom->dwItemSpec == m_indexOfSettings)
+							DrawText(DrawListCustom->hdc, I18N.Setting, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+					}
+				}
+				return CDRF_SKIPDEFAULT;
+			}
+			case CDDS_POSTPAINT:
+			{
+				if (m_actualColumn != m_lastColumn)
+					Sort(m_actualColumn);
+				break;
+			}
+			default:
+				return CDRF_DODEFAULT;
+				break;
+			}
+			break;
+		}
+		}
+		break;
+	}
+	default:
+		return DefSubclassProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
 }
 
 void RapidFireDlg::load()
@@ -426,10 +468,10 @@ void RapidFireDlg::save()
 		item.iItem = i;
 		if (!ListView_GetItem(m_hList, &item))
 		{
-			SendMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, -1);
+			SendMessage(tape.Ds2hWnd, WM_ADDRAPIDFIRE, 0, -1);
 			RECT win;
-			GetWindowRect(m_hWnd, &win);
-			MessageBoxPos(m_hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
+			GetWindowRect(tape.Ds2hWnd, &win);
+			MessageBoxPos(tape.Ds2hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
 			return;
 		}
 		if (item.lParam != NULL)
@@ -438,7 +480,7 @@ void RapidFireDlg::save()
 
 	tape.RapidFiredata.swap(newmap);
 	tape.Save(tape.Setting_RapidFiredata);
-	SendMessage(m_hWnd, WM_ADDRAPIDFIRE, 0, -1);
+	SendMessage(tape.Ds2hWnd, WM_ADDRAPIDFIRE, 0, -1);
 
 	m_active = true;
 }
@@ -519,7 +561,7 @@ void RapidFireDlg::editRapidFireDlg()
 	else if (nselected > 1)
 	{
 		lastidxs.clear();
-		for (int i = 0; i < RapidFireDataDlg::Mofified_count; i++)
+		for (int i = 0; i < RapidFireDataDlg::ModifiedRapidFire_Count; i++)
 			rDDlg.Modified[i] = false;
 		int idx;
 		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
@@ -589,16 +631,16 @@ void RapidFireDlg::editRapidFireDlgBackMulti()
 			RapidFire* data2 = (RapidFire*)item.lParam;
 			rf = *data2;
 			data2 = new RapidFire(rf);
-			for (int i = 0; i < RapidFireDataDlg::Mofified_count; i++)
+			for (int i = 0; i < RapidFireDataDlg::ModifiedRapidFire_Count; i++)
 				if (rDDlg.Modified[i])
 					switch (i)
 					{
 					default:
-					case RapidFireDataDlg::Mofified_ButtonID:data2->ButtonID = data1->ButtonID; break;
-					case RapidFireDataDlg::Mofified_ButtonID2:data2->ButtonID2 = data1->ButtonID2; break;
-					case RapidFireDataDlg::Mofified_Firsttime:data2->Firsttime = data1->Firsttime; break;
-					case RapidFireDataDlg::Mofified_Releasetime:data2->Releasetime = data1->Releasetime; break;
-					case RapidFireDataDlg::Mofified_Presstime:data2->Presstime = data1->Presstime; break;
+					case RapidFireDataDlg::ModifiedRapidFire_ButtonID:data2->ButtonID = data1->ButtonID; break;
+					case RapidFireDataDlg::ModifiedRapidFire_ButtonID2:data2->ButtonID2 = data1->ButtonID2; break;
+					case RapidFireDataDlg::ModifiedRapidFire_Firsttime:data2->Firsttime = data1->Firsttime; break;
+					case RapidFireDataDlg::ModifiedRapidFire_Releasetime:data2->Releasetime = data1->Releasetime; break;
+					case RapidFireDataDlg::ModifiedRapidFire_Presstime:data2->Presstime = data1->Presstime; break;
 					}
 			ListView_DeleteItem(m_hList, lastidxs[i]);
 			insertRapidFire(lastidxs[i], data2);
@@ -618,7 +660,7 @@ void RapidFireDlg::deleteRapidFireDlg()
 		{ m_active = true; return; }
 
 	RECT win;
-	GetWindowRect(m_hWnd, &win);
+	GetWindowRect(tape.Ds2hWnd, &win);
 	if (MessageBoxPos(m_hDlg, I18N.MBOX_Delete, I18N.APP_TITLE, MB_YESNO, win.left + 160, win.top + 60) == IDYES)
 	{
 		int idx;
@@ -809,6 +851,95 @@ void RapidFireDlg::setInsertMark(int idx)
 	}
 }
 
+void RapidFireDlg::Sort(int column)
+{
+	m_sorting = true;
+	m_active = false;
+	rDDlg.Hide();
+
+	RapidFires newmap;
+	RapidFires newmaptmp;
+	size_t length = tape.RapidFiredata.size();
+	for (size_t i = 0; i < length; i++)
+		newmaptmp.push_back((RapidFire)tape.RapidFiredata[i]);
+
+	length = newmaptmp.size();
+	for (size_t i = 0; i < length; i++)
+	{
+		if (newmaptmp[i].Enable == 2)
+		{
+			newmap.push_back((RapidFire)newmaptmp[i]);
+			newmaptmp.erase(newmaptmp.begin() + i);
+		}
+	}
+
+	while (newmaptmp.size())
+	{
+		int pos = -1;
+
+		long long value = 0;
+
+		length = newmaptmp.size();
+		for (size_t i = 0; i < length; i++)
+		{
+			int sortresult = 0;
+
+			std::vector<byte> vjdata;
+			if (newmaptmp[i].ButtonID)
+				vjdata.push_back(newmaptmp[i].ButtonID);
+			if (newmaptmp[i].ButtonID2)
+				vjdata.push_back(newmaptmp[i].ButtonID2);
+			std::sort(vjdata.begin(), vjdata.end());
+			size_t length = 2 - vjdata.size();
+			for (int j = 0; j < length; j++)
+				vjdata.push_back(0);
+
+			switch (column)
+			{
+			case 0:
+			{
+				sortresult |= ((long long)vjdata[1] << 0);
+				sortresult |= ((long long)vjdata[0] << 8);
+				break;
+			}
+			case 1:
+			{
+				sortresult |= ((long long)newmaptmp[i].Firsttime << 0);
+				break;
+			}
+			case 2:
+			{
+				sortresult |= ((long long)newmaptmp[i].Releasetime << 0);
+				break;
+			}
+			case 3:
+			{
+				sortresult |= ((long long)newmaptmp[i].Presstime << 0);
+				break;
+			}
+			}
+
+			if (pos == -1 || (pos >= 0 && (sortresult < value)))
+			{
+				pos = (int)i;
+				value = sortresult;
+			}
+		}
+		newmap.push_back((RapidFire)newmaptmp[pos]);
+		newmaptmp.erase(newmaptmp.begin() + pos);
+	}
+
+	tape.RapidFiredata.swap(newmap);
+
+	tape.Save(tape.Setting_RapidFiredata);
+
+	PostMessage(tape.Ds2hWnd, WM_ADDRAPIDFIRE, 0, -1);
+
+	m_lastColumn = m_actualColumn;
+	m_active = true;
+	m_sorting = false;
+}
+
 void RapidFireDlg::Show()
 {
 	::ShowWindow(m_hDlg, SW_SHOW);
@@ -821,5 +952,10 @@ void RapidFireDlg::Hide()
 
 BOOL RapidFireDlg::MoveWindow(int x, int y, int w, int h, BOOL r)
 {
-	return ::MoveWindow(m_hDlg, x, y, w, h, r);
+	BOOL ret = ::MoveWindow(m_hDlg, x, y, w, h, r);
+	RECT win;
+	GetWindowRect(m_hDlg, &win);
+	::MoveWindow(m_hList, 0, 0, win.right - win.left + (GetSystemMetrics(SM_CXVSCROLL) + 2), win.bottom - win.top, FALSE);
+
+	return ret;
 }

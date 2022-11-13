@@ -9,13 +9,14 @@ KeymapDataDlg::~KeymapDataDlg()
 {
 }
 
-void KeymapDataDlg::Init(HINSTANCE hInst, HWND hWnd)
+void KeymapDataDlg::Init()
 {
-	m_hWnd = hWnd;
 	m_mode = 0;
-	m_hDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_KEYMAP_ADD), hWnd, (DLGPROC)Proc, LPARAM(this));
+	m_hDlg = CreateDialogParam(tape.Ds2hInst, MAKEINTRESOURCE(IDD_KEYMAP_ADD), tape.Ds2hWnd, (DLGPROC)Proc, LPARAM(this));
+	Hide();
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_SOURCE, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_BTN, WM_SETFONT, WPARAM(tape.hEdit), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_BTN_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_BTN, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_RESTORE_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_RESTORE, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_MAXIMIZE_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
@@ -25,6 +26,9 @@ void KeymapDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_ACTIVATING_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_ACTIVATING, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_SEND, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_INPUT1_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_INPUT2_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_INPUT3_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_INPUT1, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_INPUT2, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_INPUT3, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
@@ -43,9 +47,10 @@ void KeymapDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_SCANCODE_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_SCANCODE, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_OK, WM_SETFONT, WPARAM(tape.hButton2), MAKELPARAM(TRUE, 0));
-	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_CANCEL, WM_SETFONT, WPARAM(tape.hButton2), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_CANCEL, WM_SETFONT, WPARAM(tape.hCancel), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_WINDOW, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_FIND_LIST, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
+	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_WINDOW_LIST_STATIC, WM_SETFONT, WPARAM(tape.hStatic), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_WINDOW_LIST, WM_SETFONT, WPARAM(tape.hCombo), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_IS_W_VISIBLE_CHK, WM_SETFONT, WPARAM(tape.hCheck2), MAKELPARAM(TRUE, 0));
 	SendDlgItemMessage(m_hDlg, IDC_KEYMAP_IS_W_VISIBLE, WM_SETFONT, WPARAM(tape.hCheck), MAKELPARAM(TRUE, 0));
@@ -75,7 +80,33 @@ void KeymapDataDlg::Init(HINSTANCE hInst, HWND hWnd)
 	SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_DELETE), I18N.KEYMAP_DELETE);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_OK2), I18N.KEYMAP_OK2);
 	SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_CANCEL2), I18N.KEYMAP_CANCEL2);
-	Hide();
+
+	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_FIND_LIST);
+
+	DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
+	dwStyle |= LVS_EX_FULLROWSELECT;
+	ListView_SetExtendedListViewStyle(m_hList, dwStyle);
+
+	HWND header = ListView_GetHeader(m_hList);
+	DWORD dwHeaderStyle = ::GetWindowLong(header, GWL_STYLE);
+	dwHeaderStyle = dwHeaderStyle & ~HDS_DRAGDROP | HDS_NOSIZING;
+	::SetWindowLong(header, GWL_STYLE, dwHeaderStyle);
+
+	LVCOLUMN col;
+	firsttime = true;
+	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+	col.fmt = LVCFMT_LEFT;
+	col.cx = 140;
+	col.pszText = I18N.KEYMAP_CLASS;
+	ListView_InsertColumn(m_hList, 0, &col);
+	col.pszText = I18N.KEYMAP_TITLE;
+	col.cx = 270;
+	ListView_InsertColumn(m_hList, 1, &col);
+	col.pszText = I18N.KEYMAP_IDX;
+	col.cx = 26;
+	ListView_InsertColumn(m_hList, 2, &col);
+
+	SetWindowSubclass(m_hList, (SUBCLASSPROC)ListSubclassProc, 1, (DWORD_PTR)this);
 }
 
 void KeymapDataDlg::Open(HWND parent, int mode)
@@ -86,18 +117,18 @@ void KeymapDataDlg::Open(HWND parent, int mode)
 	canprint = false;
 	ShowWindow(parent, SW_HIDE);
 	Show();
-	PostMessage(m_hWnd, WM_SIZE, 0, -1);
+	PostMessage(tape.Ds2hWnd, WM_SIZE, 0, -1);
 }
 
 void KeymapDataDlg::_InitDialog(HWND hWnd)
 {
 	SetTimer(hWnd, 1, 10, NULL);
-	for (int i = 0; i < vJoyButtonID::button_Count; i++)
+	for (int i = 0; i < DestButtonID::Destination_Count; i++)
 	{
-		WCHAR* str = vJoyButton::String((vJoyButtonID)i);
+		WCHAR* str = DestinationButton::String((DestButtonID)i);
 		SendDlgItemMessage(hWnd, IDC_KEYMAP_BTN, CB_ADDSTRING, 0, LPARAM(str));
 	}
-	for (int i = 0; i < keymapData.keyboard_Count; i++)
+	for (int i = 0; i < keymapData.KeyboardID_Count; i++)
 	{
 		const WCHAR* str = keymapData.String((KeyboardID)i);
 		SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT1, CB_ADDSTRING, 0, LPARAM(str));
@@ -111,11 +142,30 @@ void KeymapDataDlg::_InitDialog(HWND hWnd)
 
 void KeymapDataDlg::_ShowWindow(HWND hWnd)
 {
+	if (tape.DarkTheme)
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK_DARK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST_DARK);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND_DARK);
+	}
+	else
+	{
+		ListView_SetBkColor(m_hList, tape.ink_LIST_BACK);
+		ListView_SetTextColor(m_hList, tape.ink_LIST);
+		ListView_SetTextBkColor(m_hList, tape.ink_LIST_BACKGROUND);
+	}
+
 	SendDlgItemMessage(hWnd, IDC_KEYMAP_BTN, CB_SETCURSEL, WPARAM(keymapData.ButtonID), 0);
 	SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT1, CB_SETCURSEL, 0, 0);
 	SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT2, CB_SETCURSEL, 0, 0);
 	SendDlgItemMessage(hWnd, IDC_KEYMAP_INPUT3, CB_SETCURSEL, 0, 0);
 	HWND hInput = GetDlgItem(hWnd, IDC_KEYMAP_INPUT);
+
+	SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_BTN_STATIC), (keymapData.ButtonID) ? DestinationButton::String((DestButtonID)keymapData.ButtonID) : L"...");
+	SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1_STATIC), L"...");
+	SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2_STATIC), L"...");
+	SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3_STATIC), L"...");
+	SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), L"...");
 
 	CheckDlgButton(hWnd, IDC_KEYMAP_NATURAL_CHK, keymapData.NaturalTyping);
 
@@ -155,29 +205,6 @@ void KeymapDataDlg::_ShowWindow(HWND hWnd)
 	CheckDlgButton(hWnd, IDC_KEYMAP_EXTENDEDKEY_CHK, keymapData.ExtendedKey);
 	CheckDlgButton(hWnd, IDC_KEYMAP_SCANCODE_CHK, keymapData.Scancode);
 
-	m_hList = GetDlgItem(m_hDlg, IDC_KEYMAP_FIND_LIST);
-
-	if (!firsttime)
-	{
-		DWORD dwStyle = ListView_GetExtendedListViewStyle(m_hList);
-		dwStyle |= LVS_EX_FULLROWSELECT;
-		ListView_SetExtendedListViewStyle(m_hList, dwStyle);
-		LVCOLUMN col;
-
-		firsttime = true;
-		col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-		col.fmt = LVCFMT_LEFT;
-		col.cx = 100;
-		col.pszText = WCHARI(L"Class");
-		ListView_InsertColumn(m_hList, 0, &col);
-		col.pszText = WCHARI(L"Title");
-		col.cx = 200;
-		ListView_InsertColumn(m_hList, 1, &col);
-		col.pszText = WCHARI(L"Idx");
-		col.cx = 100;
-		ListView_InsertColumn(m_hList, 2, &col);
-	}
-
 	SendMessage(hWnd, WM_RESET_FINDWINDOW, 0, 0);
 
 	SetFocus(GetDlgItem(hWnd, IDC_KEYMAP_INPUT));
@@ -213,17 +240,17 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	case WM_CTLCOLORDLG:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_DLG);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_DLG);
+		SetTextColor(hdcStatic, tape.ink_DLG);
 		return (LRESULT)tape.hB_DLG;
 	}
 	case WM_CTLCOLORMSGBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_MSGBOX);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_MSGBOX);
+		SetTextColor(hdcStatic, tape.ink_MSGBOX);
 		return (LRESULT)tape.hB_MSGBOX;
 	}
 	case WM_CTLCOLORBTN:
@@ -232,22 +259,30 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		SetTextColor(hdcStatic, tape.ink_BTN);
 		SetBkMode(hdcStatic, TRANSPARENT);
 		SetBkColor(hdcStatic, tape.Bk_BTN);
-		return (LRESULT)tape.hB_BTN;
+		if (tape.DarkTheme)
+			return (LRESULT)tape.hB_BTN_DARK;
+		else
+			return (LRESULT)tape.hB_BTN;
 	}
 	case WM_CTLCOLORSTATIC:
 	{
 		HDC hdcStatic = (HDC)wParam;
+		SetBkMode(hdcStatic, TRANSPARENT);
 		switch (GetDlgCtrlID((HWND)lParam))
 		{
-		case IDC_KEYMAP_RESTORE_CHK:
-		case IDC_KEYMAP_MAXIMIZE_CHK:
-		case IDC_KEYMAP_SHOW_CHK:
-		case IDC_KEYMAP_ACTIVATING_CHK:
-		case IDC_KEYMAP_NATURAL_CHK:
-		case IDC_KEYMAP_POSTMESSAGE_CHK:
-		case IDC_KEYMAP_EXTENDEDKEY_CHK:
-		case IDC_KEYMAP_SCANCODE_CHK:
-		case IDC_KEYMAP_IS_W_VISIBLE_CHK: { SetTextColor(hdcStatic, tape.ink_STATIC_Checkbox2); break; }
+		case IDC_KEYMAP_FW_TEXT:
+		{
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_EDIT);
+				return (LRESULT)tape.hB_EDIT;
+			}
+		}
 		case IDC_KEYMAP_RESTORE:
 		case IDC_KEYMAP_MAXIMIZE:
 		case IDC_KEYMAP_SHOW:
@@ -256,26 +291,86 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		case IDC_KEYMAP_POSTMESSAGE:
 		case IDC_KEYMAP_EXTENDEDKEY:
 		case IDC_KEYMAP_SCANCODE:
-		case IDC_KEYMAP_IS_W_VISIBLE: { SetTextColor(hdcStatic, tape.ink_STATIC_Checkbox); break; }
-		default: { SetTextColor(hdcStatic, tape.ink_STATIC); break; }
+		case IDC_KEYMAP_IS_W_VISIBLE:
+		case IDC_KEYMAP_BTN_STATIC:
+		case IDC_KEYMAP_INPUT1_STATIC:
+		case IDC_KEYMAP_INPUT2_STATIC:
+		case IDC_KEYMAP_INPUT3_STATIC:
+		case IDC_KEYMAP_WINDOW_LIST_STATIC:
+		{
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_CHK_DARK);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_CHK);
+				return (LRESULT)tape.hB_BackGround;
+			}
+			break;
 		}
-		SetBkMode(hdcStatic, TRANSPARENT);
-		SetBkColor(hdcStatic, tape.Bk_STATIC);
-		return (LRESULT)tape.hB_STATIC;
+		case IDC_KEYMAP_RESTORE_CHK:
+		case IDC_KEYMAP_MAXIMIZE_CHK:
+		case IDC_KEYMAP_SHOW_CHK:
+		case IDC_KEYMAP_ACTIVATING_CHK:
+		case IDC_KEYMAP_NATURAL_CHK:
+		case IDC_KEYMAP_POSTMESSAGE_CHK:
+		case IDC_KEYMAP_EXTENDEDKEY_CHK:
+		case IDC_KEYMAP_SCANCODE_CHK:
+		case IDC_KEYMAP_IS_W_VISIBLE_CHK:
+		{
+			SetTextColor(hdcStatic, tape.ink_STATIC);
+			if (tape.DarkTheme)
+				return (LRESULT)tape.hB_BackGround_DARK;
+			else
+				return (LRESULT)tape.hB_BackGround;
+		}
+		default:
+		{
+			if (tape.DarkTheme)
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC_DARK);
+				return (LRESULT)tape.hB_BackGround_DARK;
+			}
+			else
+			{
+				SetTextColor(hdcStatic, tape.ink_STATIC);
+				return (LRESULT)tape.hB_BackGround;
+			}
+			break;
+		}
+		}
 	}
 	case WM_CTLCOLOREDIT:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_EDIT);
-		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_EDIT;
+		SetBkMode((HDC)wParam, TRANSPARENT);
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT_TERMINAL);
+			return (LRESULT)tape.hB_EDIT_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_EDIT);
+			return (LRESULT)tape.hB_EDIT;
+		}
 	}
 	case WM_CTLCOLORLISTBOX:
 	{
 		HDC hdcStatic = (HDC)wParam;
-		SetTextColor(hdcStatic, tape.ink_LIST);
 		SetBkMode(hdcStatic, TRANSPARENT);
-		return (LRESULT)tape.hB_LIST;
+		if (tape.DarkTheme)
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO_DARK);
+			return (LRESULT)tape.hB_LIST_DARK;
+		}
+		else
+		{
+			SetTextColor(hdcStatic, tape.ink_COMBO);
+			return (LRESULT)tape.hB_LIST;
+		}
 	}
 	case WM_PAINT:
 	{
@@ -286,7 +381,35 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 			RECT rect;
 			GetClientRect(hWnd, &rect);
-			FillRect(hDC, &rect, tape.hB_BackGround);
+			if (tape.DarkTheme)
+				FillRect(hDC, &rect, tape.hB_BackGround_DARK);
+			else
+				FillRect(hDC, &rect, tape.hB_BackGround);
+
+			if (tape.DarkTheme)
+			{
+				SetRect(&rect, 8, 96, 423, 116);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK3);
+				SetRect(&rect, 8, 150, 423, 170);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK3);
+
+				SetRect(&rect, 8, 97, 423, 115);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK);
+				SetRect(&rect, 8, 151, 423, 169);
+				FrameRect(hDC, &rect, tape.hB_EDIT_DARK);
+			}
+			else
+			{
+				SetRect(&rect, 8, 96, 423, 116);
+				FrameRect(hDC, &rect, tape.hB_EDIT_BORDER);
+				SetRect(&rect, 8, 150, 423, 170);
+				FrameRect(hDC, &rect, tape.hB_EDIT_BORDER);
+
+				SetRect(&rect, 8, 97, 423, 115);
+				FillRect(hDC, &rect, tape.hB_EDIT);
+				SetRect(&rect, 8, 151, 423, 169);
+				FillRect(hDC, &rect, tape.hB_EDIT);
+			}
 
 			POINT Pt;
 			MoveToEx(hDC, 469, rect.top, &Pt);
@@ -316,9 +439,6 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			{
 				if (KeymapDataDlgmoved < 22)
 				{
-					static const double y470 = 0.046126560401444254082956;
-					static const double y20minus470 = 0.177480237348534715557960;
-
 					double tmp1 = (double)KeymapDataDlgmoved - 1;
 					double tmp2 = ((y20minus470 * tmp1) / 21) + y470;
 					double tmp3 = 1 / (tmp2 * tmp2);
@@ -335,9 +455,6 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			{
 				if (KeymapDataDlgmoved > -22)
 				{
-					static const double y470 = 0.046126560401444254082956;
-					static const double y20minus470 = 0.177480237348534715557960;
-
 					double tmp1 = -1 - (double)KeymapDataDlgmoved;
 					double tmp2 = ((y20minus470 * tmp1) / 21) + y470;
 					double tmp3 = 1 / (tmp2 * tmp2);
@@ -361,6 +478,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			SendDlgItemMessage(hWnd, IDC_KEYMAP_WINDOW_LIST, CB_RESETCONTENT, 0, 0);
 			int idx = ListView_GetItemCount(m_hList);
 			while (--idx >= 0) { ListView_DeleteItem(m_hList, idx); }
+			SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), L"...");
 		}
 
 		if (m_hEdit != NULL)
@@ -405,32 +523,30 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	}
 	case WM_NOTIFY:
 	{
-		switch (((LPNMHDR)lParam)->code)
+		switch (((LPNMHDR)lParam)->idFrom)
 		{
-		case NM_CUSTOMDRAW:
+		case IDC_KEYMAP_RESTORE_CHK:
+		case IDC_KEYMAP_MAXIMIZE_CHK:
+		case IDC_KEYMAP_SHOW_CHK:
+		case IDC_KEYMAP_ACTIVATING_CHK:
+		case IDC_KEYMAP_NATURAL_CHK:
+		case IDC_KEYMAP_POSTMESSAGE_CHK:
+		case IDC_KEYMAP_EXTENDEDKEY_CHK:
+		case IDC_KEYMAP_SCANCODE_CHK:
+		case IDC_KEYMAP_IS_W_VISIBLE_CHK:
 		{
-			LPNMCUSTOMDRAW DrawMenuCustom = (LPNMCUSTOMDRAW)lParam;
-			DrawMenuCustom->rc.right = DrawMenuCustom->rc.left + 12;
-			DrawMenuCustom->rc.bottom = DrawMenuCustom->rc.top + 12;
-
-			RECT rect;
-			rect.left = DrawMenuCustom->rc.left + 1;
-			rect.right = rect.left + 11;
-			rect.top = DrawMenuCustom->rc.top + 1;
-			rect.bottom = rect.top + 11;
-
-			switch (((LPNMHDR)lParam)->idFrom)
+			if (((LPNMHDR)lParam)->code == NM_CUSTOMDRAW)
 			{
-			case IDC_KEYMAP_RESTORE_CHK:
-			case IDC_KEYMAP_MAXIMIZE_CHK:
-			case IDC_KEYMAP_SHOW_CHK:
-			case IDC_KEYMAP_ACTIVATING_CHK:
-			case IDC_KEYMAP_NATURAL_CHK:
-			case IDC_KEYMAP_POSTMESSAGE_CHK:
-			case IDC_KEYMAP_EXTENDEDKEY_CHK:
-			case IDC_KEYMAP_SCANCODE_CHK:
-			case IDC_KEYMAP_IS_W_VISIBLE_CHK:
-			{
+				LPNMCUSTOMDRAW DrawMenuCustom = (LPNMCUSTOMDRAW)lParam;
+				DrawMenuCustom->rc.right = DrawMenuCustom->rc.left + 12;
+				DrawMenuCustom->rc.bottom = DrawMenuCustom->rc.top + 12;
+
+				RECT rect;
+				rect.left = DrawMenuCustom->rc.left + 1;
+				rect.right = rect.left + 11;
+				rect.top = DrawMenuCustom->rc.top + 1;
+				rect.bottom = rect.top + 11;
+
 				if (DrawMenuCustom->dwDrawStage == CDDS_PREPAINT)
 				{
 					switch (IsDlgButtonChecked(m_hDlg, ((LPNMHDR)lParam)->idFrom))
@@ -456,13 +572,55 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 					return TRUE;
 				}
 			}
+			break;
+		}
+		case IDC_KEYMAP_CLEAR:
+		case IDC_KEYMAP_FINDWINDOW:
+		case IDC_KEYMAP_OK:
+		case IDC_KEYMAP_CANCEL:
+		case IDC_KEYMAP_CLEAR2:
+		case IDC_KEYMAP_DELETE:
+		case IDC_KEYMAP_OK2:
+		case IDC_KEYMAP_CANCEL2:
+		{
+			if (!tape.DarkTheme)
+				break;
+			switch (((LPNMHDR)lParam)->code)
+			{
+			case NM_CUSTOMDRAW:
+			{
+				LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+				if (DrawListCustom->uItemState == CDIS_HOT || DrawListCustom->uItemState == CDIS_NEARHOT)
+				{
+					FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_BTN_DARK);
+					SelectObject(DrawListCustom->hdc, GetStockObject(DC_PEN));
+					SetDCPenColor(DrawListCustom->hdc, tape.ink_grey);
+					RoundRect(DrawListCustom->hdc, DrawListCustom->rc.left + 1, DrawListCustom->rc.top + 1, DrawListCustom->rc.right - 1, DrawListCustom->rc.bottom - 1, 6, 6);
+				}
+				return CDRF_DODEFAULT;
+			}
+			case BCN_HOTITEMCHANGE:
+			{
+				switch (((NMBCHOTITEM*)lParam)->dwFlags)
+				{
+				case (HICF_ENTERING | HICF_MOUSE):
+				{
+					::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"", L"");
+					break;
+				}
+				case (HICF_LEAVING | HICF_MOUSE):
+				{
+					::SetWindowTheme(((LPNMHDR)lParam)->hwndFrom, L"Explorer", NULL);
+					break;
+				}
+				}
+				break;
+			}
 			}
 			break;
 		}
-		}
-		switch (((LPNMHDR)lParam)->idFrom)
-		{
 		case IDC_KEYMAP_FIND_LIST:
+		{
 			switch (((LPNMHDR)lParam)->code)
 			{
 			case NM_DBLCLK:
@@ -489,12 +647,10 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				}
 				break;
 			}
-			case WM_KILLFOCUS:
 			case NM_CLICK:
 			{
 				if (m_hEdit != NULL)
 				{
-					SendMessage(m_hEdit, WM_KILLFOCUS, 0, 0);
 					if (m_flag_cancel)
 					{
 						auto buf = keymapData.findWindow.GetText(m_hEdit);
@@ -521,8 +677,11 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				return FALSE;
 			}
 			break;
+		}
 		default:
+		{
 			return FALSE;
+		}
 		}
 		break;
 	}
@@ -539,7 +698,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				if (keymapData.ButtonID == 0 && m_mode != 3)
 				{
 					RECT win;
-					GetWindowRect(m_hWnd, &win);
+					GetWindowRect(tape.Ds2hWnd, &win);
 					MessageBoxPos(hWnd, I18N.MBOX_NoButtonSelected, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
 					return TRUE;
 				}
@@ -550,7 +709,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				if (key1) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key1)); }
 				if (key2) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key2)); }
 				if (key3) { Modified[Mofified_vk] = true; keymapData.vk.push_back(keymapData.KeyboardIDtoByte((KeyboardID)key3)); }
-				PostMessage(m_hWnd, WM_ADDKEYMAP, m_mode, 1);
+				PostMessage(tape.Ds2hWnd, WM_ADDKEYMAP, m_mode, 1);
 				m_mode = 0;
 				break;
 			}
@@ -563,7 +722,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			{
 			case BN_CLICKED:
 			{
-				PostMessage(m_hWnd, WM_ADDKEYMAP, 0, 0);
+				PostMessage(tape.Ds2hWnd, WM_ADDKEYMAP, 0, 0);
 				m_mode = 0;
 				break;
 			}
@@ -585,6 +744,16 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			}
 			break;
 		}
+		case IDC_KEYMAP_BTN_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_KEYMAP_BTN), TRUE);
+				break;
+			}
+			break;
+		}
 		case IDC_KEYMAP_BTN:
 		{
 			switch (HIWORD(wParam))
@@ -593,6 +762,14 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			{
 				keymapData.ButtonID = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
 				Modified[Mofified_ButtonID] = true;
+				break;
+			}
+			case CBN_CLOSEUP:
+			{
+				byte result = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_BTN_STATIC), (result) ? DestinationButton::String((DestButtonID)result) : L"...");
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_BTN_STATIC), SW_HIDE);
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_BTN_STATIC), SW_SHOW);
 				break;
 			}
 			}
@@ -632,6 +809,81 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			{
 				keymapData.WndShow = IsDlgButtonChecked(hWnd, LOWORD(wParam));
 				Modified[Mofified_WndShow] = true;
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_KEYMAP_INPUT1_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1), TRUE);
+				break;
+			}
+			break;
+		}
+		case IDC_KEYMAP_INPUT1:
+		{
+			switch (HIWORD(wParam))
+			{
+			case CBN_CLOSEUP:
+			{
+				byte result = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1_STATIC), (result) ? keymapData.String((KeyboardID)result) : L"...");
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1_STATIC), SW_HIDE);
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT1_STATIC), SW_SHOW);
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_KEYMAP_INPUT2_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2), TRUE);
+				break;
+			}
+			break;
+		}
+		case IDC_KEYMAP_INPUT2:
+		{
+			switch (HIWORD(wParam))
+			{
+			case CBN_CLOSEUP:
+			{
+				byte result = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2_STATIC), (result) ? keymapData.String((KeyboardID)result) : L"...");
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2_STATIC), SW_HIDE);
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT2_STATIC), SW_SHOW);
+				break;
+			}
+			}
+			break;
+		}
+		case IDC_KEYMAP_INPUT3_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3), TRUE);
+				break;
+			}
+			break;
+		}
+		case IDC_KEYMAP_INPUT3:
+		{
+			switch (HIWORD(wParam))
+			{
+			case CBN_CLOSEUP:
+			{
+				byte result = (byte)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3_STATIC), (result) ? keymapData.String((KeyboardID)result) : L"...");
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3_STATIC), SW_HIDE);
+				::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_INPUT3_STATIC), SW_SHOW);
 				break;
 			}
 			}
@@ -766,7 +1018,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		case IDC_KEYMAP_FINDWINDOW:
 		{
 			fw = keymapData.findWindow;
-			GetClientRect(m_hWnd, &KeymapDataDlgrect);
+			GetClientRect(tape.Ds2hWnd, &KeymapDataDlgrect);
 			KeymapDataDlgrect.left += 3;
 			KeymapDataDlgrect.top += 21;
 			KeymapDataDlgrect.right -= 6;
@@ -775,10 +1027,56 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			KeymapDataDlgmoved = 1;
 			break;
 		}
+		case IDC_KEYMAP_WINDOW_LIST_STATIC:
+		{
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				ComboBox_ShowDropdown(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST), TRUE);
+				break;
+			}
+			break;
+		}
 		case IDC_KEYMAP_WINDOW_LIST:
 		{
 			switch (HIWORD(wParam))
 			{
+			case CBN_DROPDOWN:
+			{
+				SendMessage((HWND)lParam, CB_RESETCONTENT, 0, 0);
+				{
+					HWND hwnd = keymapData.findWindow.Find();
+					if (hwnd != NULL || keymapData.findWindow.Size() == 0)
+					{
+						HWND child = NULL;
+						int count = 0;
+						std::wstring buf;
+						while ((child = FindWindowEx(hwnd, child, NULL, NULL)) != NULL)
+						{
+							if (!m_filter_iwv || IsWindowVisible(child))
+							{
+								count++;
+								buf.clear();
+								buf.append(Findwindow::GetClass(child));
+								buf.append(L", ");
+								buf.append(Findwindow::GetText(child));
+								LRESULT idx = SendMessage((HWND)lParam, CB_ADDSTRING, 0, LPARAM(buf.c_str()));
+								if (idx != CB_ERR && idx != CB_ERRSPACE)
+									SendMessage((HWND)lParam, CB_SETITEMDATA, idx, LPARAM(child));
+							}
+						}
+						if (count == 0)
+						{
+							WCHAR buf[100];
+							swprintf_s(buf, 100, L"HWND:%08x", (int)(size_t)hwnd);
+							SendMessage((HWND)lParam, CB_ADDSTRING, 0, LPARAM(buf));
+						}
+					}
+					else if (hwnd == NULL)
+						SendMessage((HWND)lParam, CB_ADDSTRING, 0, LPARAM(L"Failed FindWindow"));
+				}
+				break;
+			}
 			case CBN_CLOSEUP:
 			{
 				LRESULT idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
@@ -828,43 +1126,11 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 						keymapData.findWindow.Set(-1, 0, classname);
 						keymapData.findWindow.Set(-1, 1, titlename);
 						keymapData.findWindow.Set(-1, 2, findIdx);
+
+						SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), classname.c_str());
+						::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), SW_HIDE);
+						::ShowWindow(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), SW_SHOW);
 					}
-				}
-				break;
-			}
-			case CBN_DROPDOWN:
-			{
-				SendMessage((HWND)lParam, CB_RESETCONTENT, 0, 0);
-				{
-					HWND hwnd = keymapData.findWindow.Find();
-					if (hwnd != NULL || keymapData.findWindow.Size() == 0)
-					{
-						HWND child = NULL;
-						int count = 0;
-						std::wstring buf;
-						while ((child = FindWindowEx(hwnd, child, NULL, NULL)) != NULL)
-						{
-							if (!m_filter_iwv || IsWindowVisible(child))
-							{
-								count++;
-								buf.clear();
-								buf.append(Findwindow::GetClass(child));
-								buf.append(L", ");
-								buf.append(Findwindow::GetText(child));
-								LRESULT idx = SendMessage((HWND)lParam, CB_ADDSTRING, 0, LPARAM(buf.c_str()));
-								if (idx != CB_ERR && idx != CB_ERRSPACE)
-									SendMessage((HWND)lParam, CB_SETITEMDATA, idx, LPARAM(child));
-							}
-						}
-						if (count == 0)
-						{
-							WCHAR buf[100];
-							swprintf_s(buf, 100, L"HWND:%08x", (int)(size_t)hwnd);
-							SendMessage((HWND)lParam, CB_ADDSTRING, 0, LPARAM(buf));
-						}
-					}
-					else if (hwnd == NULL)
-						SendMessage((HWND)lParam, CB_ADDSTRING, 0, LPARAM(L"Failed FindWindow"));
 				}
 				break;
 			}
@@ -881,6 +1147,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				while (--idx >= 0)
 					ListView_DeleteItem(m_hList, idx);
 				keymapData.findWindow.Clear();
+				SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), L"...");
 				break;
 			}
 			}
@@ -897,6 +1164,15 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				{
 					ListView_DeleteItem(m_hList, --idx);
 					keymapData.findWindow.Pop();
+				}
+				if (idx < 1)
+					SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), L"...");
+				else
+				{
+					WCHAR wszBuffer[2048];
+					ListView_GetItemText(m_hList, --idx, 0, wszBuffer, 2048);
+					std::wstring GetItemText = wszBuffer;
+					SetWindowText(GetDlgItem(hWnd, IDC_KEYMAP_WINDOW_LIST_STATIC), GetItemText.c_str());
 				}
 				break;
 			}
@@ -918,7 +1194,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				SetWindowText(GetDlgItem(m_hDlg, IDC_KEYMAP_FW_TEXT), keymapData.findWindow.Val().c_str());
 				Modified[Mofified_findWindow] = true;
 				dlgPage = 0;
-				PostMessage(m_hWnd, WM_SIZE, 0, 0);
+				PostMessage(tape.Ds2hWnd, WM_SIZE, 0, 0);
 				break;
 			}
 			}
@@ -933,7 +1209,7 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				alreadydone = false;
 				keymapData.findWindow = fw;
 				SendMessage(hWnd, WM_RESET_FINDWINDOW, 0, 0);
-				GetClientRect(m_hWnd, &KeymapDataDlgrect);
+				GetClientRect(tape.Ds2hWnd, &KeymapDataDlgrect);
 				KeymapDataDlgrect.left += 3;
 				KeymapDataDlgrect.top += 21;
 				KeymapDataDlgrect.right -= 6;
@@ -964,6 +1240,116 @@ INT_PTR KeymapDataDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		return FALSE;
 	}
 	return TRUE;
+}
+
+LRESULT CALLBACK KeymapDataDlg::ListSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR uIDSubClass, DWORD_PTR RefData)
+{
+	KeymapDataDlg* dlg = reinterpret_cast<KeymapDataDlg*>(RefData);
+	if (dlg)
+		return dlg->_listSubclassProc(hWnd, message, wParam, lParam);
+
+	return DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CALLBACK KeymapDataDlg::_listSubclassProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_NOTIFY:
+	{
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case HDN_ENDDRAG:
+		{
+			InvalidateRect(hWnd, NULL, TRUE);
+			break;
+		}
+		case NM_CUSTOMDRAW:
+		{
+			LPNMCUSTOMDRAW DrawListCustom = (LPNMCUSTOMDRAW)lParam;
+			switch (DrawListCustom->dwDrawStage)
+			{
+			case CDDS_PREPAINT:
+			{
+				return CDRF_NOTIFYITEMDRAW;
+			}
+			case CDDS_ITEMPREPAINT:
+			{
+				if (tape.DarkTheme)
+				{
+					switch (DrawListCustom->dwItemSpec)
+					{
+					case 0:
+					{
+						FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_LIST_Header_DARK);
+						SetBkColor(DrawListCustom->hdc, tape.Bk_LIST_header1_DARK);
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header1_DARK);
+						DrawText(DrawListCustom->hdc, I18N.KEYMAP_CLASS, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+						break;
+					}
+					case 1:
+					{
+						FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_LIST_Header2_DARK);
+						SetBkColor(DrawListCustom->hdc, tape.Bk_LIST_header2_DARK);
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2_DARK);
+						DrawText(DrawListCustom->hdc, I18N.KEYMAP_TITLE, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+						break;
+					}
+					case 2:
+					{
+						FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_LIST_Header2_DARK);
+						SetBkColor(DrawListCustom->hdc, tape.Bk_LIST_header2_DARK);
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2_DARK);
+						DrawText(DrawListCustom->hdc, I18N.KEYMAP_IDX, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+						break;
+					}
+					}
+				}
+				else
+				{
+					switch (DrawListCustom->dwItemSpec)
+					{
+					case 0:
+					{
+						FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_LIST_Header);
+						SetBkColor(DrawListCustom->hdc, tape.ink_LIST_Header);
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header1);
+						DrawText(DrawListCustom->hdc, I18N.KEYMAP_CLASS, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+						break;
+					}
+					case 1:
+					{
+						FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_LIST_Header2);
+						SetBkColor(DrawListCustom->hdc, tape.ink_LIST_scndHeader);
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2_DARK);
+						DrawText(DrawListCustom->hdc, I18N.KEYMAP_TITLE, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+						break;
+					}
+					case 2:
+					{
+						FillRect(DrawListCustom->hdc, &DrawListCustom->rc, tape.hB_LIST_Header2);
+						SetBkColor(DrawListCustom->hdc, tape.ink_LIST_scndHeader);
+						SetTextColor(DrawListCustom->hdc, tape.ink_LIST_header2_DARK);
+						DrawText(DrawListCustom->hdc, I18N.KEYMAP_IDX, -1, &DrawListCustom->rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+						break;
+					}
+					}
+				}
+				return CDRF_SKIPDEFAULT;
+			}
+			default:
+				return CDRF_DODEFAULT;
+				break;
+			}
+			break;
+		}
+		}
+		break;
+	}
+	default:
+		return DefSubclassProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
 }
 
 void KeymapDataDlg::Show()

@@ -7,7 +7,7 @@ public:
 	NotepadDlg();
 	~NotepadDlg();
 
-	void				Init(HINSTANCE, HWND);
+	void				Init();
 	void				Scroll(bool scrollUp = false, bool page = false);
 	void				Save();
 	void				Show();
@@ -25,7 +25,6 @@ private:
 
 	void				_InitDialog(HWND hWnd);
 
-	HWND				m_hWnd = NULL;
 	HWND				m_hDlg = NULL;
 	HWND				m_hEdit = NULL;
 	
@@ -34,6 +33,5 @@ private:
 	bool				m_error = false;
 	std::deque<wchar_t*>queue = { 0 };
 	std::mutex			m_mutex = { };
-	bool				m_load_dll = false;
 	int					m_count = 0;
 };

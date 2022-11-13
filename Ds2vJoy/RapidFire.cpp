@@ -19,12 +19,12 @@ WCHAR* RapidFire::KeyString()
 		head += swprintf_s(head, MAX_PATH, L"%s", L"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
 	else if (ButtonID != 0)
 	{
-		head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::String((vJoyButtonID)ButtonID));
+		head += swprintf_s(head, MAX_PATH, L"%s", DestinationButton::String((DestButtonID)ButtonID));
 		if (ButtonID2 != 0)
-			head += swprintf_s(head, MAX_PATH, L"+%s", vJoyButton::String((vJoyButtonID)ButtonID2));
+			head += swprintf_s(head, MAX_PATH, L"+%s", DestinationButton::String((DestButtonID)ButtonID2));
 	}
 	else if (ButtonID2 != 0)
-		head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::String((vJoyButtonID)ButtonID2));
+		head += swprintf_s(head, MAX_PATH, L"%s", DestinationButton::String((DestButtonID)ButtonID2));
 
 	return buf;
 }
@@ -51,7 +51,7 @@ const WCHAR* RapidFire::RapidFireButtons()
 	return RapidFireButtonsString.c_str();
 }
 
-BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
+BOOL RapidFire::LoadDevice(Destination* srce)
 {
 	if (Enable != 1)
 		return FALSE;
@@ -61,7 +61,7 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 
 	if (ButtonID)
 	{
-		m_button = vjoy->GetButton((vJoyButtonID)ButtonID);
+		m_button = srce->GetButton((DestButtonID)ButtonID);
 		if (m_button == 0)
 			return FALSE;
 	}
@@ -69,7 +69,7 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 		m_button = 0;
 	if (ButtonID2)
 	{
-		m_button2 = vjoy->GetButton((vJoyButtonID)ButtonID2);
+		m_button2 = srce->GetButton((DestButtonID)ButtonID2);
 		if (m_button2 == 0)
 			return FALSE;
 	}
@@ -81,7 +81,7 @@ BOOL RapidFire::LoadDevice(vJoyDevice* vjoy)
 
 void RapidFire::RunFirst()
 {
-	RapidFireButtonsString = L"RapidFire source:";
+	RapidFireButtonsString = I18N.RapidFireButtonsString;
 }
 
 BOOL RapidFire::Run(std::chrono::system_clock::time_point now)
@@ -92,7 +92,7 @@ BOOL RapidFire::Run(std::chrono::system_clock::time_point now)
 		((ButtonID == 0) && (m_button2->isPushed())) ||
 		((ButtonID2 == 0) && (m_button->isPushed())))
 	{
-		RapidFireButtonsString = RapidFireButtonsString + L" " + vJoyButton::String(vJoyButtonID((ButtonID == 0) ? ButtonID2 : ButtonID));
+		RapidFireButtonsString = RapidFireButtonsString + L" " + DestinationButton::String(DestButtonID((ButtonID == 0) ? ButtonID2 : ButtonID));
 		if (!m_pushed)
 		{
 			m_pushed = true;

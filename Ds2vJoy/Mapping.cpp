@@ -9,7 +9,7 @@ Mapping::~Mapping()
 {
 }
 
-WCHAR* Mapping::dsString(unsigned char nbutton)
+WCHAR* Mapping::SrceString(unsigned char nbutton)
 {
 	static WCHAR buf[MAX_PATH];
 	buf[0] = 0;
@@ -19,15 +19,15 @@ WCHAR* Mapping::dsString(unsigned char nbutton)
 		return buf;
 
 	std::wstring str = L"";
-	if (Target[nbutton])
+	if (Target[nbutton] == 3)
 	{
-		if (dsID[nbutton] != vJoyButton::none)
-			str = vJoyButton::String((vJoyButtonID)dsID[nbutton]);
+		if (srceID[nbutton] != DestinationButton::Destination_None)
+			str = DestinationButton::String((DestButtonID)srceID[nbutton]);
 	}
 	else
 	{
-		if (dsID[nbutton] != dsButton::none)
-			str = dsButton::String((dsButtonID)dsID[nbutton]);
+		if (srceID[nbutton] != SourceButton::Button_None)
+			str = SourceButton::String((SrceButtonID)srceID[nbutton]);
 	}
 
 	if (nbutton)
@@ -46,9 +46,9 @@ WCHAR* Mapping::dsString(unsigned char nbutton)
 
 	head += swprintf_s(head, MAX_PATH, L"%s", str.c_str());
 
-	if (dsDisable[nbutton])
+	if (srceDisable[nbutton])
 	{
-		if (dsDisable[nbutton] == 2)
+		if (srceDisable[nbutton] == 2)
 			head += swprintf_s(head, MAX_PATH, L"✱");
 		else
 			head += swprintf_s(head, MAX_PATH, L"#");
@@ -57,7 +57,7 @@ WCHAR* Mapping::dsString(unsigned char nbutton)
 	return buf;
 }
 
-const WCHAR* Mapping::vJoyString()
+const WCHAR* Mapping::DestString()
 {
 	bool firstplus = false;
 	static WCHAR buf[MAX_PATH];
@@ -72,33 +72,37 @@ const WCHAR* Mapping::vJoyString()
 		if (firstplus)
 		{
 			if (ActionType[i] == 1)
-				head += swprintf_s(head, MAX_PATH, L" %s", MouseString((MouseActionID)vjID[i]));
+				head += swprintf_s(head, MAX_PATH, L" %s", MouseString((MouseActionID)destID[i]));
 			else if (ActionType[i] == 2)
-				head += swprintf_s(head, MAX_PATH, L" %s", SpecialString((SpecialActionID)vjID[i]));
+				head += swprintf_s(head, MAX_PATH, L" %s", SpecialString((SpecialActionID)destID[i]));
 			else if (ActionType[i] == 3)
-				head += swprintf_s(head, MAX_PATH, L" %s", vJoyButton::StringAxis((vJoyAxisMoveID)vjID[i]));
+				head += swprintf_s(head, MAX_PATH, L" %s", DestinationButton::StringAxis((DestAxisMoveID)destID[i]));
 			else if (ActionType[i] == 4)
-				head += swprintf_s(head, MAX_PATH, L" %s", ModulesString((ModulesActionID)vjID[i]));
-			else if(vjID[i] != vJoyButton::none)
-				head += swprintf_s(head, MAX_PATH, L" %s", vJoyButton::String((vJoyButtonID)vjID[i]));
+				head += swprintf_s(head, MAX_PATH, L" %s", DestinationButton::StringEffect((DestAfterEffectID)destID[i]));
+			else if (ActionType[i] == 5)
+				head += swprintf_s(head, MAX_PATH, L" %s", ModulesString((ModulesActionID)destID[i]));
+			else if(destID[i] != DestinationButton::Destination_None)
+				head += swprintf_s(head, MAX_PATH, L" %s", DestinationButton::String((DestButtonID)destID[i]));
 		}
 		else
 		{
 			if (ActionType[i] == 1)
-				{ head += swprintf_s(head, MAX_PATH, L"%s", MouseString((MouseActionID)vjID[i])); firstplus = true; }
+				{ head += swprintf_s(head, MAX_PATH, L"%s", MouseString((MouseActionID)destID[i])); firstplus = true; }
 			else if (ActionType[i] == 2)
-				{ head += swprintf_s(head, MAX_PATH, L"%s", SpecialString((SpecialActionID)vjID[i])); firstplus = true; }
+				{ head += swprintf_s(head, MAX_PATH, L"%s", SpecialString((SpecialActionID)destID[i])); firstplus = true; }
 			else if (ActionType[i] == 3)
-				{ head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::StringAxis((vJoyAxisMoveID)vjID[i])); firstplus = true; }
+				{ head += swprintf_s(head, MAX_PATH, L"%s", DestinationButton::StringAxis((DestAxisMoveID)destID[i])); firstplus = true; }
 			else if (ActionType[i] == 4)
-				{ head += swprintf_s(head, MAX_PATH, L"%s", ModulesString((ModulesActionID)vjID[i])); firstplus = true; }
-			else if (vjID[i] != vJoyButton::none)
-				{ head += swprintf_s(head, MAX_PATH, L"%s", vJoyButton::String((vJoyButtonID)vjID[i])); firstplus = true; }
+				{ head += swprintf_s(head, MAX_PATH, L"%s", DestinationButton::StringEffect((DestAfterEffectID)destID[i])); firstplus = true; }
+			else if (ActionType[i] == 5)
+				{ head += swprintf_s(head, MAX_PATH, L"%s", ModulesString((ModulesActionID)destID[i])); firstplus = true; }
+			else if (destID[i] != DestinationButton::Destination_None)
+				{ head += swprintf_s(head, MAX_PATH, L"%s", DestinationButton::String((DestButtonID)destID[i])); firstplus = true; }
 		}
 
-		if (vjDisable[i] == 1)
+		if (destDisable[i] == 1)
 			head += swprintf_s(head, MAX_PATH, L"#");
-		else if (vjDisable[i])
+		else if (destDisable[i])
 			head += swprintf_s(head, MAX_PATH, L">");
 
 		if (Switch[i] == 1)
@@ -266,30 +270,37 @@ const WCHAR* Mapping::MappingButtons()
 
 void Mapping::PreLoad()
 {
-	vjUsed.clear();
+	destUsed.clear();
 	MappingButtonsString[0] = 0;
-	for (int i = 0; i < vJoyButtonID::button_Count; i++)
+	for (int i = 0; i < DestButtonID::Destination_Count; i++)
 		m_toggle[i] = false;
 	for (int i = 0; i < 8; i++)
 		mouse_toggle[i] = false;
-	for (int i = 0; i < Led_Action_Count; i++)
+	for (int i = 0; i < LedAction_Count; i++)
 		Ledactive[i] = false;
 }
 
-BOOL Mapping::LoadDevice(HWND hWnd, dsDevice* ds, vJoyDevice* vjoy)
+BOOL Mapping::LoadDevice(Source* srce, Destination* dest)
 {
-	m_hWnd = hWnd;
 	if (Enable != 1)
 		return FALSE;
 
-	m_vj_X = vjoy->GetButton(vJoyButtonID::X);
-	m_vj_Y = vjoy->GetButton(vJoyButtonID::Y);
-	m_vj_Z = vjoy->GetButton(vJoyButtonID::Z);
-	m_vj_RX = vjoy->GetButton(vJoyButtonID::RX);
-	m_vj_RY = vjoy->GetButton(vJoyButtonID::RY);
-	m_vj_RZ = vjoy->GetButton(vJoyButtonID::RZ);
-	m_vj_SL0 = vjoy->GetButton(vJoyButtonID::SL0);
-	m_vj_SL1 = vjoy->GetButton(vJoyButtonID::SL1);
+	m_dest_X = dest->GetButton(DestButtonID::X);
+	m_dest_Y = dest->GetButton(DestButtonID::Y);
+	m_dest_Z = dest->GetButton(DestButtonID::Z);
+	m_dest_RX = dest->GetButton(DestButtonID::RX);
+	m_dest_RY = dest->GetButton(DestButtonID::RY);
+	m_dest_RZ = dest->GetButton(DestButtonID::RZ);
+	m_dest_SL0 = dest->GetButton(DestButtonID::SL0);
+	m_dest_SL1 = dest->GetButton(DestButtonID::SL1);
+	m_dest_WORK1 = dest->GetButton(DestButtonID::WORK1AX);
+	m_dest_WORK2 = dest->GetButton(DestButtonID::WORK2AX);
+	m_dest_WORK3 = dest->GetButton(DestButtonID::WORK3AX);
+	m_dest_WORK4 = dest->GetButton(DestButtonID::WORK4AX);
+	m_dest_WORK5 = dest->GetButton(DestButtonID::WORK5AX);
+	m_dest_WORK6 = dest->GetButton(DestButtonID::WORK6AX);
+	m_dest_WORK7 = dest->GetButton(DestButtonID::WORK7AX);
+	m_dest_WORK8 = dest->GetButton(DestButtonID::WORK8AX);
 
 	mode = 1;
 	lastmode = 1;
@@ -300,99 +311,98 @@ BOOL Mapping::LoadDevice(HWND hWnd, dsDevice* ds, vJoyDevice* vjoy)
 	for (int i = 0; i < 8; i++)
 		modedest[i] = 0;
 	tomode = -1;
-	m_ds[0] = (dsID[0] && !Target[0]) ? ds->GetButton((dsButtonID)dsID[0]) : 0;
-	m_ds[1] = (dsID[1] && !Target[1]) ? ds->GetButton((dsButtonID)dsID[1]) : 0;
-	m_ds[2] = (dsID[2] && !Target[2]) ? ds->GetButton((dsButtonID)dsID[2]) : 0;
-	m_ds[3] = (dsID[3] && !Target[3]) ? ds->GetButton((dsButtonID)dsID[3]) : 0;
-	m_ds[4] = (dsID[4] && !Target[4]) ? ds->GetButton((dsButtonID)dsID[4]) : 0;
-	m_vj[0] = (dsID[0] && Target[0]) ? vjoy->GetButton((vJoyButtonID)dsID[0]) : 0;
-	m_vj[1] = (dsID[1] && Target[1]) ? vjoy->GetButton((vJoyButtonID)dsID[1]) : 0;
-	m_vj[2] = (dsID[2] && Target[2]) ? vjoy->GetButton((vJoyButtonID)dsID[2]) : 0;
-	m_vj[3] = (dsID[3] && Target[3]) ? vjoy->GetButton((vJoyButtonID)dsID[3]) : 0;
-	m_vj[4] = (dsID[4] && Target[4]) ? vjoy->GetButton((vJoyButtonID)dsID[4]) : 0;
-	m_vj[5] = (vjID[0] && !ActionType[0]) ? vjoy->GetButton((vJoyButtonID)vjID[0]) : ((vjID[0] && ActionType[0] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[0]) : 0);
-	m_vj[6] = (vjID[1] && !ActionType[1]) ? vjoy->GetButton((vJoyButtonID)vjID[1]) : ((vjID[1] && ActionType[1] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[1]) : 0);
-	m_vj[7] = (vjID[2] && !ActionType[2]) ? vjoy->GetButton((vJoyButtonID)vjID[2]) : ((vjID[2] && ActionType[2] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[2]) : 0);
-	m_vj[8] = (vjID[3] && !ActionType[3]) ? vjoy->GetButton((vJoyButtonID)vjID[3]) : ((vjID[3] && ActionType[3] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[3]) : 0);
-	m_vj[9] = (vjID[4] && !ActionType[4]) ? vjoy->GetButton((vJoyButtonID)vjID[4]) : ((vjID[4] && ActionType[4] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[4]) : 0);
-	m_vj[10] = (vjID[5] && !ActionType[5]) ? vjoy->GetButton((vJoyButtonID)vjID[5]) : ((vjID[5] && ActionType[5] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[5]) : 0);
-	m_vj[11] = (vjID[6] && !ActionType[6]) ? vjoy->GetButton((vJoyButtonID)vjID[6]) : ((vjID[6] && ActionType[6] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[6]) : 0);
-	m_vj[12] = (vjID[7] && !ActionType[7]) ? vjoy->GetButton((vJoyButtonID)vjID[7]) : ((vjID[7] && ActionType[7] == 3) ? vjoy->GetAxis((vJoyAxisMoveID)vjID[7]) : 0);
-
+	m_srce[0] = (srceID[0] && Target[0] < 3) ? srce->GetButton((SrceButtonID)srceID[0]) : 0;
+	m_srce[1] = (srceID[1] && Target[1] < 3) ? srce->GetButton((SrceButtonID)srceID[1]) : 0;
+	m_srce[2] = (srceID[2] && Target[2] < 3) ? srce->GetButton((SrceButtonID)srceID[2]) : 0;
+	m_srce[3] = (srceID[3] && Target[3] < 3) ? srce->GetButton((SrceButtonID)srceID[3]) : 0;
+	m_srce[4] = (srceID[4] && Target[4] < 3) ? srce->GetButton((SrceButtonID)srceID[4]) : 0;
+	m_dest[0] = (srceID[0] && Target[0] == 3) ? dest->GetButton((DestButtonID)srceID[0]): 0;
+	m_dest[1] = (srceID[1] && Target[1] == 3) ? dest->GetButton((DestButtonID)srceID[1]): 0;
+	m_dest[2] = (srceID[2] && Target[2] == 3) ? dest->GetButton((DestButtonID)srceID[2]): 0;
+	m_dest[3] = (srceID[3] && Target[3] == 3) ? dest->GetButton((DestButtonID)srceID[3]): 0;
+	m_dest[4] = (srceID[4] && Target[4] == 3) ? dest->GetButton((DestButtonID)srceID[4]): 0;
+	m_dest[5] = (destID[0] && !ActionType[0]) ? dest->GetButton((DestButtonID)destID[0]) : ((destID[0] && ActionType[0] == 3) ? dest->GetAxis((DestAxisMoveID)destID[0]) : ((destID[0] && ActionType[0] == 4) ? dest->GetEffect((DestAfterEffectID)destID[0]) : 0));
+	m_dest[6] = (destID[1] && !ActionType[1]) ? dest->GetButton((DestButtonID)destID[1]) : ((destID[1] && ActionType[1] == 3) ? dest->GetAxis((DestAxisMoveID)destID[1]) : ((destID[1] && ActionType[1] == 4) ? dest->GetEffect((DestAfterEffectID)destID[1]) : 0));
+	m_dest[7] = (destID[2] && !ActionType[2]) ? dest->GetButton((DestButtonID)destID[2]) : ((destID[2] && ActionType[2] == 3) ? dest->GetAxis((DestAxisMoveID)destID[2]) : ((destID[2] && ActionType[2] == 4) ? dest->GetEffect((DestAfterEffectID)destID[2]) : 0));
+	m_dest[8] = (destID[3] && !ActionType[3]) ? dest->GetButton((DestButtonID)destID[3]) : ((destID[3] && ActionType[3] == 3) ? dest->GetAxis((DestAxisMoveID)destID[3]) : ((destID[3] && ActionType[3] == 4) ? dest->GetEffect((DestAfterEffectID)destID[3]) : 0));
+	m_dest[9] = (destID[4] && !ActionType[4]) ? dest->GetButton((DestButtonID)destID[4]) : ((destID[4] && ActionType[4] == 3) ? dest->GetAxis((DestAxisMoveID)destID[4]) : ((destID[4] && ActionType[4] == 4) ? dest->GetEffect((DestAfterEffectID)destID[4]) : 0));
+	m_dest[10] = (destID[5] && !ActionType[5]) ? dest->GetButton((DestButtonID)destID[5]) : ((destID[5] && ActionType[5] == 3) ? dest->GetAxis((DestAxisMoveID)destID[5]) : ((destID[5] && ActionType[5] == 4) ? dest->GetEffect((DestAfterEffectID)destID[5]) : 0));
+	m_dest[11] = (destID[6] && !ActionType[6]) ? dest->GetButton((DestButtonID)destID[6]) : ((destID[6] && ActionType[6] == 3) ? dest->GetAxis((DestAxisMoveID)destID[6]) : ((destID[6] && ActionType[6] == 4) ? dest->GetEffect((DestAfterEffectID)destID[6]) : 0));
+	m_dest[12] = (destID[7] && !ActionType[7]) ? dest->GetButton((DestButtonID)destID[7]) : ((destID[7] && ActionType[7] == 3) ? dest->GetAxis((DestAxisMoveID)destID[7]) : ((destID[7] && ActionType[7] == 4) ? dest->GetEffect((DestAfterEffectID)destID[7]) : 0));
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (m_vj[i + 5] && Overcontrol[i] == 1)
+		if (m_dest[i + 5] && Overcontrol[i] == 1)
 		{
 			if (ActionType[i] == 0)
-				switch (vjID[i])
+				switch (destID[i])
 				{
-				case vJoyButtonID::X:
-				case vJoyButtonID::XTR:
-				case vJoyButtonID::XINV: { ds->GetButton(dsButtonID::LX)->SetThreshold(false); break; }
-				case vJoyButtonID::Y:
-				case vJoyButtonID::YTR:
-				case vJoyButtonID::YINV: { ds->GetButton(dsButtonID::LY)->SetThreshold(false); break; }
-				case vJoyButtonID::Z:
-				case vJoyButtonID::ZTR:
-				case vJoyButtonID::ZINV: { ds->GetButton(dsButtonID::RX)->SetThreshold(false); break; }
-				case vJoyButtonID::RZ:
-				case vJoyButtonID::RZTR:
-				case vJoyButtonID::RZINV: { ds->GetButton(dsButtonID::RY)->SetThreshold(false); break; }
+				case DestButtonID::X:
+				case DestButtonID::XTR:
+				case DestButtonID::XINV: { srce->GetButton(SrceButtonID::LX)->SetThreshold(false); break; }
+				case DestButtonID::Y:
+				case DestButtonID::YTR:
+				case DestButtonID::YINV: { srce->GetButton(SrceButtonID::LY)->SetThreshold(false); break; }
+				case DestButtonID::Z:
+				case DestButtonID::ZTR:
+				case DestButtonID::ZINV: { srce->GetButton(SrceButtonID::RX)->SetThreshold(false); break; }
+				case DestButtonID::RZ:
+				case DestButtonID::RZTR:
+				case DestButtonID::RZINV: { srce->GetButton(SrceButtonID::RY)->SetThreshold(false); break; }
 				}
 			else if (ActionType[i] == 3)
-				if (vjID[i] == vJoyAxisMoveID::XY_CW || vjID[i] == vJoyAxisMoveID::XY_CN || (vjID[i] >= vJoyAxisMoveID::XY_CENTER && vjID[i] <= vJoyAxisMoveID::XY_L_DL_CN))
+				if (destID[i] == DestAxisMoveID::XY_CW || destID[i] == DestAxisMoveID::XY_CN || (destID[i] >= DestAxisMoveID::XY_CENTER && destID[i] <= DestAxisMoveID::XY_L_DL_CN))
 				{
-					ds->GetButton(dsButtonID::LX)->SetThreshold(false);
-					ds->GetButton(dsButtonID::LY)->SetThreshold(false);
+					srce->GetButton(SrceButtonID::LX)->SetThreshold(false);
+					srce->GetButton(SrceButtonID::LY)->SetThreshold(false);
 				}
-				else if (vjID[i] == vJoyAxisMoveID::ZRZ_CW || vjID[i] == vJoyAxisMoveID::ZRZ_CN || (vjID[i] >= vJoyAxisMoveID::ZRZ_CENTER && vjID[i] <= vJoyAxisMoveID::ZRZ_L_DL_CN))
+				else if (destID[i] == DestAxisMoveID::ZRZ_CW || destID[i] == DestAxisMoveID::ZRZ_CN || (destID[i] >= DestAxisMoveID::ZRZ_CENTER && destID[i] <= DestAxisMoveID::ZRZ_L_DL_CN))
 				{
-					ds->GetButton(dsButtonID::RX)->SetThreshold(false);
-					ds->GetButton(dsButtonID::RY)->SetThreshold(false);
+					srce->GetButton(SrceButtonID::RX)->SetThreshold(false);
+					srce->GetButton(SrceButtonID::RY)->SetThreshold(false);
 				}
 		}
 
 		if (!ActionType[i])
 		{
-			if (!(std::find(vjUsed.begin(), vjUsed.end(), vjID[i]) != vjUsed.end()))
-				if (vjID[i])
+			if (!(std::find(destUsed.begin(), destUsed.end(), destID[i]) != destUsed.end()))
+				if (destID[i])
 				{
-					vjUsed.push_back(vjID[i]);
-					switch (vjID[i])
+					destUsed.push_back(destID[i]);
+					switch (destID[i])
 					{
-					case vJoyButton::ButtonID::Button1: { tape.vJoyUsed[0] = true; break; }
-					case vJoyButton::ButtonID::Button2: { tape.vJoyUsed[1] = true; break; }
-					case vJoyButton::ButtonID::Button3: { tape.vJoyUsed[2] = true; break; }
-					case vJoyButton::ButtonID::Button4: { tape.vJoyUsed[3] = true; break; }
-					case vJoyButton::ButtonID::Button5: { tape.vJoyUsed[4] = true; break; }
-					case vJoyButton::ButtonID::Button6: { tape.vJoyUsed[5] = true; break; }
-					case vJoyButton::ButtonID::Button7: { tape.vJoyUsed[6] = true; break; }
-					case vJoyButton::ButtonID::Button8: { tape.vJoyUsed[7] = true; break; }
-					case vJoyButton::ButtonID::Button9: { tape.vJoyUsed[8] = true; break; }
-					case vJoyButton::ButtonID::Button10: { tape.vJoyUsed[9] = true; break; }
-					case vJoyButton::ButtonID::Button11: { tape.vJoyUsed[10] = true; break; }
-					case vJoyButton::ButtonID::Button12: { tape.vJoyUsed[11] = true; break; }
-					case vJoyButton::ButtonID::Button13: { tape.vJoyUsed[12] = true; break; }
-					case vJoyButton::ButtonID::Button14: { tape.vJoyUsed[13] = true; break; }
-					case vJoyButton::ButtonID::Button15: { tape.vJoyUsed[14] = true; break; }
-					case vJoyButton::ButtonID::Button16: { tape.vJoyUsed[15] = true; break; }
-					case vJoyButton::ButtonID::Button17: { tape.vJoyUsed[16] = true; break; }
-					case vJoyButton::ButtonID::Button18: { tape.vJoyUsed[17] = true; break; }
-					case vJoyButton::ButtonID::Button19: { tape.vJoyUsed[18] = true; break; }
-					case vJoyButton::ButtonID::Button20: { tape.vJoyUsed[19] = true; break; }
-					case vJoyButton::ButtonID::Button21: { tape.vJoyUsed[20] = true; break; }
-					case vJoyButton::ButtonID::Button22: { tape.vJoyUsed[21] = true; break; }
-					case vJoyButton::ButtonID::Button23: { tape.vJoyUsed[22] = true; break; }
-					case vJoyButton::ButtonID::Button24: { tape.vJoyUsed[23] = true; break; }
-					case vJoyButton::ButtonID::Button25: { tape.vJoyUsed[24] = true; break; }
-					case vJoyButton::ButtonID::Button26: { tape.vJoyUsed[25] = true; break; }
-					case vJoyButton::ButtonID::Button27: { tape.vJoyUsed[26] = true; break; }
-					case vJoyButton::ButtonID::Button28: { tape.vJoyUsed[27] = true; break; }
-					case vJoyButton::ButtonID::Button29: { tape.vJoyUsed[28] = true; break; }
-					case vJoyButton::ButtonID::Button30: { tape.vJoyUsed[29] = true; break; }
-					case vJoyButton::ButtonID::Button31: { tape.vJoyUsed[30] = true; break; }
-					case vJoyButton::ButtonID::Button32: { tape.vJoyUsed[31] = true; break; }
+					case DestinationButton::ButtonID::Button1: { tape.destUsed[0] = true; break; }
+					case DestinationButton::ButtonID::Button2: { tape.destUsed[1] = true; break; }
+					case DestinationButton::ButtonID::Button3: { tape.destUsed[2] = true; break; }
+					case DestinationButton::ButtonID::Button4: { tape.destUsed[3] = true; break; }
+					case DestinationButton::ButtonID::Button5: { tape.destUsed[4] = true; break; }
+					case DestinationButton::ButtonID::Button6: { tape.destUsed[5] = true; break; }
+					case DestinationButton::ButtonID::Button7: { tape.destUsed[6] = true; break; }
+					case DestinationButton::ButtonID::Button8: { tape.destUsed[7] = true; break; }
+					case DestinationButton::ButtonID::Button9: { tape.destUsed[8] = true; break; }
+					case DestinationButton::ButtonID::Button10: { tape.destUsed[9] = true; break; }
+					case DestinationButton::ButtonID::Button11: { tape.destUsed[10] = true; break; }
+					case DestinationButton::ButtonID::Button12: { tape.destUsed[11] = true; break; }
+					case DestinationButton::ButtonID::Button13: { tape.destUsed[12] = true; break; }
+					case DestinationButton::ButtonID::Button14: { tape.destUsed[13] = true; break; }
+					case DestinationButton::ButtonID::Button15: { tape.destUsed[14] = true; break; }
+					case DestinationButton::ButtonID::Button16: { tape.destUsed[15] = true; break; }
+					case DestinationButton::ButtonID::Button17: { tape.destUsed[16] = true; break; }
+					case DestinationButton::ButtonID::Button18: { tape.destUsed[17] = true; break; }
+					case DestinationButton::ButtonID::Button19: { tape.destUsed[18] = true; break; }
+					case DestinationButton::ButtonID::Button20: { tape.destUsed[19] = true; break; }
+					case DestinationButton::ButtonID::Button21: { tape.destUsed[20] = true; break; }
+					case DestinationButton::ButtonID::Button22: { tape.destUsed[21] = true; break; }
+					case DestinationButton::ButtonID::Button23: { tape.destUsed[22] = true; break; }
+					case DestinationButton::ButtonID::Button24: { tape.destUsed[23] = true; break; }
+					case DestinationButton::ButtonID::Button25: { tape.destUsed[24] = true; break; }
+					case DestinationButton::ButtonID::Button26: { tape.destUsed[25] = true; break; }
+					case DestinationButton::ButtonID::Button27: { tape.destUsed[26] = true; break; }
+					case DestinationButton::ButtonID::Button28: { tape.destUsed[27] = true; break; }
+					case DestinationButton::ButtonID::Button29: { tape.destUsed[28] = true; break; }
+					case DestinationButton::ButtonID::Button30: { tape.destUsed[29] = true; break; }
+					case DestinationButton::ButtonID::Button31: { tape.destUsed[30] = true; break; }
+					case DestinationButton::ButtonID::Button32: { tape.destUsed[31] = true; break; }
 					}
 				}
 		}
@@ -404,137 +414,147 @@ BOOL Mapping::LoadDevice(HWND hWnd, dsDevice* ds, vJoyDevice* vjoy)
 		{
 			if (ActionType[i] == 1)
 			{
-				if ((MouseActionID)vjID[i] == ACTIVE_MOUSE)
+				if ((MouseActionID)destID[i] == ACTIVE_MOUSE)
 					mouse_toggle[i] = true;
 				else
 					continue;
 			}
 			else if (!ActionType[i] && !Switch[i])
-				if (m_vj[i + 5])
+				if (m_dest[i + 5])
 				{
-					m_toggle[vjID[i]] = true;
-					m_vj[i + 5]->SetValByte(0xFF);
-					m_vj[i + 5]->SetPushed();
+					m_toggle[destID[i]] = true;
+					m_dest[i + 5]->SetVal(0xFFFF);
+					m_dest[i + 5]->SetPushed();
 				}
 		}
 	}
 
 	for (int i = 0; i < 5; i++)
 	{
-		exists[i] = (Target[i]) ? ((m_vj[i]) ? true : false) : ((m_ds[i]) ? true : false);
-		releasedVal[i] = (byte)((exists[i]) ? ((Target[i]) ? (m_vj[i] ? m_vj[i]->GetReleasedVal() : 0) : (m_ds[i] ? m_ds[i]->GetReleasedVal() : 0)) : 0);
+		exists[i] = (Target[i] == 3) ? ((m_dest[i]) ? true : false) : ((m_srce[i]) ? true : false);
+		releasedVal[i] = (unsigned short)((exists[i]) ? ((Target[i] == 3) ? (m_dest[i] ? m_dest[i]->GetReleasedVal() : 0) : (m_srce[i] ? m_srce[i]->GetReleasedVal() : 0)) : 0);
 	}
 
 	GridCanbeUsed =
-		vjID[0] != MOVE_TO_XY && vjID[0] != SAVE_AND_MOVE_TO_XY &&
-		vjID[0] != MOVE_TO_WH && vjID[0] != SAVE_AND_MOVE_TO_WH &&
-		vjID[0] != MOVE_TO_NN && vjID[0] != SAVE_AND_MOVE_TO_NN &&
-			vjID[1] != MOVE_TO_XY && vjID[1] != SAVE_AND_MOVE_TO_XY &&
-			vjID[1] != MOVE_TO_WH && vjID[1] != SAVE_AND_MOVE_TO_WH &&
-			vjID[1] != MOVE_TO_NN && vjID[1] != SAVE_AND_MOVE_TO_NN &&
-		vjID[2] != MOVE_TO_XY && vjID[2] != SAVE_AND_MOVE_TO_XY &&
-		vjID[2] != MOVE_TO_WH && vjID[2] != SAVE_AND_MOVE_TO_WH &&
-		vjID[2] != MOVE_TO_NN && vjID[2] != SAVE_AND_MOVE_TO_NN &&
-			vjID[3] != MOVE_TO_XY && vjID[3] != SAVE_AND_MOVE_TO_XY &&
-			vjID[3] != MOVE_TO_WH && vjID[3] != SAVE_AND_MOVE_TO_WH &&
-			vjID[3] != MOVE_TO_NN && vjID[3] != SAVE_AND_MOVE_TO_NN &&
-		vjID[4] != MOVE_TO_XY && vjID[4] != SAVE_AND_MOVE_TO_XY &&
-		vjID[4] != MOVE_TO_WH && vjID[4] != SAVE_AND_MOVE_TO_WH &&
-		vjID[4] != MOVE_TO_NN && vjID[4] != SAVE_AND_MOVE_TO_NN &&
-			vjID[5] != MOVE_TO_XY && vjID[5] != SAVE_AND_MOVE_TO_XY &&
-			vjID[5] != MOVE_TO_WH && vjID[5] != SAVE_AND_MOVE_TO_WH &&
-			vjID[5] != MOVE_TO_NN && vjID[5] != SAVE_AND_MOVE_TO_NN &&
-		vjID[6] != MOVE_TO_XY && vjID[6] != SAVE_AND_MOVE_TO_XY &&
-		vjID[6] != MOVE_TO_WH && vjID[6] != SAVE_AND_MOVE_TO_WH &&
-		vjID[6] != MOVE_TO_NN && vjID[6] != SAVE_AND_MOVE_TO_NN &&
-			vjID[7] != MOVE_TO_XY && vjID[7] != SAVE_AND_MOVE_TO_XY &&
-			vjID[7] != MOVE_TO_WH && vjID[7] != SAVE_AND_MOVE_TO_WH &&
-			vjID[7] != MOVE_TO_NN && vjID[7] != SAVE_AND_MOVE_TO_NN;
+		destID[0] != MOVE_TO_XY && destID[0] != SAVE_AND_MOVE_TO_XY &&
+		destID[0] != MOVE_TO_WH && destID[0] != SAVE_AND_MOVE_TO_WH &&
+		destID[0] != MOVE_TO_NN && destID[0] != SAVE_AND_MOVE_TO_NN &&
+			destID[1] != MOVE_TO_XY && destID[1] != SAVE_AND_MOVE_TO_XY &&
+			destID[1] != MOVE_TO_WH && destID[1] != SAVE_AND_MOVE_TO_WH &&
+			destID[1] != MOVE_TO_NN && destID[1] != SAVE_AND_MOVE_TO_NN &&
+		destID[2] != MOVE_TO_XY && destID[2] != SAVE_AND_MOVE_TO_XY &&
+		destID[2] != MOVE_TO_WH && destID[2] != SAVE_AND_MOVE_TO_WH &&
+		destID[2] != MOVE_TO_NN && destID[2] != SAVE_AND_MOVE_TO_NN &&
+			destID[3] != MOVE_TO_XY && destID[3] != SAVE_AND_MOVE_TO_XY &&
+			destID[3] != MOVE_TO_WH && destID[3] != SAVE_AND_MOVE_TO_WH &&
+			destID[3] != MOVE_TO_NN && destID[3] != SAVE_AND_MOVE_TO_NN &&
+		destID[4] != MOVE_TO_XY && destID[4] != SAVE_AND_MOVE_TO_XY &&
+		destID[4] != MOVE_TO_WH && destID[4] != SAVE_AND_MOVE_TO_WH &&
+		destID[4] != MOVE_TO_NN && destID[4] != SAVE_AND_MOVE_TO_NN &&
+			destID[5] != MOVE_TO_XY && destID[5] != SAVE_AND_MOVE_TO_XY &&
+			destID[5] != MOVE_TO_WH && destID[5] != SAVE_AND_MOVE_TO_WH &&
+			destID[5] != MOVE_TO_NN && destID[5] != SAVE_AND_MOVE_TO_NN &&
+		destID[6] != MOVE_TO_XY && destID[6] != SAVE_AND_MOVE_TO_XY &&
+		destID[6] != MOVE_TO_WH && destID[6] != SAVE_AND_MOVE_TO_WH &&
+		destID[6] != MOVE_TO_NN && destID[6] != SAVE_AND_MOVE_TO_NN &&
+			destID[7] != MOVE_TO_XY && destID[7] != SAVE_AND_MOVE_TO_XY &&
+			destID[7] != MOVE_TO_WH && destID[7] != SAVE_AND_MOVE_TO_WH &&
+			destID[7] != MOVE_TO_NN && destID[7] != SAVE_AND_MOVE_TO_NN;
 
 	release = std::chrono::system_clock::now();
 
 	return TRUE;
 }
 
-void Mapping::RunFirst(vJoyDevice* vjoy)
+void Mapping::RunFirst(Destination* dest)
 {
-	dsDisabled.clear();
-	vjDisabled.clear();
+	srceDisabled.clear();
+	destDisabled.clear();
 	mouseabolute = 1;
 	for (int i = 0; i < 3; i++)
 		mousemode[i] = 0;
 	for (int i = 0; i < 5; i++)
 		grid[i] = 0;
-	defaultmouse = 0;
+	isGridNeeded = 0;
 	mouseactivated = false;
-	for (int i = 0; i < vJoyButtonID::button_Count; i++)
+	for (int i = 0; i < DestButtonID::Destination_Count; i++)
 	{
 		if (m_toggle[i])
 		{
-			vjoy->GetButton((vJoyButtonID)i)->SetValByte(0xFF);
-			vjoy->GetButton((vJoyButtonID)i)->SetPushed();
+			dest->GetButton((DestButtonID)i)->SetVal(0xFFFF);
+			dest->GetButton((DestButtonID)i)->SetPushed();
 		}
-		vjoy->GetButton((vJoyButtonID)i)->setOverwrite();
+		dest->GetButton((DestButtonID)i)->setOverwrite();
 	}
-	for (int i = 0; i < vJoyAxisMoveID::axismove_Count; i++)
-		vjoy->GetAxis((vJoyAxisMoveID)i)->setOverwrite();
+	for (int i = 0; i < DestAxisMoveID::AxisMove_Count; i++)
+		dest->GetAxis((DestAxisMoveID)i)->setOverwrite();
 }
 
-void Mapping::RunLast(dsDevice* ds, vJoyDevice* vjoy)
+void Mapping::RunLast(Source* srce, Destination* dest)
 {
+	tape.MagCanUninitialize = magnifyUnLock;
+
 	MappingButtonsString[0] = '\0';
 	WCHAR* head = MappingButtonsString;
-	head += swprintf_s(head, MAX_PATH, L"%s", L"vJoy:");
+	head += swprintf_s(head, MAX_PATH, L"%s", I18N.MappingButtonsString);
 
-	m_vj_X->ResetCounter();
-	m_vj_Y->ResetCounter();
-	m_vj_Z->ResetCounter();
-	m_vj_RX->ResetCounter();
-	m_vj_RY->ResetCounter();
-	m_vj_RZ->ResetCounter();
-	m_vj_SL0->ResetCounter();
-	m_vj_SL1->ResetCounter();
+	m_dest_X->ResetCounter();
+	m_dest_Y->ResetCounter();
+	m_dest_Z->ResetCounter();
+	m_dest_RX->ResetCounter();
+	m_dest_RY->ResetCounter();
+	m_dest_RZ->ResetCounter();
+	m_dest_SL0->ResetCounter();
+	m_dest_SL1->ResetCounter();
+	m_dest_WORK1->ResetCounter();
+	m_dest_WORK2->ResetCounter();
+	m_dest_WORK3->ResetCounter();
+	m_dest_WORK4->ResetCounter();
+	m_dest_WORK5->ResetCounter();
+	m_dest_WORK6->ResetCounter();
+	m_dest_WORK7->ResetCounter();
+	m_dest_WORK8->ResetCounter();
 
-	for (int i = 0; i < vjUsed.size(); i++)
+	for (int i = 0; i < destUsed.size(); i++)
 	{
-		if (!vjoy->GetButton((vJoyButtonID)vjUsed[i])->isPushed())
-			vjoy->GetButton((vJoyButtonID)vjUsed[i])->Release();
+		if (!dest->GetButton((DestButtonID)destUsed[i])->isPushed())
+			dest->GetButton((DestButtonID)destUsed[i])->Release();
 		else
-			head += swprintf_s(head, MAX_PATH, L" %s", vJoyButton::String((vJoyButtonID)vjUsed[i]));
+			head += swprintf_s(head, MAX_PATH, L" %s", DestinationButton::String((DestButtonID)destUsed[i]));
 	}
 
-	if (tape.ActualDS == 2 && tape.PreferredDS)
+	if (tape.ActualSource == 2)
 	{
 		byte m_Whitetmp = 0x00;
 
-		if (!Ledactive[Led_Action_Led1] && !Ledactive[Led_Action_Led2] && !Ledactive[Led_Action_Led3] && !Ledactive[Led_Action_Led4] && !Ledactive[Led_Action_Led5] && Ledactive[Led_Action_Battery])
+		if (!Ledactive[LedAction_Led1] && !Ledactive[LedAction_Led2] && !Ledactive[LedAction_Led3] && !Ledactive[LedAction_Led4] && !Ledactive[LedAction_Led5] && Ledactive[LedAction_Battery])
 		{
-			if (battery < 20)
+			if (tape.BatteryLevel < 21)
 				m_Whitetmp = 0x01;
-			else if (battery < 40)
+			else if (tape.BatteryLevel < 41)
 				m_Whitetmp = 0x03;
-			else if (battery < 60)
+			else if (tape.BatteryLevel < 61)
 				m_Whitetmp = 0x07;
-			else if (battery < 80)
+			else if (tape.BatteryLevel < 81)
 				m_Whitetmp = 0x0b;
 			else
 				m_Whitetmp = 0x1b;
 		}
 		else
 		{
-			if (Ledactive[Led_Action_Led1])
+			if (Ledactive[LedAction_Led1])
 				m_Whitetmp = 0x01;
-			if (Ledactive[Led_Action_Led2])
+			if (Ledactive[LedAction_Led2])
 				m_Whitetmp = m_Whitetmp | 0x02;
-			if (Ledactive[Led_Action_Led3])
+			if (Ledactive[LedAction_Led3])
 				m_Whitetmp = m_Whitetmp | 0x04;
-			if (Ledactive[Led_Action_Led4])
+			if (Ledactive[LedAction_Led4])
 				m_Whitetmp = m_Whitetmp | 0x08;
-			if (Ledactive[Led_Action_Led5])
+			if (Ledactive[LedAction_Led5])
 				m_Whitetmp = m_Whitetmp | 0x10;
 		}
 
-		ds->SetWhiteLED(m_Whitetmp);
+		srce->SetWhiteLED(m_Whitetmp);
 	}
 }
 
@@ -544,21 +564,23 @@ void Mapping::Run(double average)
 		return;
 
 	for (int i = 0; i < 5; i++)
-		pushed[i] = (exists[i]) ? ((Target[i]) ? ((m_vj[i]->isPushed()) ? true : false) : ((m_ds[i]->isPushed()) ? true : false)) : false;
+		pushed[i] = (exists[i]) ? ((Target[i] == 3) ? ((m_dest[i]->isPushed()) ? true : false) : ((m_srce[i]->isPushed()) ? true : false)) : false;
 
 	for (int i = 0; i < 5; i++)
 	{
 		disabled[i] = false;
-		if (Target[i])
+		if (Target[i] == 3)
 		{
-			if (m_vj[i])
-				if (std::find(vjDisabled.begin(), vjDisabled.end(), dsID[i]) != vjDisabled.end())
+			if (m_dest[i])
+			{
+				if (std::find(destDisabled.begin(), destDisabled.end(), srceID[i]) != destDisabled.end())
 					disabled[i] = true;
+			}
 		}
 		else
 		{
-			if (m_ds[i])
-				if (std::find(dsDisabled.begin(), dsDisabled.end(), dsID[i]) != dsDisabled.end())
+			if (m_srce[i])
+				if (std::find(srceDisabled.begin(), srceDisabled.end(), srceID[i]) != srceDisabled.end())
 					disabled[i] = true;
 		}
 	}
@@ -950,9 +972,9 @@ void Mapping::Run(double average)
 		if (Led)
 			Ledactive[Led] = true;
 
-		byte value0 = (byte)((pushed[0]) ? ((Target[0]) ? m_vj[0]->GetVal() : m_ds[0]->GetVal()) : 0);
-		byte value1 = (byte)((pushed[1]) ? ((Target[1]) ? m_vj[1]->GetVal() : m_ds[1]->GetVal()) : 0);
-		byte value2 = (byte)((pushed[2]) ? ((Target[2]) ? m_vj[2]->GetVal() : m_ds[2]->GetVal()) : 0);
+		unsigned short value0 = (unsigned short)((pushed[0]) ? ((Target[0] == 3) ? m_dest[0]->GetVal() : m_srce[0]->GetVal()) : 0);
+		unsigned short value1 = (unsigned short)((pushed[1]) ? ((Target[1] == 3) ? m_dest[1]->GetVal() : m_srce[1]->GetVal()) : 0);
+		unsigned short value2 = (unsigned short)((pushed[2]) ? ((Target[2] == 3) ? m_dest[2]->GetVal() : m_srce[2]->GetVal()) : 0);
 
 		Interrupttmp = false;
 		NoSustain = false;
@@ -960,11 +982,11 @@ void Mapping::Run(double average)
 		for (int i = 0; i < 8; i++)
 		{
 			started[i] = (OnRelease[i] == 1) ? ((released) ? (end2 - release2 >= randStart[i]) : false) : (end2 - start2 >= randStart[i]);
-			done[i] = ran[i] ? ((OnRelease[i]) ? ((released) ? ((end2 - release2 >= randStop[i])) : false) : ((Stop[i]) ? (end2 - start2 >= randStop[i]) : released)) : false;
+			done[i] = (ran[i]) ? ((ActionType[i] == 4) ? released : ((OnRelease[i]) ? ((released) ? ((end2 - release2 >= randStop[i])) : false) : ((Stop[i]) ? (end2 - start2 >= randStop[i]) : released))) : false;
 			if (modedest[i] == 2 && released) done[i] = true;
 			if (ActionType[i] == 2)
 				if (started[i] && !done[i])
-					switch (vjID[i])
+					switch (destID[i])
 					{
 					case INTERRUPT: { Interrupttmp = true; ran[i] = true; break; }
 					case NO_SUSTAIN: { NoSustain = true; ran[i] = true; break; }
@@ -974,7 +996,7 @@ void Mapping::Run(double average)
 
 		m_data = (exists[0]) ?
 			((released && Macro != 2 && !NoSustain) ?
-				0xFF :
+				0xFFFF :
 				((pushed[0]) ?
 					value0 :
 					((OrXorNot[0] && exists[1]) ?
@@ -987,13 +1009,14 @@ void Mapping::Run(double average)
 								releasedVal[0])) :
 						releasedVal[0]))) :
 			((released && Macro != 2 && !NoSustain) ?
-				0xFF :
+				0xFFFF :
 				((exists[1]) ?
 					releasedVal[1] :
 					((exists[2]) ?
 						releasedVal[2] :
 						0)));
 
+		magnifyUnLock = true;
 		TimeActiondone = -1;
 		for (int i = 0; i < 8; i++)
 		{
@@ -1030,16 +1053,17 @@ void Mapping::Run(double average)
 			if (ActionType[i] == 1)
 			{
 				if (started[i] && !done[i] && (!ran[i] ||
-					vjID[i] == SCROLL_UP_VARIABLE || vjID[i] == SCROLL_DOWN_VARIABLE ||
-					vjID[i] == MAGNIFY_PLUS || vjID[i] == MAGNIFY_MINUS ||
-					vjID[i] == MAGNIFY_UP || vjID[i] == MAGNIFY_DOWN ||
-					vjID[i] == MAGNIFY_LEFT || vjID[i] == MAGNIFY_RIGHT ||
+					destID[i] == SCROLL_UP_VARIABLE || destID[i] == SCROLL_DOWN_VARIABLE ||
+					destID[i] == MAGNIFY_PLUS || destID[i] == MAGNIFY_MINUS ||
+					destID[i] == MAGNIFY_UP || destID[i] == MAGNIFY_DOWN ||
+					destID[i] == MAGNIFY_LEFT || destID[i] == MAGNIFY_RIGHT ||
+					destID[i] == MAGNIFY_LOCK ||
 					(Stop[i] && (
-						vjID[i] == MOVE_TO_XY || vjID[i] == SAVE_AND_MOVE_TO_XY ||
-						vjID[i] == MOVE_TO_WH || vjID[i] == SAVE_AND_MOVE_TO_WH ||
-						vjID[i] == MOVE_TO_NN || vjID[i] == SAVE_AND_MOVE_TO_NN))))
+						destID[i] == MOVE_TO_XY || destID[i] == SAVE_AND_MOVE_TO_XY ||
+						destID[i] == MOVE_TO_WH || destID[i] == SAVE_AND_MOVE_TO_WH ||
+						destID[i] == MOVE_TO_NN || destID[i] == SAVE_AND_MOVE_TO_NN))))
 				{
-					switch (vjID[i])
+					switch (destID[i])
 					{
 					case ACTIVE_MOUSE:
 					{
@@ -1067,16 +1091,16 @@ void Mapping::Run(double average)
 						{
 							POINT actualpoint;
 							GetCursorPos(&actualpoint);
-							long long x = actualpoint.x;
-							long long y = actualpoint.y;
-							long long steps = (long long)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
+							double x = actualpoint.x;
+							double y = actualpoint.y;
+							double steps = (double)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
 							if ((Macro == 1 || Interrupttmp) && released)
 							{
 								steps = 1;
 								randStop[i] = std::chrono::milliseconds(0);
 								ran[i] = 0;
 							}
-							SetCursorPos(int(x + (((long long)Grid[0] - x) / steps)), int(y + (((long long)Grid[1] - y) / steps)));
+							SetCursorPos(int(x + (((double)Grid[0] - x) / steps)), int(y + (((double)Grid[1] - y) / steps)));
 						}
 						else
 							SetCursorPos(Grid[0], Grid[1]);
@@ -1094,16 +1118,16 @@ void Mapping::Run(double average)
 						{
 							POINT actualpoint;
 							GetCursorPos(&actualpoint);
-							long long x = actualpoint.x;
-							long long y = actualpoint.y;
-							long long steps = (long long)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
+							double x = actualpoint.x;
+							double y = actualpoint.y;
+							double steps = (double)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
 							if ((Macro == 1 || Interrupttmp) && released)
 							{
 								steps = 1;
 								randStop[i] = std::chrono::milliseconds(0);
 								ran[i] = 0;
 							}
-							SetCursorPos(int(x + (((long long)Grid[2] - x) / steps)), int(y + (((long long)Grid[3] - y) / steps)));
+							SetCursorPos(int(x + (((double)Grid[2] - x) / steps)), int(y + (((double)Grid[3] - y) / steps)));
 						}
 						else
 							SetCursorPos(Grid[2], Grid[3]);
@@ -1117,20 +1141,20 @@ void Mapping::Run(double average)
 					}
 					case MOVE_TO_NN:
 					{
-						if (Stop[i] && vjID[i] == SAVE_AND_MOVE_TO_NN)
+						if (Stop[i] && destID[i] == SAVE_AND_MOVE_TO_NN)
 						{
 							POINT actualpoint;
 							GetCursorPos(&actualpoint);
-							long long x = actualpoint.x;
-							long long y = actualpoint.y;
-							long long steps = (long long)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
+							double x = actualpoint.x;
+							double y = actualpoint.y;
+							double steps = (double)floor(max(1, ((randStop[i] - (end2 - ((OnRelease[i] == 1) ? release2 : start2))) / std::chrono::nanoseconds(int(average * 1000000)))));
 							if ((Macro == 1 || Interrupttmp) && released)
 							{
 								steps = 1;
 								randStop[i] = std::chrono::milliseconds(0);
 								ran[i] = 0;
 							}
-							SetCursorPos(int(x + (((long long)Grid[4] - x) / steps)), int(y + (((long long)Grid[5] - y) / steps)));
+							SetCursorPos(int(x + (((double)Grid[4] - x) / steps)), int(y + (((double)Grid[5] - y) / steps)));
 						}
 						else
 							SetCursorPos(Grid[4], Grid[5]);
@@ -1143,21 +1167,21 @@ void Mapping::Run(double average)
 					case SCROLL_UP_VARIABLE:
 					case SCROLL_DOWN_VARIABLE:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
+								if (!(cycle % llround(1 + 20 / average)))
 								{
 									unsigned long long delta = cycle;
 									delta = delta * delta / 1600;
-									std::thread(MouseActions, (MouseActionID)vjID[i], (int)min(240, delta)).detach();
+									std::thread(MouseActions, (MouseActionID)destID[i], (int)min(240, delta)).detach();
 								}
 							}
 							else
 							{
-								if (!(cycle % 18))
-									std::thread(MouseActions, (MouseActionID)vjID[i], 600 - (modulo * 5)).detach();
+								if (!(cycle % llround(1 + 72 / average)))
+									std::thread(MouseActions, (MouseActionID)destID[i], 600 - (modulo * 5)).detach();
 							}
 						break;
 					}
@@ -1175,137 +1199,168 @@ void Mapping::Run(double average)
 						if (MagFactor > 0)
 						{
 							//Level = min(4096, Grid[4] + ((Grid[5]) ? (float(Grid[5]) / float(pow(10, floor(log10(Grid[5])) + 1))) : 0));
-							PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_SET, 0), MAKELPARAM(Grid[4], Grid[5]));
+							PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_SET, 0), MAKELPARAM(Grid[4], Grid[5]));
 							MagFactor = 0;
 						}
-						PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(Method, 0), MAKELPARAM(xOffset, yOffset));
+						PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(Method, 0), MAKELPARAM(xOffset, yOffset));
 						break;
 					}
 					case MAGNIFY_PLUS:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(1, 0)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(1, 0)); break; }
 							}
 							else
 							{
-								if (!(cycle % modulo))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(1, 0)); break; }
+								if (!(cycle % llround(1 + modulo * 4 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(1, 0)); break; }
 							}
 						break;
 					}
 					case MAGNIFY_MINUS:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(0, 1)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(0, 1)); break; }
 							}
 							else
 							{
-								if (!(cycle % modulo))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(0, 1)); break; }
+								if (!(cycle % llround(1 + modulo * 4 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_ZOOM, 0), MAKELPARAM(0, 1)); break; }
 							}
 						break;
 					}
-					case MAGNIFY_RESET: { PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_RESET, 0), MAKELPARAM(0, 0)); break; }
+					case MAGNIFY_RESET: { PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_RESET, 0), MAKELPARAM(0, 0)); break; }
 					case MAGNIFY_UP:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 3), MAKELPARAM(0, 10)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 3), MAKELPARAM(0, 10)); break; }
 							}
 							else
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 3), MAKELPARAM(0, unsigned short(100 / modulo))); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 3), MAKELPARAM(0, unsigned short(100 / modulo))); break; }
 							}
 						break;
 					}
 					case MAGNIFY_DOWN:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(0, 10)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(0, 10)); break; }
 							}
 							else
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(0, (100 / modulo))); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(0, (100 / modulo))); break; }
 							}
 						break;
 					}
 					case MAGNIFY_LEFT:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 1), MAKELPARAM(10, 0)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 1), MAKELPARAM(10, 0)); break; }
 							}
 							else
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 1), MAKELPARAM(unsigned short(100 / modulo), 0)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 1), MAKELPARAM(unsigned short(100 / modulo), 0)); break; }
 							}
 						break;
 					}
 					case MAGNIFY_RIGHT:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(10, 0)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM(10, 0)); break; }
 							}
 							else
 							{
-								if (!(cycle % 5))
-									{ PostMessage(m_hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM((100 / modulo), 0)); break; }
+								if (!(cycle % llround(1 + 20 / average)))
+									{ PostMessage(tape.Ds2hWnd, WM_SET_MAGNIFY, MAKEWPARAM(MAG_METHOD_MOVE, 0), MAKELPARAM((100 / modulo), 0)); break; }
 							}
 						break;
 					}
-					default: { std::thread(MouseActions, (MouseActionID)vjID[i], 0).detach(); break; }
+					case MAGNIFY_LOCK:
+					{
+						magnifyUnLock = false;
+						if (!(cycle % llround(1 + 72 / average)))
+						{
+							if (!tape.MagInitialized)
+								if (MagInitialize())
+									tape.MagInitialized = true;
+						}
+						break;
+					}
+					case MAGNIFY_CURSOR_ON:
+					{
+						tape.MagCursor = true;
+						MagShowSystemCursor(true);
+						break;
+					}
+					case MAGNIFY_CURSOR_OFF:
+					{
+						tape.MagCursor = false;
+						MagShowSystemCursor(false);
+						break;
+					}
+					case MAGNIFY_CURSOR_SWITCH:
+					{
+						tape.MagCursor = !tape.MagCursor;
+						MagShowSystemCursor(tape.MagCursor);
+						break;
+					}
+					case MSE_CAN_BYPASS_ON: { tape.MouseCanBypasstmp = true; break; }
+					case MSE_CAN_BYPASS_OFF: { tape.MouseCanBypasstmp = false; break; }
+					default: { std::thread(MouseActions, (MouseActionID)destID[i], 0).detach(); break; }
 					}
 					ran[i] = true;
 				}
 			}
 			else if (ActionType[i] == 2)
 			{
-				if (vjID[i] == TO_LAST_MODE || vjID[i] == IF_RELEASED_GOTO || vjID[i] == IF_PUSHED_GOTO)
+				if (destID[i] == TO_LAST_MODE || destID[i] == IF_RELEASED_GOTO || destID[i] == IF_PUSHED_GOTO)
 					if (ran[i])
 						done[i] = true;
-				if (started[i] && !done[i] && (!ran[i] || vjID[i] == VOLUME_UP || vjID[i] == VOLUME_DOWN))
+				if (started[i] && !done[i] && (!ran[i] || destID[i] == VOLUME_UP || destID[i] == VOLUME_DOWN || destID[i] == CHANGE_POSITION))
 				{
-					switch (vjID[i])
+					switch (destID[i])
 					{
 					case VOLUME_UP:
 					case VOLUME_DOWN:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
-									std::thread(SpecialActions, (MouseActionID)vjID[i]).detach();
+								if (!(cycle % (int)(2222 / min(450, sqrt((cycle * cycle * 16 / average) / average)))))
+									std::thread(SpecialActions, (MouseActionID)destID[i]).detach();
 							}
 							else
 							{
-								if (!(cycle % modulo))
-									std::thread(SpecialActions, (MouseActionID)vjID[i]).detach();
+								if (!(cycle % llround(1 + modulo * 4 / average)))
+									std::thread(SpecialActions, (MouseActionID)destID[i]).detach();
 							}
 						break;
 					}
@@ -1333,6 +1388,12 @@ void Mapping::Run(double average)
 					case IF_RELEASED_GOTO: { if (TimeActiondone == -1 && released) TimeActiondone = i; done[i] = true; break; }
 					case IF_PUSHED_GOTO: { if (TimeActiondone == -1 && !released) TimeActiondone = i; done[i] = true; break; }
 					case RETURN_TO: { if (TimeActiondone == -1) TimeActiondone = i; done[i] = true; break; }
+					case CHANGE_POSITION: { tape.zoneChange = true; break;}
+					case STANCE1: { tape.Stance = 0; break;}
+					case STANCE2: { tape.Stance = 1; break;}
+					case STANCE3: { tape.Stance = 2; break;}
+					case STANCE4: { tape.Stance = 3; break;}
+					case STANCE5: { tape.Stance = 4; break;}
 					case RESET_STATS: { for (int i = 0; i < 8; i++) tape.Stat[i] = 0; break; }
 					case ADDSTAT1: { tape.Stat[0] += 1; break; }
 					case ADDSTAT2: { tape.Stat[1] += 1; break; }
@@ -1342,11 +1403,21 @@ void Mapping::Run(double average)
 					case ADDSTAT6: { tape.Stat[5] += 1; break; }
 					case ADDSTAT7: { tape.Stat[6] += 1; break; }
 					case ADDSTAT8: { tape.Stat[7] += 1; break; }
-					case SCREENSHOT: { PostMessage(m_hWnd, WM_SCREENSHOT, MAKEWPARAM(Grid[0], Grid[1]), MAKELPARAM(Grid[2], Grid[3])); break; }
-					case MINIMIZE: { PostMessage(m_hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); break; }
-					case RESTORE: { PostMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0); break; }
-					case TRANSPARENCY: { PostMessage(m_hWnd, WM_TRANSPARENCY, 0, 1); break; }
-					default: { std::thread(SpecialActions, (SpecialActionID)vjID[i]).detach(); break; }
+					case KBD_INPUT_ON: { tape.KeyboardActivetmp = true; break; }
+					case KBD_INPUT_OFF: { tape.KeyboardActivetmp = false; break; }
+					case MSE_INPUT_ON: { tape.MouseActivetmp = true; break; }
+					case MSE_INPUT_OFF: { tape.MouseActivetmp = false; break; }
+					case SCREENSHOT: { PostMessage(tape.Ds2hWnd, WM_SCREENSHOT, MAKEWPARAM(Grid[0], Grid[1]), MAKELPARAM(Grid[2], Grid[3])); break; }
+					case MINIMIZE: { PostMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); break; }
+					case RESTORE: { PostMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_RESTORE, 0); break; }
+					case TRANSPARENCY: { PostMessage(tape.Ds2hWnd, WM_TRANSPARENCY, 0, 1); break; }
+					case INPUT_OFF: { tape.PreferredSource = 0; tape.Save(tape.Setting_PreferredSource); PostMessage(tape.Ds2hWnd, WM_DEVICE_SRCE_START, 0, 0);; break; }
+					case DS4_INPUT_ON: { tape.PreferredSource = 1; tape.Save(tape.Setting_PreferredSource); PostMessage(tape.Ds2hWnd, WM_DEVICE_SRCE_START, 0, 0);; break; }
+					case DS5_INPUT_ON: { tape.PreferredSource = 2; tape.Save(tape.Setting_PreferredSource); PostMessage(tape.Ds2hWnd, WM_DEVICE_SRCE_START, 0, 0);; break; }
+					case DI_INPUT_ON: { tape.PreferredSource = 3; tape.Save(tape.Setting_PreferredSource); PostMessage(tape.Ds2hWnd, WM_DEVICE_SRCE_START, 0, 0);; break; }
+					case XI_INPUT_ON: { tape.PreferredSource = 4; tape.Save(tape.Setting_PreferredSource); PostMessage(tape.Ds2hWnd, WM_DEVICE_SRCE_START, 0, 0);; break; }
+					case EXIT: { PostMessage(tape.Ds2hWnd, WM_DESTROY, 0, 0); break; }
+					default: { std::thread(SpecialActions, (SpecialActionID)destID[i]).detach(); break; }
 					}
 					ran[i] = true;
 				}
@@ -1355,40 +1426,41 @@ void Mapping::Run(double average)
 			{
 				if (started[i] && !done[i])
 				{
-					if (m_vj[i + 5])
+					if (m_dest[i + 5])
 					{
-						if (m_vj[i + 5]->isOverWrite())
+						if (m_dest[i + 5]->isOverWrite() && m_dest[i + 5]->isOverWrite2())
 						{
-							long initialval1 = m_vj[i + 5]->GetVal();
-							long initialval2 = m_vj[i + 5]->GetVal2();
+							double initialval1 = m_dest[i + 5]->GetVal();
+							double initialval2 = m_dest[i + 5]->GetVal2();
 							if (Start[i] || Stop[i])
 							{
-								byte m_dataRing = (byte)((OnRelease[i] == 2) ? ((((min(randStop[i] - randStart[i], end2 - randStart[i] - start2))) * 255) / (randStop[i] - randStart[i])) :
-									((((end2 - randStart[i] - ((OnRelease[i] == 1) ? release2 : start2))) * 255) / (randStop[i] - randStart[i])));
-								m_vj[i + 5]->SetValByte(m_dataRing);
+								unsigned short m_dataRing = (unsigned short)((OnRelease[i] == 2) ?
+									((((min(randStop[i] - randStart[i], end2 - randStart[i] - start2))) * 65535) / (randStop[i] - randStart[i])) :
+									((((end2 - randStart[i] - ((OnRelease[i] == 1) ? release2 : start2))) * 65535) / (randStop[i] - randStart[i])));
+								m_dest[i + 5]->SetVal(m_dataRing);
 							}
 							else
-								m_vj[i + 5]->SetValByte(m_data);
-							m_vj[i + 5]->SetPushed();
+								m_dest[i + 5]->SetVal(m_data);
+							m_dest[i + 5]->SetPushed();
 
 							if (Overcontrol[i] == 1)
 							{
 								int counter1 = 0;
 								int counter2 = 0;
-								switch (m_vj[i + 5]->GetCounterType())
+								switch (m_dest[i + 5]->GetCounterType())
 								{
-								case vJoyAxisID::axis_XY: { counter1 = m_vj_X->GetCounter(); counter2 = m_vj_Y->GetCounter(); break; }
-								case vJoyAxisID::axis_ZRZ: { counter1 = m_vj_Z->GetCounter(); counter2 = m_vj_RZ->GetCounter(); break; }
-								case vJoyAxisID::axis_RXRY: { counter1 = m_vj_RX->GetCounter(); counter2 = m_vj_RY->GetCounter(); break; }
-								case vJoyAxisID::axis_SL0SL1: { counter1 = m_vj_SL0->GetCounter(); counter2 = m_vj_SL1->GetCounter(); break; }
+								case DestAxisID::Axis_XY: { counter1 = m_dest_X->GetCounter(); counter2 = m_dest_Y->GetCounter(); break; }
+								case DestAxisID::Axis_ZRZ: { counter1 = m_dest_Z->GetCounter(); counter2 = m_dest_RZ->GetCounter(); break; }
+								case DestAxisID::Axis_RXRY: { counter1 = m_dest_RX->GetCounter(); counter2 = m_dest_RY->GetCounter(); break; }
+								case DestAxisID::Axis_SL0SL1: { counter1 = m_dest_SL0->GetCounter(); counter2 = m_dest_SL1->GetCounter(); break; }
 								}
 								if (counter1 > 1)
-									m_vj[i + 5]->SetVal((m_vj[i + 5]->GetVal() + (initialval1 * (counter1 - 1))) / counter1);
+									m_dest[i + 5]->SetVal1((m_dest[i + 5]->GetVal() + (initialval1 * (counter1 - 1))) / counter1);
 								if (counter2 > 1)
-									m_vj[i + 5]->SetVal2((m_vj[i + 5]->GetVal() + (initialval2 * (counter2 - 1))) / counter2);
+									m_dest[i + 5]->SetVal2((m_dest[i + 5]->GetVal2() + (initialval2 * (counter2 - 1))) / counter2);
 							}
 							else if (Overcontrol[i] == 2)
-								m_vj[i + 5]->setOverwrite(false);
+								m_dest[i + 5]->setOverwrite(false);
 						}
 					}
 				}
@@ -1396,124 +1468,136 @@ void Mapping::Run(double average)
 			}
 			else if (ActionType[i] == 4)
 			{
-				if (started[i] && !done[i] && (!ran[i] || vjID[i] == WEB_ZOOMMINUS || vjID[i] == WEB_ZOOMPLUS ||
-						vjID[i] == WEB_DOWN || vjID[i] == WEB_UP || vjID[i] == WEB_LEFT || vjID[i] == WEB_RIGHT))
+				if (started[i] && !done[i])
+					if (m_dest[i + 5])
+						m_dest[i + 5]->SetVal(max(0, min(1000, int(Stop[i]))));
+				ran[i] = true;
+			}
+			else if (ActionType[i] == 5)
+			{
+				if (started[i] && !done[i] && (!ran[i] || destID[i] == WEB_ZOOMMINUS || destID[i] == WEB_ZOOMPLUS ||
+						destID[i] == WEB_DOWN || destID[i] == WEB_UP || destID[i] == WEB_LEFT || destID[i] == WEB_RIGHT))
 				{
-					switch (vjID[i])
+					switch (destID[i])
 					{
-					case NOTEPAD: { PostMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); break; }
-					case NOTEPAD_DOWN: { PostMessage(m_hWnd, WM_NOTEPAD_SCROLL, 0, 0); break; }
-					case NOTEPAD_UP: { PostMessage(m_hWnd, WM_NOTEPAD_SCROLL, 0, 1); break; }
+					case NOTEPAD: { PostMessage(tape.Ds2hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); break; }
+					case NOTEPAD_DOWN: { PostMessage(tape.Ds2hWnd, WM_NOTEPAD_SCROLL, 0, 0); break; }
+					case NOTEPAD_UP: { PostMessage(tape.Ds2hWnd, WM_NOTEPAD_SCROLL, 0, 1); break; }
+					case LINKS_APPLICATION0: { PostMessage(tape.Ds2hWnd, WM_COMMAND, IDM_APP0, 0); break; }
+					case LINKS_APPLICATION1: { PostMessage(tape.Ds2hWnd, WM_COMMAND, IDM_APP1, 0); break; }
+					case LINKS_APPLICATION2: { PostMessage(tape.Ds2hWnd, WM_COMMAND, IDM_APP2, 0); break; }
+					case LINKS_APPLICATION3: { PostMessage(tape.Ds2hWnd, WM_COMMAND, IDM_APP3, 0); break; }
+					case LINKS_APPLICATION4: { PostMessage(tape.Ds2hWnd, WM_COMMAND, IDM_APP4, 0); break; }
 					}
 
 					if (tape.isExplorerLoaded)
-					switch (vjID[i])
+					switch (destID[i])
 					{
 					case WEB_DOWN:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
-						if (modulo && !(cycle % 18))
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % llround(1 + 72 / average)))
 						{
 							if (modulo == -1)
-								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, 90);
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, 0, 90);
 							else
-								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, (540 / modulo));
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, 0, (540 / modulo));
 						}
 						break;
 					}
 					case WEB_UP:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
-						if (modulo && !(cycle % 18))
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % llround(1 + 72 / average)))
 						{
 							if (modulo == -1)
-								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, -90);
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, 0, -90);
 							else
-								PostMessage(m_hWnd, WM_WEB_SCROLL, 0, (-540 / modulo));
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, 0, (-540 / modulo));
 						}
 						break;
 					}
 					case WEB_LEFT:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
-						if (modulo && !(cycle % 18))
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % llround(1 + 72 / average)))
 						{
 							if (modulo == -1)
-								PostMessage(m_hWnd, WM_WEB_SCROLL, -90, 0);
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, -90, 0);
 							else
-								PostMessage(m_hWnd, WM_WEB_SCROLL, (-540 / modulo), 0);
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, (-540 / modulo), 0);
 						}
 						break;
 					}
 					case WEB_RIGHT:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
-						if (modulo && !(cycle % 18))
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
+						if (modulo && !(cycle % llround(1 + 72 / average)))
 						{
 							if (modulo == -1)
-								PostMessage(m_hWnd, WM_WEB_SCROLL, 90, 0);
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, 90, 0);
 							else
-								PostMessage(m_hWnd, WM_WEB_SCROLL, (540 / modulo), 0);
+								PostMessage(tape.Ds2hWnd, WM_WEB_SCROLL, (540 / modulo), 0);
 						}
 						break;
 					}
-					case WEB_PREVIOUSTAB: { PostMessage(m_hWnd, WM_WEB_CHANGETAB, 0, 0); break; }
-					case WEB_NEXTTAB: { PostMessage(m_hWnd, WM_WEB_CHANGETAB, 0, 1); break; }
-					case WEB_CLOSETAB: { PostMessage(m_hWnd, WM_COMMAND, ID_WEBCLOSE, -1); break; }
-					case WEB_FULLSCREEN: { PostMessage(m_hWnd, WM_WEB_FULLSCREEN, 0, 0); break; }
-					case WEB_FAVORITE1: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 1); break; }
-					case WEB_FAVORITE2: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 2); break; }
-					case WEB_FAVORITE3: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 3); break; }
-					case WEB_FAVORITE4: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 4); break; }
-					case WEB_FAVORITE5: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 5); break; }
-					case WEB_FAVORITE6: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 6); break; }
-					case WEB_FAVORITE7: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 7); break; }
-					case WEB_FAVORITE8: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 8); break; }
-					case WEB_FAVORITE9: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 9); break; }
-					case WEB_HOME: { PostMessage(m_hWnd, WM_WEB_FAVORITE, 0, 0); break; }
-					case WEB_BACK: { PostMessage(m_hWnd, WM_WEB_BACK, 0, 0); break; }
-					case WEB_NEXT: { PostMessage(m_hWnd, WM_WEB_NEXT, 0, 0); break; }
-					case WEB_REFRESH: { PostMessage(m_hWnd, WM_WEB_REFRESH, 0, 0); break; }
-					case WEB_CANCEL: { PostMessage(m_hWnd, WM_WEB_CANCEL, 0, 0); break; }
-					case WEB_AUTOREFRESH: { PostMessage(m_hWnd, WM_WEB_AUTOREFRESH, 0, 0); break; }
+					case WEB_PREVIOUSTAB: { PostMessage(tape.Ds2hWnd, WM_WEB_CHANGETAB, 0, 0); break; }
+					case WEB_NEXTTAB: { PostMessage(tape.Ds2hWnd, WM_WEB_CHANGETAB, 0, 1); break; }
+					case WEB_CLOSETAB: { PostMessage(tape.Ds2hWnd, WM_COMMAND, ID_WEBCLOSE, -1); break; }
+					case WEB_FULLSCREEN: { PostMessage(tape.Ds2hWnd, WM_WEB_FULLSCREEN, 0, 0); break; }
+					case WEB_FAVORITE1: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 1); break; }
+					case WEB_FAVORITE2: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 2); break; }
+					case WEB_FAVORITE3: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 3); break; }
+					case WEB_FAVORITE4: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 4); break; }
+					case WEB_FAVORITE5: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 5); break; }
+					case WEB_FAVORITE6: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 6); break; }
+					case WEB_FAVORITE7: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 7); break; }
+					case WEB_FAVORITE8: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 8); break; }
+					case WEB_FAVORITE9: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 9); break; }
+					case WEB_HOME: { PostMessage(tape.Ds2hWnd, WM_WEB_FAVORITE, 0, 0); break; }
+					case WEB_BACK: { PostMessage(tape.Ds2hWnd, WM_WEB_BACK, 0, 0); break; }
+					case WEB_NEXT: { PostMessage(tape.Ds2hWnd, WM_WEB_NEXT, 0, 0); break; }
+					case WEB_REFRESH: { PostMessage(tape.Ds2hWnd, WM_WEB_REFRESH, 0, 0); break; }
+					case WEB_CANCEL: { PostMessage(tape.Ds2hWnd, WM_WEB_CANCEL, 0, 0); break; }
+					case WEB_AUTOREFRESH: { PostMessage(tape.Ds2hWnd, WM_WEB_AUTOREFRESH, 0, 0); break; }
 					case WEB_ZOOMMINUS:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
-									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 0);
+								if (!(cycle % (int)(2222 / min(450, sqrt((cycle * cycle * 16 / average) / average)))))
+									PostMessage(tape.Ds2hWnd, WM_WEB_ZOOM, 0, 0);
 							}
 							else
 							{
-								if (!(cycle % (modulo)))
-									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 0);
+								if (!(cycle % llround(1 + modulo * 4 / average)))
+									PostMessage(tape.Ds2hWnd, WM_WEB_ZOOM, 0, 0);
 							}
 						break;
 					}
 					case WEB_ZOOMPLUS:
 					{
-						short modulo = (Target[0]) ? ((m_vj[0]) ? m_vj[0]->GetScrollVal() : -1) : ((m_ds[0]) ? m_ds[0]->GetScrollVal() : -1);
+						short modulo = (Target[0] == 3) ? ((m_dest[0]) ? m_dest[0]->GetScrollVal() : -1) : ((m_srce[0]) ? m_srce[0]->GetScrollVal() : -1);
 						if (modulo)
 							if (modulo == -1)
 							{
-								if (!(cycle % (int)(2222 / min(450, sqrt(cycle * cycle)))))
-									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 1);
+								if (!(cycle % (int)(2222 / min(450, sqrt((cycle * cycle / average) / average)))))
+									PostMessage(tape.Ds2hWnd, WM_WEB_ZOOM, 0, 1);
 							}
 							else
 							{
-								if (!(cycle % (modulo)))
-									PostMessage(m_hWnd, WM_WEB_ZOOM, 0, 1);
+								if (!(cycle % llround(1 + modulo * 4 / average)))
+									PostMessage(tape.Ds2hWnd, WM_WEB_ZOOM, 0, 1);
 							}
 						break;
 					}
-					case WEB_ZOOMRESET: { PostMessage(m_hWnd, WM_WEB_ZOOMRESET, 0, 0); break; }
-					case WEB_ZOOMSET: { PostMessage(m_hWnd, WM_WEB_ZOOMSET, 0, 0); break; }
-					case WEB_VISIBILITY: { PostMessage(m_hWnd, WM_WEB_VISIBILITY, 0, 0); break; }
-					case WEB_SCREENSHOT: { PostMessage(m_hWnd, WM_WEB_SCREENSHOT, 0, 0); break; }
-					case WEB_DARKMODE: { PostMessage(m_hWnd, WM_WEB_DARKMODE, 0, 1); break; }
-					case WEB_DARKMODE2: { PostMessage(m_hWnd, WM_WEB_DARKMODE, 0, 2); break; }
+					case WEB_ZOOMRESET: { PostMessage(tape.Ds2hWnd, WM_WEB_ZOOMRESET, 0, 0); break; }
+					case WEB_ZOOMSET: { PostMessage(tape.Ds2hWnd, WM_WEB_ZOOMSET, 0, 0); break; }
+					case WEB_VISIBILITY: { PostMessage(tape.Ds2hWnd, WM_WEB_VISIBILITY, 0, 0); break; }
+					case WEB_SCREENSHOT: { PostMessage(tape.Ds2hWnd, WM_WEB_SCREENSHOT, 0, 0); break; }
+					case WEB_DARKMODE: { PostMessage(tape.Ds2hWnd, WM_WEB_DARKMODE, 0, 1); break; }
+					case WEB_DARKMODE2: { PostMessage(tape.Ds2hWnd, WM_WEB_DARKMODE, 0, 2); break; }
 					}
 					ran[i] = true;
 				}
@@ -1522,46 +1606,46 @@ void Mapping::Run(double average)
 			{
 				if (started[i] && !done[i])
 				{
-					if (m_vj[i + 5])
+					if (m_dest[i + 5])
 					{
 						if (Switch[i])
 						{
 							if (!ran[i])
-								m_toggle[vjID[i]] = (Switch[i] == 1) ? true : false;
+								m_toggle[destID[i]] = (Switch[i] == 1) ? true : false;
 						}
 						else if (Toggle)
 						{
 							if (!Toggledone[i])
 							{
 								Toggledone[i] = true;
-								m_toggle[vjID[i]] = !m_toggle[vjID[i]];
+								m_toggle[destID[i]] = !m_toggle[destID[i]];
 							}
 						}
 						else
 						{
-							if (m_vj[i + 5]->isOverWrite())
+							if (m_dest[i + 5]->isOverWrite())
 							{
-								long initialval = m_vj[i + 5]->GetVal();
-								m_vj[i + 5]->SetValByte(m_data);
-								m_vj[i + 5]->SetPushed();
+								int initialval = m_dest[i + 5]->GetVal();
+								m_dest[i + 5]->SetVal(m_data);
+								m_dest[i + 5]->SetPushed();
 
 								if (Overcontrol[i] == 1)
 								{
-									int counter = m_vj[i + 5]->GetCounter();
+									int counter = m_dest[i + 5]->GetCounter();
 									if (counter > 1)
-										m_vj[i + 5]->SetVal((m_vj[i + 5]->GetVal() + (initialval * (counter - 1))) / counter);
+										m_dest[i + 5]->SetVal((m_dest[i + 5]->GetVal() + (initialval * (counter - 1))) / counter);
 								}
 								else if (Overcontrol[i] == 2)
-									m_vj[i + 5]->setOverwrite(false);
+									m_dest[i + 5]->setOverwrite(false);
 							}
 						}
 					}
 					ran[i] = true;
 				}
-				if (m_toggle[vjID[i]])
+				if (m_toggle[destID[i]])
 				{
-					m_vj[i + 5]->SetValByte((m_data) ? m_data : ((done[i]) ? 0xFF : 0));
-					m_vj[i + 5]->SetPushed();
+					m_dest[i + 5]->SetVal((m_data) ? m_data : ((done[i]) ? 0xFFFF : 0));
+					m_dest[i + 5]->SetPushed();
 				}
 			}
 		}
@@ -1570,7 +1654,7 @@ void Mapping::Run(double average)
 			if (ActionType[i] == 1 && done[i] && !MouseActiondone[i])
 			{
 				MouseActiondone[i] = true;
-				std::thread(MouseActionEnd, (MouseActionID)vjID[i]).detach();
+				std::thread(MouseActionEnd, (MouseActionID)destID[i]).detach();
 			}
 
 
@@ -1595,29 +1679,29 @@ void Mapping::Run(double average)
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				if (dsDisable[i])
-					if (Target[i])
+				if (srceDisable[i])
+					if (Target[i] == 3)
 					{
-						if (m_vj[i])
+						if (m_dest[i])
 						{
-							vjDisabled.push_back(dsID[i]);
-							m_vj[i]->SetPushed(false);
+							destDisabled.push_back(srceID[i]);
+							m_dest[i]->SetPushed(false);
 						}
 					}
 					else
 					{
-						if (m_ds[i])
-							dsDisabled.push_back(dsID[i]);
+						if (m_srce[i])
+							srceDisabled.push_back(srceID[i]);
 					}
 			}
 			for (int i = 0; i < 8; i++)
 			{
-				if ((vjDisable[i] == 2) || (vjDisable[i] == 1 && started[i] && !done[i]))
+				if ((destDisable[i] == 2) || (destDisable[i] == 1 && started[i] && !done[i]))
 				{
-					if (m_vj[i + 5])
+					if (m_dest[i + 5])
 					{
-						vjDisabled.push_back(vjID[i]);
-						m_vj[i + 5]->SetPushed(false);
+						destDisabled.push_back(destID[i]);
+						m_dest[i + 5]->SetPushed(false);
 					}
 				}
 			}
@@ -1655,7 +1739,7 @@ void Mapping::Run(double average)
 			for (int i = 0; i < 6; i++)
 				grid[i] = Grid[i];
 
-		defaultmouse = (Mouse[6]) ? ((Mouse[6] == 1) ? true : false) : defaultmouse;
+		isGridNeeded = (Mouse[6]) ? ((Mouse[6] == 1) ? true : false) : isGridNeeded;
 	}
 
 	if (TimeActiondone > -1)
@@ -1673,7 +1757,6 @@ void Mapping::Run(double average)
 			}
 			else if (Stop[i] >= Stop[TimeActiondone])
 			{
-
 				ran[i] = true;
 				Toggledone[i] = true;
 				MouseActiondone[i] = false;
@@ -1685,32 +1768,32 @@ void Mapping::Run(double average)
 				MouseActiondone[i] = true;
 			}
 		}
-		cycle = (unsigned long long)(floor((Stop[TimeActiondone] / average)) - 1);
+		cycle = double((floor((Stop[TimeActiondone] / average)) - 1));
 		std::chrono::system_clock::time_point start2tmp = std::chrono::system_clock::now() - std::chrono::milliseconds(Stop[TimeActiondone]);
 		release2 = start2tmp + (release2 - start2);
 		start2 = start2tmp;
 	}
 
-	cycle = (cycle == 18446744073709551615) ? 0 : cycle + 1;
+	cycle += 1;
 }
 
 void Mapping::PreLaunchDisable()
 {
 	for (int i = 0; i < 5; i++)
 	{
-		if (dsDisable[i] == 2)
-			if (Target[i])
+		if (srceDisable[i] == 2)
+			if (Target[i] == 3)
 			{
-				if (m_vj[i])
+				if (m_dest[i])
 				{
-					vjDisabled.push_back(dsID[i]);
-					m_vj[i]->SetPushed(false);
+					destDisabled.push_back(srceID[i]);
+					m_dest[i]->SetPushed(false);
 				}
 			}
 			else
 			{
-				if (m_ds[i])
-					dsDisabled.push_back(dsID[i]);
+				if (m_srce[i])
+					srceDisabled.push_back(srceID[i]);
 			}
 	}
 }
@@ -1800,13 +1883,13 @@ WCHAR* Mapping::LedString(LedActionID id)
 {
 	switch (id)
 	{
-	case Led_Action_none: return I18N.EMPTY;
-	case Led_Action_Led1: return I18N.LedAction_Led_1;
-	case Led_Action_Led2: return I18N.LedAction_Led_2;
-	case Led_Action_Led3: return I18N.LedAction_Led_3;
-	case Led_Action_Led4: return I18N.LedAction_Led_4;
-	case Led_Action_Led5: return I18N.LedAction_Led_5;
-	case Led_Action_Battery: return I18N.LedAction_BATTERY;
+	case LedAction_None: return I18N.EMPTY;
+	case LedAction_Led1: return I18N.LedAction_Led_1;
+	case LedAction_Led2: return I18N.LedAction_Led_2;
+	case LedAction_Led3: return I18N.LedAction_Led_3;
+	case LedAction_Led4: return I18N.LedAction_Led_4;
+	case LedAction_Led5: return I18N.LedAction_Led_5;
+	case LedAction_Battery: return I18N.LedAction_BATTERY;
 	default: return I18N.WHICH;
 	}
 }
@@ -1815,7 +1898,7 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 {
 	switch (id)
 	{
-	case mouse_none: return I18N.EMPTY;
+	case MouseAction_None: return I18N.EMPTY;
 	case ACTIVE_MOUSE: return I18N.MouseAction_ACTIVE_MOUSE;
 	case SAVE_POSITION: return I18N.MouseAction_SAVE_POSITION;
 	case MOVE_BACK: return I18N.MouseAction_MOVE_BACK;
@@ -1858,6 +1941,12 @@ WCHAR* Mapping::MouseString(MouseActionID id)
 	case MAGNIFY_DOWN: return I18N.MouseAction_MAGNIFY_DOWN;
 	case MAGNIFY_LEFT: return I18N.MouseAction_MAGNIFY_LEFT;
 	case MAGNIFY_RIGHT: return I18N.MouseAction_MAGNIFY_RIGHT;
+	case MAGNIFY_LOCK: return I18N.MouseAction_MAGNIFY_LOCK;
+	case MAGNIFY_CURSOR_ON: return I18N.MouseAction_MAGNIFY_CURSOR_ON;
+	case MAGNIFY_CURSOR_OFF: return I18N.MouseAction_MAGNIFY_CURSOR_OFF;
+	case MAGNIFY_CURSOR_SWITCH: return I18N.MouseAction_MAGNIFY_CURSOR_SWITCH;
+	case MSE_CAN_BYPASS_ON: return I18N.MouseAction_MSE_CAN_BYPASS_ON;
+	case MSE_CAN_BYPASS_OFF: return I18N.MouseAction_MSE_CAN_BYPASS_OFF;
 	default: return I18N.WHICH;
 	}
 }
@@ -1866,7 +1955,7 @@ WCHAR* Mapping::SpecialString(SpecialActionID id)
 {
 	switch (id)
 	{
-	case mouse_none: return I18N.EMPTY;
+	case MouseAction_None: return I18N.EMPTY;
 	case MUTE_SOUND: return I18N.SpecialAction_MUTE_SOUND;
 	case VOLUME_UP: return I18N.SpecialAction_VOLUME_UP;
 	case VOLUME_DOWN: return I18N.SpecialAction_VOLUME_DOWN;
@@ -1894,9 +1983,15 @@ WCHAR* Mapping::SpecialString(SpecialActionID id)
 	case IF_RELEASED_GOTO: return I18N.SpecialAction_IF_RELEASED_GOTO;
 	case IF_PUSHED_GOTO: return I18N.SpecialAction_IF_PUSHED_GOTO;
 	case RETURN_TO: return I18N.SpecialAction_RETURN_TO;
-	case INTERRUPT: return I18N.SpecialAction_MOUSE_INTERRUPT;
-	case NO_SUSTAIN: return I18N.SpecialAction_MOUSE_NO_SUSTAIN;
-	case PAUSE: return I18N.SpecialAction_MOUSE_PAUSE;
+	case INTERRUPT: return I18N.SpecialAction_INTERRUPT;
+	case NO_SUSTAIN: return I18N.SpecialAction_NO_SUSTAIN;
+	case PAUSE: return I18N.SpecialAction_PAUSE;
+	case CHANGE_POSITION: return I18N.SpecialAction_CHANGE_POSITION;
+	case STANCE1: return I18N.SpecialAction_STANCE1;
+	case STANCE2: return I18N.SpecialAction_STANCE2;
+	case STANCE3: return I18N.SpecialAction_STANCE3;
+	case STANCE4: return I18N.SpecialAction_STANCE4;
+	case STANCE5: return I18N.SpecialAction_STANCE5;
 	case BEEP1: return I18N.SpecialAction_BEEP1;
 	case BEEP2: return I18N.SpecialAction_BEEP2;
 	case BEEP3: return I18N.SpecialAction_BEEP3;
@@ -1917,6 +2012,12 @@ WCHAR* Mapping::SpecialString(SpecialActionID id)
 	case MINIMIZE: return I18N.SpecialAction_MINIMIZE;
 	case RESTORE: return I18N.SpecialAction_RESTORE;
 	case TRANSPARENCY: return I18N.SpecialAction_TRANSPARENCY;
+	case INPUT_OFF: return I18N.SpecialAction_INPUT_OFF;
+	case DS4_INPUT_ON: return I18N.SpecialAction_DS4_INPUT_ON;
+	case DS5_INPUT_ON: return I18N.SpecialAction_DS5_INPUT_ON;
+	case DI_INPUT_ON: return I18N.SpecialAction_DI_INPUT_ON;
+	case XI_INPUT_ON: return I18N.SpecialAction_XI_INPUT_ON;
+	case EXIT: return I18N.SpecialAction_EXIT;
 	default: return I18N.WHICH;
 	}
 }
@@ -1925,7 +2026,7 @@ WCHAR* Mapping::ModulesString(ModulesActionID id)
 {
 	switch (id)
 	{
-	case modules_none: return I18N.EMPTY;
+	case ModulesAction_None: return I18N.EMPTY;
 	case NOTEPAD: return I18N.ModulesAction_NOTEPAD;
 	case NOTEPAD_DOWN: return I18N.ModulesAction_NOTEPAD_DOWN;
 	case NOTEPAD_UP: return I18N.ModulesAction_NOTEPAD_UP;
@@ -1960,6 +2061,11 @@ WCHAR* Mapping::ModulesString(ModulesActionID id)
 	case WEB_SCREENSHOT: return I18N.ModulesAction_WEB_SCREENSHOT;
 	case WEB_DARKMODE: return I18N.ModulesAction_WEB_DARKMODE;
 	case WEB_DARKMODE2: return I18N.ModulesAction_WEB_DARKMODE2;
+	case LINKS_APPLICATION0: return I18N.ModulesAction_LINKS_APPLICATION0;
+	case LINKS_APPLICATION1: return I18N.ModulesAction_LINKS_APPLICATION1;
+	case LINKS_APPLICATION2: return I18N.ModulesAction_LINKS_APPLICATION2;
+	case LINKS_APPLICATION3: return I18N.ModulesAction_LINKS_APPLICATION3;
+	case LINKS_APPLICATION4: return I18N.ModulesAction_LINKS_APPLICATION4;
 	default: return I18N.WHICH;
 	}
 }
@@ -2323,9 +2429,5 @@ void SpecialActions(int action)
 	case Mapping::BEEP1: { Beep(234.9, 112); break; }
 	case Mapping::BEEP2: { Beep(385.3, 112); break; }
 	case Mapping::BEEP3: { Beep(551.8, 112); break; }
-	case Mapping::KBD_INPUT_ON: { tape.KeyboardActivetmp = true; tape.Save(tape.Setting_KeyboardActive); break; }
-	case Mapping::KBD_INPUT_OFF: { tape.KeyboardActivetmp = false; tape.Save(tape.Setting_KeyboardActive); break; }
-	case Mapping::MSE_INPUT_ON: { tape.MouseActivetmp = true; tape.Save(tape.Setting_MouseActive); break; }
-	case Mapping::MSE_INPUT_OFF: { tape.MouseActivetmp = false; tape.Save(tape.Setting_MouseActive); break; }
 	}
 }
