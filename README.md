@@ -930,8 +930,8 @@ You can now enter up to 64 characters per keymap
 
 You will find.
 
-## ViGEm
-![ViGEm](Doc/15_Ds2vJoy_ViGEm.png)
+## Output
+![Output](Doc/15_Ds2vJoy_Output.png)
 
 Install, remove and use @nefarius &co ViGEm separately or jointly to vJoy
 - Then you can have a fully remapped DS4 or X360
