@@ -30,6 +30,8 @@ struct LANGSTRS
 	WCHAR* Settings_Change_Settings;
 	WCHAR* TaskTray_AppNotFound;
 	WCHAR* TaskTray_ProfileChanged;
+	WCHAR* TaskTray_Imported;
+	WCHAR* TaskTray_Exported;
 
 	WCHAR* ds_notforuse;
 	WCHAR* ds_wait;
@@ -173,7 +175,7 @@ struct LANGSTRS
 	WCHAR* TabMapping;
 	WCHAR* TabRapidFire;
 	WCHAR* TabKeymap;
-	WCHAR* TabXOutput;
+	WCHAR* TabOutput;
 	WCHAR* TabGuardian;
 	WCHAR* TabExplorer;
 	WCHAR* TabLinks;
@@ -1558,6 +1560,8 @@ struct LANGSTRS
 	WCHAR* FILE;
 	WCHAR* EXIT;
 	WCHAR* HELP;
+	WCHAR* IMPORT;
+	WCHAR* EXPORT;
 	WCHAR* ABOUT;
 	WCHAR* MENU_SEE_VIEW2;
 	WCHAR* MENU_TO_MODE_0;
@@ -1578,6 +1582,7 @@ struct LANGSTRS
 	WCHAR* CLONE_TO_MODE_6;
 	WCHAR* CLONE_TO_MODE_7;
 	WCHAR* CLONE_TO_MODE_8;
+	WCHAR* MENU_DISABLE;
 	WCHAR* MENU_ADD;
 	WCHAR* MENU_EDIT;
 	WCHAR* MENU_DEL;

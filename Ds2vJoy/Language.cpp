@@ -105,6 +105,8 @@ void LoadLanguage()
 	I18N.Settings_Change_Settings							= WCHARI(L"   SETTINGS: Reconnecting for change settings");
 	I18N.TaskTray_AppNotFound								= WCHARI(L"   TASKTRAY: %s not found");
 	I18N.TaskTray_ProfileChanged							= WCHARI(L"   TASKTRAY: Profile changed to: %d");
+	I18N.TaskTray_Imported									= WCHARI(L"     IMPORT: To Profile %d from: %s");
+	I18N.TaskTray_Exported									= WCHARI(L"     EXPORT: From Profile %d to: %s");
 
 	I18N.ds_notforuse										= WCHARI(L"         DS: set to not intended for use");
 	I18N.ds_wait											= WCHARI(L"         DS: waiting for a valid device");
@@ -255,7 +257,7 @@ void LoadLanguage()
 	I18N.TabSettings										= WCHARI(L"Settings");
 	I18N.TabMapping											= WCHARI(L"Mapping");
 	I18N.TabRapidFire										= WCHARI(L"RapidFire");
-	I18N.TabXOutput											= WCHARI(L"XOutput");
+	I18N.TabOutput											= WCHARI(L"Output");
 	I18N.TabKeymap											= WCHARI(L"Keymap");
 	I18N.TabGuardian										= WCHARI(L"Guardian");
 	I18N.TabExplorer										= WCHARI(L"Web");
@@ -1646,6 +1648,8 @@ void LoadLanguage()
 	I18N.FILE												= WCHARI(L"File(&F)");
 	I18N.EXIT												= WCHARI(L"Exit");
 	I18N.HELP												= WCHARI(L"Help(&H)");
+	I18N.IMPORT												= WCHARI(L"Import");
+	I18N.EXPORT												= WCHARI(L"Export");
 	I18N.ABOUT												= WCHARI(L"About");
 
 	I18N.MENU_SEE_VIEW2										= WCHARI(L"Clone to view2");
@@ -1669,6 +1673,7 @@ void LoadLanguage()
 	I18N.CLONE_TO_MODE_7                                    = WCHARI(L"Clone tab 7");
 	I18N.CLONE_TO_MODE_8                                    = WCHARI(L"Clone tab 8");
 
+	I18N.MENU_DISABLE										= WCHARI(L"En/Disable");
 	I18N.MENU_ADD											= WCHARI(L"Add");
 	I18N.MENU_EDIT											= WCHARI(L"Edit");
 	I18N.MENU_DEL											= WCHARI(L"Delete");
@@ -2123,6 +2128,8 @@ void FreeLanguage()
 	delete[] I18N.Settings_Change_Settings;
 	delete[] I18N.TaskTray_AppNotFound;
 	delete[] I18N.TaskTray_ProfileChanged;
+	delete[] I18N.TaskTray_Imported;
+	delete[] I18N.TaskTray_Exported;
 
 	delete[] I18N.ds_notforuse;
 	delete[] I18N.ds_wait;
@@ -2252,7 +2259,7 @@ void FreeLanguage()
 	delete[] I18N.TabMapping;
 	delete[] I18N.TabRapidFire;
 	delete[] I18N.TabKeymap;
-	delete[] I18N.TabXOutput;
+	delete[] I18N.TabOutput;
 	delete[] I18N.TabGuardian;
 	delete[] I18N.TabExplorer;
 	delete[] I18N.TabLinks;
@@ -3632,6 +3639,8 @@ void FreeLanguage()
 	delete[] I18N.FILE;
 	delete[] I18N.EXIT;
 	delete[] I18N.HELP;
+	delete[] I18N.IMPORT;
+	delete[] I18N.EXPORT;
 	delete[] I18N.ABOUT;
 	delete[] I18N.MENU_SEE_VIEW2;
 	delete[] I18N.MENU_TO_MODE_0;
@@ -3652,6 +3661,7 @@ void FreeLanguage()
 	delete[] I18N.CLONE_TO_MODE_6;
 	delete[] I18N.CLONE_TO_MODE_7;
 	delete[] I18N.CLONE_TO_MODE_8;
+	delete[] I18N.MENU_DISABLE;
 	delete[] I18N.MENU_ADD;
 	delete[] I18N.MENU_EDIT;
 	delete[] I18N.MENU_DEL;

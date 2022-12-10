@@ -1296,7 +1296,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			load_dll = true;
 		
 		_log.SetShowTime(load_dll);
-		tape.Load(Settings::SettingCategory_All);
+		tape.Load(Settings::Setting_All);
 		SendMessage(hProgressBar, PBM_STEPIT, 0, 0);
 		if (tape.BreakAndExit)
 		{
@@ -1370,7 +1370,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TabCtrl_InsertItem(hTab, 3, &tc_item);
 			tc_item.pszText = I18N.TabKeymap;
 			TabCtrl_InsertItem(hTab, 4, &tc_item);
-			tc_item.pszText = I18N.TabXOutput;
+			tc_item.pszText = I18N.TabOutput;
 			TabCtrl_InsertItem(hTab, 5, &tc_item);
 			tc_item.pszText = I18N.TabGuardian;
 			TabCtrl_InsertItem(hTab, 6, &tc_item);
@@ -2075,6 +2075,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_RELOAD:
 	{
+		// wParam == Profile
 		// lParam == 1 silent
 		if (tape.MagInitialized)
 			SetMagnifyZoom(MAG_METHOD_RESET, 0, 0, 0);
@@ -2096,27 +2097,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PreviousNotepadTab = NotepadTab;
 		TabCtrl_SetCurFocus(hTab, 0);
 
-		if (!lParam)
-			echo(I18N.Settings_Change_Settings);
-
 		{
 			if ((wParam == 1) || (wParam == 2) || (wParam == 3))
 			{
 				tape.Save(tape.Setting_All);
 				tape.Profile = (unsigned char)wParam;
 				tape.Save(tape.Setting_Profile);
-				echo(I18N.TaskTray_ProfileChanged, tape.Profile);
+				if (!lParam)
+					echo(I18N.TaskTray_ProfileChanged, tape.Profile);
 			}
 			else
 				hid.RestartDevices(true);
 		}
+
+		if (!lParam)
+			echo(I18N.Settings_Change_Settings);
 
 		xi.CloseClient();
 		srce.Close();
 		dest.Close();
 		SendMessage(hWnd, WM_RESET, 0, 0);
 
-		tape.Load(Settings::SettingCategory_All);
+		tape.Load(Settings::Setting_All);
 		mDlg.Hide();
 		mDDlg.m_mode = 0;
 
@@ -3483,7 +3485,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			tape.Save(tape.Setting_vJoyPaused);
 			break;
 		}
-		case IDM_XINPUT:
+		case IDM_XOUTPUT:
 		{
 			tape.XOutputPaused = !tape.XOutputPaused;
 			tasktray.SwapMenuitem(Tasktray::TasktrayItem_XOutputPaused);
@@ -3557,6 +3559,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_APP2: { if (tape.App2Location) { if (!LaunchProcess(tape.App2Location)) { echo(I18N.TaskTray_AppNotFound, tape.App2Location); } } break; }
 		case IDM_APP3: { if (tape.App3Location) { if (!LaunchProcess(tape.App3Location)) { echo(I18N.TaskTray_AppNotFound, tape.App3Location); } } break; }
 		case IDM_APP4: { if (tape.App4Location) { if (!LaunchProcess(tape.App4Location)) { echo(I18N.TaskTray_AppNotFound, tape.App4Location); } } break; }
+		case IDM_MENU_IMPORT: { if (tape.Import()) SendMessage(hWnd, WM_RELOAD, tape.Profile, 1); break; }
+		case IDM_MENU_EXPORT: { tape.Export(); break; }
 		case IDM_MENU_ABOUT: { DialogBox(tape.Ds2hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About); break; }
 		default: return DefWindowProc(hWnd, message, wParam, lParam);
 		}

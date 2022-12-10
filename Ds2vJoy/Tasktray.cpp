@@ -69,11 +69,13 @@ void Tasktray::CreateMenu()
 	AppendMenu(m_menu, MF_GRAYED, IDM_MAPPING, _T("Mapping"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_RAPIDFIRE, _T("RapidFire"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_VJOY, _T("vJoy"));
-	AppendMenu(m_menu, MF_GRAYED, IDM_XINPUT, _T("XOutput"));
+	AppendMenu(m_menu, MF_GRAYED, IDM_XOUTPUT, _T("Output"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_KEYMAP, _T("Keymap"));
 	AppendMenu(m_menu, MF_GRAYED, IDM_GUARDIAN, _T("Guardian"));
 	for (int i = 0; i < 6; i++) { SwapMenuitem(i); };
 	AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
+	AppendMenu(m_menu, MF_POPUP, IDM_MENU_IMPORT, I18N.IMPORT);
+	AppendMenu(m_menu, MF_POPUP, IDM_MENU_EXPORT, I18N.EXPORT);
 	AppendMenu(m_menu, MF_POPUP, IDM_MENU_ABOUT, I18N.ABOUT);
 	AppendMenu(m_menu, MF_SEPARATOR, NULL, NULL);
 	AppendMenu(m_menu, MF_POPUP, IDM_MENU_EXIT, I18N.EXIT);
@@ -113,9 +115,9 @@ void Tasktray::SwapMenuitem(int item)
 	case TasktrayItem_XOutputPaused:
 	{
 		if (tape.XOutputPaused)
-			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_XINPUT, I18N.XOutputPaused_Off);
+			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_XOUTPUT, I18N.XOutputPaused_Off);
 		else
-			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_XINPUT, I18N.XOutputPaused_On);
+			ModifyMenu(m_menu, MenuOffset + 3, MF_BYPOSITION | MF_POPUP, IDM_XOUTPUT, I18N.XOutputPaused_On);
 		break;
 	}
 	case TasktrayItem_KeymapPaused:

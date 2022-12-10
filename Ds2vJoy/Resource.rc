@@ -258,6 +258,7 @@ IDR_MENU_MAPPING MENU
 BEGIN
     POPUP "Menu"
     BEGIN
+        MENUITEM "",                            IDM_MENU_DISABLE
         MENUITEM "",                            IDM_MENU_ADD
         MENUITEM "",                            IDM_MENU_EDIT
         MENUITEM "",                            IDM_MENU_DEL

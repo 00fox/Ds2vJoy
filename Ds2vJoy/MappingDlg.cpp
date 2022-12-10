@@ -150,24 +150,25 @@ void MappingDlg::Init(bool isClone)
 	}
 
 	{
-		m_TabsID[0] = IDM_MENU_ADD;
-		m_TabsID[1] = IDM_MENU_EDIT;
-		m_TabsID[2] = IDM_MENU_DEL;
-		m_TabsID[3] = IDM_MENU_COPY;
-		m_TabsID[4] = IDM_MENU_SEPARATOR;
-		m_TabsID[5] = IDM_MENU_MOVE_TO_0;
-		m_TabsID[6] = IDM_MENU_MOVE_TO_1;
-		m_TabsID[7] = IDM_MENU_MOVE_TO_2;
-		m_TabsID[8] = IDM_MENU_MOVE_TO_3;
-		m_TabsID[9] = IDM_MENU_MOVE_TO_4;
-		m_TabsID[10] = IDM_MENU_MOVE_TO_5;
-		m_TabsID[11] = IDM_MENU_MOVE_TO_6;
-		m_TabsID[12] = IDM_MENU_MOVE_TO_7;
-		m_TabsID[13] = IDM_MENU_MOVE_TO_8;
-		m_TabsID[14] = IDM_MENU_SWAP_VIEW;
-		m_TabsID[15] = IDM_MENU_ADD_NOTICE;
+		m_TabsID[0] = IDM_MENU_DISABLE;
+		m_TabsID[1] = IDM_MENU_ADD;
+		m_TabsID[2] = IDM_MENU_EDIT;
+		m_TabsID[3] = IDM_MENU_DEL;
+		m_TabsID[4] = IDM_MENU_COPY;
+		m_TabsID[5] = IDM_MENU_SEPARATOR;
+		m_TabsID[6] = IDM_MENU_MOVE_TO_0;
+		m_TabsID[7] = IDM_MENU_MOVE_TO_1;
+		m_TabsID[8] = IDM_MENU_MOVE_TO_2;
+		m_TabsID[9] = IDM_MENU_MOVE_TO_3;
+		m_TabsID[10] = IDM_MENU_MOVE_TO_4;
+		m_TabsID[11] = IDM_MENU_MOVE_TO_5;
+		m_TabsID[12] = IDM_MENU_MOVE_TO_6;
+		m_TabsID[13] = IDM_MENU_MOVE_TO_7;
+		m_TabsID[14] = IDM_MENU_MOVE_TO_8;
+		m_TabsID[15] = IDM_MENU_SWAP_VIEW;
+		m_TabsID[16] = IDM_MENU_ADD_NOTICE;
 		m_hMenu = LoadMenu(tape.Ds2hInst, MAKEINTRESOURCE(IDR_MENU_MAPPING));
-		redrawMenu(16);
+		redrawMenu(17);
 
 		if (isClone)
 		{
@@ -353,22 +354,23 @@ void MappingDlg::redrawMenu(int ntabs, bool isclonemenu)
 			info.fState = MFS_UNCHECKED;
 			switch (i)
 			{
-			case 0: info.dwTypeData = I18N.MENU_ADD; break;
-			case 1: info.dwTypeData = I18N.MENU_EDIT; break;
-			case 2: info.dwTypeData = I18N.MENU_DEL; break;
-			case 3: info.dwTypeData = I18N.MENU_COPY; break;
-			case 4: info.dwTypeData = I18N.MENU_SEPARATOR; break;
-			case 5: info.dwTypeData = I18N.MENU_MOVE_TO_0; break;
-			case 6: info.dwTypeData = I18N.MENU_MOVE_TO_1; break;
-			case 7: info.dwTypeData = I18N.MENU_MOVE_TO_2; break;
-			case 8: info.dwTypeData = I18N.MENU_MOVE_TO_3; break;
-			case 9: info.dwTypeData = I18N.MENU_MOVE_TO_4; break;
-			case 10: info.dwTypeData = I18N.MENU_MOVE_TO_5; break;
-			case 11: info.dwTypeData = I18N.MENU_MOVE_TO_6; break;
-			case 12: info.dwTypeData = I18N.MENU_MOVE_TO_7; break;
-			case 13: info.dwTypeData = I18N.MENU_MOVE_TO_8; break;
-			case 14: info.dwTypeData = I18N.MENU_SWAP_VIEW; break;
-			case 15: info.dwTypeData = I18N.MENU_ADD_NOTICE; break;
+			case 0 : info.dwTypeData = I18N.MENU_DISABLE; break;
+			case 1 : info.dwTypeData = I18N.MENU_ADD; break;
+			case 2 : info.dwTypeData = I18N.MENU_EDIT; break;
+			case 3 : info.dwTypeData = I18N.MENU_DEL; break;
+			case 4 : info.dwTypeData = I18N.MENU_COPY; break;
+			case 5 : info.dwTypeData = I18N.MENU_SEPARATOR; break;
+			case 6 : info.dwTypeData = I18N.MENU_MOVE_TO_0; break;
+			case 7 : info.dwTypeData = I18N.MENU_MOVE_TO_1; break;
+			case 8 : info.dwTypeData = I18N.MENU_MOVE_TO_2; break;
+			case 9 : info.dwTypeData = I18N.MENU_MOVE_TO_3; break;
+			case 10: info.dwTypeData = I18N.MENU_MOVE_TO_4; break;
+			case 11: info.dwTypeData = I18N.MENU_MOVE_TO_5; break;
+			case 12: info.dwTypeData = I18N.MENU_MOVE_TO_6; break;
+			case 13: info.dwTypeData = I18N.MENU_MOVE_TO_7; break;
+			case 14: info.dwTypeData = I18N.MENU_MOVE_TO_8; break;
+			case 15: info.dwTypeData = I18N.MENU_SWAP_VIEW; break;
+			case 16: info.dwTypeData = I18N.MENU_ADD_NOTICE; break;
 			}
 			SetMenuItemInfo(m_hMenu, m_TabsID[i], FALSE, &info);
 		}
@@ -1403,9 +1405,9 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				POINT pt;
 				GetCursorPos(&pt);
 				ScreenToClient(m_hList, &pt);
-				if (pt.x < 45)
-					stateMappingDlg();
-				else
+				//if (pt.x < 45)
+				//	stateMappingDlg();
+				//else
 					editMappingDlg();
 				break;
 			}
@@ -2135,6 +2137,7 @@ INT_PTR MappingDlg::_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
+		case IDM_MENU_DISABLE: { stateMappingDlg(); break; }
 		case IDM_MENU_ADD: { addMappingDlg(); break; }
 		case IDM_MENU_EDIT: { editMappingDlg(); break; }
 		case IDM_MENU_DEL: { deleteMappingDlg(); break; }
@@ -2565,21 +2568,101 @@ void MappingDlg::stateMappingDlg()
 		if (item.lParam != NULL)
 		{
 			Mapping* data = (Mapping*)item.lParam;
-			switch (data->Enable)
+			if (data->Enable != 2)
+				switch (data->Enable)
+				{
+				case 0:
+				{
+					data->Enable = 1;
+					save();
+					break;
+				}
+				case 1:
+				{
+					data->Enable = 0;
+					save();
+					break;
+				}
+				}
+		}
+	}
+	else if (nselected > 1)
+	{
+		lastidxs.clear();
+		int idx;
+		while ((idx = ListView_GetNextItem(m_hList, -1, LVNI_SELECTED)) != -1)
+		{
+			ListView_SetItemState(m_hList, idx, LVIF_STATE, LVIS_SELECTED);
+			LV_ITEM item = { 0 };
+			item.mask = LVIF_PARAM;
+			item.iItem = idx;
+			item.iSubItem = 0;
+			ListView_GetItem(m_hList, &item);
+			if (item.lParam != NULL)
 			{
-			case 0:
+				Mapping* data = (Mapping*)item.lParam;
+				if (data->Enable != 2)
+					lastidxs.push_back(idx);
+			}
+		}
+		{
+			Mappings newtmp;
+			size_t length = tape.Mappingdata.size();
+			for (int i = 0; i < length; i++)
+				if (tape.Mappingdata[i].Tab != m_Tab)
+					newtmp.push_back((Mapping)tape.Mappingdata[i]);
+
+			int lastitemindex = ListView_GetItemCount(m_hList);
+			for (int i = 0; i < lastitemindex; i++)
 			{
-				data->Enable = 1;
-				save();
-				break;
+				LV_ITEM item = { 0 };
+				item.mask = LVIF_PARAM;
+				item.iItem = i;
+				if (!ListView_GetItem(m_hList, &item))
+				{
+					PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, mDDlg.m_mode, MAKELPARAM(0, m_Tab));
+					RECT win;
+					GetWindowRect(tape.Ds2hWnd, &win);
+					MessageBoxPos(tape.Ds2hWnd, I18N.MBOX_ErrorWhileSaving, I18N.MBOX_ErrTitle, MB_ICONERROR, win.left + 275, win.top + 30);
+					return;
+				}
+				if (item.lParam != NULL)
+				{
+					Mapping* data = (Mapping*)item.lParam;
+					if (std::find(lastidxs.begin(), lastidxs.end(), i) != lastidxs.end())
+					{
+						if (data->Enable != 2)
+							switch (data->Enable)
+							{
+							case 0:
+							{
+								data->Enable = 1;
+								save();
+								break;
+							}
+							case 1:
+							{
+								data->Enable = 0;
+								save();
+								break;
+							}
+							}
+					}
+					newtmp.push_back(*data);
+				}
 			}
-			case 1:
-			{
-				data->Enable = 0;
-				save();
-				break;
-			}
-			}
+
+			Mappings newmap;
+			length = newtmp.size();
+			for (int j = 0; j < 9; j++)
+				for (int i = 0; i < length; i++)
+					if (newtmp[i].Tab == j)
+						newmap.push_back((Mapping)newtmp[i]);
+
+			tape.Mappingdata.swap(newmap);
+			tape.Save(tape.Setting_Mappingdata);
+
+			PostMessage(tape.Ds2hWnd, WM_ADDMAPPING, NULL, MAKELPARAM(0, NULL));
 		}
 	}
 

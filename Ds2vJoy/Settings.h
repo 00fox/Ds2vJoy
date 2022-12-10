@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int			VersionDate = 202211131;
+	const int			VersionDate = 202212101;
 	const std::wstring	ProgramFilesDirName = L"Ds2vJoy";
 	bool				BreakAndExit = false;
 	bool				FirstPass = true;
@@ -18,30 +18,11 @@ public:
 	WCHAR				XOutputtxt[20];
 	WCHAR				Guardiantxt[20];
 	WCHAR				Webtxt[20];
-	//////////////////////
 	WCHAR				ViGEmtxt[20];
-
-	enum SettingCategory : short
-	{
-		SettingCategory_Create = -2,
-		SettingCategory_Update = -1,
-		SettingCategory_All,
-		SettingCategory_Profile,
-		SettingCategory_Tray,
-		SettingCategory_Settings,
-		SettingCategory_Mapping,
-		SettingCategory_RapidFire,
-		SettingCategory_Keymap,
-		SettingCategory_XOutput,
-		SettingCategory_Guardian,
-		SettingCategory_Web,
-		SettingCategory_WebScript,
-		SettingCategory_Links,
-		SettingCategory_Notepad
-	};
 
 	enum SettingName : short
 	{
+		Setting_Create = -2,
 		Setting_Update = -1,
 		Setting_All,				//All
 		Setting_Version,
@@ -236,8 +217,10 @@ public:
 
 	BOOL				Init(WCHAR* inifile);
 	void				LoadLanguage();
-	void				Load(int category = SettingCategory_All);
-	void				Save(int item = Setting_All);
+	void				Load(int category = Setting_All, bool isExport = false);
+	void				Save(int category = Setting_All, bool isExport = false);
+	bool				Import();
+	bool				Export();
 
 	void				setCountry(int land);
 	void				setvJoyDevice(int id);
@@ -750,6 +733,7 @@ private:
 	std::vector<BYTE>	KeymapString(std::wstring);
 
 	WCHAR				m_file[MAX_PATH + 1] = { 0 };
+	WCHAR				m_file2[MAX_PATH + 1] = { 0 };
 };
 
 	extern	Settings			tape;

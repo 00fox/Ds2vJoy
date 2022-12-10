@@ -67,7 +67,7 @@ private:
 
 	std::chrono::system_clock::time_point m_timeOfLastDarkMenuCall = std::chrono::system_clock::now();
 	unsigned char		tabrightclick;
-	int					m_TabsID[16] = { 0 };
+	int					m_TabsID[17] = { 0 };
 	int					m_ReminderId[32] = { 0 };
 	int					m_Randcolor[32] = { 0 };
 	bool				m_active = false;
