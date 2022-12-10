@@ -5,6 +5,9 @@
 
 Thanks
 
+**Opened Issues, please report bugs, problems**
+Report them to issues@00fox.com, I'll publish them in 'Issues'
+
 # Ds2vJoy
 DualShock™ and DualSense™, DirectInput or XInput to DirectOutput or XOutput for Windows 64 bits
 
@@ -35,18 +38,21 @@ Content:
   - Microsoft Edge WebView2 for internet, local files, with automation, stay overgame
   - Simple notepad, rapid access, autosave
   - They can stay over your desktop or game, borders disappear automatically when mouseout
+- Import/Export, the share your .ds2 templates files easily without altering whole program
 - Multiple efficiency, like docking, insight, transparency, automatic full height, minimize & restore
-
-**Opened Issues, please report bugs, problems**
 
 ## How to use
 1. Launch Ds2vJoy.exe, no installation is required
    * an .ini file will be created, to save parameters, with some examples already filled
+
 2. If first time install drivers you need, vJoy, ViGem, Guardian under XOutput & Guardian Tabs
    * real quick, drivers only, you can remove them after use if you wish
+
 3. Connect your DS4/DS5 or any other Joystick, or two via USB or Bluetooth
    * or simply skip to use only keyboard and mouse
+
 4. Choose your sources under Settings Tab
+
 5. Configure as you wish (you have 3 profiles accessible by the system tray)
 
 - It is okay to connect DS4 after starting the game. VJoy and ViGEm are always visible in the game
@@ -128,6 +134,7 @@ Each tab corresponds to a drawer, in which you can organize the different mappin
 - Each of these tabs are by default, like the first one, set to 'Always', but just show their numbers.
 - 'Always' means that all mappings, if they are checked, will always work, just, the tabs are processed in the order of appearance
 - But you can assign a mode for each of these tabs, which allows you to say that the mappings they contain will only be active in this mode
+- For this, just right click on the tab
 - The tabs left in the 'Always' position will remain active even if you are in another mode than the starting one (1) (see Special mouse actions to know how)
 - The first tab is neutral and cannot be assigned to another mode, the others (1-8) all can. There is no order to follow, and two tabs can share the same mode. On the other hand, the order of processing is also the order of the tabs
 
@@ -140,18 +147,23 @@ There is a dual view mode, where you can clone a tab
 
 ![Mapping](Doc/4_Ds2vJoy_Mapping_Tools.png)
 
-Order, add, delete, copy or edit (double click or right click menu) your mappings easily
-Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
-- Two different views exist
-  - Each source, destination, tagg
-  - Each source, notice
-  - Swap between them by right clicking on the list and choosing 'Swap view' in the menu that will pop
-- Edit, delete, copy and move actions can process multiple mappings the same time
-  - You can for example copy Square/Triangle/Circle/Cross and after edit all the copies the same time to add L1 as source, then you'll have L1+Square/L1+Triangle/L1+Circle/L1+Cross. After that, you'll just need to change the destination for each
-  - When edit, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
-- when copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
-- Add, move a sepator, for clarity or organization, at the end or specified location
-  - Cant't be edited, and does not interfere with the operation
+By right-clicking on elements of the list, you can:
+- Order, add, delete, disable, copy or edit (double click or right click menu) your mappings easily
+- Or Move them to another tab (0-8, 0 is the first, always seen as 'Always')
+
+Two different views exist (will be modified in futur to see both the same time inside a larger window)
+- Each source, destination, tags
+- Each source, notice
+- Swap between them by right clicking on the list and choosing 'Swap view' in the menu that will pop
+
+Edit, delete, disable, copy and move actions can process multiple mappings the same time
+- You can for example copy Square/Triangle/Circle/Cross bloc, move the copies in another mode and after alter their actions individually
+- When editing, editor is a blank one, and only touched values will be repercuted to the selection you've made before. You don't need to enter a valid DS/vJoy button
+
+When copy only one, it is added just after the source of the copy, if multiple ones are processed, they are all added at the end of the Tab
+
+Add, move a sepator, for clarity or organization, at the end or specified location
+- Cant't be edited, and does not interfere with the operation
 
 ![Mapping](Doc/5_Ds2vJoy_Mapping_List.png.png)
 
@@ -1027,12 +1039,21 @@ Remember you can use MINIMIZE/RESTORE special actions, for example, quickly hide
 ## Tray
 ![Tray](Doc/19_Ds2vJoy_Tray.png)
 
-Picture talk by itself
+The icon contain three informations:
+- yellow circle at the bottom is the profile, 1-3 left to right
+- number in the middle is the mode, 1-8
+- ray at the top is the stance, Back-Leaned-Leaned+Sat-Sat-Leaning left to right
 
-- The icon contain three informations:
-  - yellow circle at the bottom is the profile, 1-3 left to right
-  - number in the middle is the mode, 1-8
-  - ray at the top is the stance, Back-Leaned-Leaned+Sat-Sat-Leaning left to right
+Change profile
+
+Find extrenal programs if you added them under 'Links' tab
+
+Pause/Restart certain parts of the program
+
+Import or Export Mappings, RapidFire, Keymap and Output
+- Other parts of the program will not be imported/exported
+- Then easily share your .ds2 files without modifying the whole program
+- Remember to add a notice to the lines of your mappings if you think something needs a better understanding
 
 ## Efficiency
 ![Efficiency](Doc/20_Ds2vJoy_Efficiency.png)
