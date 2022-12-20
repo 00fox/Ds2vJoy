@@ -13,7 +13,7 @@ DualShock™ and DualSense™, DirectInput or XInput to DirectOutput or XOutput 
 
 You can combine one or more of these options, no one is required:
 - DualShock™ and DualSense™, DirectInput or XInput as source
-  - Mix of two different DirectInput sources allowed
+  - Mixing of two different DirectInput sources allowed
   - Bluetooth compatible
   - A lot of buttons added (individual axes, L1R1 the same time etc)
 - Keyboard and mouse as source and destination
