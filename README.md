@@ -1,4 +1,4 @@
-﻿Please consider supporting the project by clicking [![Github Sponsorship](.github/Sponsors.gif)](https://https://github.com/sponsors/00fox)
+﻿Please consider supporting the project by clicking [![Github Sponsorship](.github/Sponsors.gif)](https://github.com/sponsors/00fox)
 - Influence future choices
 - Or propose your own and give them importance
 - You will find a list of pending requests in the issues, take a look...
