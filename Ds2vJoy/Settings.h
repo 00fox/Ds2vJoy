@@ -6,7 +6,7 @@
 class Settings
 {
 public:
-	const int			VersionDate = 202212101;
+	const int			VersionDate = 202502011;
 	const std::wstring	ProgramFilesDirName = L"Ds2vJoy";
 	bool				BreakAndExit = false;
 	bool				FirstPass = true;

@@ -474,11 +474,11 @@ void DestinationButton::SetVal(float val)
 	}
 	case Type_Effect:
 	{
-		if (*m_data == 0 && *m_data2 == 0)
-			return;
-
 		if (m_AxisID >= XY_DEL_12_1 and m_AxisID <= ZRZ_DEL_16_16)
 		{
+			if (*m_data == 0 && *m_data2 == 0)
+				return;
+
 			const double π = 3.141592653589793;
 			double result = atan2(32767.5 - *m_data2, *m_data - 32767.5);
 
@@ -571,6 +571,9 @@ void DestinationButton::SetVal(float val)
 		}
 		else if (m_AxisID >= XY_DISTORT_U___ and m_AxisID <= ZRZ_DISTORT__DDDDD)
 		{
+			if (*m_data == 0 && *m_data2 == 0)
+				return;
+
 			const double π = 3.141592653589793;
 			long x = 32767.5 - *m_data;
 			long y = 32767.5 - *m_data2;
@@ -711,9 +714,13 @@ void DestinationButton::SetVal(float val)
 			}
 			*m_data = (x < 0) ? (32767.5 - r * cos(result + (π / 2))) : (r * cos(result + (π / 2)) + 32767.5);
 			*m_data2 = 32767.5 - r * sin(result + (π / 2));
+			return;
 		}
 		else
 		{
+			if (*m_data == 0)
+				return;
+
 			switch (m_AxisID)
 			{
 			case X_INV:

@@ -1,3 +1,24 @@
+20250201-1
+Mapping:
+- Corrected a bug while running an after effect with an undefined source, that caused the program to crash
+Diverse:
+- Improved readability of mapping help pop-ups
+Type of release : MINOR + PATCH (MAJOR/MINOR/PATCH)
+
+20221210-1
+Settings:
+- Default template on first launch is now accurate with 'output' tab, it hadn't been modified after altering source buttons
+
+Mappings:
+- Enable/Disable a mapping is right click now, and can proceed multiple mappings same time, so don't bother anymore figuring out where to double-click to edit them
+
+Systray:
+- Import or Export Mappings, RapidFire, Keymap and Output
+  - Other parts of the program will not be imported/exported
+  - Then easily share your .ds2 files without modifying the whole program
+  - Remember to add a notice to the lines of your mappings if you think something needs a better understanding
+Type of release : MINOR + PATCH (MAJOR/MINOR/PATCH)
+
 20221113-1
 General:
 - Converted the use of dll in static.
@@ -33,6 +54,7 @@ Diverse:
 - Bug with battery values and mic status with ds5 solved.
 - Visual bug with second source in mappings corrected.
 - Code optomization
+Type of release : MAJOR + PATCH (MAJOR/MINOR/PATCH)
 
 20220404-1
 Ds2vjoy build in driver utilities x64 only Latest
@@ -124,7 +146,6 @@ OrXor1	OrXor2	Sustain ?	Source1		Source2		Source3		Source1
 1/2	1/2	Interrupt)	val	>	val	>	val	>	released1
 sustain is released and time stamps is in use (and no 'Interrupt' else mapping is stopped when released)
 PATCH (MAJOR/MINOR/PATCH)
-
 
 20211012-1
 Ds2vjoy stability patch x64
@@ -397,7 +418,6 @@ On bottom right, you can see a Reminder to remember dispatch of attributed butto
 You can use it as you wish, it is saved as soon as you change a state, and you get it back next session
 Corner indicator automatically indicates all vJoy buttons (1-32) used in all mappings
 Type of release : MAJOR (MAJOR/MINOR/PATCH)
-Please report bug
 
 20210817-1
 Ds2vjoy toggle patch x64

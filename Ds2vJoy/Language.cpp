@@ -1783,241 +1783,265 @@ void LoadLanguage()
 	I18N.HELP_DINPUT_S0										= I18N.Button_SLO;
 	I18N.HELP_DINPUT_S1										= I18N.Button_SL1;
 
-	I18N.HELP_IFMOUSE										= WCHARI(L"If mouse requirement:\n\
-If a mouse is already in use\n\
-double, if none mouse is actually in use");
-	I18N.HELP_FORCE											= WCHARI(L"Force overpass:\n\
-Ignore if a button has been disabled by a precedent mapping\n\
-double, this will work only if this mapping is already working");
-	I18N.HELP_ORXOR											= WCHARI(L"OrXor condition:\n\
-'or' instead of simple combination\n\
-double, 'xor' conditions instead of simple combination\n\
-If only first 'or' is used and first source is killed\n\
-	to launch the mapping\n\
+	I18N.HELP_IFMOUSE										= WCHARI(L"If mouse requirement:\n\n\
+1	If a mouse is already in use\n\
+2	If none mouse is actually in use");
+	I18N.HELP_FORCE											= WCHARI(L"Force overpass:\n\n\
+1	Ignore if a button has been disabled by a precedent mapping\n\
+2	This will work only if this mapping is already working");
+	I18N.HELP_ORXOR											= WCHARI(L"OrXor condition:\n\n\
+1	'or' instead of simple combination\n\
+2	'xor' conditions instead of simple combination\n\n\
+If only first 'or' is used and first source is killed to launch the mapping\n\
 	(for example, pushed more than a short press),\n\
 	and still pushed, second source is still available.\n\
 	But both will have to be released\n\
 	to be available to trigger the mapping again");
-	I18N.HELP_NOT											= WCHARI(L"Not condition:\n\
-The mapping won't be launched if this button is pressed\n\
-double, except if this mapping is already running\n\
+	I18N.HELP_NOT											= WCHARI(L"Not condition:\n\n\
+1	The mapping won't be launched if this button is pressed\n\
+2	Except if this mapping is already running\n\n\
 See 'Pause' for more informations about not condition");
-	I18N.HELP_SOURCE										= WCHARI(L"Source selection:\n\
-None, Source, DS or DirectInput\n\
-Simple, Sisaxis(S)\n\
-Double, Mouse and Keyboard (K)\n\
-Triple, Destination (D), even if vJoy not used");
-	I18N.HELP_DESTINATION									= WCHARI(L"Destination selection:\n\
-None, vJoy\n\
-Simple, Mouse actions, Magnifier (M)\n\
-Double, Sound, modes, window, stats and time actions (S)\n\
-Triple, Axis movements (A)\n\
-quadruple, Modules actions, Web, Notepad, etc. (W)");
-	I18N.HELP_DISABLING_S									= WCHARI(L"Disabling post action:\n\
-This button will be disabled for next mappings\n\
-	if this mapping is running (except with Force)\n\
-double (only source),\n\
-	if Short (or Double), even when release time,\n\
-	before time to activate spent (or second press)");
-	I18N.HELP_DISABLING_D									= WCHARI(L"Disabling post action:\n\
-This button will be disabled for next mappings\n\
-	if this mapping is running\n\
-double (only destination),\n\
-	if time stamp is in use, disabling will be effective\n\
-	until whole mapping is finished instead this destination only");
-	I18N.HELP_MACRO											= WCHARI(L"Macro modificator:\n\
-simple, Interrupt:\n\
-	Interrupt macros on release(even if timestamp not finished)\n\
-double, No sustain :\n\
-	we use release value of first source instead of 0xFFFF\n\
-	if timestamp is still in use and we have released sources\n\
-	second source too if first is not pushed and OrXor1\n\
-	third source too if first is not pushed, second isn't in used and OrXor1 + OrXor2");
-	I18N.HELP_PAUSE											= WCHARI(L"Pause modificator:\n\
-simple, Pause1:\n\
-	Pause this mapping while a 'not1' condition\n\
-double, Pause2:\n\
-	Pause this mapping while a 'not2' condition\n\
-triple, Pause:\n\
-	Pause this mapping while a 'not' condition\n\
+	I18N.HELP_SOURCE										= WCHARI(L"Source selection:\n\n\
+-	Usual sources\n\
+1	Sisaxis(S)\n\
+2	Mouse and Keyboard (K)\n\
+3	Destination (D), even if vJoy not used");
+	I18N.HELP_DESTINATION									= WCHARI(L"Destination selection:\n\n\
+-		Usual destinations\n\
+1 (M)	Mouse actions, Magnifier\n\
+2 (S)	Sound, modes, window, stats and time actions\n\
+3 (A)	Axis movements\n\
+4 (E)	After effects\n\
+5 (W)	Modules actions, Web, Notepad, etc.");
+	I18N.HELP_DISABLING_S									= WCHARI(L"Disabling post action:\n\n\
+1	This button will be disabled for next mappings\n\
+		if this mapping is running (except with Force)\n\
+2	If Short (or Double), even when release time,\n\
+		before time to activate spent (or second press)\n\
+		(only source)");
+	I18N.HELP_DISABLING_D									= WCHARI(L"Disabling post action:\n\n\
+1	This button will be disabled for next mappings\n\
+		if this mapping is running\n\
+2	If time stamp is in use, disabling will be effective\n\
+		until whole mapping is finished instead only this one\n\
+		(only destination)");
+	I18N.HELP_MACRO											= WCHARI(L"Macro modificator:\n\n\
+1	Interrupt:\n\
+		Interrupt macros on release(even if timestamp not finished)\n\
+2	No sustain :\n\
+		we use release value of first source instead of 0xFFFF\n\
+		if timestamp is still in use and we have released sources\n\
+		second source too if first is not pushed and OrXor1\n\
+		third source too if first is not pushed, second isn't in used and OrXor1 + OrXor2");
+	I18N.HELP_PAUSE											= WCHARI(L"Pause modificator:\n\n\
+1	Pause1:\n\
+		Pause this mapping while a 'not1' condition\n\
+2	Pause2:\n\
+		Pause this mapping while a 'not2' condition\n\
+3	Pause:\n\
+		Pause this mapping while a 'not' condition\n\
 otherwise :\n\
 	if 'not' is a simple, and 'not' button is pressed, the mapping is interrupted\n\
 	if 'not' is a double, and 'not' button is pressed, the mapping still continue");
-	I18N.HELP_TRANSITIVITY									= WCHARI(L"Transitivity modificator:\n\
+	I18N.HELP_TRANSITIVITY									= WCHARI(L"Transitivity modificator:\n\n\
 Brings different behaviors and transition possibilities while mode changed\n\
-simple : Conduct\n\
-	If the source is already pushed when entering the new mode,\n\
-	the mapping is triggered\n\
-double : Complete\n\
-	You can release and trigger again in new mode\n\
-	if it was already active before changing mode\n\
-triple : Limited\n\
-	Action continue while changing mode,\n\
-	but you can't trigger again if release\n\
-quadruple : Retroactive\n\
-	Instead of continuation, button is released,\n\
-	but triggered again if still pushed when initial mode is back\n\
-quintuple : One time back\n\
-	The same as Retroactive, but while pushed,\n\
-	you can change modeand get it triggered again only one time.\n\
-	After, you have to releaseand trigger it again in its own mode\n\
-in any case, except conduct,\n\
+1	Conduct\n\
+		If the source is already pushed when entering the new mode,\n\
+		the mapping is triggered\n\
+2	Complete\n\
+		You can release and trigger again in new mode\n\
+		if it was already active before changing mode\n\
+3	Limited\n\
+		Action continue while changing mode,\n\
+		but you can't trigger again if release\n\
+4	Retroactive\n\
+		Instead of continuation, button is released,\n\
+		but triggered again if still pushed when initial mode is back\n\
+5	One time back\n\
+		The same as Retroactive, but while pushed,\n\
+		you can change modeand get it triggered again only one time.\n\
+		After, you have to releaseand trigger it again in its own mode\n\
+In any case, except conduct,\n\
 	you cannot launch the mapping of a mode when another mode is active,\n\
 	if it was not activated before this change of mode");
-	I18N.HELP_TOGGLE										= WCHARI(L"Toggle modificator:\n\
-Satisfy mapping condition once to start, once again one to stop\n\
-double, destinations states begin activated at program launch\n\
+	I18N.HELP_TOGGLE										= WCHARI(L"Toggle modificator:\n\n\
+1	Satisfy mapping condition once to start, once again one to stop\n\
+2	Destinations states begin activated at program launch\n\n\
 Can be used to time based mouse actions too\n\
 	and for mouse if ACTIVE_MOUSE special action is used");
-	I18N.HELP_SWITCH										= WCHARI(L"Switch overpass:\n\
-simple, On\n\
-	double, Off\n\
+	I18N.HELP_SWITCH										= WCHARI(L"Switch overpass:\n\n\
+1	On\n\
+2	Off\n\n\
 Switch can be use in conjunction or independently from Toggle\n\
 	In conjuction it forces the toggle state\n\
 	Otherwize it acts as a linear commutator");
-	I18N.HELP_OVERCONTROL									= WCHARI(L"Overcontrol modificator:\n\
-Like for normal axis, the value of axis movement takes place over last axis values\n\
-	of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)\n\
-	but you can use Overcontrol checkbox to fuse values\n\
-double, Protect : further axis action which should overpass this one won't be permit\n\
-	(may be used on other vJoy buttons)\n\
-	if there are merged vJoy axes of type X, Y, Z, RZ in the mapping,\n\
-	the threshold is removed on, respectively, the LX, LY, RX, RY axes of source");
-	I18N.HELP_START											= WCHARI(L"Start Time stamp:\n\
+	I18N.HELP_OVERCONTROL									= WCHARI(L"Overcontrol modificator:\n\n\
+1	Like for normal axis, the value of axis movement takes place over last axis values\n\
+		of the same type (for example X, XTR, XINV, XY_C_UR: XY center to UpRight)\n\
+		but you can use Overcontrol checkbox to fuse values\n\
+2	Protect : further axis action which should overpass this one won't be permit\n\
+		(may be used on other destination buttons)\n\
+		If there are merged vJoy axes of type X, Y, Z, RZ in the mapping,\n\
+		the threshold is removed on, respectively, the LX, LY, RX, RY axes of source");
+	I18N.HELP_START											= WCHARI(L"Start Time stamp:\n\n\
 Enter start (if not as soon as)\n\
-If you enter an odd number,\n\
-	0 - 9 milliseconds will be added,\n\
-	different each time");
-	I18N.HELP_END											= WCHARI(L"End Time stamp:\n\
+	If you enter an odd number,\n\
+		0 - 9 milliseconds will be added,\n\
+		different each time");
+	I18N.HELP_END											= WCHARI(L"End Time stamp:\n\n\
 Enter end (if not when release)\n\
-If you enter an odd number,\n\
-	0 - 9 milliseconds will be added,\n\
-	different each time\n\
+	If you enter an odd number,\n\
+		0 - 9 milliseconds will be added,\n\
+		different each time\n\
 Or enter ‘return to’ time");
-	I18N.HELP_ONRELEASE										= WCHARI(L"OnRelease condition:\n\
-To begin the action on release\n\
-double, only the up press,\n\
-	even if some other timestamps are finished");
-	I18N.HELP_NORELEASE										= WCHARI(L"NoRelease modificator:\n\
-To decide to not do release action\n\
-	while transitivity mode active and mode changed\n\
-double, one turn of this release action\n\
-	will still be performed then stopped");
-	I18N.HELP_NLRELEASE										= WCHARI(L"NlRelease (normal release) overpass:\n\
-To decide not perform NoRelease condition\n\
-	if back to initial mode\n\
-double, not perform NoRelease condition\n\
-	while the new mode");
-	I18N.HELP_SHORT											= WCHARI(L"Short condition:\n\
-Short\n\
-	Simple:\n\
+	I18N.HELP_ONRELEASE										= WCHARI(L"OnRelease condition:\n\n\
+1	To begin the action on release\n\
+2	Only the up press,\n\
+		even if some other timestamps are finished");
+	I18N.HELP_NORELEASE										= WCHARI(L"NoRelease modificator:\n\n\
+1	To decide to not do release action\n\
+		while transitivity mode active and mode changed\n\
+2	One turn of this release action\n\
+		will still be performed then stopped");
+	I18N.HELP_NLRELEASE										= WCHARI(L"NlRelease (normal release) overpass:\n\n\
+1	To decide not perform NoRelease condition\n\
+		if back to initial mode\n\
+2	Not perform NoRelease condition\n\
+		while the new mode");
+	I18N.HELP_SHORT											= WCHARI(L"Short condition:\n\n\
+Short (Simple)\n\
 	You have to press and release quickly\n\
-	you'll have to use timestamp or On release\n\
+	You'll have to use timestamp or On release\n\
 	Time: Immediate\n\
-Short & Double\n\
-	Double short:\n\
+Short & Double (Double short)\n\
 	Second press acting like short\n\
-	you'll have to use timestamp or On release\n\
-	Time: ~first press and second press < long\n\
-		+ second press duration > long\n\
-Short & Long\n\
-	Medium long:\n\
+	You'll have to use timestamp or On release\n\
+	Time: ~first press and second press	(< long)\n\
+		+ second press duration	(> long)\n\
+Short & Long (Medium long)\n\
 	Like long but after double long\n\
-	Time: ~press > twice the time as long\n\
-All\n\
-	Very long\n\
-	Time: found in settings");
-	I18N.HELP_DOUBLE										= WCHARI(L"Double condition:\n\
+	Time: ~press (> twice the time as long)\n\
 Double\n\
 	You'll have to double press in a limited time\n\
-	Time: ~first press and second press < long\n\
-Short & Double\n\
-	Double short:\n\
-	Second press acting like short\n\
-	you'll have to use timestamp or On release\n\
-	Time: ~first press and second press < long\n\
-		+ second press duration > long\n\
-Double & Long\n\
-	Double long:\n\
+	Time: ~first press and second press (< long)\n\
+Double & Long (Double long)\n\
 	Second press acting like long\n\
-	Time: ~press > twice the time as long\n\
-All\n\
-	Very long\n\
-	Time: found in settings");
-	I18N.HELP_LONG											= WCHARI(L"Long condition:\n\
+	Time: ~press (> twice the time as long)\n\
 Long\n\
 	You have to stay pressed from a certain time\n\
 	Time: found in settings\n\
-Short & Long\n\
-	Medium long:\n\
-	Like long but after double long\n\
-	Time: ~press > twice the time as long\n\
-Double & Long\n\
-	Double long:\n\
-	Second press acting like long\n\
-	Time: ~press > twice the time as long\n\
-All\n\
-	Very long\n\
+All (Very long)\n\
+	You have to stay pressed from a long time\n\
 	Time: found in settings");
-	I18N.HELP_MOUSE_L1										= WCHARI(L"Left stick:\n\
+	I18N.HELP_DOUBLE										= WCHARI(L"Double condition:\n\n\
+Short (Simple)\n\
+	You have to press and release quickly\n\
+	You'll have to use timestamp or On release\n\
+	Time: Immediate\n\
+Short & Double (Double short)\n\
+	Second press acting like short\n\
+	You'll have to use timestamp or On release\n\
+	Time: ~first press and second press	(< long)\n\
+			+ second press duration		(> long)\n\
+Short & Long (Medium long)\n\
+	Like long but after double long\n\
+	Time: ~press (> twice the time as long)\n\
+Double\n\
+	You'll have to double press in a limited time\n\
+	Time: ~first press and second press (< long)\n\
+Double & Long (Double long)\n\
+	Second press acting like long\n\
+	Time: ~press (> twice the time as long)\n\
+Long\n\
+	You have to stay pressed from a certain time\n\
+	Time: found in settings\n\
+All (Very long)\n\
+	You have to stay pressed from a long time\n\
+	Time: found in settings");
+	I18N.HELP_LONG											= WCHARI(L"Long condition:\n\n\
+Short (Simple)\n\
+	You have to press and release quickly\n\
+	You'll have to use timestamp or On release\n\
+	Time: Immediate\n\
+Short+Double (Double short)\n\
+	Second press acting like short\n\
+	You'll have to use timestamp or On release\n\
+	Time: ~first press and second press	(< long)\n\
+		+ second press duration	(> long)\n\
+Short+Long (Medium long)\n\
+	Like long but after double long\n\
+	Time: ~press (> twice the time as long)\n\
+Double\n\
+	You'll have to double press in a limited time\n\
+	Time: ~first press and second press (< long)\n\
+Double+Long (Double long)\n\
+	Second press acting like long\n\
+	Time: ~press (> twice the time as long)\n\
+Long\n\
+	You have to stay pressed from a certain time\n\
+	Time: found in settings\n\
+All (Very long)\n\
+	You have to stay pressed from a long time\n\
+	Time: found in settings");
+	I18N.HELP_MOUSE_L1										= WCHARI(L"Left stick:\n\n\
 Absolute\n\
-	you move at a point which correspond\n\
+	You move at a point which correspond\n\
 	to the coordinates of the stick or touchpad");
-	I18N.HELP_MOUSE_L2										= WCHARI(L"Left stick:\n\
+	I18N.HELP_MOUSE_L2										= WCHARI(L"Left stick:\n\n\
 Mouse\n\
-	as a normal mouse with acceleration");
-	I18N.HELP_MOUSE_L3										= WCHARI(L"Left stick:\n\
+	As a normal mouse with acceleration");
+	I18N.HELP_MOUSE_L3										= WCHARI(L"Left stick:\n\n\
 Move\n\
-	adapted for game movements");
-	I18N.HELP_MOUSE_L4										= WCHARI(L"Left stick:\n\
+	Adapted for game movements");
+	I18N.HELP_MOUSE_L4										= WCHARI(L"Left stick:\n\n\
 Sniper\n\
-	extreme precision");
-	I18N.HELP_MOUSE_L5										= WCHARI(L"Left stick:\n\
+	Extreme precision");
+	I18N.HELP_MOUSE_L5										= WCHARI(L"Left stick:\n\n\
 Raid\n\
-move inside a zone whom coordinates\n\
-are entered in numbers group at the right");
-	I18N.HELP_MOUSE_T1										= WCHARI(L"Touchpad:\n\
-Absolute\n\
-	you move at a point which correspond\n\
-	to the coordinates of the stick or touchpad");
-	I18N.HELP_MOUSE_T2										= WCHARI(L"Touchpad:\n\
-Mouse\n\
-	as a normal mouse with acceleration");
-	I18N.HELP_MOUSE_T3										= WCHARI(L"Touchpad:\n\
-Slow\n\
-	precise mouse");
-	I18N.HELP_MOUSE_T4										= WCHARI(L"Touchpad:\n\
-Accuracy\n\
-	extreme precision");
-	I18N.HELP_MOUSE_T5										= WCHARI(L"Touchpad:\n\
-Grid\n\
-	move inside a zone whom coordinates\n\
+	Move inside a zone whom coordinates\n\
 	are entered in numbers group at the right");
-	I18N.HELP_MOUSE_R1										= WCHARI(L"Right stick:\n\
+	I18N.HELP_MOUSE_T1										= WCHARI(L"Touchpad:\n\n\
 Absolute\n\
-	you move at a point which correspond\n\
+	You move at a point which correspond\n\
 	to the coordinates of the stick or touchpad");
-	I18N.HELP_MOUSE_R2										= WCHARI(L"Right stick:\n\
+	I18N.HELP_MOUSE_T2										= WCHARI(L"Touchpad:\n\n\
 Mouse\n\
-	as a normal mouse with acceleration");
-	I18N.HELP_MOUSE_R3										= WCHARI(L"Right stick:\n\
+	As a normal mouse with acceleration");
+	I18N.HELP_MOUSE_T3										= WCHARI(L"Touchpad:\n\n\
+Slow\n\
+	Precise mouse");
+	I18N.HELP_MOUSE_T4										= WCHARI(L"Touchpad:\n\n\
+Accuracy\n\
+	Extreme precision");
+	I18N.HELP_MOUSE_T5										= WCHARI(L"Touchpad:\n\n\
+Grid\n\
+	Move inside a zone whom coordinates\n\
+	are entered in numbers group at the right");
+	I18N.HELP_MOUSE_R1										= WCHARI(L"Right stick:\n\n\
+Absolute\n\
+	You move at a point which correspond\n\
+	to the coordinates of the stick or touchpad");
+	I18N.HELP_MOUSE_R2										= WCHARI(L"Right stick:\n\n\
+Mouse\n\
+	As a normal mouse with acceleration");
+	I18N.HELP_MOUSE_R3										= WCHARI(L"Right stick:\n\n\
 Move\n\
-	adapted for game movements");
-	I18N.HELP_MOUSE_R4										= WCHARI(L"Right stick:\n\
+	Adapted for game movements");
+	I18N.HELP_MOUSE_R4										= WCHARI(L"Right stick:\n\n\
 Sniper\n\
-	extreme precision");
-	I18N.HELP_MOUSE_R5										= WCHARI(L"Right stick:\n\
+	Extreme precision");
+	I18N.HELP_MOUSE_R5										= WCHARI(L"Right stick:\n\n\
 Raid\n\
-move inside a zone whom coordinates\n\
-are entered in numbers group at the right");
-	I18N.HELP_MOUSE_GRID									= WCHARI(L"Priority:\n\
-when you have together raid / grid\n\
+	Move inside a zone whom coordinates\n\
+	are entered in numbers group at the right");
+	I18N.HELP_MOUSE_GRID									= WCHARI(L"Priority:\n\n\
+When you have together raid / grid\n\
 	and another mouse mode active,\n\
 	determine which one is the default one\n\
-unchecked: Raid / Grid is not the default one\n\
-simple: Raid/Grid is the default one\n\
-double: Remove previous (not the default again)");
-	I18N.HELP_GRID_X										= WCHARI(L"x:\n\
+_	Raid / Grid is not the default one\n\
+1	Raid/Grid is the default one\n\
+2	Remove previous (not the default again)");
+	I18N.HELP_GRID_X										= WCHARI(L"x:\n\n\
 Mouse action\n\
 	Abscissa of first point\n\
 Raid/Grid\n\
@@ -2027,7 +2051,7 @@ Magnifier\n\
 	x=1 y=0	at cursor position\n\
 	x=0 y=1	at actual point\n\
 	x=y=1	at given point (w,h)");
-	I18N.HELP_GRID_Y										= WCHARI(L"y:\n\
+	I18N.HELP_GRID_Y										= WCHARI(L"y:\n\n\
 Mouse action\n\
 	Ordinate of first point\n\
 Raid/Grid\n\
@@ -2037,50 +2061,50 @@ Magnifier\n\
 	x=1 y=0	at cursor position\n\
 	x=0 y=1	at actual point\n\
 	x=y=1	at given point (w,h)");
-	I18N.HELP_GRID_W										= WCHARI(L"w:\n\
+	I18N.HELP_GRID_W										= WCHARI(L"w:\n\n\
 Mouse action\n\
 	Abscissa of second point\n\
 Raid/Grid\n\
 	Width of the grid\n\
 Magnifier\n\
-	if x=y=1, Abscissa to zoom at");
-	I18N.HELP_GRID_H										= WCHARI(L"h:\n\
+	If x=y=1, Abscissa to zoom at");
+	I18N.HELP_GRID_H										= WCHARI(L"h:\n\n\
 Mouse action\n\
 	Ordinate of second point\n\
 Raid/Grid\n\
 	Height of the grid\n\
 Magnifier\n\
-	if x=y=1, Ordinate to zoom at");
-	I18N.HELP_GRID_NW										= WCHARI(L"nw:\n\
+	If x=y=1, Ordinate to zoom at");
+	I18N.HELP_GRID_NW										= WCHARI(L"nw:\n\n\
 Mouse action\n\
 	Abscissa of third point\n\
 Raid/Grid\n\
 	Number of horizontal subdivisions\n\
 Magnifier\n\
 	Zoom factor (1-4096)");
-	I18N.HELP_GRID_NH										= WCHARI(L"nh:\n\
+	I18N.HELP_GRID_NH										= WCHARI(L"nh:\n\n\
 Mouse action\n\
 	Ordinate of third point\n\
 Raid/Grid\n\
 	Number of horizontal subdivisions\n\
 Magnifier\n\
-	frational part of zoom level");
-	I18N.HELP_DIGITS										= WCHARI(L"Digits:\n\
-mouse coordinates,\n\
+	Frational part of zoom level");
+	I18N.HELP_DIGITS										= WCHARI(L"Digits:\n\n\
+Mouse coordinates,\n\
 	to make it easier to enter special mouse actions\n\
-click on the left number to start capture,\n\
+Click on the left number to start capture,\n\
 	the color changes for 3s,\n\
 	and after 3s it come back to its normal state\n\
 	with the mouse point you were at captured\n\
-while you already selected an element of the grid\n\
+While you already selected an element of the grid\n\
 	(x, y or w, h or nw, nh)\n\
 	click on the right number,\n\
 	it will insert the coordinates into this column");
 
-	I18N.HELP_SETTINGS_MOUSE								= WCHARI(L"Mouse acquisition:\n\
-via usual Virual keys\n\
-double, by activating mouse DirectInput\n\
-	to have buttons 6,7 and 8 too");
+	I18N.HELP_SETTINGS_MOUSE								= WCHARI(L"1 Mouse acquisition:\n\n\
+1	Via usual Virual keys\n\
+2	by activating mouse DirectInput\n\
+		to have buttons 6,7 and 8 too");
 
 	I18N.HELP_WEB_MENU										= WCHARI(L"Web menu");
 	I18N.HELP_WEB_CLOSE										= WCHARI(L"Left click: quit web module\nRight click: close actual tab");
