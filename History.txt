@@ -3,6 +3,7 @@ Mapping:
 - Corrected a bug while running an after effect with an undefined source, that caused the program to crash
 Diverse:
 - Improved readability of mapping help pop-ups
+- Updated all 3 packages
 Type of release : MINOR + PATCH (MAJOR/MINOR/PATCH)
 
 20221210-1
