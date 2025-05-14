@@ -30,7 +30,6 @@ If you wanted to return to normal, you'd have to double-click the line of the Sq
 This mapping contains many things, from the very simple (like triggering only on a double tap) to the more complicated. Don't let that fool you into thinking everything is. For example, the 8 boxes in the center allow you to create a timeline, perform a series of operations, or create complex macros with the ability to rewind, but you can always limit yourself to the first of these boxes as the only thing to do.
 Later in this mapping tab, you will learn that lines are processed in order, letting you perform algorithms that other programs cannot do.
 
-
 Second example:
 This one demonstrates how you can control the mouse and zoom the screen with a joystick.
 Same here, make sure your joystick is detected.
