@@ -1,0 +1,56 @@
+This program isn't designed like its competitors.
+Instead of providing you with the usual basic settings, it offers you a huge degree of freedom.
+Once you understand the principle, it will seem simple, like Lego, but it can be a little daunting at first, which is why you can use this ini file with three examples as a starting point.
+So, you start with obvious functions and then add possibilities as you go.
+
+If you have already configured some things, consider making a copy of your ini file before replacing it with this one.
+To switch between examples, right-click the icon in the taskbar and choose Profile 1 to 3.
+If the icon does not appear, make it appear in the Windows Taskbar Settings, you have quick access to them by right-clicking on the taskbar.
+
+First example:
+We'll use a joystick as the source.
+Normally, it should be detected. In the "Log" tab, you should see the message "DIRECTINPUT: WIRELESS CONTROLLER ACQUIRED."
+If not, make sure the "DI" box for 'Direct Input' is checked. You can specify which one to use in the list at the bottom. If you have a Dualshock or Dualsense, you can specify "DS4" or "DS5" instead.
+In the "Output" tab, "XOutput Module" is checked. This means that we'll use a virtual joystick as the output, specifically a Dualshock specified on the right by "DS4".
+'vJoy' is for an older joystick, allowing you to play old games or emulators. We won't be using it here, so there's no point clicking the "vJoy Inst" button.
+However, you must click the Install button directly below which will turn yellow; this will activate the virtual joystick driver on your system. You can uninstall it at any time; it won't leave any trace on your computer.
+Now observe the numbers in this tab; they are positioned according to a gamepad.
+'vJoy' goes with the top button for the driver, 'XOutput' with the bottom one.
+They are arbitrary; I placed them circling from left to right of the gamepad as a memo technique; you can use your own, which explains why the lists are drop-down.
+The axes are at the bottom, in the middle are the left, bottom, center, and top buttons, and the right buttons, and at the top are the shoulders and triggers, otherwise known as L1, L2, R1, and R2 on Sony. Note that the top row has both a button and an axis number, because triggers vary an axis when pressed, but also activate a button if fully pressed.
+The goal of this example will be to swap buttons 8 and 10, Square and Circle on Sony, X and B on Microsoft. So, Square usually goes on 8 and Circle on 10.
+Now that we understand the principle, let's go to the "Mapping" tab, which serves as your operations table. There are 9 registers, 'Always' and 1-8. Currently, they all function as always, meaning they're always active, but if you right-click on one of them, like above '4', you'll see that you can set it to be active only if you're in a certain 'Mode'.
+'Modes' can be changed using operations in this same section: switching between them, toggling them, or even returning to the first one when you release the button. You'll be able to see this later.
+For now, I've placed the axis correspondences between the source and destination joysticks in the "Always" register.
+In register "1", I've placed the beginning of the buttons; this is the one we're interested in.
+You can see that Square corresponds to the number 10 rather than 8, and Circle corresponds to 8 rather than 10. They are therefore reversed.
+You can test when using a joystick in a game, select the destination and not the source, and you'll see them reversed.
+You can also check this in the Windows Joystick Manager; there's direct access by right-clicking the taskbar icon and selecting 'JoyCpl'.
+If you wanted to return to normal, you'd have to double-click the line of the Square button that opens the mapping (or right click and select "Edit"), replace 10 with 8, validate, and do the same for the Circle button.
+This mapping contains many things, from the very simple (like triggering only on a double tap) to the more complicated. Don't let that fool you into thinking everything is. For example, the 8 boxes in the center allow you to create a timeline, perform a series of operations, or create complex macros with the ability to rewind, but you can always limit yourself to the first of these boxes as the only thing to do.
+Later in this mapping tab, you will learn that lines are processed in order, letting you perform algorithms that other programs cannot do.
+
+
+Second example:
+This one demonstrates how you can control the mouse and zoom the screen with a joystick.
+Same here, make sure your joystick is detected.
+In the "Output" tab, we don't need anything this time.
+So let's go directly to the "Mapping" tab; everything is in the "Always" register.
+'Full>Active mouse' means that the virtual mouse is enabled. In the corresponding mapping, I've specified that the left stick allows it to be moved (bottom grid if you'll see). You can test it right now.
+L2 (left trigger) allows you to activate a zoom mode where the mouse moves the zoomed location.
+L1 (left shoulder) allows you to instantly return to normal, without having to zoom out.
+Up and Down adjust the zoom amplification, but if used alone without pressing L2, they will do something else: the zoomed area will not follow the mouse, and if you want to move it, you will have to use the right buttons of the gamepad, Triangle to Circle.
+Left and Right, allow you to right-click or left-click with the joystick.
+The Share button in the center left, which has several names depending on the gamepad, allows you to make the cursor disappear when zoom is active.
+Note that although this is more of an example for desktop use, it is possible to set a zoom with a combination in a shooting game for example and return to normal view by releasing it.
+You can also create mouse movement and click scripts to automate your actions with a program.
+
+Third example:
+We're going to use a virtual joystick controlled by the keyboard. So there's no need to have your joystick detected this time; however, in the "Settings" tab, "KBD" and "MSE" for keyboard and mouse, respectively, are checked.
+In the "Output" tab, we're going to use a virtual joystick as seen in the first example, so remember to check that the driver is installed (you can use vJoy instead of DS4 if you prefer).
+In the "Mapping" tab, under the "Always" tab, we find that WASD controls the left axis and the mouse controls the right axis.
+In register "1", the 0123456789-+ keys activate the joystick buttons in a circular motion from the left stick to the right stick.
+In register "2", G&T activate the PS or touchpad button, R&F L1 and R1, Q&E L2 and R2.
+
+There is so much more, have fun
+
